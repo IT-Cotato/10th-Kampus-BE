@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.chat.domain;
 
-import com.cotato.kampus.domain.model.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,10 +30,10 @@ public class ChatMessage extends BaseTimeEntity {
 	@Column(name = "sender_id", nullable = false)
 	private Long senderId;
 
-	@Column(name = "content")
+	@Column(name = "content", nullable = false, length = 500)
 	private String content;
 
-	@Column(name = "is_read")
+	@Column(name = "is_read", nullable = false)
 	private Boolean isRead;
 
 	@Builder

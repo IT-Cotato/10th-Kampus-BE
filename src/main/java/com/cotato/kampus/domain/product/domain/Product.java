@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.product.domain;
 
-import com.cotato.kampus.domain.model.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 import com.cotato.kampus.domain.product.ProductCategory;
 import com.cotato.kampus.domain.product.ProductStatus;
 
@@ -28,34 +28,34 @@ public class Product extends BaseTimeEntity {
 	@Column(name = "product_id")
 	private Long id;
 
-	@Column(name = "user_id")
+	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "category")
+	@Column(name = "category", nullable = false)
 	private ProductCategory category;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "product_status")
+	@Column(name = "product_status", nullable = false)
 	private ProductStatus productStatus;
 
-	@Column(name = "title")
+	@Column(name = "title", nullable = false)
 	private String title;
 
-	@Column(name = "description", columnDefinition = "text")
+	@Column(name = "description", nullable = false, columnDefinition = "text")
 	private String description;
 
-	@Column(name = "scraps")
-	private Long scraps;
+	@Column(name = "scraps", nullable = false)
+	private Long scraps = 0L;
 
-	@Column(name = "chats")
-	private Long chats;
+	@Column(name = "chats", nullable = false)
+	private Long chats = 0L;
 
-	@Column(name = "sell_price")
+	@Column(name = "sell_price", nullable = false)
 	private Long sellPrice;
 
-	@Column(name = "views")
-	private Long views;
+	@Column(name = "views", nullable = false)
+	private Long views = 0L;
 
 	@Builder
 	public Product(Long userId, ProductCategory category, ProductStatus productStatus,

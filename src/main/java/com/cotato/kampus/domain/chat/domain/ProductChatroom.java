@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.chat.domain;
 
-import com.cotato.kampus.domain.model.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +30,7 @@ public class ProductChatroom extends BaseTimeEntity {
 	@Column(name = "product_id", nullable = false)
 	private Long productId;
 
-	@Column(name = "buyer_id")
+	@Column(name = "buyer_id", nullable = false)
 	private Long buyerId;
 
 	@Builder

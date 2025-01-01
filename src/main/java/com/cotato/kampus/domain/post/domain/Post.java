@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.post.domain;
 
-import com.cotato.kampus.domain.model.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.PostStatus;
 
 import jakarta.persistence.Column;
@@ -33,31 +34,32 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "board_id", nullable = false)
 	private Long boardId;
 
-	@Column(name = "title")
+	@Column(name = "title", nullable = false)
 	private String title;
 
-	@Column(name = "content", columnDefinition = "text")
+	@Column(name = "content", nullable = false, columnDefinition = "text")
 	private String content;
 
-	@Column(name = "likes")
-	private Long likes;
+	@Column(name = "likes", nullable = false)
+	private Long likes = 0L;
 
-	@Column(name = "scraps")
-	private Long scraps;
-
-	@Column(name = "anonymity", columnDefinition = "enum('anonymous','identified')")
-	private String anonymity;
+	@Column(name = "scraps", nullable = false)
+	private Long scraps = 0L;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "post_status")
+	@Column(name = "anonymity", nullable = false)
+	private Anonymity anonymity;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "post_status", nullable = false)
 	private PostStatus postStatus;
 
-	@Column(name = "post_category")
+	@Column(name = "post_category", nullable = false)
 	private String postCategory;
 
 	@Builder
 	public Post(Long userId, Long boardId, String title, String content,
-		Long likes, Long scraps, String anonymity,
+		Long likes, Long scraps, Anonymity anonymity,
 		PostStatus postStatus, String postCategory) {
 		this.userId = userId;
 		this.boardId = boardId;

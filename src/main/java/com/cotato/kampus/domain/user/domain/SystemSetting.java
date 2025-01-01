@@ -1,7 +1,7 @@
 package com.cotato.kampus.domain.user.domain;
 
-import com.cotato.kampus.domain.model.domain.BaseTimeEntity;
-import com.cotato.kampus.domain.notification.enums.NotificationOption;
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.user.enums.SystemOption;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,27 +34,27 @@ public class SystemSetting extends BaseTimeEntity {
 	private Long userId;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "chat_notification")
-	private NotificationOption chatNotification;
+	@Column(name = "chat_notification", nullable = false)
+	private SystemOption chatNotification;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "comment_notification")
-	private NotificationOption commentNotification;
+	@Column(name = "comment_notification", nullable = false)
+	private SystemOption commentNotification;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "trending_post_notification")
-	private NotificationOption trendingPostNotification;
+	@Column(name = "trending_post_notification", nullable = false)
+	private SystemOption trendingPostNotification;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "ad_agreement")
-	private NotificationOption adAgreement;
+	@Column(name = "ad_agreement", nullable = false)
+	private SystemOption adAgreement;
 
 	@Builder
 	public SystemSetting(Long settingId, Long userId,
-		NotificationOption chatNotification,
-		NotificationOption commentNotification,
-		NotificationOption trendingPostNotification,
-		NotificationOption adAgreement) {
+		SystemOption chatNotification,
+		SystemOption commentNotification,
+		SystemOption trendingPostNotification,
+		SystemOption adAgreement) {
 		this.settingId = settingId;
 		this.userId = userId;
 		this.chatNotification = chatNotification;

@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.board.domain;
 
-import com.cotato.kampus.domain.model.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,10 +21,10 @@ public class Board extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "board_id")
+	@Column(name = "board_id", nullable = false)
 	private Long id;
 
-	@Column(name = "board_name")
+	@Column(name = "board_name", nullable = false)
 	private String boardName;
 
 	@Builder

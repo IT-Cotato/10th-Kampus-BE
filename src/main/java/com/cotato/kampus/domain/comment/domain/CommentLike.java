@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.comment.domain;
 
-import com.cotato.kampus.domain.model.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,13 +30,9 @@ public class CommentLike extends BaseTimeEntity {
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
-	@Column(name = "user_id2", nullable = false)
-	private Long userId2;
-
 	@Builder
 	public CommentLike(Long commentId, Long userId, Long userId2) {
 		this.commentId = commentId;
 		this.userId = userId;
-		this.userId2 = userId2;
 	}
 }

@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.notice.domain;
 
-import com.cotato.kampus.domain.model.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,10 +24,10 @@ public class Notice extends BaseTimeEntity {
 	@Column(name = "notice_id")
 	private Long id;
 
-	@Column(name = "title")
+	@Column(name = "title", nullable = false)
 	private String title;
 
-	@Column(name = "content", columnDefinition = "text")
+	@Column(name = "content", columnDefinition = "text", nullable = false)
 	private String content;
 
 	@Builder

@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.university.domain;
 
-import com.cotato.kampus.domain.model.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,8 +24,8 @@ public class University extends BaseTimeEntity {
 	@Column(name = "university_id")
 	private Long id;
 
-	@Column(name = "university_name", length = 10)
-	private String universityName;
+	@Column(name = "university_name", nullable = false, length = 10)
+	private String universityName; // 추후에 Enum으로 변경 필요
 
 	@Builder
 	public University(String universityName) {

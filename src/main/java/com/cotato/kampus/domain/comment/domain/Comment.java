@@ -1,8 +1,8 @@
 package com.cotato.kampus.domain.comment.domain;
 
-import com.cotato.kampus.domain.comment.CommentStatus;
-import com.cotato.kampus.domain.model.enums.Anonymity;
-import com.cotato.kampus.domain.model.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.comment.enums.RepostStatus;
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.common.enums.Anonymity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,29 +37,29 @@ public class Comment extends BaseTimeEntity {
 	@Column(name = "content", columnDefinition = "text")
 	private String content;
 
-	@Column(name = "likes")
-	private Long likes;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "comment_status", nullable = false)
+	private RepostStatus repostStatus;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "comment_status")
-	private CommentStatus commentStatus;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "anonymity")
+	@Column(name = "anonymity", nullable = false)
 	private Anonymity anonymity;
 
-	@Column(name = "reports")
-	private Long reports;
+	@Column(name = "likes", nullable = false)
+	private Long likes = 0L;
+
+	@Column(name = "reports", nullable = false)
+	private Long reports = 0L;
 
 	@Builder
 	public Comment(Long userId, Long postId, String content,
-		Long likes, CommentStatus commentStatus,
+		Long likes, RepostStatus repostStatus,
 		Anonymity anonymity, Long reports) {
 		this.userId = userId;
 		this.postId = postId;
 		this.content = content;
 		this.likes = likes;
-		this.commentStatus = commentStatus;
+		this.repostStatus = repostStatus;
 		this.anonymity = anonymity;
 		this.reports = reports;
 	}
