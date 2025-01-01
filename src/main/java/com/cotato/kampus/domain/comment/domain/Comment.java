@@ -34,7 +34,7 @@ public class Comment extends BaseTimeEntity {
 	@Column(name = "post_id", nullable = false)
 	private Long postId;
 
-	@Column(name = "content", columnDefinition = "text")
+	@Column(name = "content", nullable = false, columnDefinition = "text")
 	private String content;
 
 	@Enumerated(EnumType.STRING)
