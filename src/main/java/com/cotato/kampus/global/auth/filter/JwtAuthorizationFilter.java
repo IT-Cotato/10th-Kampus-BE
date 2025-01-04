@@ -8,8 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.cotato.kampus.domain.user.enums.UserRole;
-import com.cotato.kampus.global.auth.PrincipleDetails;
-import com.cotato.kampus.global.auth.PrincipleDetailsRequest;
+import com.cotato.kampus.global.auth.PrincipalDetails;
+import com.cotato.kampus.global.auth.PrincipalDetailsRequest;
 import com.cotato.kampus.global.util.JWTUtil;
 
 import jakarta.servlet.FilterChain;
@@ -54,19 +54,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		PrincipleDetailsRequest principleDetailsRequest = PrincipleDetailsRequest.of(
+		PrincipalDetailsRequest principalDetailsRequest = PrincipalDetailsRequest.of(
 			jwtUtil.getUsername(token),
 			jwtUtil.getUniqueId(token),
 			jwtUtil.getProviderId(token),
 			UserRole.valueOf(jwtUtil.getRole(token))
 		);
 
-		PrincipleDetails principleDetails = new PrincipleDetails(principleDetailsRequest);
+		PrincipalDetails principalDetails = new PrincipalDetails(principalDetailsRequest);
 
 		Authentication authToken = new UsernamePasswordAuthenticationToken(
-			principleDetails,
+			principalDetails,
 			null,
-			principleDetails.getAuthorities()
+			principalDetails.getAuthorities()
 		);
 
 		SecurityContextHolder.getContext().setAuthentication(authToken);

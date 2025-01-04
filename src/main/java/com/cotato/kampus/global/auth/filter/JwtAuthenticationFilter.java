@@ -11,7 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.cotato.kampus.domain.user.domain.User;
-import com.cotato.kampus.global.auth.PrincipleDetails;
+import com.cotato.kampus.global.auth.PrincipalDetails;
 import com.cotato.kampus.global.util.JWTUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 		Authentication authentication) {
-		PrincipleDetails principalDetails = (PrincipleDetails)authentication.getPrincipal();
+		PrincipalDetails principalDetails = (PrincipalDetails)authentication.getPrincipal();
 
 		String uniqueId = principalDetails.uniqueId();
 		String providerId = principalDetails.providerId();

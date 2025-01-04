@@ -13,13 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
-public class PrincipleDetails implements UserDetails {
+public class PrincipalDetails implements UserDetails {
 
-	private final PrincipleDetailsRequest principleDetailsRequest;
+	private final PrincipalDetailsRequest principalDetailsRequest;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(new SimpleGrantedAuthority(principleDetailsRequest.role().name()));
+		return List.of(new SimpleGrantedAuthority(principalDetailsRequest.role().name()));
 	}
 
 	@Override
@@ -29,14 +29,14 @@ public class PrincipleDetails implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return principleDetailsRequest.username();
+		return principalDetailsRequest.username();
 	}
 
 	public String uniqueId() {
-		return principleDetailsRequest.uniqueId();
+		return principalDetailsRequest.uniqueId();
 	}
 
 	public String providerId() {
-		return principleDetailsRequest.providerId();
+		return principalDetailsRequest.providerId();
 	}
 }

@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class PrincipleDetailsService implements UserDetailsService {
+public class PrincipalDetailsService implements UserDetailsService {
 
 	private final UserRepository userRepository;
 
@@ -26,11 +26,10 @@ public class PrincipleDetailsService implements UserDetailsService {
 
 		User user = userRepository.findByUniqueId(uniqueId)
 			.orElseThrow(() -> {
-				log.error("User not found: {}", uniqueId);
 				return new AppException(ErrorCode.USER_NOT_FOUND);
 			});
-		log.info("Loading user: {}", user.getUniqueId());
-		PrincipleDetailsRequest principleDetailsRequest = PrincipleDetailsRequest.from(user);
-		return new PrincipleDetails(principleDetailsRequest);
+		log.info("PrincipalDetailService::loadUserByUsername Loading user: {}", user.getUniqueId());
+		PrincipalDetailsRequest principalDetailsRequest = PrincipalDetailsRequest.from(user);
+		return new PrincipalDetails(principalDetailsRequest);
 	}
 }

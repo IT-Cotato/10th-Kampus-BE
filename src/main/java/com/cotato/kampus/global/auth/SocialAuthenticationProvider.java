@@ -32,13 +32,13 @@ public class SocialAuthenticationProvider implements AuthenticationProvider {
 
 		log.info("SocialAuthenticationProvider::authenticate user uniqueId: {}", user.getUniqueId());
 
-		PrincipleDetailsRequest principleDetailsRequest = PrincipleDetailsRequest.from(user);
+		PrincipalDetailsRequest principalDetailsRequest = PrincipalDetailsRequest.from(user);
 
 		// 인증 완료된 Authentication 반환
 		return new UsernamePasswordAuthenticationToken(
-			new PrincipleDetails(principleDetailsRequest), // 인증된 사용자 정보
+			new PrincipalDetails(principalDetailsRequest), // 인증된 사용자 정보
 			null,
-			new PrincipleDetails(principleDetailsRequest).getAuthorities()
+			new PrincipalDetails(principalDetailsRequest).getAuthorities()
 		);
 	}
 
