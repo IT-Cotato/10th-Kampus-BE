@@ -1,4 +1,4 @@
-package com.cotato.kampus.global.filter;
+package com.cotato.kampus.global.auth.filter;
 
 import java.io.IOException;
 
@@ -7,9 +7,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.global.auth.PrincipleDetails;
+import com.cotato.kampus.global.auth.PrincipleDetailsRequest;
 import com.cotato.kampus.global.util.JWTUtil;
 
 import jakarta.servlet.FilterChain;
@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JWTFilter extends OncePerRequestFilter {
+public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 	private final JWTUtil jwtUtil;
 
@@ -54,19 +54,14 @@ public class JWTFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		String username = jwtUtil.getUsername(token);
-		String role = jwtUtil.getRole(token);
+		PrincipleDetailsRequest principleDetailsRequest = PrincipleDetailsRequest.of(
+			jwtUtil.getUsername(token),
+			jwtUtil.getUniqueId(token),
+			jwtUtil.getProviderId(token),
+			UserRole.valueOf(jwtUtil.getRole(token))
+		);
 
-		log.info("username: {}, role {}", username, role);
-
-		User user = User.builder()
-			.username(username)
-			.email("tempemail")
-			.password("temppassword")
-			.userRole(UserRole.valueOf(role))
-			.build();
-
-		PrincipleDetails principleDetails = new PrincipleDetails(user);
+		PrincipleDetails principleDetails = new PrincipleDetails(principleDetailsRequest);
 
 		Authentication authToken = new UsernamePasswordAuthenticationToken(
 			principleDetails,
@@ -75,7 +70,7 @@ public class JWTFilter extends OncePerRequestFilter {
 		);
 
 		SecurityContextHolder.getContext().setAuthentication(authToken);
-		log.info("JWTFilter: SecurityContext Authentication: {}",
+		log.info("JwtAuthorizationFilter: SecurityContext Authentication: {}",
 			SecurityContextHolder.getContext().getAuthentication());
 
 		filterChain.doFilter(request, response);

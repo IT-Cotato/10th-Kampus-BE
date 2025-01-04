@@ -10,77 +10,68 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.cotato.deepl.jwt.JwtAuthenticationFilter;
-import com.cotato.kampus.global.filter.JWTFilter;
+import com.cotato.kampus.global.auth.SocialAuthenticationProvider;
+import com.cotato.kampus.global.auth.filter.JwtAuthenticationFilter;
+import com.cotato.kampus.global.auth.filter.JwtAuthorizationFilter;
 import com.cotato.kampus.global.util.JWTUtil;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-	private static final String[] WHITE_LIST = {
-		"/v1/api/auth/**",
-	};
-
 	private final JWTUtil jwtUtil;
+	private final SocialAuthenticationProvider socialAuthenticationProvider;
 	private static final String LOGIN_URL = "/v1/api/auth/login";
+	private static final String[] WHITE_LIST = {
+		"/v1/api/auth/signup",
+	};
 
 	@Bean
 	public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.getSharedObject(AuthenticationManagerBuilder.class)
+			.authenticationProvider(socialAuthenticationProvider)
 			.build();
 	}
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+		// AuthenticationManager 설정
 		AuthenticationManagerBuilder sharedObject = http.getSharedObject(AuthenticationManagerBuilder.class);
 		AuthenticationManager authenticationManager = sharedObject.build();
 		http.authenticationManager(authenticationManager);
 
-		// 기본 로그인 url 변경
+		// JWT Authentication Filter 설정
 		JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtUtil);
 		jwtAuthenticationFilter.setFilterProcessesUrl(LOGIN_URL);
 
-		//csrf disable
 		http
-			.csrf((auth) -> auth.disable());
+			// CSRF 비활성화
+			.csrf(csrf -> csrf.disable())
 
-		//From 로그인 방식 disable
-		http
-			.formLogin((auth) -> auth.disable());
+			// Form 로그인 및 HTTP Basic 비활성화
+			.formLogin(form -> form.disable())
+			.httpBasic(httpBasic -> httpBasic.disable())
 
-		//http basic 인증 방식 disable
-		http
-			.httpBasic((auth) -> auth.disable());
-
-		//경로별 인가 작업
-		http
-			.authorizeHttpRequests((auth) -> auth
+			// 경로별 권한 설정
+			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(WHITE_LIST).permitAll()
-				.requestMatchers("/").hasAnyRole("UNVERIFIED", "ADMIN", "VERIFIED")
-				// .requestMatchers("/reissue").permitAll()
-				.anyRequest().authenticated());
+				.requestMatchers("/").hasAnyAuthority("UNVERIFIED", "ADMIN", "VERIFIED")
+				.requestMatchers("/v1/api/auth/health").hasAnyAuthority("UNVERIFIED", "ADMIN", "VERIFIED")
+				.anyRequest().authenticated()
+			)
 
-		//인증 필터 추가
-		http
-			.addFilterAt(jwtAuthenticationFilter,
-				UsernamePasswordAuthenticationFilter.class);
+			// 인증 필터 추가
+			.addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
-		//jwt 필터 추가(인가)
-		http
-			.addFilterBefore(new JWTFilter(jwtUtil), JwtAuthenticationFilter.class);
+			// JWT Authorization 필터 추가
+			.addFilterBefore(new JwtAuthorizationFilter(jwtUtil), JwtAuthenticationFilter.class)
 
-		// http
-		// 	.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
-
-		http
-			.sessionManagement((session) -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+			// 세션 관리 설정 (Stateless)
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		return http.build();
 	}

@@ -22,15 +22,15 @@ public class PrincipleDetailsService implements UserDetailsService {
 	private final UserRepository userRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+	public UserDetails loadUserByUsername(String uniqueId) throws UsernameNotFoundException {
 
-		User user = userRepository.findByEmail(email)
+		User user = userRepository.findByUniqueId(uniqueId)
 			.orElseThrow(() -> {
-				log.error("User not found with email: {}", email);
+				log.error("User not found: {}", uniqueId);
 				return new AppException(ErrorCode.USER_NOT_FOUND);
 			});
-		log.info("Loading user: {}", user.getEmail());
-
-		return new PrincipleDetails(user);
+		log.info("Loading user: {}", user.getUniqueId());
+		PrincipleDetailsRequest principleDetailsRequest = PrincipleDetailsRequest.from(user);
+		return new PrincipleDetails(principleDetailsRequest);
 	}
 }

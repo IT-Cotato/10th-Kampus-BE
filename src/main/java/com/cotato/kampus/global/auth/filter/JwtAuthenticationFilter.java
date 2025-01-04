@@ -1,4 +1,4 @@
-package com.cotato.deepl.jwt;
+package com.cotato.kampus.global.auth.filter;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -35,15 +35,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws
 		AuthenticationException {
-		log.info("[login 요청]");
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			User user = mapper.readValue(request.getInputStream(), User.class);
+			log.info("JwtAuthenticationFilter::attemptAuthentication user uniqueId: {}", user.getUniqueId());
 			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-				user.getEmail(), user.getPassword());
+				user.getUniqueId(),
+				user.getProviderId()
+			);
 			return authenticationManager.authenticate(authenticationToken);
 		} catch (Exception e) {
-			log.error("[login 실패]");
+			log.error("JwtAuthenticationFilter::attemptAuthentication Exception occur: {}", e.getMessage());
 			throw new AuthenticationException("로그인 시도에 실패했습니다.") {
 			};
 		}
@@ -52,17 +54,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 		Authentication authentication) {
-
 		PrincipleDetails principalDetails = (PrincipleDetails)authentication.getPrincipal();
 
-		String username = principalDetails.getUsername();
+		String uniqueId = principalDetails.uniqueId();
+		String providerId = principalDetails.providerId();
 
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
 		GrantedAuthority auth = iterator.next();
-
 		String role = auth.getAuthority();
-		String token = jwtUtil.createJwt(username, role, ACCESS_TOKEN_EXPIRATION_TIME);
+
+		String token = jwtUtil.createJwt(uniqueId, providerId, role, ACCESS_TOKEN_EXPIRATION_TIME);
 
 		response.addHeader(HEADER_NAME, TOKEN_PREFIX + token);
 	}
