@@ -31,6 +31,12 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	//s3
+	implementation 'software.amazon.awssdk:s3:2.29.44'
+
+	//webp 변환 라이브러리
+	implementation 'com.sksamuel.scrimage:scrimage-core:4.3.0'
+	implementation 'com.sksamuel.scrimage:scrimage-webp:4.3.0'
 
 	// Spring Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
