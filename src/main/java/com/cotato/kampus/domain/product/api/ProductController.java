@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.product.application.ProductService;
 import com.cotato.kampus.domain.product.dto.request.ProductCreateRequest;
+import com.cotato.kampus.domain.product.dto.response.ProductCreateResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
 
@@ -25,17 +26,21 @@ public class ProductController {
 	private final ProductService productService;
 
 	@PostMapping("")
-	public ResponseEntity<DataResponse<Void>> createProduct(
+	public ResponseEntity<DataResponse<ProductCreateResponse>> createProduct(
 		@RequestPart ProductCreateRequest request,
 		@RequestPart List<MultipartFile> images) throws ImageException {
 
-		productService.createProduct(
-			request.title(),
-			request.sellPrice(),
-			request.description(),
-			request.productCategory(),
-			images
+		return ResponseEntity.ok(DataResponse.from(
+				ProductCreateResponse.of(
+					productService.createProduct(
+						request.title(),
+						request.sellPrice(),
+						request.description(),
+						request.productCategory(),
+						images
+					)
+				)
+			)
 		);
-		return ResponseEntity.ok(DataResponse.ok());
 	}
 }
