@@ -33,7 +33,7 @@ public class Product extends BaseTimeEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "category", nullable = false)
-	private ProductCategory category;
+	private ProductCategory productCategory;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "product_status", nullable = false)
@@ -58,17 +58,17 @@ public class Product extends BaseTimeEntity {
 	private Long views = 0L;
 
 	@Builder
-	public Product(Long userId, ProductCategory category, ProductStatus productStatus,
+	public Product(Long userId, ProductCategory productCategory, ProductStatus productStatus,
 		String title, String description, Long scraps, Long chats,
 		Long sellPrice, Long views) {
 		this.userId = userId;
-		this.category = category;
-		this.productStatus = productStatus;
+		this.productCategory = productCategory != null ? productCategory : ProductCategory.ETC;
+		this.productStatus = productStatus != null ? productStatus : ProductStatus.ACTIVE;
 		this.title = title;
 		this.description = description;
-		this.scraps = scraps;
-		this.chats = chats;
+		this.scraps = scraps != null ? scraps : 0L;
+		this.chats = chats != null ? chats : 0L;
 		this.sellPrice = sellPrice;
-		this.views = views;
+		this.views = views != null ? views : 0L;
 	}
 }

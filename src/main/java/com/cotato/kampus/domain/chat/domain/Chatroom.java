@@ -1,7 +1,7 @@
 package com.cotato.kampus.domain.chat.domain;
 
-import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
