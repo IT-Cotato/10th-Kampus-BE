@@ -21,13 +21,12 @@ public class UserAppender {
 	private final UserRepository userRepository;
 
 	@Transactional
-	public Long appendUser(String email, String uniqueId, String providerId, String password, String username,
+	public Long appendUser(String email, String uniqueId, String providerId, String username,
 		String nickname, String nationality) {
 		User user = User.builder()
 			.username(username)
 			.uniqueId(uniqueId)
 			.providerId(providerId)
-			.password(password)
 			.email(email)
 			.nickname(nickname)
 			.nationality(Nationality.valueOf(nationality))

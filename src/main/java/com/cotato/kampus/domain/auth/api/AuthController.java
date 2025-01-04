@@ -30,7 +30,6 @@ public class AuthController {
 						request.email(),
 						request.uniqueId(),
 						request.providerId(),
-						request.password(),
 						request.username(),
 						request.nickname(),
 						request.nationality())
