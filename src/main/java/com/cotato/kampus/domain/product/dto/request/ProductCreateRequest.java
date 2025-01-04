@@ -7,5 +7,5 @@ public record ProductCreateRequest(
 	Long sellPrice,
 	String description,
 	ProductCategory productCategory
-	) {
+) {
 }

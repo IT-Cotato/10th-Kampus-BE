@@ -17,7 +17,7 @@ public class ApiUserResolver {
 
 	public Long getUserId() {
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		PrincipalDetails userDetails = (PrincipalDetails) principal;
+		PrincipalDetails userDetails = (PrincipalDetails)principal;
 
 		return userFinder.findByUniqueId(userDetails.uniqueId()).getId();
 	}
