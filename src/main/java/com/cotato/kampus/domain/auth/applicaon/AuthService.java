@@ -14,9 +14,12 @@ public class AuthService {
 	private final UserAppender userAppender;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	public Long signup(String email, String password, String username, String nickname, String nationality) {
+	public Long signup(String email, String uniqueId, String providerId, String password, String username,
+		String nickname, String nationality) {
 		return userAppender.appendUser(
 			email,
+			uniqueId,
+			providerId,
 			bCryptPasswordEncoder.encode(password),
 			username,
 			nickname,

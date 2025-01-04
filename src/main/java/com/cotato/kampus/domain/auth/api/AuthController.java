@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.auth.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,8 @@ public class AuthController {
 				SignupResponse.of(
 					authService.signup(
 						request.email(),
+						request.uniqueId(),
+						request.providerId(),
 						request.password(),
 						request.username(),
 						request.nickname(),
@@ -34,5 +37,10 @@ public class AuthController {
 				)
 			)
 		);
+	}
+
+	@GetMapping("/health")
+	public ResponseEntity<DataResponse<Void>> health() {
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 }

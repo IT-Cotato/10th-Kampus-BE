@@ -30,6 +30,12 @@ public class User {
 	@Column(name = "email", nullable = false)
 	private String email;
 
+	@Column(name = "unique_id", nullable = false, unique = true)
+	private String uniqueId;
+
+	@Column(name = "provider_id", nullable = false)
+	private String providerId;
+
 	@Column(name = "password", nullable = false)
 	private String password;
 
@@ -48,9 +54,12 @@ public class User {
 	private UserRole userRole = UserRole.UNVERIFIED;
 
 	@Builder
-	public User(String email, String password, String username, String nickname, Nationality nationality,
+	public User(String email, String uniqueId, String providerId, String password, String username, String nickname,
+		Nationality nationality,
 		UserRole userRole) {
 		this.email = email;
+		this.uniqueId = uniqueId;
+		this.providerId = providerId;
 		this.password = password;
 		this.username = username;
 		this.nickname = nickname;

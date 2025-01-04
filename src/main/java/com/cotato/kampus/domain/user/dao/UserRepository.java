@@ -8,5 +8,5 @@ import com.cotato.kampus.domain.user.domain.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-	Optional<User> findByEmail(String email);
+	Optional<User> findByUniqueId(String uniqueId);
 }
