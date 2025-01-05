@@ -6,7 +6,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.dto.response.BoardResponseDto;
+import com.cotato.kampus.domain.board.dto.BoardDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +17,7 @@ public class BoardService {
 	private final BoardReader boardReader;
 	private final BoardFavoriteReader boardFavoriteReader;
 
-	public List<BoardResponseDto.BoardDto> getBoardList(){
+	public List<BoardDto> getBoardList(){
 
 		// 즐겨찾는 게시판 조회
 		Set<Long> favoriteBoardIds = boardFavoriteReader.read();
