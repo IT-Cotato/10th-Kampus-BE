@@ -28,6 +28,7 @@ public class SecurityConfig {
 	private static final String[] WHITE_LIST = {
 		"/v1/api/auth/signup",
 		"/v1/api/products",
+		"/v1/api/boards/**"
 	};
 
 	@Bean
