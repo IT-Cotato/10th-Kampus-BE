@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 
 import lombok.RequiredArgsConstructor;
@@ -23,10 +22,10 @@ public class BoardService {
 		Set<Long> favoriteBoardIds = boardFavoriteReader.read();
 
 		// 전체 게시판 조회
-		List<Board> boards = boardReader.read();
+		List<BoardDto> boards = boardReader.read();
 
-		// DTO 변환
-		return BoardMapper.toBoardDtos(boards, favoriteBoardIds);
+		// 즐겨찾기 여부 매핑
+		return BoardDtoEnhancer.updateFavoriteStatus(boards, favoriteBoardIds);
 	}
 
 }

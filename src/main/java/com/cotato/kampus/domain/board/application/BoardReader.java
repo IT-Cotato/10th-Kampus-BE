@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.BoardRepository;
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.dto.BoardDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,13 @@ import lombok.RequiredArgsConstructor;
 public class BoardReader {
 	private final BoardRepository boardRepository;
 
-	public List<Board> read(){
-		return boardRepository.findAll();
+	public List<BoardDto> read(){
+		return boardRepository.findAll().stream()
+			.map(board -> BoardDto.of(
+				board.getId(),
+				board.getBoardName(),
+				false
+			))
+			.toList();
 	}
-
-
 }
