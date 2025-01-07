@@ -12,13 +12,12 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Jwts;
 
 @Component
-public class JWTUtil {
+public class JwtUtil {
 
 	private SecretKey secretKey;
 
-	public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
-
-		this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
+	public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
+		secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
 			Jwts.SIG.HS256.key().build().getAlgorithm());
 	}
 
@@ -30,16 +29,6 @@ public class JWTUtil {
 			.parseSignedClaims(token)
 			.getPayload()
 			.get("uniqueId", String.class);
-	}
-
-	public String getProviderId(String token) {
-
-		return Jwts.parser()
-			.verifyWith(secretKey)
-			.build()
-			.parseSignedClaims(token)
-			.getPayload()
-			.get("providerId", String.class);
 	}
 
 	public String getUsername(String token) {
@@ -62,6 +51,16 @@ public class JWTUtil {
 			.get("role", String.class);
 	}
 
+	public String getCategory(String token) {
+
+		return Jwts.parser()
+			.verifyWith(secretKey)
+			.build()
+			.parseSignedClaims(token)
+			.getPayload()
+			.get("category", String.class);
+	}
+
 	public Boolean isExpired(String token) {
 
 		return Jwts.parser()
@@ -73,11 +72,12 @@ public class JWTUtil {
 			.before(new Date());
 	}
 
-	public String createJwt(String uniqueId, String providerId, String role, Long expiredMs) {
+	public String createJwt(String category, String uniqueId, String username, String role, Long expiredMs) {
 
 		return Jwts.builder()
+			.claim("category", category)
 			.claim("uniqueId", uniqueId)
-			.claim("providerId", providerId)
+			.claim("username", username)
 			.claim("role", role)
 			.issuedAt(new Date(System.currentTimeMillis()))
 			.expiration(new Date(System.currentTimeMillis() + expiredMs))
