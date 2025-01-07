@@ -2,12 +2,15 @@ package com.cotato.kampus.domain.board.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.board.application.BoardService;
 import com.cotato.kampus.domain.board.dto.response.BoardResponse;
+import com.cotato.kampus.domain.board.dto.response.FavoriteBoardAddResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import lombok.AccessLevel;
@@ -33,6 +36,17 @@ public class BoardController {
 		return ResponseEntity.ok(DataResponse.from(
 			BoardResponse.of(
 				boardService.getFavoriteBoardList()
+			)
+		));
+	}
+
+	@PostMapping("/favorite/{boardId}")
+	public ResponseEntity<DataResponse<FavoriteBoardAddResponse>> addFavoriteBoard(
+		@PathVariable Long boardId
+	){
+		return ResponseEntity.ok(DataResponse.from(
+			FavoriteBoardAddResponse.of(
+				boardService.addFavoriteBoard(boardId)
 			)
 		));
 	}
