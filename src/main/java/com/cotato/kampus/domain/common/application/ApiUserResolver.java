@@ -4,7 +4,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.cotato.kampus.domain.user.application.UserFinder;
-import com.cotato.kampus.global.auth.PrincipalDetails;
+import com.cotato.kampus.global.auth.nativeapp.NativeAppUserDetails;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +17,8 @@ public class ApiUserResolver {
 
 	public Long getUserId() {
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		PrincipalDetails userDetails = (PrincipalDetails)principal;
+		NativeAppUserDetails userDetails = (NativeAppUserDetails)principal;
 
-		return userFinder.findByUniqueId(userDetails.uniqueId()).getId();
+		return userFinder.findByUniqueId(userDetails.getUsername()).getId();
 	}
 }
