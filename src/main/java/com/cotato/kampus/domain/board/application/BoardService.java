@@ -16,6 +16,7 @@ public class BoardService {
 	private final BoardReader boardReader;
 	private final BoardFavoriteReader boardFavoriteReader;
 	private final BoardFavoriteAppender boardFavoriteAppender;
+	private final BoardFavoriteDeleter boardFavoriteDeleter;
 
 	public List<BoardDto> getBoardList(){
 
@@ -46,6 +47,11 @@ public class BoardService {
 
 		// 즐겨찾기 추가
 		return boardFavoriteAppender.appendFavoriteBoard(boardId);
+	}
+
+	public Long removeFavoriteBoard(Long boardId) {
+		boardFavoriteDeleter.deleteFavoriteBoard(boardId);
+		return boardId;
 	}
 
 }
