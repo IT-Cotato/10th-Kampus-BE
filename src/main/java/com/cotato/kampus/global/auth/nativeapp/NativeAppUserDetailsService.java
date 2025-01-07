@@ -1,4 +1,4 @@
-package com.cotato.kampus.global.auth;
+package com.cotato.kampus.global.auth.nativeapp;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class PrincipalDetailsService implements UserDetailsService {
+public class NativeAppUserDetailsService implements UserDetailsService {
 
 	private final UserRepository userRepository;
 
@@ -29,7 +29,7 @@ public class PrincipalDetailsService implements UserDetailsService {
 				return new AppException(ErrorCode.USER_NOT_FOUND);
 			});
 		log.info("PrincipalDetailService::loadUserByUsername Loading user: {}", user.getUniqueId());
-		PrincipalDetailsRequest principalDetailsRequest = PrincipalDetailsRequest.from(user);
-		return new PrincipalDetails(principalDetailsRequest);
+		NativeAppDetailsRequest nativeAppDetailsRequest = NativeAppDetailsRequest.from(user);
+		return new NativeAppUserDetails(nativeAppDetailsRequest);
 	}
 }

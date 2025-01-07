@@ -1,4 +1,4 @@
-package com.cotato.kampus.global.auth;
+package com.cotato.kampus.global.auth.nativeapp;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class SocialAuthenticationProvider implements AuthenticationProvider {
+public class NativeAppAuthProvider implements AuthenticationProvider {
 
 	private final UserRepository userRepository;
 
@@ -32,13 +32,13 @@ public class SocialAuthenticationProvider implements AuthenticationProvider {
 
 		log.info("SocialAuthenticationProvider::authenticate user uniqueId: {}", user.getUniqueId());
 
-		PrincipalDetailsRequest principalDetailsRequest = PrincipalDetailsRequest.from(user);
+		NativeAppDetailsRequest nativeAppDetailsRequest = NativeAppDetailsRequest.from(user);
 
 		// 인증 완료된 Authentication 반환
 		return new UsernamePasswordAuthenticationToken(
-			new PrincipalDetails(principalDetailsRequest), // 인증된 사용자 정보
+			new NativeAppUserDetails(nativeAppDetailsRequest), // 인증된 사용자 정보
 			null,
-			new PrincipalDetails(principalDetailsRequest).getAuthorities()
+			new NativeAppUserDetails(nativeAppDetailsRequest).getAuthorities()
 		);
 	}
 
