@@ -11,4 +11,6 @@ import com.cotato.kampus.domain.board.domain.BoardFavorite;
 public interface BoardFavoriteRepository extends JpaRepository<BoardFavorite, Long> {
 
 	List<BoardFavorite> findAllByUserId(Long userId);
+
+	boolean existsByUserIdAndBoardId(Long userId, Long boardId);
 }
