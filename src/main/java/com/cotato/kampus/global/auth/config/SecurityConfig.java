@@ -39,14 +39,10 @@ public class SecurityConfig {
 		"/v1/api/products"
 	};
 
-	// Login filter( 스킵
-	private static final String[] OAUTH_SKIP_URL = {
-		"/oauth2/**",
-		"/v1/api/auth/**",
-	};
-
-	private static final String[] NATIVE_SKIP_URL = {
-		"/v1/api/auth/**",
+	// jwtAuthenticationFilter에서 스킵하는 url
+	private static final String[] JWT_SKIP_URL = {
+		"/v1/api/auth/login",
+		"/v1/api/auth/signup",
 	};
 
 	// nativeAppLoginFilter > nativeAppAuthFilter
@@ -67,7 +63,6 @@ public class SecurityConfig {
 			)
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(WHITE_LIST).permitAll()
-				.requestMatchers("/").hasAnyAuthority("UNVERIFIED", "ADMIN", "VERIFIED")
 				.requestMatchers("/v1/api/auth/health").hasAnyAuthority("UNVERIFIED", "ADMIN", "VERIFIED")
 				.anyRequest().authenticated()
 			)
@@ -91,7 +86,7 @@ public class SecurityConfig {
 	}
 
 	private JwtAuthenticationFilter jwtAuthenticationFilter() {
-		var matcher = new SkipPathRequestMatcher(List.of(NATIVE_SKIP_URL), API_ROOT_URL);
+		var matcher = new SkipPathRequestMatcher(List.of(JWT_SKIP_URL), API_ROOT_URL);  // API_ROOT_URL로 오는 요청만 처리
 		return new JwtAuthenticationFilter(matcher, jwtUtil);
 	}
 
