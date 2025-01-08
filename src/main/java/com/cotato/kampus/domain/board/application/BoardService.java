@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
 	private final BoardReader boardReader;
+	private final BoardValidator boardValidator;
 	private final BoardFavoriteReader boardFavoriteReader;
 	private final BoardFavoriteAppender boardFavoriteAppender;
 	private final BoardFavoriteDeleter boardFavoriteDeleter;
@@ -43,7 +44,7 @@ public class BoardService {
 
 	public Long addFavoriteBoard(Long boardId) {
 		// 게시판이 존재하는지 확인
-		boardReader.validateBoardExists(boardId);
+		boardValidator.validateBoardExists(boardId);
 
 		// 즐겨찾기 추가
 		return boardFavoriteAppender.appendFavoriteBoard(boardId);
