@@ -16,4 +16,15 @@ public class BoardDtoEnhancer {
 			))
 			.toList();
 	}
+
+	public static List<BoardDto> filterFavoriteBoards(List<BoardDto> boardDtos, Set<Long> favoriteBoardIds) {
+		return boardDtos.stream()
+			.filter(boardDto -> favoriteBoardIds.contains(boardDto.boardId()))
+			.map(boardDto -> BoardDto.of(
+				boardDto.boardId(),
+				boardDto.boardName(),
+				true
+			))
+			.toList();
+	}
 }
