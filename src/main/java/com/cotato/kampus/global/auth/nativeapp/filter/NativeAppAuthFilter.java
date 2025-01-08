@@ -84,8 +84,8 @@ public class NativeAppAuthFilter extends AbstractAuthenticationProcessingFilter 
 
 	private NativeAppDetailsRequest createPrincipalDetailsRequest(String token) {
 		return NativeAppDetailsRequest.of(
-			jwtUtil.getUniqueId(token),
 			jwtUtil.getUsername(token),
+			jwtUtil.getUniqueId(token),
 			UserRole.valueOf(jwtUtil.getRole(token))
 		);
 	}
