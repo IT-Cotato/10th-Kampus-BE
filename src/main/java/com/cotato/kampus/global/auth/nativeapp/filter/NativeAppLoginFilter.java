@@ -1,5 +1,6 @@
 package com.cotato.kampus.global.auth.nativeapp.filter;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -11,7 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.cotato.kampus.domain.user.domain.User;
-import com.cotato.kampus.global.auth.nativeapp.NativeAppUserDetails;
+import com.cotato.kampus.global.auth.nativeapp.AppUserDetails;
 import com.cotato.kampus.global.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -42,14 +43,14 @@ public class NativeAppLoginFilter extends UsernamePasswordAuthenticationFilter {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			User user = mapper.readValue(request.getInputStream(), User.class);
-			log.info("JwtAuthenticationFilter::attemptAuthentication user uniqueId: {}", user.getUniqueId());
+			log.info("attemptAuthentication:: user uniqueId: {}", user.getUniqueId());
 			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
 				user.getUniqueId(),
 				user.getProviderId()
 			);
 			return authenticationManager.authenticate(authenticationToken);
 		} catch (Exception e) {
-			log.error("JwtAuthenticationFilter::attemptAuthentication Exception occur: {}", e.getMessage());
+			log.error("attemptAuthentication Exception occur: {}", e.getMessage());
 			throw new AuthenticationException("로그인 시도에 실패했습니다.") {
 			};
 		}
@@ -58,10 +59,10 @@ public class NativeAppLoginFilter extends UsernamePasswordAuthenticationFilter {
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 		Authentication authentication) {
-		NativeAppUserDetails nativeAppUserDetails = (NativeAppUserDetails)authentication.getPrincipal();
+		AppUserDetails appUserDetails = (AppUserDetails)authentication.getPrincipal();
 
-		String uniqueId = nativeAppUserDetails.getUniqueId();
-		String username = nativeAppUserDetails.getUsername();
+		String uniqueId = appUserDetails.getUniqueId();
+		String username = appUserDetails.getUsername();
 
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -77,7 +78,9 @@ public class NativeAppLoginFilter extends UsernamePasswordAuthenticationFilter {
 
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-		AuthenticationException failed) {
+		AuthenticationException authenticationException) throws IOException {
+		log.error("Authentication not successful: {}", authenticationException.getMessage());
+		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authenticationException.getMessage());
 		response.setStatus(401);
 	}
 }

@@ -12,8 +12,8 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import com.cotato.kampus.domain.user.enums.UserRole;
-import com.cotato.kampus.global.auth.nativeapp.NativeAppUserDetails;
-import com.cotato.kampus.global.auth.nativeapp.NativeAppDetailsRequest;
+import com.cotato.kampus.global.auth.nativeapp.AppUserDetails;
+import com.cotato.kampus.global.auth.nativeapp.AppUserDetailsRequest;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.JwtException;
 import com.cotato.kampus.global.util.JwtUtil;
@@ -25,11 +25,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class NativeAppAuthFilter extends AbstractAuthenticationProcessingFilter {
+public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
 	private final JwtUtil jwtUtil;
 
-	public NativeAppAuthFilter(RequestMatcher matcher, JwtUtil jwtUtil) {
+	public JwtAuthenticationFilter(RequestMatcher matcher, JwtUtil jwtUtil) {
 		super(matcher);
 		this.jwtUtil = jwtUtil;
 	}
@@ -45,10 +45,10 @@ public class NativeAppAuthFilter extends AbstractAuthenticationProcessingFilter 
 		validateToken(token);
 
 		// 사용자 정보 추출 및 인증 객체 생성
-		NativeAppDetailsRequest detailsRequest = createPrincipalDetailsRequest(token);
-		NativeAppUserDetails nativeAppUserDetails = new NativeAppUserDetails(detailsRequest);
+		AppUserDetailsRequest detailsRequest = createPrincipalDetailsRequest(token);
+		AppUserDetails appUserDetails = new AppUserDetails(detailsRequest);
 
-		return new UsernamePasswordAuthenticationToken(nativeAppUserDetails, null, nativeAppUserDetails.getAuthorities());
+		return new UsernamePasswordAuthenticationToken(appUserDetails, null, appUserDetails.getAuthorities());
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class NativeAppAuthFilter extends AbstractAuthenticationProcessingFilter 
 
 	@Override
 	protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
-		AuthenticationException authenticationException) throws IOException, ServletException {
+		AuthenticationException authenticationException) throws IOException {
 		SecurityContextHolder.clearContext();
 		log.error("Authentication not successful: {}", authenticationException.getMessage());
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authenticationException.getMessage());
@@ -82,8 +82,8 @@ public class NativeAppAuthFilter extends AbstractAuthenticationProcessingFilter 
 		}
 	}
 
-	private NativeAppDetailsRequest createPrincipalDetailsRequest(String token) {
-		return NativeAppDetailsRequest.of(
+	private AppUserDetailsRequest createPrincipalDetailsRequest(String token) {
+		return AppUserDetailsRequest.of(
 			jwtUtil.getUsername(token),
 			jwtUtil.getUniqueId(token),
 			UserRole.valueOf(jwtUtil.getRole(token))

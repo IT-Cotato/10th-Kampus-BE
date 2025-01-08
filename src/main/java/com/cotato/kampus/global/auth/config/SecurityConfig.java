@@ -14,9 +14,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.cotato.kampus.global.auth.SkipPathRequestMatcher;
 import com.cotato.kampus.global.auth.nativeapp.NativeAppAuthProvider;
-import com.cotato.kampus.global.auth.nativeapp.filter.NativeAppAuthFilter;
+import com.cotato.kampus.global.auth.nativeapp.filter.JwtAuthenticationFilter;
 import com.cotato.kampus.global.auth.nativeapp.filter.NativeAppLoginFilter;
-import com.cotato.kampus.global.auth.oauth.filter.OAuthAuthenticationFilter;
 import com.cotato.kampus.global.auth.oauth.handler.OAuthSuccessHandler;
 import com.cotato.kampus.global.auth.oauth.service.CustomOAuth2UserService;
 import com.cotato.kampus.global.util.JwtUtil;
@@ -41,21 +40,27 @@ public class SecurityConfig {
 	};
 
 	// Login filter( 스킵
-	private static final String[] SKIP_URL = {
+	private static final String[] OAUTH_SKIP_URL = {
 		"/oauth2/**",
-		"/v1/api/auth/signup"
+		"/v1/api/auth/**",
 	};
 
+	private static final String[] NATIVE_SKIP_URL = {
+		"/v1/api/auth/**",
+	};
+
+	// nativeAppLoginFilter > nativeAppAuthFilter
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf(csrf -> csrf.disable()) // CSRF 비활성화
 			.formLogin(form -> form.disable()) // Form 로그인 비활성화
 			.httpBasic(httpBasic -> httpBasic.disable()) // HTTP Basic 비활성화
+
 			.authenticationManager(authenticationManager(http)) // AuthenticationManager 설정
-			.addFilterBefore(oAuthAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-			.addFilterAfter(nativeAuthenticationFilter(), OAuthAuthenticationFilter.class)
-			.addFilterBefore(nativeAuthenticationFilter(http), OAuthAuthenticationFilter.class)
+
+			.addFilterAt(nativeAppLoginFilter(http), UsernamePasswordAuthenticationFilter.class)
+			.addFilterAfter(jwtAuthenticationFilter(), NativeAppLoginFilter.class)
 			.oauth2Login(oauth2 -> oauth2
 				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
 				.successHandler(OAuthSuccessHandler)
@@ -79,20 +84,15 @@ public class SecurityConfig {
 			.build();
 	}
 
-	private NativeAppLoginFilter nativeAuthenticationFilter(HttpSecurity http) throws Exception {
+	private NativeAppLoginFilter nativeAppLoginFilter(HttpSecurity http) throws Exception {
 		NativeAppLoginFilter filter = new NativeAppLoginFilter(authenticationManager(http), jwtUtil);
 		filter.setFilterProcessesUrl(LOGIN_URL);
 		return filter;
 	}
 
-	private OAuthAuthenticationFilter oAuthAuthenticationFilter() {
-		var matcher = new SkipPathRequestMatcher(List.of(SKIP_URL), API_ROOT_URL);
-		return new OAuthAuthenticationFilter(matcher, jwtUtil);
-	}
-
-	private NativeAppAuthFilter nativeAuthenticationFilter() {
-		var matcher = new SkipPathRequestMatcher(List.of(SKIP_URL), API_ROOT_URL);
-		return new NativeAppAuthFilter(matcher, jwtUtil);
+	private JwtAuthenticationFilter jwtAuthenticationFilter() {
+		var matcher = new SkipPathRequestMatcher(List.of(NATIVE_SKIP_URL), API_ROOT_URL);
+		return new JwtAuthenticationFilter(matcher, jwtUtil);
 	}
 
 }
