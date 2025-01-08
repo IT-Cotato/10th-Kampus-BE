@@ -36,7 +36,8 @@ public class SecurityConfig {
 	private static final String API_ROOT_URL = "/v1/api/**";
 	private static final String[] WHITE_LIST = {
 		"/v1/api/auth/signup",
-		"/v1/api/products"
+		"/v1/api/products",
+		"/v1/api/boards/**",
 	};
 
 	// jwtAuthenticationFilter에서 스킵하는 url
@@ -89,5 +90,4 @@ public class SecurityConfig {
 		var matcher = new SkipPathRequestMatcher(List.of(JWT_SKIP_URL), API_ROOT_URL);  // API_ROOT_URL로 오는 요청만 처리
 		return new JwtAuthenticationFilter(matcher, jwtUtil);
 	}
-
 }
