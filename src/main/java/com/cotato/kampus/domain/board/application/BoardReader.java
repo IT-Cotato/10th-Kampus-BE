@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.BoardRepository;
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +17,9 @@ import lombok.RequiredArgsConstructor;
 public class BoardReader {
 	private final BoardRepository boardRepository;
 
-	public List<BoardDto> readAll(){
+	public List<BoardWithFavoriteStatusDto> readAll(){
 		return boardRepository.findAll().stream()
-			.map(board -> BoardDto.of(
+			.map(board -> BoardWithFavoriteStatusDto.of(
 				board.getId(),
 				board.getBoardName(),
 				false

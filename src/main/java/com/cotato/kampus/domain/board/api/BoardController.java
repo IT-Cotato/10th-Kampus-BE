@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.board.application.BoardService;
+import com.cotato.kampus.domain.board.dto.response.BoardListResponse;
 import com.cotato.kampus.domain.board.dto.response.BoardResponse;
-import com.cotato.kampus.domain.board.dto.response.FavoriteBoardResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import lombok.AccessLevel;
@@ -24,39 +24,39 @@ public class BoardController {
 	private final BoardService boardService;
 
 	@GetMapping("")
-	public ResponseEntity<DataResponse<BoardResponse>> getBoardList(){
+	public ResponseEntity<DataResponse<BoardListResponse>> getBoardList(){
 		return ResponseEntity.ok(DataResponse.from(
-				BoardResponse.of(
+				BoardListResponse.of(
 				boardService.getBoardList()))
 			);
 	}
 
 	@GetMapping("/favorite")
-	public ResponseEntity<DataResponse<BoardResponse>> getFavoriteBoardList(){
+	public ResponseEntity<DataResponse<BoardListResponse>> getFavoriteBoardList(){
 		return ResponseEntity.ok(DataResponse.from(
-			BoardResponse.of(
+			BoardListResponse.of(
 				boardService.getFavoriteBoardList()
 			)
 		));
 	}
 
 	@PostMapping("/favorite/{boardId}")
-	public ResponseEntity<DataResponse<FavoriteBoardResponse>> addFavoriteBoard(
+	public ResponseEntity<DataResponse<BoardResponse>> addFavoriteBoard(
 		@PathVariable Long boardId
 	){
 		return ResponseEntity.ok(DataResponse.from(
-			FavoriteBoardResponse.of(
+			BoardResponse.of(
 				boardService.addFavoriteBoard(boardId)
 			)
 		));
 	}
 
 	@DeleteMapping("favorite/{boardId}")
-	public ResponseEntity<DataResponse<FavoriteBoardResponse>> removeFavoriteBoard(
+	public ResponseEntity<DataResponse<BoardResponse>> removeFavoriteBoard(
 		@PathVariable Long boardId
 	){
 		return ResponseEntity.ok(DataResponse.from(
-			FavoriteBoardResponse.of(
+			BoardResponse.of(
 				boardService.removeFavoriteBoard(boardId)
 			)
 		));

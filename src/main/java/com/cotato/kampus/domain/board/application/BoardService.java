@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,24 +19,24 @@ public class BoardService {
 	private final BoardFavoriteAppender boardFavoriteAppender;
 	private final BoardFavoriteDeleter boardFavoriteDeleter;
 
-	public List<BoardDto> getBoardList(){
+	public List<BoardWithFavoriteStatusDto> getBoardList(){
 
 		// 즐겨찾는 게시판 조회
 		Set<Long> favoriteBoardIds = boardFavoriteReader.read();
 
 		// 전체 게시판 조회
-		List<BoardDto> boards = boardReader.readAll();
+		List<BoardWithFavoriteStatusDto> boards = boardReader.readAll();
 
 		// 즐겨찾기 여부 매핑
 		return BoardDtoEnhancer.updateFavoriteStatus(boards, favoriteBoardIds);
 	}
 
-	public List<BoardDto> getFavoriteBoardList() {
+	public List<BoardWithFavoriteStatusDto> getFavoriteBoardList() {
 		// 즐겨찾는 게시판 조회
 		Set<Long> favoriteBoardIds = boardFavoriteReader.read();
 
 		// 전체 게시판 조회
-		List<BoardDto> boards = boardReader.readAll();
+		List<BoardWithFavoriteStatusDto> boards = boardReader.readAll();
 
 		// 즐겨찾는 게시판만 필터링
 		return BoardDtoEnhancer.filterFavoriteBoards(boards, favoriteBoardIds);
