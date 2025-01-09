@@ -1,4 +1,4 @@
-package com.cotato.kampus.global.auth;
+package com.cotato.kampus.global.auth.nativeapp;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,32 +13,35 @@ import com.cotato.kampus.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/*
+NativeAppLoginFilter의 AuthenticationManager의 AuthenticationProvider
+ */
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class SocialAuthenticationProvider implements AuthenticationProvider {
+public class NativeAppAuthProvider implements AuthenticationProvider {
 
 	private final UserRepository userRepository;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String uniqueId = (String)authentication.getPrincipal();
-		log.info("SocialAuthenticationProvider::authenticate authentication principal: {}",
+		log.info("authenticate authentication principal: {}",
 			authentication.getPrincipal());
 
 		// 사용자 조회
 		User user = userRepository.findByUniqueId(uniqueId)
 			.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + uniqueId));
 
-		log.info("SocialAuthenticationProvider::authenticate user uniqueId: {}", user.getUniqueId());
+		log.info("authenticate user uniqueId: {}", user.getUniqueId());
 
-		PrincipalDetailsRequest principalDetailsRequest = PrincipalDetailsRequest.from(user);
+		AppUserDetailsRequest appUserDetailsRequest = AppUserDetailsRequest.from(user);
 
 		// 인증 완료된 Authentication 반환
 		return new UsernamePasswordAuthenticationToken(
-			new PrincipalDetails(principalDetailsRequest), // 인증된 사용자 정보
+			new AppUserDetails(appUserDetailsRequest), // 인증된 사용자 정보
 			null,
-			new PrincipalDetails(principalDetailsRequest).getAuthorities()
+			new AppUserDetails(appUserDetailsRequest).getAuthorities()
 		);
 	}
 

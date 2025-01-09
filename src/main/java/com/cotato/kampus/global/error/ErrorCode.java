@@ -36,7 +36,13 @@ public enum ErrorCode {
 	//Board
 	BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시판을 찾을 수 없습니다.", "BOARD-001"),
 	BOARD_ALREADY_FAVORITED(HttpStatus.CONFLICT, "이미 즐겨찾기에 추가된 게시판입니다.", "BOARD-002"),
-	BOARD_FAVORITE_NOT_FOUND(HttpStatus.NOT_FOUND, "즐겨찾기 목록에 없는 게시판입니다.", "BOARD-003");
+	BOARD_FAVORITE_NOT_FOUND(HttpStatus.NOT_FOUND, "즐겨찾기 목록에 없는 게시판입니다.", "BOARD-003"),
+
+	//JWT
+	TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "헤더에 Access Token을 찾을 수 없습니다.", "JWT-001"),
+	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료 되었습니다.", "JWT-002"),
+	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "올바른 형식의 토큰이 아닙니다.", "JWT-003"),
+	MALFORMED_TOKEN(HttpStatus.BAD_REQUEST, "토큰 내부에 공백이 있습니다.", "JWT-004");
 
 	private final HttpStatus httpStatus;
 	private final String message;

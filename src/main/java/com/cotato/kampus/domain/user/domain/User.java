@@ -63,4 +63,9 @@ public class User {
 		this.userRole = userRole;
 	}
 
+	public User update(String email, String username) {
+		this.email = email;
+		this.username = username;
+		return this;
+	}
 }
