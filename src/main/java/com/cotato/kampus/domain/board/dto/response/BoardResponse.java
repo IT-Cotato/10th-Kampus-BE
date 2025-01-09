@@ -1,9 +1,11 @@
 package com.cotato.kampus.domain.board.dto.response;
 
+import com.cotato.kampus.domain.board.dto.BoardDto;
+
 public record BoardResponse(
-	Long boardId
+	BoardDto boardDto
 ) {
-	public static BoardResponse of(Long boardId) {
-		return new BoardResponse(boardId);
+	public static BoardResponse of(BoardDto boardDto) {
+		return new BoardResponse(boardDto);
 	}
 }
