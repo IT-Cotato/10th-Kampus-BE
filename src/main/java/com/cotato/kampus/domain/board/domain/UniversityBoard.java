@@ -27,11 +27,11 @@ public class UniversityBoard extends BaseTimeEntity {
 	private Long universityId;
 
 	@Column(name = "title", nullable = false)
-	private String title;
+	private String boardName;
 
 	@Builder
-	public UniversityBoard(Long universityId, String title) {
+	public UniversityBoard(Long universityId, String boardName) {
 		this.universityId = universityId;
-		this.title = title;
+		this.boardName = boardName;
 	}
 }
