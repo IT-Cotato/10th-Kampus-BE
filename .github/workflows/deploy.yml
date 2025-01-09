@@ -2,7 +2,7 @@ name: Deploy Workflow
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "develop" ]
 
 env:
   BASE_RESOURCE_PATH: ./src/main/resources/application.yml
