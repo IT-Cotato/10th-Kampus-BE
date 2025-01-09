@@ -5,7 +5,10 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
+import com.cotato.kampus.domain.user.application.UserFinder;
+import com.cotato.kampus.domain.user.application.UserValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,10 +17,13 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
 	private final BoardReader boardReader;
+	private final UniversityBoardReader universityBoardReader;
 	private final BoardValidator boardValidator;
 	private final BoardFavoriteReader boardFavoriteReader;
 	private final BoardFavoriteAppender boardFavoriteAppender;
 	private final BoardFavoriteDeleter boardFavoriteDeleter;
+	private final UserValidator userValidator;
+	private final UserFinder userFinder;
 
 	public List<BoardWithFavoriteStatusDto> getBoardList(){
 
@@ -53,6 +59,12 @@ public class BoardService {
 	public Long removeFavoriteBoard(Long boardId) {
 		boardFavoriteDeleter.deleteFavoriteBoard(boardId);
 		return boardId;
+	}
+
+	public BoardDto getUniversityBoard(){
+		userValidator.validateStudentVerification();
+
+		return universityBoardReader.read(userFinder.currentUser().getUniversityId());
 	}
 
 }

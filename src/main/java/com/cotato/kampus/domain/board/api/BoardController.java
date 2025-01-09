@@ -32,6 +32,15 @@ public class BoardController {
 			);
 	}
 
+	@GetMapping("/university")
+	public ResponseEntity<DataResponse<BoardResponse>> getUniversityBoard(){
+		return ResponseEntity.ok(DataResponse.from(
+			BoardResponse.of(
+				boardService.getUniversityBoard()
+			)
+		));
+	}
+
 	@GetMapping("/favorite")
 	public ResponseEntity<DataResponse<BoardListResponse>> getFavoriteBoardList(){
 		return ResponseEntity.ok(DataResponse.from(
