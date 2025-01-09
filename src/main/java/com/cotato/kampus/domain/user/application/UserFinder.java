@@ -16,15 +16,14 @@ import lombok.RequiredArgsConstructor;
 public class UserFinder {
 
 	private final UserRepository userRepository;
-	private final ApiUserResolver apiUserResolver;
 
 	public User findByUniqueId(String uniqueId) {
 		return userRepository.findByUniqueId(uniqueId)
 			.orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 	}
 
-	public User currentUser(){
-		return userRepository.findById(apiUserResolver.getUserId())
+	public User findById(Long id){
+		return userRepository.findById(id)
 			.orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 	}
 }

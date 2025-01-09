@@ -64,7 +64,7 @@ public class BoardService {
 	public BoardDto getUniversityBoard(){
 		userValidator.validateStudentVerification();
 
-		return universityBoardReader.read(userFinder.currentUser().getUniversityId());
+		return universityBoardReader.read();
 	}
 
 }
