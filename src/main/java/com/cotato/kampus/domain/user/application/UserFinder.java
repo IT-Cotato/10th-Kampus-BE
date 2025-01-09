@@ -2,6 +2,7 @@ package com.cotato.kampus.domain.user.application;
 
 import org.springframework.stereotype.Component;
 
+import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.user.dao.UserRepository;
 import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -15,9 +16,15 @@ import lombok.RequiredArgsConstructor;
 public class UserFinder {
 
 	private final UserRepository userRepository;
+	private final ApiUserResolver apiUserResolver;
 
 	public User findByUniqueId(String uniqueId) {
 		return userRepository.findByUniqueId(uniqueId)
+			.orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+	}
+
+	public User currentUser(){
+		return userRepository.findById(apiUserResolver.getUserId())
 			.orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 	}
 }
