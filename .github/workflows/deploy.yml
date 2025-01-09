@@ -34,6 +34,9 @@ jobs:
       - name: Ensure directory exists
         run: mkdir -p ./src/main/resources
 
+      - name: Print all environment variables
+        run: env
+
       - name: application.yml 파일 생성
         run: |
           touch ${{ env.BASE_RESOURCE_PATH }}
