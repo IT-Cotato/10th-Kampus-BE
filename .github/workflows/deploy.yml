@@ -31,10 +31,14 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Ensure directory exists
+        run: mkdir -p ./src/main/resources
+
       - name: application.yml 파일 생성
         run: |
           touch ${{ env.BASE_RESOURCE_PATH }}
           echo "${{ secrets.APPLICATION }}" | base64 --decode > ${{ env.BASE_RESOURCE_PATH }}
+
       - name: application.yml 파일 내용 확인
         run: cat ./src/main/resources/application.yml
 
