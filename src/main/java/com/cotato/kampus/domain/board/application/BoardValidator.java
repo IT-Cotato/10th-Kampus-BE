@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 public class BoardValidator {
 	private final BoardRepository boardRepository;
 
-
 	public void validateBoardExists(Long boardId){
 		if(!boardRepository.existsById(boardId))
 			throw new AppException(ErrorCode.BOARD_NOT_FOUND);

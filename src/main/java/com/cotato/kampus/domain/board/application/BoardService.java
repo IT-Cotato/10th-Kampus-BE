@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
-import com.cotato.kampus.domain.user.application.UserFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ public class BoardService {
 	private final BoardFavoriteAppender boardFavoriteAppender;
 	private final BoardFavoriteDeleter boardFavoriteDeleter;
 	private final UserValidator userValidator;
-	private final UserFinder userFinder;
 
 	public List<BoardWithFavoriteStatusDto> getBoardList(){
 
