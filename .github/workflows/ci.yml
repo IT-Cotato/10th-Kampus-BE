@@ -38,6 +38,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      - name: Debug Secrets
+        run: |
+          echo "Key ID: ${{ secrets.AWS_ACCESS_KEY_ID }}"
+          echo "Secret Key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+
       - name: AWS Resource에 접근할 수 있게 AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
         with:
