@@ -22,10 +22,10 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: application.yml 파일 생성
+      - name: application-prod.yml 파일 생성
         run: |
-          touch ${{ env.BASE_RESOURCE_PATH }}
-          echo "${{ secrets.APPLICATION_PROD }}" | base64 --decode > ${{ env.BASE_RESOURCE_PATH }}
+          mkdir -p ./src/main/resources # 디렉토리가 없으면 생성
+          echo "${{ secrets.APPLICATION_PROD }}" | base64 --decode > ./src/main/resources/application-prod.yml
 
       - name: application-prod.yml 파일 내용 확인
         run: cat ./src/main/resources/application-prod.yml
@@ -38,8 +38,10 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: Debug Secrets
+        run: |
+          echo "Key ID: ${{ secrets.AWS_ACCESS_KEY_ID }}"
+          echo "Secret Key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
 
       - name: AWS Resource에 접근할 수 있게 AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
@@ -69,7 +71,7 @@ jobs:
 
       - name: Code Deploy를 활용해 EC2에 프로젝트 코드 배포
         run: aws deploy create-deployment
-          --application-name kampus-server # deploy application name
+          --application-name kampus-server
           --deployment-config-name CodeDeployDefault.AllAtOnce
-          --deployment-group-name kampus-server-deploy # 배포 그룹 이름
+          --deployment-group-name kampus-server-deploy
           --s3-location bucket=kampus-deploy,bundleType=tgz,key=$GITHUB_SHA.tar.gz
