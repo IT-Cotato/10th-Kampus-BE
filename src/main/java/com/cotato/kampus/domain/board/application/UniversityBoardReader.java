@@ -7,7 +7,6 @@ import com.cotato.kampus.domain.board.dao.UniversityBoardRepository;
 import com.cotato.kampus.domain.board.domain.UniversityBoard;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.user.application.UserFinder;
 import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -20,11 +19,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class UniversityBoardReader {
 	private final UniversityBoardRepository universityBoardRepository;
-	private final UserFinder userFinder;
 	private final ApiUserResolver apiUserResolver;
 
 	public BoardDto read(){
-		User user = userFinder.findById(apiUserResolver.getUserId());
+		User user = apiUserResolver.getUser();
 
 		Long universityId = user.getUniversityId();
 
