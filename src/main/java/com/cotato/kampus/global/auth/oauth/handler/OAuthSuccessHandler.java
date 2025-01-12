@@ -1,5 +1,6 @@
 package com.cotato.kampus.global.auth.oauth.handler;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -30,10 +31,11 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 	private static final String TOKEN_PREFIX = "Bearer";
 	private static final Long ACCESS_TOKEN_EXP = 6000000L;
 	private static final Long REFRESH_TOKEN_EXP = 86400000L;
+	private static final String REDIRECT_URL = "http://localhost:3000/oauth-success";
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication authentication) {
+		Authentication authentication) throws IOException {
 
 		CustomOAuth2User customOAuth2User = (CustomOAuth2User)authentication.getPrincipal();
 
@@ -55,5 +57,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		// Bearer 토큰을 헤더에 추가
 		response.setHeader(ACCESS_HEADER_NAME, TOKEN_PREFIX + access);
 		response.setHeader(REFRESH_HEADER_NAME, TOKEN_PREFIX + refresh);
+		response.sendRedirect(REDIRECT_URL + "?accessToken=" + access
+			+ "&refreshToken=" + refresh);
 	}
 }

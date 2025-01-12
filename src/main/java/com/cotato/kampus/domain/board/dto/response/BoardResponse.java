@@ -1,13 +1,11 @@
 package com.cotato.kampus.domain.board.dto.response;
 
-import java.util.List;
-
 import com.cotato.kampus.domain.board.dto.BoardDto;
 
 public record BoardResponse(
-	List<BoardDto> boards
+	BoardDto boardDto
 ) {
-	public static BoardResponse of(List<BoardDto> boards){
-		return new BoardResponse(boards);
+	public static BoardResponse of(BoardDto boardDto) {
+		return new BoardResponse(boardDto);
 	}
 }
