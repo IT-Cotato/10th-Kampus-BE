@@ -38,6 +38,8 @@ public class SecurityConfig {
 		"/v1/api/auth/signup",
 		"/v1/api/products",
 		"/v1/api/boards/**",
+		"/swagger-ui/**",
+		"/v3/api-docs/**",
 	};
 
 	// jwtAuthenticationFilter에서 스킵하는 url
