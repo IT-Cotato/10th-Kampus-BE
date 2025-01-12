@@ -16,11 +16,10 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserValidator {
-	private final UserFinder userFinder;
 	public final ApiUserResolver apiUserResolver;
 
 	public void validateStudentVerification() {
-		User user = userFinder.findById(apiUserResolver.getUserId());
+		User user = apiUserResolver.getUser();
 
 		if (user.getUserRole() == UserRole.UNVERIFIED)
 			throw new AppException(ErrorCode.USER_UNVERIFIED);
