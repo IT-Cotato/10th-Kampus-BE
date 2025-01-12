@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cotato.kampus.domain.product.application.PostDeleter;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -17,6 +18,7 @@ public class PostService {
 
 	private final S3Uploader s3Uploader;
 	private final PostAppender postAppender;
+	private final PostDeleter postDeleter;
 	private final PostImageAppender postImageAppender;
 	private static final String PRODUCT_IMAGE_FOLDER = "post";
 
@@ -37,6 +39,13 @@ public class PostService {
 
 		// 게시글 이미지 추가
 		postImageAppender.appendAll(postId, imageUrls);
+
+		return postId;
+	}
+
+	@Transactional
+	public Long deletePost(Long postId){
+		postDeleter.delete(postId);
 
 		return postId;
 	}
