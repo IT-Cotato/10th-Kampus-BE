@@ -3,13 +3,13 @@ package com.cotato.kampus.domain.board.application;
 import java.util.List;
 import java.util.Set;
 
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
 
 public class BoardDtoEnhancer {
 
-	public static List<BoardDto> updateFavoriteStatus(List<BoardDto> boardDtos, Set<Long> favoriteBoardIds) {
-		return boardDtos.stream()
-			.map(boardDto -> BoardDto.of(
+	public static List<BoardWithFavoriteStatusDto> updateFavoriteStatus(List<BoardWithFavoriteStatusDto> boardWithFavoriteStatusDtos, Set<Long> favoriteBoardIds) {
+		return boardWithFavoriteStatusDtos.stream()
+			.map(boardDto -> BoardWithFavoriteStatusDto.of(
 				boardDto.boardId(),
 				boardDto.boardName(),
 				favoriteBoardIds.contains(boardDto.boardId())
@@ -17,10 +17,10 @@ public class BoardDtoEnhancer {
 			.toList();
 	}
 
-	public static List<BoardDto> filterFavoriteBoards(List<BoardDto> boardDtos, Set<Long> favoriteBoardIds) {
-		return boardDtos.stream()
+	public static List<BoardWithFavoriteStatusDto> filterFavoriteBoards(List<BoardWithFavoriteStatusDto> boardWithFavoriteStatusDtos, Set<Long> favoriteBoardIds) {
+		return boardWithFavoriteStatusDtos.stream()
 			.filter(boardDto -> favoriteBoardIds.contains(boardDto.boardId()))
-			.map(boardDto -> BoardDto.of(
+			.map(boardDto -> BoardWithFavoriteStatusDto.of(
 				boardDto.boardId(),
 				boardDto.boardName(),
 				true

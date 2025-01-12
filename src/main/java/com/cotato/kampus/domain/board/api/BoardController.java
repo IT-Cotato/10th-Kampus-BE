@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.board.application.BoardService;
+import com.cotato.kampus.domain.board.dto.response.BoardListResponse;
 import com.cotato.kampus.domain.board.dto.response.BoardResponse;
 import com.cotato.kampus.domain.board.dto.response.FavoriteBoardResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
@@ -24,17 +25,26 @@ public class BoardController {
 	private final BoardService boardService;
 
 	@GetMapping("")
-	public ResponseEntity<DataResponse<BoardResponse>> getBoardList(){
+	public ResponseEntity<DataResponse<BoardListResponse>> getBoardList(){
 		return ResponseEntity.ok(DataResponse.from(
-				BoardResponse.of(
+				BoardListResponse.of(
 				boardService.getBoardList()))
 			);
 	}
 
-	@GetMapping("/favorite")
-	public ResponseEntity<DataResponse<BoardResponse>> getFavoriteBoardList(){
+	@GetMapping("/university")
+	public ResponseEntity<DataResponse<BoardResponse>> getUniversityBoard(){
 		return ResponseEntity.ok(DataResponse.from(
 			BoardResponse.of(
+				boardService.getUniversityBoard()
+			)
+		));
+	}
+
+	@GetMapping("/favorite")
+	public ResponseEntity<DataResponse<BoardListResponse>> getFavoriteBoardList(){
+		return ResponseEntity.ok(DataResponse.from(
+			BoardListResponse.of(
 				boardService.getFavoriteBoardList()
 			)
 		));

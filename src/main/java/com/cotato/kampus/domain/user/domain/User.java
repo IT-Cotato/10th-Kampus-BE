@@ -42,6 +42,9 @@ public class User {
 	@Column(name = "nickname", nullable = false)
 	private String nickname;
 
+	@Column(name = "universityId")
+	private Long universityId;
+
 	@Column(name = "nationality", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Nationality nationality;
@@ -52,6 +55,7 @@ public class User {
 
 	@Builder
 	public User(String email, String uniqueId, String providerId, String username, String nickname,
+		Long universityId,
 		Nationality nationality,
 		UserRole userRole) {
 		this.email = email;
@@ -59,6 +63,7 @@ public class User {
 		this.providerId = providerId;
 		this.username = username;
 		this.nickname = nickname;
+		this.universityId = universityId;
 		this.nationality = nationality;
 		this.userRole = userRole;
 	}
