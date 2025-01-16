@@ -35,6 +35,7 @@ public class PostAppender {
 			.anonymity(Anonymity.ANONYMOUS)
 			.postStatus(PostStatus.PUBLISHED)
 			.postCategory(postCategory)
+			.nextAnonymousNumber(1L)
 			.build();
 
 		return postRepository.save(post).getId();
