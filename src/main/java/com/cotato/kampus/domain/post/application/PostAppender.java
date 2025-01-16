@@ -22,6 +22,7 @@ public class PostAppender {
 
 	@Transactional
 	public Long append(Long boardId, String title, String content, String postCategory){
+
 		Long userId = apiUserResolver.getUserId();
 
 		Post post = Post.builder()
