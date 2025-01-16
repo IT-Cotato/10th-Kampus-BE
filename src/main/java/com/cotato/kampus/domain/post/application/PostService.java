@@ -37,13 +37,21 @@ public class PostService {
 	) throws ImageException {
 		// s3에 이미지 업로드
 		List<String> imageUrls = (images == null || images.isEmpty()) ?
-			List.of() : s3Uploader.uploadFiles(images, PRODUCT_IMAGE_FOLDER);
+			List.of() :
+			s3Uploader.uploadFiles(
+				images.stream()
+					.filter(image -> image != null && image.getOriginalFilename() != null && !image.getOriginalFilename().isEmpty())
+					.toList(),
+				PRODUCT_IMAGE_FOLDER
+			);
 
 		// 게시글 추가
 		Long postId = postAppender.append(boardId, title, content, postCategory);
 
 		// 게시글 이미지 추가
-		postImageAppender.appendAll(postId, imageUrls);
+		if(!imageUrls.isEmpty()) {
+			postImageAppender.appendAll(postId, imageUrls);
+		}
 
 		return postId;
 	}
