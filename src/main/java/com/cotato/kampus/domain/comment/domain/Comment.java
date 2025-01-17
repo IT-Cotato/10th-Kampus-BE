@@ -81,4 +81,8 @@ public class Comment extends BaseTimeEntity {
 	public void setCommentStatus(CommentStatus commentStatus) {
 		this.commentStatus = commentStatus;
 	}
+
+	public void increaseLikes() {
+		this.likes++;
+	}
 }

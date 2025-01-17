@@ -21,6 +21,7 @@ public class CommentService {
 	private final CommentValidator commentValidator;
 	private final CommentDeleter commentDeleter;
 	private final AnonymousNumberAllocator anonymousNumberAllocator;
+	private final CommentLikeAppender commentLikeAppender;
 
 	@Transactional
 	public Long createComment(Long postId, String content, Anonymity anonymity, Long parentId){
@@ -46,5 +47,16 @@ public class CommentService {
 		return commentDeleter.delete(commentId);
 	}
 
+	@Transactional
+	public Long likeComment(Long commentId){
 
+		// 학생 인증 확인
+		userValidator.validateStudentVerification();
+
+		// 댓글 유효성 체크
+		commentValidator.validateCommentStatus(commentId);
+
+		// 좋아요 추가
+		return commentLikeAppender.append(commentId);
+	}
 }

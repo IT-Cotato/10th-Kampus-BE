@@ -54,4 +54,12 @@ public class CommentValidator {
 			throw new AppException(ErrorCode.INVALID_PARENT_COMMENT);
 		}
 	}
+
+	public void validateCommentStatus(Long commentId){
+
+		Comment comment = commentFinder.getById(commentId);
+		if (comment.getCommentStatus() != CommentStatus.NORMAL) {
+			throw new AppException(ErrorCode.INVALID_COMMENT);
+		}
+	}
 }
