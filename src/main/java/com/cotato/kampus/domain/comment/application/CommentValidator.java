@@ -29,7 +29,7 @@ public class CommentValidator {
 
 	public void checkParentBelongsToPost(Long postId, Long parentId){
 
-		Comment parentComment = commentFinder.findById(parentId);
+		Comment parentComment = commentFinder.getById(parentId);
 		boolean isParentBelongsToPost = parentComment.getPostId().equals(postId);
 		if(!isParentBelongsToPost){
 			throw new AppException(ErrorCode.INVALID_PARENT_COMMENT);
@@ -39,7 +39,7 @@ public class CommentValidator {
 
 	public void checkParentDepth(Long parentId){
 
-		Comment parentComment = commentFinder.findById(parentId);
+		Comment parentComment = commentFinder.getById(parentId);
 		if(parentComment.getParentId() != null){
 			throw new AppException(ErrorCode.INVALID_PARENT_COMMENT);
 		}
@@ -49,7 +49,7 @@ public class CommentValidator {
 	public void checkParentStatus(Long parentId) {
 
 		// 부모 댓글이 삭제된 경우 대댓글 생성 불가
-		Comment parentComment = commentFinder.findById(parentId);
+		Comment parentComment = commentFinder.getById(parentId);
 		if (parentComment.getCommentStatus() != CommentStatus.NORMAL) {
 			throw new AppException(ErrorCode.INVALID_PARENT_COMMENT);
 		}

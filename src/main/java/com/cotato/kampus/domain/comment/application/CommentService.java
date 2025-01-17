@@ -19,6 +19,7 @@ public class CommentService {
 	private final UserValidator userValidator;
 	private final CommentAppender commentAppender;
 	private final CommentValidator commentValidator;
+	private final CommentDeleter commentDeleter;
 	private final AnonymousNumberAllocator anonymousNumberAllocator;
 
 	@Transactional
@@ -37,6 +38,12 @@ public class CommentService {
 		Long commentId = commentAppender.append(postId, content, anonymity, anonymousNumber, parentId);
 
 		return commentId;
+	}
+
+	@Transactional
+	public Long deleteComment(Long commentId){
+
+		return commentDeleter.delete(commentId);
 	}
 
 

@@ -77,4 +77,8 @@ public class Comment extends BaseTimeEntity {
 		this.anonymousNumber = anonymousNumber;
 		this.parentId = parentId;
 	}
+
+	public void setCommentStatus(CommentStatus commentStatus) {
+		this.commentStatus = commentStatus;
+	}
 }

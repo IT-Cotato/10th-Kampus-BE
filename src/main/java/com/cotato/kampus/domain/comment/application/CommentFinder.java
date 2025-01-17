@@ -18,7 +18,7 @@ public class CommentFinder {
 
 	private final CommentRepository commentRepository;
 
-	public Comment findById(Long commentId){
+	public Comment getById(Long commentId){
 		return commentRepository.findById(commentId)
 			.orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
 	}
