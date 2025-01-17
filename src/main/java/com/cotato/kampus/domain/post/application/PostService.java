@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.product.application.PostDeleter;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -33,6 +34,7 @@ public class PostService {
 		String title,
 		String content,
 		String postCategory,
+		Anonymity anonymity,
 		List<MultipartFile> images
 	) throws ImageException {
 		// s3에 이미지 업로드
@@ -46,7 +48,7 @@ public class PostService {
 			);
 
 		// 게시글 추가
-		Long postId = postAppender.append(boardId, title, content, postCategory);
+		Long postId = postAppender.append(boardId, title, content, postCategory, anonymity);
 
 		// 게시글 이미지 추가
 		if(!imageUrls.isEmpty()) {

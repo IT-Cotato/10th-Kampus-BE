@@ -40,6 +40,7 @@ public class PostController {
 				request.title(),
 				request.content(),
 				request.postCategory(),
+				request.anonymity(),
 				images
 				)
 			)
