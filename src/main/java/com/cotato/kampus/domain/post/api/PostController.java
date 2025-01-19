@@ -21,9 +21,11 @@ import com.cotato.kampus.global.error.exception.ImageException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "게시글(Post) API", description = "게시글 관련 API(게시판 API는 Board)")
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @RequestMapping("/v1/api/posts")
@@ -32,6 +34,7 @@ public class PostController {
 	private final PostService postService;
 
 	@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@Operation(summary = "게시글 생성", description = "게시글 생성 요청입니다.")
 	public ResponseEntity<DataResponse<PostCreateResponse>> createPost(
 		@Parameter(description = "Post creation request")
 		@ModelAttribute PostCreateRequest request) throws ImageException {
@@ -64,6 +67,7 @@ public class PostController {
 	}
 
 	@DeleteMapping("/{postId}")
+	@Operation(summary = "게시글 삭제", description = "postId를 통해 게시글 삭제")
 	public ResponseEntity<DataResponse<PostDeleteResponse>> deletePost(
 		@PathVariable Long postId
 	) {
