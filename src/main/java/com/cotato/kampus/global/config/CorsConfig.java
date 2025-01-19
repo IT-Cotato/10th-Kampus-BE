@@ -13,6 +13,7 @@ public class CorsConfig {
 
 	private static final String[] ORIGINS = {
 		"http://localhost:3000",
+		"http://localhost:8000",
 		"http://54.180.123.60:8080",
 		"https://kampus.kro.kr"
 	};
