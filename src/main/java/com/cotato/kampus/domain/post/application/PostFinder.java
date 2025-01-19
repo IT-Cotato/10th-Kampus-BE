@@ -9,7 +9,9 @@ import com.cotato.kampus.domain.post.dao.PostPhotoRepository;
 import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
+import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
+import com.cotato.kampus.domain.user.dao.UserRepository;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -53,5 +55,12 @@ public class PostFinder {
 				.orElse(null);
 			return PostWithPhotos.from(post, postPhoto);
 		});
+	}
+
+	public PostDto findPost(Long postId) {
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+
+		return PostDto.from(post);
 	}
 }

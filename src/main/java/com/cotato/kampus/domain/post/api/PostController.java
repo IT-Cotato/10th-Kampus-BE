@@ -15,6 +15,7 @@ import com.cotato.kampus.domain.post.application.PostService;
 import com.cotato.kampus.domain.post.dto.request.PostCreateRequest;
 import com.cotato.kampus.domain.post.dto.response.PostCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDeleteResponse;
+import com.cotato.kampus.domain.post.dto.response.PostDetailResponse;
 import com.cotato.kampus.domain.post.dto.response.PostSliceFindResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -52,7 +53,7 @@ public class PostController {
 		));
 	}
 
-	@GetMapping("{boardId}")
+	@GetMapping("/boards/{boardId}")
 	@Operation(summary = "게시판의 게시글 리스트 조회", description = "BoardId에 해당하는 전체 게시글을 최신순으로 정렬한 후 슬라이싱 하여 조회합니다.(슬라이스 별 기본 게시글 수: 10)")
 	public ResponseEntity<DataResponse<PostSliceFindResponse>> findPosts(
 		@PathVariable Long boardId,
@@ -61,6 +62,19 @@ public class PostController {
 			DataResponse.from(
 				PostSliceFindResponse.from(
 					postService.findPosts(boardId, page)
+				)
+			)
+		);
+	}
+
+	@GetMapping("{postId}")
+	@Operation(summary = "게시글 상세 조회", description = "게시글을 세부 내역을 조회합니다. 익명이면 u")
+	public ResponseEntity<DataResponse<PostDetailResponse>> findPostDetail(
+		@PathVariable Long postId) {
+		return ResponseEntity.ok(
+			DataResponse.from(
+				PostDetailResponse.from(
+					postService.findPostDetail(postId)
 				)
 			)
 		);

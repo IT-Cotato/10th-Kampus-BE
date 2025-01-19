@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.post.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,6 @@ import com.cotato.kampus.domain.post.domain.PostPhoto;
 public interface PostPhotoRepository extends JpaRepository<PostPhoto, Long> {
 
 	Optional<PostPhoto> findFirstByPostIdOrderByCreatedTimeDesc(Long postId);
+
+	List<PostPhoto> findALlByPostId(Long postId);
 }
