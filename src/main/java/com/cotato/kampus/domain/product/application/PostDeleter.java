@@ -23,13 +23,7 @@ public class PostDeleter {
 	private final PostFinder postFinder;
 
 	public void delete(Long postId){
-		User user = apiUserResolver.getUser();
-
-		Post post = postFinder.getById(postId);
-
-		if(post.getUserId() != user.getId()){
-			throw new AppException(ErrorCode.POST_NOT_AUTHOR);
-		}
+		Post post = postFinder.getPost(postId);
 		postRepository.delete(post);
 	}
 }
