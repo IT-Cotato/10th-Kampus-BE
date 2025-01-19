@@ -11,7 +11,6 @@ import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
-import com.cotato.kampus.domain.user.dao.UserRepository;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;

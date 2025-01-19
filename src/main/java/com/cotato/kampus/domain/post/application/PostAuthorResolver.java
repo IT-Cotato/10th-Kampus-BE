@@ -29,13 +29,8 @@ public class PostAuthorResolver {
 		User author = userRepository.findById(postDto.userId())
 			.orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-		Boolean isAuthor;
 		// 현재 사용자가 게시글 작성자인지 확인
-		if (apiUserResolver.getUserId().equals(author.getId())) {
-			isAuthor = true;
-		} else {
-			isAuthor = false;
-		}
+		Boolean isAuthor = apiUserResolver.getUserId().equals(author.getId());
 
 		if (postDto.anonymity().equals(Anonymity.ANONYMOUS)) {
 			// 익명 사용자 정보 반환
