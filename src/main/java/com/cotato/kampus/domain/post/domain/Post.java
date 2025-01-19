@@ -57,10 +57,13 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "post_category", nullable = false)
 	private String postCategory;
 
+	@Column(name = "next_ananymous_number", nullable = false)
+	private Long nextAnonymousNumber = 1L;
+
 	@Builder
 	public Post(Long userId, Long boardId, String title, String content,
 		Long likes, Long scraps, Anonymity anonymity,
-		PostStatus postStatus, String postCategory) {
+		PostStatus postStatus, String postCategory, Long nextAnonymousNumber) {
 		this.userId = userId;
 		this.boardId = boardId;
 		this.title = title;
@@ -70,5 +73,6 @@ public class Post extends BaseTimeEntity {
 		this.anonymity = anonymity;
 		this.postStatus = postStatus;
 		this.postCategory = postCategory;
+		this.nextAnonymousNumber = nextAnonymousNumber;
 	}
 }

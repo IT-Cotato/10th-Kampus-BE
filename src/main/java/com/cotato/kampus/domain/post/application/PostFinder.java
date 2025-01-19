@@ -17,8 +17,16 @@ import lombok.RequiredArgsConstructor;
 public class PostFinder {
 	private final PostRepository postRepository;
 
-	public Post getById(Long postId){
+	public Post getPost(Long postId){
+
 		return postRepository.findById(postId)
 			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+	}
+
+	public Long getAuthorId(Long postId){
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+
+		return post.getUserId();
 	}
 }
