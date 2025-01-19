@@ -68,7 +68,7 @@ public class PostController {
 	}
 
 	@GetMapping("{postId}")
-	@Operation(summary = "게시글 상세 조회", description = "게시글을 세부 내역을 조회합니다. 익명이면 u")
+	@Operation(summary = "게시글 상세 조회", description = "게시글을 세부 내역을 조회합니다.")
 	public ResponseEntity<DataResponse<PostDetailResponse>> findPostDetail(
 		@PathVariable Long postId) {
 		return ResponseEntity.ok(
