@@ -46,6 +46,9 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "scraps", nullable = false)
 	private Long scraps = 0L;
 
+	@Column(name = "comments", nullable = false)
+	private Long comments = 0L;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "anonymity", nullable = false)
 	private Anonymity anonymity;

@@ -2,11 +2,16 @@ package com.cotato.kampus.domain.post.application;
 
 import java.util.List;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
+import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
+import com.cotato.kampus.domain.post.dto.PostDetails;
+import com.cotato.kampus.domain.post.dto.PostDto;
+import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.product.application.PostDeleter;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -27,6 +32,8 @@ public class PostService {
 	private static final String PRODUCT_IMAGE_FOLDER = "post";
 	private final ApiUserResolver apiUserResolver;
 	private final PostFinder postFinder;
+	private final PostImageFinder postImageFinder;
+	private final PostAuthorResolver postAuthorResolver;
 
 	@Transactional
 	public Long createPost(
@@ -42,7 +49,9 @@ public class PostService {
 			List.of() :
 			s3Uploader.uploadFiles(
 				images.stream()
-					.filter(image -> image != null && image.getOriginalFilename() != null && !image.getOriginalFilename().isEmpty())
+					.filter(
+						image -> image != null && image.getOriginalFilename() != null && !image.getOriginalFilename()
+							.isEmpty())
 					.toList(),
 				PRODUCT_IMAGE_FOLDER
 			);
@@ -51,7 +60,7 @@ public class PostService {
 		Long postId = postAppender.append(boardId, title, content, postCategory, anonymity);
 
 		// 게시글 이미지 추가
-		if(!imageUrls.isEmpty()) {
+		if (!imageUrls.isEmpty()) {
 			postImageAppender.appendAll(postId, imageUrls);
 		}
 
@@ -59,18 +68,36 @@ public class PostService {
 	}
 
 	@Transactional
-	public Long deletePost(Long postId){
+	public Long deletePost(Long postId) {
 		// 작성자 검증: 현재 사용자가 게시글 작성자인지 확인
 		Long userId = apiUserResolver.getUserId();
 		Long authorId = postFinder.getAuthorId(postId);
 
 		// 작성자가 아닌 경우 예외 처리
-		if(userId != authorId)
+		if (userId != authorId)
 			throw new AppException(ErrorCode.POST_NOT_AUTHOR);
 
 		// 게시글 삭제
 		postDeleter.delete(postId);
 
 		return postId;
+	}
+
+	public Slice<PostWithPhotos> findPosts(Long boardId, int page) {
+		return postFinder.findPosts(boardId, page);
+	}
+
+	public PostDetails findPostDetail(Long postId) {
+		// 1. Post 조회하여 Dto에 저장
+		PostDto postDto = postFinder.findPost(postId);
+
+		// 2. Post의 이미지 조회
+		List<String> postPhotos = postImageFinder.findPostPhotos(postId);
+
+		// 3. 유저가 익명인지 아닌지 조회 + 게시글 작성자인지 확인
+		AnonymousOrPostAuthor author = postAuthorResolver.getAuthor(postDto);
+
+		// 4. 게시글 세부 내역 리턴
+		return PostDetails.of(author, postDto, postPhotos);
 	}
 }
