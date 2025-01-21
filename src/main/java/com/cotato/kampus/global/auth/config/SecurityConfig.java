@@ -40,12 +40,14 @@ public class SecurityConfig {
 		"/v1/api/boards/**",
 		"/swagger-ui/**",
 		"/v3/api-docs/**",
+		"/v1/api/post/{postId}/comments"
 	};
 
 	// jwtAuthenticationFilter에서 스킵하는 url
 	private static final String[] JWT_SKIP_URL = {
 		"/v1/api/auth/login",
 		"/v1/api/auth/signup",
+		"/v1/api/post/{postId}/comments"
 	};
 
 	// nativeAppLoginFilter > nativeAppAuthFilter
