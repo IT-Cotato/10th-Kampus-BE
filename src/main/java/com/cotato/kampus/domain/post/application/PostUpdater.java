@@ -19,7 +19,7 @@ public class PostUpdater {
 
 	public Long increaseNextAnonymousNumber(Long postId){
 
-		Post post = postFinder.getById(postId);
+		Post post = postFinder.getPost(postId);
 		Long currentAnonymousNumber = post.getNextAnonymousNumber();
 
 		post.increaseNextAnonymousNumber();
