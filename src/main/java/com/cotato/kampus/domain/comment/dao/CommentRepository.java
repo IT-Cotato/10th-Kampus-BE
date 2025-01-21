@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.comment.dao;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 	Optional<Comment> findFirstByPostIdAndUserIdAndAnonymity(Long postId, Long userId, Anonymity anonymity);
 
 	boolean existsByParentId(Long parentId);
+
+	List<Comment> findAllByPostId(Long postId);
+
+	List<Comment> findAllByParentId(Long parentId);
 }

@@ -1,10 +1,13 @@
 package com.cotato.kampus.domain.comment.application;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.comment.dto.CommentDto;
+import com.cotato.kampus.domain.comment.dto.CommentDetail;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.user.application.UserValidator;
 
@@ -20,8 +23,10 @@ public class CommentService {
 	private final CommentAppender commentAppender;
 	private final CommentValidator commentValidator;
 	private final CommentDeleter commentDeleter;
-	private final AnonymousNumberAllocator anonymousNumberAllocator;
+	private final AuthorResolver authorResolver;
 	private final CommentLikeAppender commentLikeAppender;
+	private final CommentFinder commentFinder;
+	private final CommentMapper commentMapper;
 
 	@Transactional
 	public Long createComment(Long postId, String content, Anonymity anonymity, Long parentId){
@@ -33,7 +38,7 @@ public class CommentService {
 		commentValidator.validateParent(postId, parentId);
 
 		// 익명 번호 할당
-		Optional<Long> anonymousNumber = anonymousNumberAllocator.allocate(postId, anonymity);
+		Optional<Long> anonymousNumber = authorResolver.allocateAnonymousNumber(postId, anonymity);
 
 		// 댓글 추가
 		Long commentId = commentAppender.append(postId, content, anonymity, anonymousNumber, parentId);
@@ -58,5 +63,17 @@ public class CommentService {
 
 		// 좋아요 추가
 		return commentLikeAppender.append(commentId);
+	}
+
+	@Transactional
+	public List<CommentDetail> getAllCommentsForPost(Long postId){
+
+		// 이 게시글에 달린 모든 댓글과 대댓글 가져오기
+		List<CommentDto> commentDtos = commentFinder.findComments(postId);
+
+		// 댓글 리스트 생성
+		List<CommentDetail> comments = commentMapper.buildCommentDetails(commentDtos);
+
+		return comments;
 	}
 }

@@ -2,6 +2,7 @@ package com.cotato.kampus.domain.comment.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import com.cotato.kampus.domain.comment.dto.request.CommentCreateRequest;
 import com.cotato.kampus.domain.comment.dto.response.CommentCreateResponse;
 import com.cotato.kampus.domain.comment.dto.response.CommentDeleteResponse;
 import com.cotato.kampus.domain.comment.dto.response.CommentLikeResponse;
+import com.cotato.kampus.domain.comment.dto.response.CommentListResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import lombok.AccessLevel;
@@ -65,7 +67,24 @@ public class CommentController {
 
 		return ResponseEntity.ok(DataResponse.from(
 				CommentLikeResponse.of(
-					commentService.likeComment(commentId)
+					commentService.likeComment(
+						commentId
+					)
+				)
+			)
+		);
+	}
+
+	@GetMapping("/posts/{postId}/comments")
+	public ResponseEntity<DataResponse<CommentListResponse>> getPostComments(
+		@PathVariable Long postId
+	){
+
+			return ResponseEntity.ok(DataResponse.from(
+				CommentListResponse.from(
+					commentService.getAllCommentsForPost(
+						postId
+					)
 				)
 			)
 		);

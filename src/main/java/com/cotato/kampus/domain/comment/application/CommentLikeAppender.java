@@ -1,7 +1,5 @@
 package com.cotato.kampus.domain.comment.application;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +39,7 @@ public class CommentLikeAppender {
 				.userId(userId)
 				.build();
 
-		Comment comment = commentFinder.getById(commentId);
+		Comment comment = commentFinder.findComment(commentId);
 		comment.increaseLikes();
 
 		return commentLikeRepository.save(commentLike).getId();

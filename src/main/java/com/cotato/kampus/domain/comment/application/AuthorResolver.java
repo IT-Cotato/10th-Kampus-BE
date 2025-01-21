@@ -7,9 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.comment.dao.CommentRepository;
 import com.cotato.kampus.domain.comment.domain.Comment;
+import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.application.PostUpdater;
+import com.cotato.kampus.domain.user.application.UserFinder;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +19,14 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class AnonymousNumberAllocator {
+public class AuthorResolver {
 
 	private final CommentRepository commentRepository;
 	private final ApiUserResolver apiUserResolver;
 	private final PostUpdater postUpdater;
+	private final UserFinder userFinder;
 
-	public Optional<Long> allocate(Long postId, Anonymity anonymity){
+	public Optional<Long> allocateAnonymousNumber(Long postId, Anonymity anonymity){
 
 		// 익명인 경우
 		if(anonymity == Anonymity.ANONYMOUS){
@@ -37,5 +40,16 @@ public class AnonymousNumberAllocator {
 		} else {
 			return Optional.empty();
 		}
+	}
+
+	public String resolveAuthorName(CommentDto commentDto){
+
+		if(commentDto.anonymity() == Anonymity.ANONYMOUS){
+			return "Anonymous" + commentDto.anonymousNumber();
+		}
+
+		String nickname = userFinder.findById(commentDto.userId()).getNickname();
+
+		return nickname;
 	}
 }
