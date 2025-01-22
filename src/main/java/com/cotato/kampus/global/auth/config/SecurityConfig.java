@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,15 +40,13 @@ public class SecurityConfig {
 		"/v1/api/products",
 		"/v1/api/boards/**",
 		"/swagger-ui/**",
-		"/v3/api-docs/**",
-		"/v1/api/posts/{postId}/comments"
+		"/v3/api-docs/**"
 	};
 
 	// jwtAuthenticationFilter에서 스킵하는 url
 	private static final String[] JWT_SKIP_URL = {
 		"/v1/api/auth/login",
-		"/v1/api/auth/signup",
-		"/v1/api/posts/{postId}/comments"
+		"/v1/api/auth/signup"
 	};
 
 	// nativeAppLoginFilter > nativeAppAuthFilter
@@ -68,6 +67,7 @@ public class SecurityConfig {
 			)
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers(WHITE_LIST).permitAll()
+				.requestMatchers(HttpMethod.GET, "/v1/api/posts/{postId}/comments").permitAll() // 댓글 조회 허용
 				.requestMatchers("/v1/api/auth/health").hasAnyAuthority("UNVERIFIED", "ADMIN", "VERIFIED")
 				.anyRequest().authenticated()
 			)

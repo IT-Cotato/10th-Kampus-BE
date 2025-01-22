@@ -3,11 +3,15 @@ package com.cotato.kampus.domain.comment.application;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.comment.dto.CommentDetail;
+import com.cotato.kampus.domain.comment.dto.CommentSummary;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.user.application.UserValidator;
 
@@ -66,7 +70,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public List<CommentDetail> getAllCommentsForPost(Long postId){
+	public List<CommentDetail> findAllCommentsForPost(Long postId){
 
 		// 이 게시글에 달린 모든 댓글과 대댓글 가져오기
 		List<CommentDto> commentDtos = commentFinder.findComments(postId);
@@ -75,5 +79,11 @@ public class CommentService {
 		List<CommentDetail> comments = commentMapper.buildCommentDetails(commentDtos);
 
 		return comments;
+	}
+
+	@Transactional
+	public Slice<CommentSummary> findUserComments(int page){
+
+		return commentFinder.findUserComments(page);
 	}
 }

@@ -3,11 +3,13 @@ package com.cotato.kampus.domain.comment.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.comment.dto.CommentDetail;
 import com.cotato.kampus.domain.comment.dto.CommentDto;
+import com.cotato.kampus.domain.comment.dto.CommentSummary;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

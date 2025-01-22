@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.comment.application.CommentService;
@@ -15,6 +16,7 @@ import com.cotato.kampus.domain.comment.dto.response.CommentCreateResponse;
 import com.cotato.kampus.domain.comment.dto.response.CommentDeleteResponse;
 import com.cotato.kampus.domain.comment.dto.response.CommentLikeResponse;
 import com.cotato.kampus.domain.comment.dto.response.CommentListResponse;
+import com.cotato.kampus.domain.comment.dto.response.MyCommentResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +33,7 @@ public class CommentController {
 	private final CommentService commentService;
 
 	@PostMapping("/posts/{postId}/comments")
-	@Operation(summary = "댓글 작성", description = "특정 게시글에 댓글을 추가합니다.")
+	@Operation(summary = "댓글 작성", description = "특정 게시글에 댓글을 추가합니다. 대댓글일 경우 parentId에 원래 댓글의 id를 넣어주세요. (기본값 = null)")
 	public ResponseEntity<DataResponse<CommentCreateResponse>> createComment(
 		@PathVariable Long postId,
 		@RequestBody CommentCreateRequest request){
@@ -89,9 +91,22 @@ public class CommentController {
 
 			return ResponseEntity.ok(DataResponse.from(
 				CommentListResponse.from(
-					commentService.getAllCommentsForPost(
+					commentService.findAllCommentsForPost(
 						postId
 					)
+				)
+			)
+		);
+	}
+
+	@GetMapping("/comments/my")
+	@Operation(summary = "내가 쓴 댓글 조회", description = "현재 사용자가 작성한 댓글을 최신순으로 조회합니다.")
+	public ResponseEntity<DataResponse<MyCommentResponse>> getMyComments(
+		@RequestParam(required = false, defaultValue = "0") int page
+	){
+		return ResponseEntity.ok(DataResponse.from(
+				MyCommentResponse.from(
+					commentService.findUserComments(page)
 				)
 			)
 		);
