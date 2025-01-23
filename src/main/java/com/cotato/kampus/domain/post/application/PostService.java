@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
+import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
@@ -99,5 +100,9 @@ public class PostService {
 
 		// 4. 게시글 세부 내역 리턴
 		return PostDetails.of(author, postDto, postPhotos);
+	}
+
+	public Slice<MyPostWithPhoto> findUserPosts(int page){
+		return postFinder.findUserPosts(page);
 	}
 }

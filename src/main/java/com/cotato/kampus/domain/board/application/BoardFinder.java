@@ -6,7 +6,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.BoardRepository;
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +17,10 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardReader {
+public class BoardFinder {
 	private final BoardRepository boardRepository;
 
-	public List<BoardWithFavoriteStatusDto> readAll(){
+	public List<BoardWithFavoriteStatusDto> findAll(){
 		return boardRepository.findAll().stream()
 			.map(board -> BoardWithFavoriteStatusDto.of(
 				board.getId(),
@@ -25,5 +28,10 @@ public class BoardReader {
 				false
 			))
 			.toList();
+	}
+
+	public Board findBoard(Long boardId){
+		return boardRepository.findById(boardId)
+			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 	}
 }

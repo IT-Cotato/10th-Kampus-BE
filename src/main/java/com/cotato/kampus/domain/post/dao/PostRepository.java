@@ -11,4 +11,6 @@ import com.cotato.kampus.domain.post.domain.Post;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
 	Slice<Post> findAllByBoardIdOrderByCreatedTimeDesc(Long boardId, Pageable pageable);
+
+	Slice<Post> findAllByUserId(Long userId, Pageable pageable);
 }
