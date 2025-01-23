@@ -20,13 +20,13 @@ public class PostImageAppender {
 
 	@Transactional
 	public void appendAll(Long postId, List<String> imageUrls){
-		List<PostPhoto> postPhotos = imageUrls.stream()
-			.map(imageUrl -> PostPhoto.builder()
-				.postId(postId)
-				.photoUrl(imageUrl)
-				.build())
-			.toList();
+			imageUrls.forEach(imageUrl -> {
+				PostPhoto postPhoto = PostPhoto.builder()
+					.postId(postId)
+					.photoUrl(imageUrl)
+					.build();
 
-		postPhotoRepository.saveAll(postPhotos);
+				postPhotoRepository.save(postPhoto);
+			});
 	}
 }
