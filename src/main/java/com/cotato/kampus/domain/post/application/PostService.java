@@ -12,6 +12,7 @@ import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
 import com.cotato.kampus.domain.post.dto.PostDetails;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
+import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.product.application.PostDeleter;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -25,22 +26,27 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class PostService {
 
-	private final S3Uploader s3Uploader;
 	private final PostAppender postAppender;
 	private final PostDeleter postDeleter;
-	private final PostImageAppender postImageAppender;
-	private static final String PRODUCT_IMAGE_FOLDER = "post";
-	private final ApiUserResolver apiUserResolver;
 	private final PostFinder postFinder;
+	private final PostUpdater postUpdater;
+
+	private final PostImageAppender postImageAppender;
 	private final PostImageFinder postImageFinder;
+	private final PostImageUpdater postImageUpdater;
+
 	private final PostAuthorResolver postAuthorResolver;
+	private final ApiUserResolver apiUserResolver;
+	private final S3Uploader s3Uploader;
+
+	private static final String PRODUCT_IMAGE_FOLDER = "post";
 
 	@Transactional
 	public Long createPost(
 		Long boardId,
 		String title,
 		String content,
-		String postCategory,
+		PostCategory postCategory,
 		Anonymity anonymity,
 		List<MultipartFile> images
 	) throws ImageException {
@@ -99,5 +105,19 @@ public class PostService {
 
 		// 4. 게시글 세부 내역 리턴
 		return PostDetails.of(author, postDto, postPhotos);
+	}
+
+	@Transactional
+	public void updatePost(Long postId, String title, String content, PostCategory postCategory, Anonymity anonymity,
+		List<MultipartFile> images) throws ImageException {
+		// 1. Post Author 검증
+		Long userId = apiUserResolver.getUserId();
+		postAuthorResolver.validatePostAuthor(postId, userId);
+
+		// 2. Post 업데이트
+		postUpdater.updatePost(postId, title, content, postCategory, anonymity);
+
+		// 3. Post Images 업데이트
+		postImageUpdater.updatePostImages(postId, images);
 	}
 }
