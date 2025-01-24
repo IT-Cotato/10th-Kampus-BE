@@ -2,7 +2,8 @@ package com.cotato.kampus.domain.post.domain;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 import com.cotato.kampus.domain.common.enums.Anonymity;
-import com.cotato.kampus.domain.post.PostStatus;
+import com.cotato.kampus.domain.post.enums.PostCategory;
+import com.cotato.kampus.domain.post.enums.PostStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,7 +59,7 @@ public class Post extends BaseTimeEntity {
 	private PostStatus postStatus;
 
 	@Column(name = "post_category", nullable = false)
-	private String postCategory;
+	private PostCategory postCategory;
 
 	@Column(name = "next_ananymous_number", nullable = false)
 	private Long nextAnonymousNumber = 1L;
@@ -66,7 +67,7 @@ public class Post extends BaseTimeEntity {
 	@Builder
 	public Post(Long userId, Long boardId, String title, String content,
 		Long likes, Long scraps, Anonymity anonymity,
-		PostStatus postStatus, String postCategory, Long nextAnonymousNumber) {
+		PostStatus postStatus, PostCategory postCategory, Long nextAnonymousNumber) {
 		this.userId = userId;
 		this.boardId = boardId;
 		this.title = title;
@@ -77,5 +78,12 @@ public class Post extends BaseTimeEntity {
 		this.postStatus = postStatus;
 		this.postCategory = postCategory;
 		this.nextAnonymousNumber = nextAnonymousNumber;
+	}
+
+	public void update(String title, String content, PostCategory postCategory, Anonymity anonymity) {
+		this.title = title;
+		this.content = content;
+		this.postCategory = postCategory;
+		this.anonymity = anonymity;
 	}
 }
