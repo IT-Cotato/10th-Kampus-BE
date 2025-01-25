@@ -77,8 +77,8 @@ public class PostFinder {
 
 		Long userId = apiUserResolver.getUserId();
 
-		PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, SORT_PROPERTY));
-		Slice<Post> posts = postRepository.findAllByUserId(userId, pageRequest);
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+		Slice<Post> posts = postRepository.findAllByUserId(userId, customPageRequest.of(SORT_PROPERTY));
 
 		return posts.map(post -> {
 			String boardName = boardFinder.findBoard(post.getBoardId()).getBoardName();
