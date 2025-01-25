@@ -16,7 +16,7 @@ public record CommentDetail(
 ) {
 	public static CommentDetail of(CommentDto commentDto, String author, List<CommentDetail> replies) {
 		return new CommentDetail(
-			commentDto.id(),
+			commentDto.commentId(),
 			commentDto.commentStatus(),
 			author,
 			commentDto.content(),

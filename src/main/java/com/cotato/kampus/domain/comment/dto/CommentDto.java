@@ -8,7 +8,7 @@ import com.cotato.kampus.domain.comment.enums.ReportStatus;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 
 public record CommentDto (
-	Long id,
+	Long commentId,
 	Long userId,
 	Long postId,
 	String content,
