@@ -3,13 +3,11 @@ package com.cotato.kampus.domain.comment.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.comment.dto.CommentDetail;
 import com.cotato.kampus.domain.comment.dto.CommentDto;
-import com.cotato.kampus.domain.comment.dto.CommentSummary;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -37,17 +35,17 @@ public class CommentMapper {
 					.toList();
 
 				// 현재 댓글을 부모 댓글로 추가하고 replies를 자식 댓글 리스트로 설정
-				commentDetails.add(mapToParentCOmmentDetail(commentDto, childCommentDetails));
+				commentDetails.add(mapToParentCommentDetail(commentDto, childCommentDetails));
 			} else if (commentDto.parentId() == null){
 				// 대댓글이 없는 댓글이면 리스트로 replies 설정
-				commentDetails.add(mapToParentCOmmentDetail(commentDto, List.of()));
+				commentDetails.add(mapToParentCommentDetail(commentDto, List.of()));
 			}
 		}
 
 		return commentDetails;
 	}
 
-	private CommentDetail mapToParentCOmmentDetail(CommentDto commentDto, List<CommentDetail> replies) {
+	private CommentDetail mapToParentCommentDetail(CommentDto commentDto, List<CommentDetail> replies) {
 		String authorName = authorResolver.resolveAuthorName(commentDto);
 		return CommentDetail.of(
 			commentDto,
