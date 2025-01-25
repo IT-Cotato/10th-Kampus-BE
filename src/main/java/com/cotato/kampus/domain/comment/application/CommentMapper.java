@@ -1,7 +1,9 @@
 package com.cotato.kampus.domain.comment.application;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,48 +20,31 @@ import lombok.RequiredArgsConstructor;
 public class CommentMapper {
 
 	private final AuthorResolver authorResolver;
-	private final CommentFinder commentFinder;
 
-	public List<CommentDetail> buildCommentDetails(List<CommentDto> commentDtos){
+	public List<CommentDetail> buildCommentHierarchy(List<CommentDto> commentDtos){
+		Map<Long, CommentDetail> commentMap = new HashMap<>();
+		List<CommentDetail> rootComments = new ArrayList<>();
 
-		List<CommentDetail> commentDetails = new ArrayList<>();
-
-		// 하나씩 돌며 댓글과 대댓글 구분
+		// 모든 댓글을 Map으로 변환
 		for (CommentDto commentDto : commentDtos) {
-			List<CommentDto> childComments = commentFinder.findChildComments(commentDto.id());
-
-			// 자식 댓글이 있으면 replies 채운 후 CommentDatails 생성
-			if(!childComments.isEmpty()) {
-				List<CommentDetail> childCommentDetails = childComments.stream()
-					.map(this::mapToChildCommentDetail)
-					.toList();
-
-				// 현재 댓글을 부모 댓글로 추가하고 replies를 자식 댓글 리스트로 설정
-				commentDetails.add(mapToParentCommentDetail(commentDto, childCommentDetails));
-			} else if (commentDto.parentId() == null){
-				// 대댓글이 없는 댓글이면 리스트로 replies 설정
-				commentDetails.add(mapToParentCommentDetail(commentDto, List.of()));
-			}
+			CommentDetail detail = CommentDetail.of(
+				commentDto,
+				authorResolver.resolveAuthorName(commentDto),
+				new ArrayList<>()
+			);
+			commentMap.put(commentDto.commentId(), detail);
 		}
 
-		return commentDetails;
-	}
+		// 부모-자식 관계 형성
+		for(CommentDto commentDto : commentDtos){
+			if(commentDto.parentId() == null){
+				rootComments.add(commentMap.get(commentDto.commentId()));
+			} else {
+				CommentDetail parent = commentMap.get(commentDto.parentId());
+				parent.replies().add(commentMap.get(commentDto.commentId()));
 
-	private CommentDetail mapToParentCommentDetail(CommentDto commentDto, List<CommentDetail> replies) {
-		String authorName = authorResolver.resolveAuthorName(commentDto);
-		return CommentDetail.of(
-			commentDto,
-			authorName,
-			replies
-		);
-	}
-
-	private CommentDetail mapToChildCommentDetail(CommentDto commentDto) {
-		String authorName = authorResolver.resolveAuthorName(commentDto);
-		return CommentDetail.of(
-			commentDto,
-			authorName,
-			List.of()
-		);
+			}
+		}
+		return rootComments;
 	}
 }

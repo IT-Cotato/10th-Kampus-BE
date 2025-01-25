@@ -76,7 +76,7 @@ public class CommentService {
 		List<CommentDto> commentDtos = commentFinder.findComments(postId);
 
 		// 댓글 리스트 생성
-		List<CommentDetail> comments = commentMapper.buildCommentDetails(commentDtos);
+		List<CommentDetail> comments = commentMapper.buildCommentHierarchy(commentDtos);
 
 		return comments;
 	}
