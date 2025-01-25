@@ -44,6 +44,7 @@ public class PostService {
 	private final ImageValidator imageValidator;
 	private final UserValidator userValidator;
 	private final PostLikeAppender postLikeAppender;
+	private final PostLikeValidator postLikeValidator;
 
 	private static final String POST_IMAGE_FOLDER = "post";
 
@@ -124,14 +125,12 @@ public class PostService {
 		// 1. userId 조회
 		Long userId = apiUserResolver.getUserId();
 
-		// 2. PostAuthor인지 확인(false)
-		Boolean isAuthor = postAuthorResolver.validatePostAuthor(postId, userId);
-		if (isAuthor) {
-			throw new AppException(ErrorCode.POST_LIKE_FORBIDDEN);
-		} else {
-			// 3. Post like
-			postLikeAppender.appendPostLike(postId, userId);
-		}
+		// 2. 좋아요 제약 조건 검증(자신의 게시글, 이미 좋아요한 게시글)
+		postLikeValidator.validatePostLike(postId, userId);
+
+		// 3. 좋아요 추가
+		postLikeAppender.appendPostLike(postId, userId);
+
 		// 4. post의 likes + 1
 		postUpdater.increasePostLike(postId);
 	}
