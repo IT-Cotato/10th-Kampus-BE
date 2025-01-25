@@ -39,6 +39,8 @@ public class PostService {
 	private final ApiUserResolver apiUserResolver;
 	private final S3Uploader s3Uploader;
 
+	private final PostLikeAppender postLikeAppender;
+
 	private static final String PRODUCT_IMAGE_FOLDER = "post";
 
 	@Transactional
@@ -119,5 +121,22 @@ public class PostService {
 
 		// 3. Post Images 업데이트
 		postImageUpdater.updatePostImages(postId, images);
+	}
+
+	@Transactional
+	public void likePost(Long postId) {
+		// 1. userId 조회
+		Long userId = apiUserResolver.getUserId();
+
+		// 2. PostAuthor인지 확인(false)
+		Boolean isAuthor = postAuthorResolver.validatePostAuthor(postId, userId);
+		if (isAuthor) {
+			throw new AppException(ErrorCode.POST_LIKE_FORBIDDEN);
+		} else {
+			// 3. Post like
+			postLikeAppender.appendPostLike(postId, userId);
+		}
+		// 4. post의 likes + 1
+		postUpdater.increasePostLike(postId);
 	}
 }

@@ -27,4 +27,12 @@ public class PostUpdater {
 
 		post.update(title, content, postCategory, anonymity);
 	}
+
+	@Transactional
+	public void increasePostLike(Long postId) {
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+
+		post.increaseLikes();
+	}
 }

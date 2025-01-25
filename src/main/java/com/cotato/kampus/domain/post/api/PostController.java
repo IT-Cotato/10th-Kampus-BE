@@ -108,4 +108,13 @@ public class PostController {
 			request.images() == null ? List.of() : request.images()); // 이미지 없는 경우 빈 리스트로 요청
 		return ResponseEntity.ok(DataResponse.ok());
 	}
+
+	@PostMapping("/{postId}/likes")
+	@Operation(summary = "게시글 좋아요", description = "게시글 좋아요")
+	public ResponseEntity<DataResponse<Void>> likePost(
+		@PathVariable Long postId
+	) {
+		postService.likePost(postId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
 }
