@@ -21,6 +21,8 @@ public enum ErrorCode {
 	POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글을 찾을 수 없습니다.", "POST-001"),
 	POST_NOT_AUTHOR(HttpStatus.FORBIDDEN, "게시글 작성자가 아니므로 삭제할 수 없습니다.", "POST-002"),
 	POST_LIKE_FORBIDDEN(HttpStatus.FORBIDDEN, "자신의 게시글을 좋아요 할 수 없습니다.", "POST-003"),
+	POST_LIKE_DUPLICATED(HttpStatus.FORBIDDEN, "이미 좋아요한 게시글입니다.", "POST-004"),
+
 
 	//File
 	FILE_EXTENSION_FAULT(HttpStatus.BAD_REQUEST, "F-001", "해당 파일 확장자 명이 존재하지 않습니다."),
