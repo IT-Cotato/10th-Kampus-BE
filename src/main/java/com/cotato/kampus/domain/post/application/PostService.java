@@ -28,19 +28,25 @@ public class PostService {
 
 	private final PostAppender postAppender;
 	private final PostDeleter postDeleter;
-	private final PostImageAppender postImageAppender;
 	private final PostFinder postFinder;
 	private final PostUpdater postUpdater;
-	private final PostAuthorResolver postAuthorResolver;
-	private static final String POST_IMAGE_FOLDER = "post";
+
+	private final PostImageAppender postImageAppender;
 	private final PostImageFinder postImageFinder;
 	private final PostImageUpdater postImageUpdater;
+
 	private final PostScrapUpdater postScrapUpdater;
+	private final PostAuthorResolver postAuthorResolver;
 	private final ApiUserResolver apiUserResolver;
 	private final S3Uploader s3Uploader;
-	private final UserValidator userValidator;
+
 	private final ImageValidator imageValidator;
+	private final UserValidator userValidator;
 	private final PostScrapValidator postScrapValidator;
+	private final PostLikeAppender postLikeAppender;
+	private final PostLikeValidator postLikeValidator;
+
+	private static final String POST_IMAGE_FOLDER = "post";
 
 	@Transactional
 	public Long createPost(
@@ -75,9 +81,7 @@ public class PostService {
 	public Long deletePost(Long postId) {
 		// 작성자 검증: 현재 사용자가 게시글 작성자인지 확인
 		Long userId = apiUserResolver.getUserId();
-		Long authorId = postAuthorResolver.getAuthorId(postId);
-
-		userValidator.validatePostAuthor(authorId, userId);
+		userValidator.validatePostAuthor(postId, userId);
 
 		// 게시글 삭제
 		postDeleter.delete(postId);
@@ -108,7 +112,7 @@ public class PostService {
 		List<MultipartFile> images) throws ImageException {
 		// 1. Post Author 검증
 		Long userId = apiUserResolver.getUserId();
-		userValidator.validatePostAuthor(postId, userId);
+		postAuthorResolver.validatePostAuthor(postId, userId);
 
 		// 2. Post 업데이트
 		postUpdater.updatePost(postId, title, content, postCategory, anonymity);
@@ -117,7 +121,22 @@ public class PostService {
 		postImageUpdater.updatePostImages(postId, images);
 	}
 
-	public Slice<MyPostWithPhoto> findUserPosts(int page){
+	@Transactional
+	public void likePost(Long postId) {
+		// 1. userId 조회
+		Long userId = apiUserResolver.getUserId();
+
+		// 2. 좋아요 제약 조건 검증(자신의 게시글, 이미 좋아요한 게시글)
+		postLikeValidator.validatePostLike(postId, userId);
+
+		// 3. 좋아요 추가
+		postLikeAppender.appendPostLike(postId, userId);
+
+		// 4. post의 likes + 1
+		postUpdater.increasePostLike(postId);
+	}
+
+	public Slice<MyPostWithPhoto> findUserPosts(int page) {
 		return postFinder.findUserPosts(page);
 	}
 

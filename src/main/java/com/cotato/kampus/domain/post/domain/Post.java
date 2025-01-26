@@ -99,4 +99,8 @@ public class Post extends BaseTimeEntity {
 	public void decreaseScraps() {
 		this.scraps--;
 	}
+
+	public void increaseLikes() {
+		this.likes++;
+	}
 }
