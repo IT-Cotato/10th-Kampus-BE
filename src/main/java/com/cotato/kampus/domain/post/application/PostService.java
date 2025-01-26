@@ -35,7 +35,7 @@ public class PostService {
 	private static final String POST_IMAGE_FOLDER = "post";
 	private final PostImageFinder postImageFinder;
 	private final PostImageUpdater postImageUpdater;
-	private final PostScrapAppender postScrapAppender;
+	private final PostScrapUpdater postScrapUpdater;
 	private final ApiUserResolver apiUserResolver;
 	private final S3Uploader s3Uploader;
 	private final UserValidator userValidator;
@@ -123,15 +123,26 @@ public class PostService {
 
 	@Transactional
 	public void scrapPost(Long postId){
-
 		// 스크랩 가능 여부 검증
 		Long userId = apiUserResolver.getUserId();
 		postScrapValidator.validatePostScrap(postId, userId);
 
-		// 게시글 스크랩 수 추가 - PostUpdater에 넣기
+		// 게시글 스크랩 수 추가
 		postUpdater.increaseScraps(postId);
 
 		// 스크랩 데이터 추가
-		postScrapAppender.append(postId, userId);
+		postScrapUpdater.append(postId, userId);
+	}
+
+	@Transactional
+	public void unscrapPost(Long postId){
+		// 유저 조회
+		Long userId = apiUserResolver.getUserId();
+
+		// 게시글 스크랩 수 감소
+		postUpdater.decreaseScraps(postId);
+
+		// 스크랩 데이터 삭제
+		postScrapUpdater.delete(postId, userId);
 	}
 }

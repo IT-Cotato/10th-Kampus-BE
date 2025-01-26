@@ -48,4 +48,13 @@ public class PostUpdater {
 
 		postRepository.save(post);
 	}
+
+	@Transactional
+	public void decreaseScraps(Long postId){
+
+		Post post = postFinder.getPost(postId);
+		post.decreaseScraps();
+
+		postRepository.save(post);
+	}
 }

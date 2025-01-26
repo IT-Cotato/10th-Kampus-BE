@@ -132,4 +132,13 @@ public class PostController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
+	@DeleteMapping("/{postId}/scrap")
+	@Operation(summary = "게시글 스크랩 취소", description = "게시글 스크랩을 해제합니다.")
+	public ResponseEntity<DataResponse<Void>> unscrapPost(
+		@PathVariable Long postId
+	){
+		postService.unscrapPost(postId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
 }
