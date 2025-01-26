@@ -31,16 +31,20 @@ public class PostService {
 	private final PostFinder postFinder;
 	private final PostUpdater postUpdater;
 
+	private final PostAuthorResolver postAuthorResolver;
+	private static final String POST_IMAGE_FOLDER = "post";
 
 	private final PostImageAppender postImageAppender;
 	private final PostImageFinder postImageFinder;
 	private final PostImageUpdater postImageUpdater;
-
-	private final PostAuthorResolver postAuthorResolver;
+  
+	private final PostScrapUpdater postScrapUpdater;
 	private final ApiUserResolver apiUserResolver;
 	private final S3Uploader s3Uploader;
 
+  private final UserValidator userValidator;
 	private final ImageValidator imageValidator;
+	private final PostScrapValidator postScrapValidator;
 	private final UserValidator userValidator;
 	private final PostLikeAppender postLikeAppender;
 	private final PostLikeValidator postLikeValidator;
@@ -79,7 +83,10 @@ public class PostService {
 	@Transactional
 	public Long deletePost(Long postId) {
 		// 작성자 검증: 현재 사용자가 게시글 작성자인지 확인
-		userValidator.validatePostAuthor(postId);
+		Long userId = apiUserResolver.getUserId();
+		Long authorId = postAuthorResolver.getAuthorId(postId);
+
+		userValidator.validatePostAuthor(authorId, userId);
 
 		// 게시글 삭제
 		postDeleter.delete(postId);
@@ -110,7 +117,7 @@ public class PostService {
 		List<MultipartFile> images) throws ImageException {
 		// 1. Post Author 검증
 		Long userId = apiUserResolver.getUserId();
-		postAuthorResolver.validatePostAuthor(postId, userId);
+		userValidator.validatePostAuthor(postId, userId);
 
 		// 2. Post 업데이트
 		postUpdater.updatePost(postId, title, content, postCategory, anonymity);
@@ -136,5 +143,34 @@ public class PostService {
 
 	public Slice<MyPostWithPhoto> findUserPosts(int page) {
 		return postFinder.findUserPosts(page);
+	}
+
+	@Transactional
+	public void scrapPost(Long postId){
+		// 스크랩 가능 여부 검증
+		Long userId = apiUserResolver.getUserId();
+		postScrapValidator.validatePostScrap(postId, userId);
+
+		// 게시글 스크랩 수 추가
+		postUpdater.increaseScraps(postId);
+
+		// 스크랩 데이터 추가
+		postScrapUpdater.append(postId, userId);
+	}
+
+	@Transactional
+	public void unscrapPost(Long postId){
+		// 유저 조회
+		Long userId = apiUserResolver.getUserId();
+
+		// 게시글 스크랩 수 감소
+		postUpdater.decreaseScraps(postId);
+
+		// 스크랩 데이터 삭제
+		postScrapUpdater.delete(postId, userId);
+	}
+
+	public Slice<MyPostWithPhoto> findUserScrapedPosts(int page){
+		return postFinder.findUserScrapedPosts(page);
 	}
 }

@@ -86,7 +86,7 @@ public class PostController {
 	}
 
 	@DeleteMapping("/{postId}")
-	@Operation(summary = "게시글 삭제", description = "postId를 통해 게시글 삭제")
+	@Operation(summary = "게시글 삭제", description = "(현재 유저가 작성한 게시글일 경우) 게시글을 삭제합니다.")
 	public ResponseEntity<DataResponse<PostDeleteResponse>> deletePost(
 		@PathVariable Long postId
 	) {
@@ -122,8 +122,8 @@ public class PostController {
 			)
 		);
 	}
-
-	@PostMapping("/{postId}/likes")
+  
+  @PostMapping("/{postId}/likes")
 	@Operation(summary = "게시글 좋아요", description = "게시글 좋아요")
 	public ResponseEntity<DataResponse<Void>> likePost(
 		@PathVariable Long postId
@@ -131,4 +131,36 @@ public class PostController {
 		postService.likePost(postId);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
+
+	@PostMapping("/{postId}/scrap")
+	@Operation(summary = "게시글 스크랩", description = "게시글을 스크랩합니다.")
+	public ResponseEntity<DataResponse<Void>> scrapPost(
+		@PathVariable Long postId
+	){
+		postService.scrapPost(postId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@DeleteMapping("/{postId}/scrap")
+	@Operation(summary = "게시글 스크랩 취소", description = "게시글 스크랩을 해제합니다.")
+	public ResponseEntity<DataResponse<Void>> unscrapPost(
+		@PathVariable Long postId
+	){
+		postService.unscrapPost(postId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@GetMapping("/my/scrap")
+	@Operation(summary = "[마이페이지] 스크랩한 게시글 조회", description = "현재 사용자가 스크랩한 게시글을 최신순으로 조회합니다.")
+	public ResponseEntity<DataResponse<MyPostResponse>> findMyScrapedPosts(
+		@RequestParam(required = false, defaultValue = "0") int page
+	){
+		return ResponseEntity.ok(DataResponse.from(
+				MyPostResponse.from(
+					postService.findUserScrapedPosts(page)
+				)
+			)
+		);
+	}
+ 
 }

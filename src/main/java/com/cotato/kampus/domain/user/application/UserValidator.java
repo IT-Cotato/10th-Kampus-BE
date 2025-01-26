@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.post.application.PostAuthorResolver;
 import com.cotato.kampus.domain.post.application.PostFinder;
 import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.domain.user.enums.UserRole;
@@ -18,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserValidator {
 	public final ApiUserResolver apiUserResolver;
-	public final PostFinder postFinder;
+	public final PostAuthorResolver postFinder;
 
 	public void validateStudentVerification() {
 		User user = apiUserResolver.getUser();
@@ -27,10 +28,7 @@ public class UserValidator {
 			throw new AppException(ErrorCode.USER_UNVERIFIED);
 	}
 
-	public void validatePostAuthor(Long postId) {
-		Long userId = apiUserResolver.getUserId();
-		Long authorId = postFinder.getAuthorId(postId);
-
+	public void validatePostAuthor(Long authorId, Long userId) {
 		// 작성자가 아닌 경우 예외 처리
 		if (userId != authorId)
 			throw new AppException(ErrorCode.POST_NOT_AUTHOR);

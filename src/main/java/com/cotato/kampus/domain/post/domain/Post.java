@@ -58,6 +58,7 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "post_status", nullable = false)
 	private PostStatus postStatus;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "post_category", nullable = false)
 	private PostCategory postCategory;
 
@@ -85,10 +86,18 @@ public class Post extends BaseTimeEntity {
 		this.content = content;
 		this.postCategory = postCategory;
 		this.anonymity = anonymity;
+  	}
+
+  public void increaseNextAnonymousNumber(){
+			this.nextAnonymousNumber++;
 	}
 
-	public void increaseNextAnonymousNumber() {
-		this.nextAnonymousNumber++;
+	public void increaseScraps() {
+		this.scraps++;
+	}
+
+	public void decreaseScraps() {
+		this.scraps--;
 	}
 
 	public void increaseLikes() {

@@ -14,8 +14,10 @@ import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.dao.PostPhotoRepository;
 import com.cotato.kampus.domain.post.dao.PostRepository;
+import com.cotato.kampus.domain.post.dao.PostScrapRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
+import com.cotato.kampus.domain.post.domain.PostScrap;
 import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
@@ -37,18 +39,13 @@ public class PostFinder {
 	public static final String SORT_PROPERTY = "createdTime";
 	private final ApiUserResolver apiUserResolver;
 	private final BoardFinder boardFinder;
+	private final PostScrapRepository postScrapRepository;
 
 	public Post getPost(Long postId) {
 		return postRepository.findById(postId)
 			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
 	}
 
-	public Long getAuthorId(Long postId) {
-		Post post = postRepository.findById(postId)
-			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
-
-		return post.getUserId();
-	}
 
 	public Slice<PostWithPhotos> findPosts(Long boardId, int page) {
 		// 1. Post 리스트를 Slice로 조회
@@ -81,6 +78,27 @@ public class PostFinder {
 		Slice<Post> posts = postRepository.findAllByUserId(userId, customPageRequest.of(SORT_PROPERTY));
 
 		return posts.map(post -> {
+			String boardName = boardFinder.findBoard(post.getBoardId()).getBoardName();
+
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())
+				.orElse(null);
+
+			return MyPostWithPhoto.from(post, boardName, postPhoto);
+		});
+	}
+
+	public Slice<MyPostWithPhoto> findUserScrapedPosts(int page){
+
+		Long userId = apiUserResolver.getUserId();
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+
+		// 스크랩된 포스트만 조회
+		Slice<PostScrap> postScraps = postScrapRepository.findAllByUserId(userId, customPageRequest.of(SORT_PROPERTY));
+
+		// 스크랩된 포스트에 해당하는 Post를 찾아서 반환
+		return postScraps.map(postScrap -> {
+			Post post = getPost(postScrap.getPostId());
+
 			String boardName = boardFinder.findBoard(post.getBoardId()).getBoardName();
 
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())

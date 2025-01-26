@@ -45,5 +45,6 @@ public class PostAuthorResolver {
 		PostDto post = postFinder.findPost(postId);
 
 		return post.userId().equals(userId);
+
 	}
 }
