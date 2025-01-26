@@ -6,18 +6,17 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cotato.kampus.domain.common.application.ImageValidator;
+import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
-import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.product.application.PostDeleter;
+import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
-import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -30,12 +29,10 @@ public class PostService {
 
 	private final PostAppender postAppender;
 	private final PostDeleter postDeleter;
-	private final PostImageAppender postImageAppender;
 	private final PostFinder postFinder;
 	private final PostUpdater postUpdater;
 
-	private static final String POST_IMAGE_FOLDER = "post";
-  
+
 	private final PostImageAppender postImageAppender;
 	private final PostImageFinder postImageFinder;
 	private final PostImageUpdater postImageUpdater;
@@ -44,8 +41,12 @@ public class PostService {
 	private final ApiUserResolver apiUserResolver;
 	private final S3Uploader s3Uploader;
 
-	private final UserValidator userValidator;
 	private final ImageValidator imageValidator;
+	private final UserValidator userValidator;
+	private final PostLikeAppender postLikeAppender;
+	private final PostLikeValidator postLikeValidator;
+
+	private static final String POST_IMAGE_FOLDER = "post";
 
 	@Transactional
 	public Long createPost(
@@ -119,8 +120,22 @@ public class PostService {
 		postImageUpdater.updatePostImages(postId, images);
 	}
 
-	public Slice<MyPostWithPhoto> findUserPosts(int page){
+	@Transactional
+	public void likePost(Long postId) {
+		// 1. userId 조회
+		Long userId = apiUserResolver.getUserId();
+
+		// 2. 좋아요 제약 조건 검증(자신의 게시글, 이미 좋아요한 게시글)
+		postLikeValidator.validatePostLike(postId, userId);
+
+		// 3. 좋아요 추가
+		postLikeAppender.appendPostLike(postId, userId);
+
+		// 4. post의 likes + 1
+		postUpdater.increasePostLike(postId);
+	}
+
+	public Slice<MyPostWithPhoto> findUserPosts(int page) {
 		return postFinder.findUserPosts(page);
 	}
-  
 }

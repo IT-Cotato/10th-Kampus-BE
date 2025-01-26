@@ -85,10 +85,13 @@ public class Post extends BaseTimeEntity {
 		this.content = content;
 		this.postCategory = postCategory;
 		this.anonymity = anonymity;
-  }
-  
-  public void increaseNextAnonymousNumber(){
+	}
+
+	public void increaseNextAnonymousNumber() {
 		this.nextAnonymousNumber++;
 	}
-  
+
+	public void increaseLikes() {
+		this.likes++;
+	}
 }
