@@ -5,7 +5,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
-import com.cotato.kampus.domain.post.PostStatus;
+import com.cotato.kampus.domain.post.enums.PostCategory;
+import com.cotato.kampus.domain.post.enums.PostStatus;
 import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 
@@ -25,7 +26,7 @@ public class PostAppender {
 		Long boardId,
 		String title,
 		String content,
-		String postCategory,
+		PostCategory postCategory,
 		Anonymity anonymity
 	){
 

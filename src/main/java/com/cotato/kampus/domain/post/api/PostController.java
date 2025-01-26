@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.post.api;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -7,12 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.post.application.PostService;
 import com.cotato.kampus.domain.post.dto.request.PostCreateRequest;
+import com.cotato.kampus.domain.post.dto.request.PostUpdateRequest;
 import com.cotato.kampus.domain.post.dto.response.MyPostResponse;
 import com.cotato.kampus.domain.post.dto.response.PostCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDeleteResponse;
@@ -95,6 +99,17 @@ public class PostController {
 		));
 	}
 
+	@PutMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@Operation(summary = "게시글 수정", description = "게시글의 내용 수정")
+	public ResponseEntity<DataResponse<Void>> updatePost(
+		@PathVariable Long postId,
+		@ModelAttribute PostUpdateRequest request
+	) throws ImageException {
+		postService.updatePost(postId, request.title(), request.content(), request.postCategory(), request.anonymity(),
+			request.images() == null ? List.of() : request.images()); // 이미지 없는 경우 빈 리스트로 요청
+		return ResponseEntity.ok(DataResponse.ok());
+  }
+  
 	@GetMapping("/my")
 	@Operation(summary = "[마이페이지] 내가 쓴 게시글 조회", description = "현재 사용자가 작성한 게시글을 최신순으로 조회합니다.")
 	public ResponseEntity<DataResponse<MyPostResponse>> findMyPosts(
@@ -107,4 +122,5 @@ public class PostController {
 			)
 		);
 	}
+  
 }
