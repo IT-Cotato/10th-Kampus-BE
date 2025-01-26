@@ -9,6 +9,8 @@ import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
+import com.cotato.kampus.domain.post.dao.PostRepository;
+import com.cotato.kampus.domain.post.domain.Post;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class PostUpdater {
 
 	private final PostRepository postRepository;
+	private final PostFinder postFinder;
 
 	@Transactional
 	public void updatePost(Long postId, String title, String content, PostCategory postCategory, Anonymity anonymity) {
@@ -27,4 +30,16 @@ public class PostUpdater {
 
 		post.update(title, content, postCategory, anonymity);
 	}
+
+	public Long increaseNextAnonymousNumber(Long postId){
+
+		Post post = postFinder.getPost(postId);
+		Long currentAnonymousNumber = post.getNextAnonymousNumber();
+
+		post.increaseNextAnonymousNumber();
+		postRepository.save(post);
+
+		return currentAnonymousNumber;
+	}
+
 }

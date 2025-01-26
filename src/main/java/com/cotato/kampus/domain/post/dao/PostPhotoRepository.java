@@ -13,6 +13,8 @@ public interface PostPhotoRepository extends JpaRepository<PostPhoto, Long> {
 
 	Optional<PostPhoto> findFirstByPostIdOrderByCreatedTimeDesc(Long postId);
 
+	Optional<PostPhoto> findFirstByPostIdOrderByCreatedTimeAsc(Long postId);
+
 	List<PostPhoto> findALlByPostId(Long postId);
 
 	void deleteAllByPostId(Long postId);

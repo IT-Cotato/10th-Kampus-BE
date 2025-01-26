@@ -1,5 +1,5 @@
 package com.cotato.kampus.domain.comment.enums;
 
-public enum RepostStatus {
+public enum ReportStatus {
 	NORMAL, REPORTED
 }
