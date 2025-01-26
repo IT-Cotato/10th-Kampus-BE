@@ -145,4 +145,8 @@ public class PostService {
 		// 스크랩 데이터 삭제
 		postScrapUpdater.delete(postId, userId);
 	}
+
+	public Slice<MyPostWithPhoto> findUserScrapedPosts(int page){
+		return postFinder.findUserScrapedPosts(page);
+	}
 }
