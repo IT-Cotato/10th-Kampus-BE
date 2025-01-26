@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cotato.kampus.domain.post.application.PostService;
 import com.cotato.kampus.domain.post.dto.request.PostCreateRequest;
 import com.cotato.kampus.domain.post.dto.request.PostUpdateRequest;
+import com.cotato.kampus.domain.post.dto.response.MyPostResponse;
 import com.cotato.kampus.domain.post.dto.response.PostCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDeleteResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDetailResponse;
