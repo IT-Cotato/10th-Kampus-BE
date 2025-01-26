@@ -31,21 +31,18 @@ public class PostService {
 	private final PostFinder postFinder;
 	private final PostUpdater postUpdater;
 
-	private final PostAuthorResolver postAuthorResolver;
-	private static final String POST_IMAGE_FOLDER = "post";
-
 	private final PostImageAppender postImageAppender;
 	private final PostImageFinder postImageFinder;
 	private final PostImageUpdater postImageUpdater;
-  
+
 	private final PostScrapUpdater postScrapUpdater;
+	private final PostAuthorResolver postAuthorResolver;
 	private final ApiUserResolver apiUserResolver;
 	private final S3Uploader s3Uploader;
 
-  private final UserValidator userValidator;
 	private final ImageValidator imageValidator;
-	private final PostScrapValidator postScrapValidator;
 	private final UserValidator userValidator;
+	private final PostScrapValidator postScrapValidator;
 	private final PostLikeAppender postLikeAppender;
 	private final PostLikeValidator postLikeValidator;
 
@@ -84,9 +81,7 @@ public class PostService {
 	public Long deletePost(Long postId) {
 		// 작성자 검증: 현재 사용자가 게시글 작성자인지 확인
 		Long userId = apiUserResolver.getUserId();
-		Long authorId = postAuthorResolver.getAuthorId(postId);
-
-		userValidator.validatePostAuthor(authorId, userId);
+		userValidator.validatePostAuthor(postId, userId);
 
 		// 게시글 삭제
 		postDeleter.delete(postId);
