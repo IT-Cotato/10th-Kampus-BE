@@ -6,6 +6,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
@@ -34,6 +35,8 @@ public class PostService {
 	private final PostAuthorResolver postAuthorResolver;
 	private final UserValidator userValidator;
 	private final ImageValidator imageValidator;
+	private final ApiUserResolver apiUserResolver;
+	private final PostScrapAppender postScrapAppender;
 
 	@Transactional
 	public Long createPost(
@@ -67,7 +70,10 @@ public class PostService {
 	@Transactional
 	public Long deletePost(Long postId) {
 		// 작성자 검증: 현재 사용자가 게시글 작성자인지 확인
-		userValidator.validatePostAuthor(postId);
+		Long userId = apiUserResolver.getUserId();
+		Long authorId = postAuthorResolver.getAuthorId(postId);
+
+		userValidator.validatePostAuthor(authorId, userId);
 
 		// 게시글 삭제
 		postDeleter.delete(postId);
