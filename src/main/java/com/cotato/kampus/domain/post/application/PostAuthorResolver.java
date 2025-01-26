@@ -5,8 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
-import com.cotato.kampus.domain.post.dao.PostRepository;
-import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.user.dao.UserRepository;
@@ -23,12 +21,10 @@ import lombok.RequiredArgsConstructor;
 public class PostAuthorResolver {
 
 	private final UserRepository userRepository;
+	private final PostFinder postFinder;
 	private final ApiUserResolver apiUserResolver;
-	private final PostRepository postRepository;
 
 	public AnonymousOrPostAuthor getAuthor(PostDto postDto) {
-		AnonymousOrPostAuthor anonymousOrPostAuthor;
-
 		User author = userRepository.findById(postDto.userId())
 			.orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
@@ -45,10 +41,10 @@ public class PostAuthorResolver {
 		}
 	}
 
-	public Long getAuthorId(Long postId) {
-		Post post = postRepository.findById(postId)
-			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+	public Boolean validatePostAuthor(Long postId, Long userId) {
+		PostDto post = postFinder.findPost(postId);
 
-		return post.getUserId();
+		return post.userId().equals(userId);
+
 	}
 }
