@@ -6,6 +6,7 @@ public record SignupRequest(
 	String providerId,
 	String username,
 	String nickname,
-	String nationality
+	String nationality,
+	String languageCode
 ) {
 }
