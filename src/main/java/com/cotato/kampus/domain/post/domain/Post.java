@@ -88,7 +88,7 @@ public class Post extends BaseTimeEntity {
 		this.anonymity = anonymity;
   	}
 
-  	public void increaseNextAnonymousNumber(){
+  public void increaseNextAnonymousNumber(){
 			this.nextAnonymousNumber++;
 	}
 

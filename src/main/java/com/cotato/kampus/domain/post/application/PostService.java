@@ -112,7 +112,7 @@ public class PostService {
 		List<MultipartFile> images) throws ImageException {
 		// 1. Post Author 검증
 		Long userId = apiUserResolver.getUserId();
-		postAuthorResolver.validatePostAuthor(postId, userId);
+		userValidator.validatePostAuthor(postId, userId);
 
 		// 2. Post 업데이트
 		postUpdater.updatePost(postId, title, content, postCategory, anonymity);
