@@ -5,6 +5,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
+import com.cotato.kampus.domain.post.dao.PostRepository;
+import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.user.dao.UserRepository;
@@ -22,6 +24,7 @@ public class PostAuthorResolver {
 
 	private final UserRepository userRepository;
 	private final ApiUserResolver apiUserResolver;
+	private final PostRepository postRepository;
 
 	public AnonymousOrPostAuthor getAuthor(PostDto postDto) {
 		AnonymousOrPostAuthor anonymousOrPostAuthor;
@@ -40,5 +43,12 @@ public class PostAuthorResolver {
 			return AnonymousOrPostAuthor.of(false, isAuthor, author.getId(), author.getUsername(),
 				author.getProfileImage());
 		}
+	}
+
+	public Long getAuthorId(Long postId) {
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+
+		return post.getUserId();
 	}
 }

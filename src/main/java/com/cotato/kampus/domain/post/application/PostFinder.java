@@ -43,12 +43,6 @@ public class PostFinder {
 			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
 	}
 
-	public Long getAuthorId(Long postId) {
-		Post post = postRepository.findById(postId)
-			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
-
-		return post.getUserId();
-	}
 
 	public Slice<PostWithPhotos> findPosts(Long boardId, int page) {
 		// 1. Post 리스트를 Slice로 조회
