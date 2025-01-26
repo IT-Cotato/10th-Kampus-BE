@@ -31,14 +31,16 @@ public class PostService {
 	private final PostImageAppender postImageAppender;
 	private final PostFinder postFinder;
 	private final PostUpdater postUpdater;
+	private final PostAuthorResolver postAuthorResolver;
 	private static final String POST_IMAGE_FOLDER = "post";
 	private final PostImageFinder postImageFinder;
 	private final PostImageUpdater postImageUpdater;
-	private final PostAuthorResolver postAuthorResolver;
+	private final PostScrapAppender postScrapAppender;
 	private final ApiUserResolver apiUserResolver;
 	private final S3Uploader s3Uploader;
 	private final UserValidator userValidator;
 	private final ImageValidator imageValidator;
+	private final PostScrapValidator postScrapValidator;
 
 	@Transactional
 	public Long createPost(
@@ -117,5 +119,19 @@ public class PostService {
 
 	public Slice<MyPostWithPhoto> findUserPosts(int page){
 		return postFinder.findUserPosts(page);
+	}
+
+	@Transactional
+	public void scrapPost(Long postId){
+
+		// 스크랩 가능 여부 검증
+		Long userId = apiUserResolver.getUserId();
+		postScrapValidator.validatePostScrap(postId, userId);
+
+		// 게시글 스크랩 수 추가 - PostUpdater에 넣기
+		postUpdater.increaseScraps(postId);
+
+		// 스크랩 데이터 추가
+		postScrapAppender.append(postId, userId);
 	}
 }

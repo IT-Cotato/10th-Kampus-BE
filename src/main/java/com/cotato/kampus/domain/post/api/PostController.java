@@ -109,7 +109,7 @@ public class PostController {
 			request.images() == null ? List.of() : request.images()); // 이미지 없는 경우 빈 리스트로 요청
 		return ResponseEntity.ok(DataResponse.ok());
   }
-  
+
 	@GetMapping("/my")
 	@Operation(summary = "[마이페이지] 내가 쓴 게시글 조회", description = "현재 사용자가 작성한 게시글을 최신순으로 조회합니다.")
 	public ResponseEntity<DataResponse<MyPostResponse>> findMyPosts(
@@ -122,5 +122,14 @@ public class PostController {
 			)
 		);
 	}
-  
+
+	@PostMapping("/{postId}/scrap")
+	@Operation(summary = "게시글 스크랩", description = "게시글을 스크랩합니다.")
+	public ResponseEntity<DataResponse<Void>> scrapPost(
+		@PathVariable Long postId
+	){
+		postService.scrapPost(postId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
 }

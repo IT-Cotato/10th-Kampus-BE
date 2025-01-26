@@ -40,4 +40,12 @@ public class PostUpdater {
 		return currentAnonymousNumber;
 	}
 
+	@Transactional
+	public void increaseScraps(Long postId){
+
+		Post post = postFinder.getPost(postId);
+		post.increaseScraps();
+
+		postRepository.save(post);
+	}
 }
