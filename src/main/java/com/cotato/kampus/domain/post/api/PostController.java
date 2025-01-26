@@ -82,7 +82,7 @@ public class PostController {
 	}
 
 	@DeleteMapping("/{postId}")
-	@Operation(summary = "게시글 삭제", description = "postId를 통해 게시글 삭제")
+	@Operation(summary = "게시글 삭제", description = "(현재 유저가 작성한 게시글일 경우) 게시글을 삭제합니다.")
 	public ResponseEntity<DataResponse<PostDeleteResponse>> deletePost(
 		@PathVariable Long postId
 	) {
