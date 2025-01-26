@@ -1,14 +1,22 @@
 package com.cotato.kampus.domain.post.application;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.board.application.BoardFinder;
+import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.dao.PostPhotoRepository;
 import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
+import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
@@ -27,6 +35,8 @@ public class PostFinder {
 	private final PostPhotoRepository postPhotoRepository;
 	private static final Integer PAGE_SIZE = 10;
 	public static final String SORT_PROPERTY = "createdTime";
+	private final ApiUserResolver apiUserResolver;
+	private final BoardFinder boardFinder;
 
 	public Post getPost(Long postId) {
 		return postRepository.findById(postId)
@@ -61,5 +71,22 @@ public class PostFinder {
 			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
 
 		return PostDto.from(post);
+	}
+
+	public Slice<MyPostWithPhoto> findUserPosts(int page){
+
+		Long userId = apiUserResolver.getUserId();
+
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+		Slice<Post> posts = postRepository.findAllByUserId(userId, customPageRequest.of(SORT_PROPERTY));
+
+		return posts.map(post -> {
+			String boardName = boardFinder.findBoard(post.getBoardId()).getBoardName();
+
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())
+				.orElse(null);
+
+			return MyPostWithPhoto.from(post, boardName, postPhoto);
+		});
 	}
 }

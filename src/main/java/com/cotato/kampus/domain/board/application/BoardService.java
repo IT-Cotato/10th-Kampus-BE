@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class BoardService {
 
-	private final BoardReader boardReader;
+	private final BoardFinder boardFinder;
 	private final UniversityBoardReader universityBoardReader;
 	private final BoardValidator boardValidator;
 	private final BoardFavoriteReader boardFavoriteReader;
@@ -29,7 +29,7 @@ public class BoardService {
 		Set<Long> favoriteBoardIds = boardFavoriteReader.read();
 
 		// 전체 게시판 조회
-		List<BoardWithFavoriteStatusDto> boards = boardReader.readAll();
+		List<BoardWithFavoriteStatusDto> boards = boardFinder.findAll();
 
 		// 즐겨찾기 여부 매핑
 		return BoardDtoEnhancer.updateFavoriteStatus(boards, favoriteBoardIds);
@@ -40,7 +40,7 @@ public class BoardService {
 		Set<Long> favoriteBoardIds = boardFavoriteReader.read();
 
 		// 전체 게시판 조회
-		List<BoardWithFavoriteStatusDto> boards = boardReader.readAll();
+		List<BoardWithFavoriteStatusDto> boards = boardFinder.findAll();
 
 		// 즐겨찾는 게시판만 필터링
 		return BoardDtoEnhancer.filterFavoriteBoards(boards, favoriteBoardIds);

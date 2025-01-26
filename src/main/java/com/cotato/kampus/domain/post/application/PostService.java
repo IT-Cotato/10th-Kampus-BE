@@ -6,15 +6,14 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
+import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
-import com.cotato.kampus.domain.product.application.PostDeleter;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
+import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -29,11 +28,12 @@ public class PostService {
 	private final PostAppender postAppender;
 	private final PostDeleter postDeleter;
 	private final PostImageAppender postImageAppender;
-	private static final String PRODUCT_IMAGE_FOLDER = "post";
-	private final ApiUserResolver apiUserResolver;
+	private static final String POST_IMAGE_FOLDER = "post";
 	private final PostFinder postFinder;
 	private final PostImageFinder postImageFinder;
 	private final PostAuthorResolver postAuthorResolver;
+	private final UserValidator userValidator;
+	private final ImageValidator imageValidator;
 
 	@Transactional
 	public Long createPost(
@@ -44,17 +44,14 @@ public class PostService {
 		Anonymity anonymity,
 		List<MultipartFile> images
 	) throws ImageException {
+
+		// 유효한 이미지만 필터링
+		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
+
 		// s3에 이미지 업로드
-		List<String> imageUrls = (images == null || images.isEmpty()) ?
+		List<String> imageUrls = (validImages.isEmpty()) ?
 			List.of() :
-			s3Uploader.uploadFiles(
-				images.stream()
-					.filter(
-						image -> image != null && image.getOriginalFilename() != null && !image.getOriginalFilename()
-							.isEmpty())
-					.toList(),
-				PRODUCT_IMAGE_FOLDER
-			);
+			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
 
 		// 게시글 추가
 		Long postId = postAppender.append(boardId, title, content, postCategory, anonymity);
@@ -70,12 +67,7 @@ public class PostService {
 	@Transactional
 	public Long deletePost(Long postId) {
 		// 작성자 검증: 현재 사용자가 게시글 작성자인지 확인
-		Long userId = apiUserResolver.getUserId();
-		Long authorId = postFinder.getAuthorId(postId);
-
-		// 작성자가 아닌 경우 예외 처리
-		if (userId != authorId)
-			throw new AppException(ErrorCode.POST_NOT_AUTHOR);
+		userValidator.validatePostAuthor(postId);
 
 		// 게시글 삭제
 		postDeleter.delete(postId);
@@ -99,5 +91,9 @@ public class PostService {
 
 		// 4. 게시글 세부 내역 리턴
 		return PostDetails.of(author, postDto, postPhotos);
+	}
+
+	public Slice<MyPostWithPhoto> findUserPosts(int page){
+		return postFinder.findUserPosts(page);
 	}
 }

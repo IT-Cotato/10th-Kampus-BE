@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.post.application.PostService;
 import com.cotato.kampus.domain.post.dto.request.PostCreateRequest;
+import com.cotato.kampus.domain.post.dto.response.MyPostResponse;
 import com.cotato.kampus.domain.post.dto.response.PostCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDeleteResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDetailResponse;
@@ -92,5 +93,18 @@ public class PostController {
 				)
 			)
 		));
+	}
+
+	@GetMapping("/my")
+	@Operation(summary = "[마이페이지] 내가 쓴 게시글 조회", description = "현재 사용자가 작성한 게시글을 최신순으로 조회합니다.")
+	public ResponseEntity<DataResponse<MyPostResponse>> findMyPosts(
+		@RequestParam(required = false, defaultValue = "0") int page
+	){
+			return ResponseEntity.ok(DataResponse.from(
+				MyPostResponse.from(
+					postService.findUserPosts(page)
+				)
+			)
+		);
 	}
 }
