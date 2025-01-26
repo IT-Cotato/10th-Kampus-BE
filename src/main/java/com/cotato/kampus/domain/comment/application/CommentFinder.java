@@ -33,16 +33,7 @@ public class CommentFinder {
 	}
 
 	public List<CommentDto> findComments(Long postId){
-		List<Comment> comments = commentRepository.findAllByPostId(postId);
-		List<CommentDto> commentDtos = comments.stream()
-			.map(CommentDto::from)
-			.toList();
-
-		return commentDtos;
-	}
-
-	public List<CommentDto> findChildComments(Long parentId){
-		List<Comment> comments = commentRepository.findAllByParentId(parentId);
+		List<Comment> comments = commentRepository.findAllByPostIdOrderByCreatedTimeAsc(postId);
 		List<CommentDto> commentDtos = comments.stream()
 			.map(CommentDto::from)
 			.toList();
