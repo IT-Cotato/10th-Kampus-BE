@@ -22,4 +22,9 @@ public class UserFinder {
 			.orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 	}
 
+	public User findById(Long userId){
+		return userRepository.findById(userId)
+			.orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+	}
+
 }

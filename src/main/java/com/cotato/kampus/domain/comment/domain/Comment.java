@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.comment.domain;
 
-import com.cotato.kampus.domain.comment.enums.RepostStatus;
+import com.cotato.kampus.domain.comment.enums.CommentStatus;
+import com.cotato.kampus.domain.comment.enums.ReportStatus;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 
@@ -38,12 +39,22 @@ public class Comment extends BaseTimeEntity {
 	private String content;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "report_status", nullable = false)
+	private ReportStatus reportStatus;
+
+	@Enumerated(EnumType.STRING)
 	@Column(name = "comment_status", nullable = false)
-	private RepostStatus repostStatus;
+	private CommentStatus commentStatus;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "anonymity", nullable = false)
 	private Anonymity anonymity;
+
+	@Column(name = "anonymous_number")
+	private Long anonymousNumber;
+
+	@Column(name = "parent_id")
+	private Long parentId;
 
 	@Column(name = "likes", nullable = false)
 	private Long likes = 0L;
@@ -53,14 +64,25 @@ public class Comment extends BaseTimeEntity {
 
 	@Builder
 	public Comment(Long userId, Long postId, String content,
-		Long likes, RepostStatus repostStatus,
-		Anonymity anonymity, Long reports) {
+		Long likes, ReportStatus reportStatus, CommentStatus commentStatus,
+		Anonymity anonymity, Long reports, Long anonymousNumber, Long parentId) {
 		this.userId = userId;
 		this.postId = postId;
 		this.content = content;
 		this.likes = likes;
-		this.repostStatus = repostStatus;
+		this.reportStatus = reportStatus;
+		this.commentStatus = commentStatus;
 		this.anonymity = anonymity;
 		this.reports = reports;
+		this.anonymousNumber = anonymousNumber;
+		this.parentId = parentId;
+	}
+
+	public void setCommentStatus(CommentStatus commentStatus) {
+		this.commentStatus = commentStatus;
+	}
+
+	public void increaseLikes() {
+		this.likes++;
 	}
 }
