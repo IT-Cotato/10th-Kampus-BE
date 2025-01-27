@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.DeepLException;
+import com.deepl.api.DeepLException;
 import com.deepl.api.Translator;
 
 @Configuration
@@ -15,9 +15,9 @@ public class DeepLConfig {
 	private String authKey;
 
 	@Bean
-	public Translator translator() {
+	public Translator translator() throws DeepLException {
 		if (authKey == null || authKey.isEmpty()) {
-			throw new DeepLException(ErrorCode.INVALID_DEEPL_AUTH_KEY);
+			throw new DeepLException(ErrorCode.INVALID_DEEPL_AUTH_KEY.getMessage());
 		}
 		return new Translator(authKey);
 	}

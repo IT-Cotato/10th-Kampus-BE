@@ -62,7 +62,8 @@ public enum ErrorCode {
 	MALFORMED_TOKEN(HttpStatus.BAD_REQUEST, "토큰 내부에 공백이 있습니다.", "JWT-004"),
 
 	// DeepL
-	INVALID_DEEPL_AUTH_KEY(HttpStatus.INTERNAL_SERVER_ERROR, "DeepL 인증키가 유효하지 않습니다.", "DEEPL-001");
+	INVALID_DEEPL_AUTH_KEY(HttpStatus.INTERNAL_SERVER_ERROR, "DeepL 인증키가 유효하지 않습니다.", "DEEPL-001"),
+	INVALID_DEEPL_CONTENT(HttpStatus.BAD_REQUEST, "번역 요청 내용이 올바르지 않습니다.", "DEEPL-002");
 
 	private final HttpStatus httpStatus;
 	private final String message;

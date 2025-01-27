@@ -2,14 +2,15 @@ package com.cotato.kampus.global.error.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
-import com.cotato.kampus.global.error.exception.DeepLException;
 import com.cotato.kampus.global.error.exception.JwtException;
 import com.cotato.kampus.global.error.response.ErrorResponse;
+import com.deepl.api.DeepLException;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,12 +49,23 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(DeepLException.class)
-	public ResponseEntity<ErrorResponse> handleDeepLException(JwtException e,
+	public ResponseEntity<ErrorResponse> handleDeepLException(DeepLException e,
 		HttpServletRequest request) {
 		log.error("DeepL Exception 발생: {}", e.getMessage());
 		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
-		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode(), request);
-		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INVALID_DEEPL_AUTH_KEY, request);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(errorResponse);
+	}
+
+	// 요청 바디에 잘못된 문자가 포함되어 있는 경우 발생(ex: 한글 지웠을 때)
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<ErrorResponse> handleMessageNotReadableException(HttpMessageNotReadableException e,
+		HttpServletRequest request) {
+		log.error("HttpMessageNotReadable Exception 발생: {}", e.getMessage());
+		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
+		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.BAD_REQUEST, request);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 			.body(errorResponse);
 	}
 }

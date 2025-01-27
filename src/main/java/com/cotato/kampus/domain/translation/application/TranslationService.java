@@ -21,6 +21,7 @@ public class TranslationService {
 	private final PostTranslator postTranslator;
 	private final PostFinder postFinder;
 	private final ApiUserResolver apiUserResolver;
+	private final TranslationValidator translationValidator;
 
 	public TranslatedPost translatePost(Long postId) throws DeepLException, InterruptedException {
 		// 1. 게시글 조회
@@ -35,6 +36,11 @@ public class TranslationService {
 
 	public TranslatedPost translatePost(String title, String content, String targetLanguageCode) throws
 		DeepLException, InterruptedException {
+
+		// 1. 번역할 게시글 검증
+		translationValidator.validatePost(title, content);
+
+		// 2. 번역
 		return postTranslator.translatePost(title, content, targetLanguageCode);
 	}
 }
