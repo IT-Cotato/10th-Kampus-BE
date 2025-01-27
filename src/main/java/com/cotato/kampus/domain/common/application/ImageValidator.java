@@ -15,10 +15,6 @@ import lombok.RequiredArgsConstructor;
 public class ImageValidator {
 
 	public List<MultipartFile> filterValidImages(List<MultipartFile> images) {
-		if (images == null) {
-			return List.of(); // null인 경우 빈 리스트 반환
-		}
-
 		return images.stream()
 			.filter(image -> image != null && image.getOriginalFilename() != null && !image.getOriginalFilename().isEmpty())
 			.toList();

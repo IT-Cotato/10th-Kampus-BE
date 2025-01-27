@@ -21,6 +21,7 @@ import com.cotato.kampus.domain.post.dto.response.MyPostResponse;
 import com.cotato.kampus.domain.post.dto.response.PostCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDeleteResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDetailResponse;
+import com.cotato.kampus.domain.post.dto.response.PostDraftResponse;
 import com.cotato.kampus.domain.post.dto.response.PostSliceFindResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -40,7 +41,7 @@ public class PostController {
 	private final PostService postService;
 
 	@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "게시글 생성", description = "게시글 생성 요청입니다.")
+	@Operation(summary = "게시글 생성", description = "게시글 생성 요청입니다. 사진이 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
 	public ResponseEntity<DataResponse<PostCreateResponse>> createPost(
 		@Parameter(description = "Post creation request")
 		@ModelAttribute PostCreateRequest request) throws ImageException {
@@ -52,7 +53,26 @@ public class PostController {
 					request.content(),
 					request.postCategory(),
 					request.anonymity(),
-					request.images()
+					request.images() == null ? List.of() : request.images()
+				)
+			)
+		));
+	}
+
+	@PostMapping(value = "/draft", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@Operation(summary = "게시글 임시 저장", description = "게시글을 임시 저장합니다. boardId, anonymity(ANONYMOUS)는 필수 값입니다. 사진이 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
+	public ResponseEntity<DataResponse<PostDraftResponse>> draftPost(
+		@Parameter(description = "Post creation request")
+		@ModelAttribute PostCreateRequest request) throws ImageException {
+		return ResponseEntity.ok(DataResponse.from(
+			PostDraftResponse.of(
+				postService.draftPost(
+					request.boardId(),
+					request.title(),
+					request.content(),
+					request.postCategory(),
+					request.anonymity(),
+					request.images() == null ? List.of() : request.images()
 				)
 			)
 		));
