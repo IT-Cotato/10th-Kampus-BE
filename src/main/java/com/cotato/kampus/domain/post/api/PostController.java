@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.post.application.PostService;
 import com.cotato.kampus.domain.post.dto.request.PostCreateRequest;
+import com.cotato.kampus.domain.post.dto.request.PostDraftRequest;
 import com.cotato.kampus.domain.post.dto.request.PostUpdateRequest;
 import com.cotato.kampus.domain.post.dto.response.MyPostResponse;
 import com.cotato.kampus.domain.post.dto.response.PostCreateResponse;
@@ -29,6 +30,7 @@ import com.cotato.kampus.global.error.exception.ImageException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -59,11 +61,12 @@ public class PostController {
 		));
 	}
 
+
 	@PostMapping(value = "/draft", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "게시글 임시 저장", description = "게시글을 임시 저장합니다. boardId, anonymity(ANONYMOUS)는 필수 값입니다. 사진이 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
+	@Operation(summary = "게시글 임시 저장", description = "게시글을 임시 저장합니다. boardId는 필수 값입니다. 사진이 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
 	public ResponseEntity<DataResponse<PostDraftResponse>> draftPost(
 		@Parameter(description = "Post creation request")
-		@ModelAttribute PostCreateRequest request) throws ImageException {
+		@Valid @ModelAttribute PostDraftRequest request) throws ImageException {
 		return ResponseEntity.ok(DataResponse.from(
 			PostDraftResponse.of(
 				postService.draftPost(
@@ -71,7 +74,6 @@ public class PostController {
 					request.title(),
 					request.content(),
 					request.postCategory(),
-					request.anonymity(),
 					request.images() == null ? List.of() : request.images()
 				)
 			)

@@ -40,7 +40,6 @@ public class PostService {
 	private final ApiUserResolver apiUserResolver;
 	private final S3Uploader s3Uploader;
 
-	private final PostValidator postValidator;
 	private final ImageValidator imageValidator;
 	private final UserValidator userValidator;
 	private final PostScrapValidator postScrapValidator;
@@ -58,6 +57,7 @@ public class PostService {
 		Anonymity anonymity,
 		List<MultipartFile> images
 	) throws ImageException {
+
 		// 유효한 이미지만 필터링
 		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
 
@@ -65,9 +65,6 @@ public class PostService {
 		List<String> imageUrls = (validImages.isEmpty()) ?
 			List.of() :
 			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
-
-		// 필수값 검증
-		postValidator.validatePublishable(boardId, title, content, anonymity);
 
 		// 게시글 추가
 		Long postId = postAppender.append(boardId, title, content, postCategory, anonymity);
@@ -86,7 +83,6 @@ public class PostService {
 		String title,
 		String content,
 		PostCategory postCategory,
-		Anonymity anonymity,
 		List<MultipartFile> images
 	) throws ImageException {
 		// 유효한 이미지만 필터링
@@ -98,14 +94,14 @@ public class PostService {
 			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
 
 		// 임시 저장글 추가
-		Long postId = postAppender.draft(boardId, title, content, postCategory, anonymity);
+		Long postDraftId = postAppender.draft(boardId, title, content, postCategory);
 
 		// 임시 저장 이미지 추가
 		if (!imageUrls.isEmpty()) {
-			postImageAppender.appendAll(postId, imageUrls);
+			postImageAppender.appendAllDraftImage(postDraftId, imageUrls);
 		}
 
-		return postId;
+		return postDraftId;
 	}
 
 
