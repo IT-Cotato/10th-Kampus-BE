@@ -22,7 +22,8 @@ import com.cotato.kampus.domain.post.dto.response.MyPostResponse;
 import com.cotato.kampus.domain.post.dto.response.PostCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDeleteResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDetailResponse;
-import com.cotato.kampus.domain.post.dto.response.PostDraftResponse;
+import com.cotato.kampus.domain.post.dto.response.PostDraftSliceFindResponse;
+import com.cotato.kampus.domain.post.dto.response.PostDraftCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostSliceFindResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -55,25 +56,6 @@ public class PostController {
 					request.content(),
 					request.postCategory(),
 					request.anonymity(),
-					request.images() == null ? List.of() : request.images()
-				)
-			)
-		));
-	}
-
-
-	@PostMapping(value = "/draft", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "게시글 임시 저장", description = "게시글을 임시 저장합니다. boardId는 필수 값입니다. 사진이 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
-	public ResponseEntity<DataResponse<PostDraftResponse>> draftPost(
-		@Parameter(description = "Post creation request")
-		@Valid @ModelAttribute PostDraftRequest request) throws ImageException {
-		return ResponseEntity.ok(DataResponse.from(
-			PostDraftResponse.of(
-				postService.draftPost(
-					request.boardId(),
-					request.title(),
-					request.content(),
-					request.postCategory(),
 					request.images() == null ? List.of() : request.images()
 				)
 			)
@@ -130,7 +112,40 @@ public class PostController {
 		postService.updatePost(postId, request.title(), request.content(), request.postCategory(), request.anonymity(),
 			request.images() == null ? List.of() : request.images()); // 이미지 없는 경우 빈 리스트로 요청
 		return ResponseEntity.ok(DataResponse.ok());
-  }
+  	}
+
+	@PostMapping(value = "/draft", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@Operation(summary = "게시글 임시 저장", description = "게시글을 임시 저장합니다. boardId는 필수 값입니다. 사진이 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
+	public ResponseEntity<DataResponse<PostDraftCreateResponse>> draftPost(
+		@Parameter(description = "Post creation request")
+		@Valid @ModelAttribute PostDraftRequest request) throws ImageException {
+		return ResponseEntity.ok(DataResponse.from(
+			PostDraftCreateResponse.of(
+				postService.draftPost(
+					request.boardId(),
+					request.title(),
+					request.content(),
+					request.postCategory(),
+					request.images() == null ? List.of() : request.images()
+				)
+			)
+		));
+	}
+
+	@GetMapping(value = "/boards/{boardId}/draft")
+	@Operation(summary = "임시 저장글 리스트 조회", description = "해당 게시판의 임시 저장글을 최신순으로 조회합니다.")
+	public ResponseEntity<DataResponse<PostDraftSliceFindResponse>> draftPostBoard(
+		@PathVariable Long boardId,
+		@RequestParam(required = false, defaultValue = "0") int page
+	){
+			return ResponseEntity.ok(DataResponse.from(
+				PostDraftSliceFindResponse.from(
+					postService.findPostDrafts(boardId, page)
+				)
+			)
+		);
+	}
+
 
 	@GetMapping("/my")
 	@Operation(summary = "[마이페이지] 내가 쓴 게시글 조회", description = "현재 사용자가 작성한 게시글을 최신순으로 조회합니다.")

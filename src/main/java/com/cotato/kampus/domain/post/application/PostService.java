@@ -14,6 +14,7 @@ import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
+import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -78,34 +79,6 @@ public class PostService {
 	}
 
 	@Transactional
-	public Long draftPost(
-		Long boardId,
-		String title,
-		String content,
-		PostCategory postCategory,
-		List<MultipartFile> images
-	) throws ImageException {
-		// 유효한 이미지만 필터링
-		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
-
-		// s3에 이미지 업로드
-		List<String> imageUrls = (validImages.isEmpty()) ?
-			List.of() :
-			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
-
-		// 임시 저장글 추가
-		Long postDraftId = postAppender.draft(boardId, title, content, postCategory);
-
-		// 임시 저장 이미지 추가
-		if (!imageUrls.isEmpty()) {
-			postImageAppender.appendAllDraftImage(postDraftId, imageUrls);
-		}
-
-		return postDraftId;
-	}
-
-
-	@Transactional
 	public Long deletePost(Long postId) {
 		// 작성자 검증: 현재 사용자가 게시글 작성자인지 확인
 		Long userId = apiUserResolver.getUserId();
@@ -147,6 +120,41 @@ public class PostService {
 
 		// 3. Post Images 업데이트
 		postImageUpdater.updatePostImages(postId, images);
+	}
+
+	@Transactional
+	public Long draftPost(
+		Long boardId,
+		String title,
+		String content,
+		PostCategory postCategory,
+		List<MultipartFile> images
+	) throws ImageException {
+		// 유효한 이미지만 필터링
+		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
+
+		// s3에 이미지 업로드
+		List<String> imageUrls = (validImages.isEmpty()) ?
+			List.of() :
+			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
+
+		// 임시 저장글 추가
+		Long postDraftId = postAppender.draft(boardId, title, content, postCategory);
+
+		// 임시 저장 이미지 추가
+		if (!imageUrls.isEmpty()) {
+			postImageAppender.appendAllDraftImage(postDraftId, imageUrls);
+		}
+
+		return postDraftId;
+	}
+
+	@Transactional
+	public Slice<PostDraftWithPhoto> findPostDrafts(Long boardId, int page) {
+
+		Long userId = apiUserResolver.getUserId();
+
+		return postFinder.findPostDrafts(boardId, userId, page);
 	}
 
 	@Transactional

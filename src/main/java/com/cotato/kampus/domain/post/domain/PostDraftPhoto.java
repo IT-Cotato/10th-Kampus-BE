@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.post.domain;
 
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "post_draft_photo")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostDraftPhoto {
+public class PostDraftPhoto extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
