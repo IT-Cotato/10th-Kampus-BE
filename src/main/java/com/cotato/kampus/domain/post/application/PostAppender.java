@@ -39,10 +39,34 @@ public class PostAppender {
 			.content(content)
 			.likes(0L)
 			.scraps(0L)
+			.comments(0L)
 			.anonymity(anonymity)
 			.postStatus(PostStatus.PUBLISHED)
 			.postCategory(postCategory)
 			.nextAnonymousNumber(1L)
+			.build();
+
+		return postRepository.save(post).getId();
+	}
+
+	@Transactional
+	public Long draft(
+		Long boardId,
+		String title,
+		String content,
+		PostCategory postCategory,
+		Anonymity anonymity
+	){
+		Long userId = apiUserResolver.getUserId();
+
+		Post post = Post.builder()
+			.userId(userId)
+			.boardId(boardId)
+			.title(title)
+			.content(content)
+			.anonymity(anonymity)
+			.postStatus(PostStatus.DRAFT)
+			.postCategory(postCategory)
 			.build();
 
 		return postRepository.save(post).getId();
