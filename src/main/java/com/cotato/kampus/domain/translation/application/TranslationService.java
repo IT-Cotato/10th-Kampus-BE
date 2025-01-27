@@ -32,4 +32,9 @@ public class TranslationService {
 		// 3. 번역
 		return postTranslator.translatePost(post.title(), post.content(), preferredLanguage.getCode());
 	}
+
+	public TranslatedPost translatePost(String title, String content, String targetLanguageCode) throws
+		DeepLException, InterruptedException {
+		return postTranslator.translatePost(title, content, targetLanguageCode);
+	}
 }

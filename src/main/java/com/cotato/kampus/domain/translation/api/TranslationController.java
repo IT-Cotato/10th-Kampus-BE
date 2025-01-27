@@ -3,10 +3,12 @@ package com.cotato.kampus.domain.translation.api;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.translation.application.TranslationService;
+import com.cotato.kampus.domain.translation.dto.request.PostTranslationRequest;
 import com.cotato.kampus.domain.translation.dto.response.PostTranslationResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.deepl.api.DeepLException;
@@ -32,6 +34,19 @@ public class TranslationController {
 		return ResponseEntity.ok(DataResponse.from(
 				PostTranslationResponse.from(
 					translationService.translatePost(postId)
+				)
+			)
+		);
+	}
+
+	@PostMapping("")
+	@Operation(summary = "작성 게시글 번역", description = "작성중인 게시글을 번역합니다.")
+	public ResponseEntity<DataResponse<PostTranslationResponse>> translateWritingPost(@RequestBody PostTranslationRequest request) throws
+		DeepLException,
+		InterruptedException {
+		return ResponseEntity.ok(DataResponse.from(
+				PostTranslationResponse.from(
+					translationService.translatePost(request.title(), request.content(), request.targetLanguageCode())
 				)
 			)
 		);
