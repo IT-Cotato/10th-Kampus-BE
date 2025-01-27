@@ -35,23 +35,23 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "board_id", nullable = false)
 	private Long boardId;
 
-	@Column(name = "title", nullable = false)
+	@Column(name = "title")
 	private String title;
 
-	@Column(name = "content", nullable = false, columnDefinition = "text")
+	@Column(name = "content", columnDefinition = "text")
 	private String content;
 
-	@Column(name = "likes", nullable = false)
+	@Column(name = "likes")
 	private Long likes = 0L;
 
-	@Column(name = "scraps", nullable = false)
+	@Column(name = "scraps")
 	private Long scraps = 0L;
 
-	@Column(name = "comments", nullable = false)
+	@Column(name = "comments")
 	private Long comments = 0L;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "anonymity", nullable = false)
+	@Column(name = "anonymity")
 	private Anonymity anonymity;
 
 	@Enumerated(EnumType.STRING)
@@ -59,15 +59,15 @@ public class Post extends BaseTimeEntity {
 	private PostStatus postStatus;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "post_category", nullable = false)
+	@Column(name = "post_category")
 	private PostCategory postCategory;
 
-	@Column(name = "next_ananymous_number", nullable = false)
+	@Column(name = "next_ananymous_number")
 	private Long nextAnonymousNumber = 1L;
 
 	@Builder
 	public Post(Long userId, Long boardId, String title, String content,
-		Long likes, Long scraps, Anonymity anonymity,
+		Long likes, Long scraps, Long comments, Anonymity anonymity,
 		PostStatus postStatus, PostCategory postCategory, Long nextAnonymousNumber) {
 		this.userId = userId;
 		this.boardId = boardId;
@@ -75,6 +75,7 @@ public class Post extends BaseTimeEntity {
 		this.content = content;
 		this.likes = likes;
 		this.scraps = scraps;
+		this.comments = comments;
 		this.anonymity = anonymity;
 		this.postStatus = postStatus;
 		this.postCategory = postCategory;
