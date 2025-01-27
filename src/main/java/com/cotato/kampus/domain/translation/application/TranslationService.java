@@ -7,6 +7,7 @@ import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.application.PostFinder;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.translation.dto.TranslatedPost;
+import com.cotato.kampus.domain.translation.dto.TranslatedText;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.deepl.api.DeepLException;
 
@@ -36,11 +37,21 @@ public class TranslationService {
 
 	public TranslatedPost translatePost(String title, String content, String targetLanguageCode) throws
 		DeepLException, InterruptedException {
-
 		// 1. 번역할 게시글 검증
 		translationValidator.validatePost(title, content);
 
 		// 2. 번역
 		return postTranslator.translatePost(title, content, targetLanguageCode);
+	}
+
+	public TranslatedText translateText(String content) throws DeepLException, InterruptedException {
+		// 1. 번역할 텍스트 검증
+		translationValidator.validateText(content);
+
+		// 2. 사용자의 선호 언어 조회
+		PreferredLanguage preferredLanguage = apiUserResolver.getUser().getPreferredLanguage();
+
+		// 3. 번역
+		return postTranslator.translateText(content, preferredLanguage.getCode());
 	}
 }

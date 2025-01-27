@@ -22,4 +22,10 @@ public class TranslationValidator {
 			throw new AppException(ErrorCode.INVALID_DEEPL_CONTENT);
 		}
 	}
+
+	public void validateText(String content) {
+		if (content == null || content.isEmpty()) {
+			throw new AppException(ErrorCode.INVALID_DEEPL_CONTENT);
+		}
+	}
 }
