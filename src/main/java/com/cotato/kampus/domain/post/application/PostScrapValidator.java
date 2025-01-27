@@ -19,10 +19,9 @@ public class PostScrapValidator {
 	private final PostAuthorResolver postAuthorResolver;
 
 	public void validatePostScrap(Long postId, Long userId){
-		Long authorId = postAuthorResolver.getAuthorId(postId);
 
 		// 본인 게시글 또는 이미 스크랩한 게시글은 예외처리
-		if(userId.equals(authorId)){
+		if(postAuthorResolver.validatePostAuthor(postId, userId)){
 			throw new AppException(ErrorCode.POST_SCRAP_FORBIDDEN);
 		}
 
