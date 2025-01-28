@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
+import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.user.dao.UserRepository;
@@ -39,11 +40,5 @@ public class PostAuthorResolver {
 			return AnonymousOrPostAuthor.of(false, isAuthor, author.getId(), author.getUsername(),
 				author.getProfileImage());
 		}
-	}
-
-	public Boolean validatePostAuthor(Long postId, Long userId) {
-		PostDto post = postFinder.findPost(postId);
-
-		return post.userId().equals(userId);
 	}
 }

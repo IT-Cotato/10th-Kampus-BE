@@ -16,7 +16,6 @@ import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.enums.PostCategory;
-import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -42,10 +41,9 @@ public class PostService {
 	private final S3Uploader s3Uploader;
 
 	private final ImageValidator imageValidator;
-	private final UserValidator userValidator;
-	private final PostScrapValidator postScrapValidator;
 	private final PostLikeAppender postLikeAppender;
 	private final PostLikeValidator postLikeValidator;
+	private final PostValidator postValidator;
 
 	private static final String POST_IMAGE_FOLDER = "post";
 
@@ -82,7 +80,7 @@ public class PostService {
 	public Long deletePost(Long postId) {
 		// 작성자 검증: 현재 사용자가 게시글 작성자인지 확인
 		Long userId = apiUserResolver.getUserId();
-		userValidator.validatePostAuthor(postId, userId);
+		postValidator.validatePostOwner(postId, userId);
 
 		// 게시글 삭제
 		postDeleter.delete(postId);
@@ -113,7 +111,7 @@ public class PostService {
 		List<MultipartFile> images) throws ImageException {
 		// 1. Post Author 검증
 		Long userId = apiUserResolver.getUserId();
-		userValidator.validatePostAuthor(postId, userId);
+		postValidator.validatePostOwner(postId, userId);
 
 		// 2. Post 업데이트
 		postUpdater.updatePost(postId, title, content, postCategory, anonymity);
@@ -178,9 +176,11 @@ public class PostService {
 
 	@Transactional
 	public void scrapPost(Long postId){
-		// 스크랩 가능 여부 검증
+		// 유저 조회
 		Long userId = apiUserResolver.getUserId();
-		postScrapValidator.validatePostScrap(postId, userId);
+
+		// 스크랩 가능 여부 검증
+		postValidator.validatePostScrap(postId, userId);
 
 		// 게시글 스크랩 수 추가
 		postUpdater.increaseScraps(postId);
