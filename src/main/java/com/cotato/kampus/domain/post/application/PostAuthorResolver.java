@@ -40,4 +40,10 @@ public class PostAuthorResolver {
 				author.getProfileImage());
 		}
 	}
+
+	public Boolean validatePostAuthor(Long postId, Long userId) {
+		PostDto post = postFinder.findPost(postId);
+
+		return post.userId().equals(userId);
+	}
 }
