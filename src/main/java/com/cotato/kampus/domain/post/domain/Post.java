@@ -35,23 +35,23 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "board_id", nullable = false)
 	private Long boardId;
 
-	@Column(name = "title")
+	@Column(name = "title", nullable = false)
 	private String title;
 
-	@Column(name = "content", columnDefinition = "text")
+	@Column(name = "content", nullable = false, columnDefinition = "text")
 	private String content;
 
-	@Column(name = "likes")
+	@Column(name = "likes", nullable = false)
 	private Long likes = 0L;
 
-	@Column(name = "scraps")
+	@Column(name = "scraps", nullable = false)
 	private Long scraps = 0L;
 
-	@Column(name = "comments")
+	@Column(name = "comments", nullable = false)
 	private Long comments = 0L;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "anonymity")
+	@Column(name = "anonymity", nullable = false)
 	private Anonymity anonymity;
 
 	@Enumerated(EnumType.STRING)
@@ -59,10 +59,10 @@ public class Post extends BaseTimeEntity {
 	private PostStatus postStatus;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "post_category")
+	@Column(name = "post_category", nullable = false)
 	private PostCategory postCategory;
 
-	@Column(name = "next_ananymous_number")
+	@Column(name = "next_ananymous_number", nullable = false)
 	private Long nextAnonymousNumber = 1L;
 
 	@Builder
