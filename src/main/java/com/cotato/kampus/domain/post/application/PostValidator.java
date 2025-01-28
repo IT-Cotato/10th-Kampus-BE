@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.post.dao.PostScrapRepository;
 import com.cotato.kampus.domain.post.domain.Post;
+import com.cotato.kampus.domain.post.domain.PostDraft;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -28,7 +29,6 @@ public class PostValidator {
 		}
 	}
 
-	// 스크랩, 좋아요
 	public void validatePostScrap(Long postId, Long userId){
 		// Post 조회
 		Post post = postFinder.getPost(postId);
@@ -42,7 +42,6 @@ public class PostValidator {
 		}
 	}
 
-
 	public void validateNotPostOwner(Post post, Long userId){
 
 		if(post.getUserId().equals(userId)){
@@ -50,5 +49,17 @@ public class PostValidator {
 		}
 	}
 
+	public void validateDraftPostDelete(Long draftPostId, Long userId){
+		// 임시저장 게시글 조회
+		PostDraft postDraft = postFinder.findPostDraft(draftPostId);
 
+		// 작성자인지 검증
+		validatePostDraftOwner(postDraft, userId);
+	}
+
+	public void validatePostDraftOwner(PostDraft postDraft, Long userId){
+		if(postDraft.getUserId().equals(userId)){
+			throw new AppException(ErrorCode.POST_NOT_AUTHOR);
+		}
+	}
 }

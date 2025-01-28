@@ -148,6 +148,16 @@ public class PostService {
 	}
 
 	@Transactional
+	public void deleteDraftPost(Long draftPostId){
+		// 유저 조회
+		Long userId = apiUserResolver.getUserId();
+
+		postValidator.validateDraftPostDelete(draftPostId, userId);
+		postDeleter.deleteDraft(draftPostId);
+
+	}
+
+	@Transactional
 	public Slice<PostDraftWithPhoto> findPostDrafts(Long boardId, int page) {
 
 		Long userId = apiUserResolver.getUserId();

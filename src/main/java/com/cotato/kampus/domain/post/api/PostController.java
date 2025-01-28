@@ -134,7 +134,7 @@ public class PostController {
 
 	@GetMapping(value = "/boards/{boardId}/draft")
 	@Operation(summary = "임시 저장글 리스트 조회", description = "해당 게시판의 임시 저장글을 최신순으로 조회합니다.")
-	public ResponseEntity<DataResponse<PostDraftSliceFindResponse>> draftPostBoard(
+	public ResponseEntity<DataResponse<PostDraftSliceFindResponse>> findDraftPost(
 		@PathVariable Long boardId,
 		@RequestParam(required = false, defaultValue = "0") int page
 	){
@@ -146,6 +146,14 @@ public class PostController {
 		);
 	}
 
+	@DeleteMapping(value = "/draft/{draftPostId}")
+	@Operation(summary = "임시 저장 게시글 삭제", description = "임시 저장글을 삭제합니다.")
+	public ResponseEntity<DataResponse<Void>> deleteDraftPost(
+		@PathVariable Long draftPostId
+	){
+		postService.deleteDraftPost(draftPostId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
 
 	@GetMapping("/my")
 	@Operation(summary = "[마이페이지] 내가 쓴 게시글 조회", description = "현재 사용자가 작성한 게시글을 최신순으로 조회합니다.")
