@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.auth.applicaon;
+package com.cotato.kampus.domain.auth.application;
 
 import java.util.Date;
 import java.util.HashMap;
