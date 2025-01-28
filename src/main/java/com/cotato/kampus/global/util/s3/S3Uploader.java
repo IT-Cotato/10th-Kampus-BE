@@ -66,6 +66,22 @@ public class S3Uploader {
 			.key(key)
 			.build());
 	}
+	public void deleteFiles(List<String> imageUrls){
+		for(String imageUrl : imageUrls){
+			String key = extractKeyFromUrl(imageUrl);
+			log.info("{} 삭제 중", key);
+
+			s3Client.deleteObject(DeleteObjectRequest.builder()
+				.bucket(bucket)
+				.key(key)
+				.build());
+		}
+	}
+
+	private String extractKeyFromUrl(String imageUrl) {
+		// URL에서 버킷 이름과 도메인을 제거하고 Key 부분만 반환
+		return imageUrl.replace(String.format("https://%s.s3.%s.amazonaws.com/", bucket, REGION), "");
+	}
 
 	private String putS3(File uploadFile, String fileName) {
 		try {

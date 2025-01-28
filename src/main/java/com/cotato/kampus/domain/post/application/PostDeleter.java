@@ -28,9 +28,9 @@ public class PostDeleter {
 		postRepository.delete(post);
 	}
 
-	public void deleteDraftAll(List<Long> draftPostIds){
+	public void deleteDraftAll(List<Long> postDraftIds){
 		// 임시 저장글 조회
-		List<PostDraft> drafts = postFinder.findPostDrafts(draftPostIds);
+		List<PostDraft> drafts = postFinder.findPostDrafts(postDraftIds);
 
 		// 일괄 삭제
 		postDraftRepository.deleteAll(drafts);

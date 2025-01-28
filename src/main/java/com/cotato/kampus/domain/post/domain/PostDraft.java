@@ -51,6 +51,4 @@ public class PostDraft extends BaseTimeEntity {
 		this.content = content;
 		this.postCategory = postCategory;
 	}
-
-
 }

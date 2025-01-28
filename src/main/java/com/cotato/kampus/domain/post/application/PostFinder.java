@@ -142,4 +142,12 @@ public class PostFinder {
 
 		return drafts;
 	}
+
+	public List<Long> getPostDraftIdsByBoardAndUser(Long boardId, Long userId){
+		List<PostDraft> postDrafts = postDraftRepository.findAllByBoardIdAndUserId(boardId, userId);
+
+		return postDrafts.stream()
+			.map(PostDraft::getId)
+			.toList();
+	}
 }

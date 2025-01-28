@@ -34,6 +34,7 @@ public class PostService {
 	private final PostImageAppender postImageAppender;
 	private final PostImageFinder postImageFinder;
 	private final PostImageUpdater postImageUpdater;
+	private final PostImageDeleter postImageDeleter;
 
 	private final PostScrapUpdater postScrapUpdater;
 	private final PostAuthorResolver postAuthorResolver;
@@ -160,17 +161,24 @@ public class PostService {
 
 	}
 
-	// @Transactional
-	// public void deleteAllDraftPost(Long boardId){
-	// 	// 유저 조회
-	// 	Long userId = apiUserResolver.getUserId();
-	//
-	// 	// 작성자 검증
-	// 	postValidator.validateDraftPostDelete(draftPostId, userId);
-	//
-	// 	// 삭제
-	// 	postDeleter.deleteDraft(draftPostId);
-	// }
+	@Transactional
+	public void deleteAllDraftPost(Long boardId){
+		// 유저 조회
+		Long userId = apiUserResolver.getUserId();
+
+		// 임시 저장 게시글 조회
+		List<Long> postDraftIds = postFinder.getPostDraftIdsByBoardAndUser(boardId, userId);
+		List<String> imageUrls = postImageFinder.findAllDraftPhotos(postDraftIds);
+
+		// S3에서 이미지 삭제
+		s3Uploader.deleteFiles(imageUrls);
+
+		// PostDraftPhoto 삭제
+		postImageDeleter.deleteAll(imageUrls);
+
+		// 임시저장 글 삭제
+		postDeleter.deleteDraftAll(postDraftIds);
+	}
 
 	@Transactional
 	public Slice<PostDraftWithPhoto> findPostDrafts(Long boardId, int page) {
