@@ -13,14 +13,15 @@ public class AuthService {
 	private final UserAppender userAppender;
 
 	public Long signup(String email, String uniqueId, String providerId, String username,
-		String nickname, String nationality) {
+		String nickname, String nationality, String languageCode) {
 		return userAppender.appendUser(
 			email,
 			uniqueId,
 			providerId,
 			username,
 			nickname,
-			nationality
+			nationality,
+			languageCode
 		);
 	}
 }

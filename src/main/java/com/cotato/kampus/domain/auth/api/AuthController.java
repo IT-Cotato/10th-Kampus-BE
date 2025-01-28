@@ -34,7 +34,7 @@ public class AuthController {
 		@RequestBody SignupRequest request) {
 		return ResponseEntity.ok(DataResponse.from(SignupResponse.of(
 			authService.signup(request.email(), request.uniqueId(), request.providerId(), request.username(),
-				request.nickname(), request.nationality()))));
+				request.nickname(), request.nationality(), request.languageCode()))));
 	}
 
 	@Operation(summary = "서버 헬스 체크", description = "서버 헬스 체크")

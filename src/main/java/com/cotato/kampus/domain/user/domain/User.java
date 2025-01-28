@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.user.domain;
 
 import com.cotato.kampus.domain.user.enums.Nationality;
+import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.domain.user.enums.UserRole;
 
 import jakarta.persistence.Column;
@@ -52,15 +53,17 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	private Nationality nationality;
 
+	@Column(name = "preferred_language", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private PreferredLanguage preferredLanguage = PreferredLanguage.ENGLISH_AMERICAN;
+
 	@Column(name = "user_role", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private UserRole userRole = UserRole.UNVERIFIED;
 
 	@Builder
-	public User(String email, String uniqueId, String providerId, String username, String nickname,
-		Long universityId,
-		Nationality nationality,
-		UserRole userRole) {
+	public User(String email, String uniqueId, String providerId, String username, String nickname, Long universityId,
+		Nationality nationality, PreferredLanguage preferredLanguage, UserRole userRole) {
 		this.email = email;
 		this.uniqueId = uniqueId;
 		this.providerId = providerId;
@@ -68,6 +71,7 @@ public class User {
 		this.nickname = nickname;
 		this.universityId = universityId;
 		this.nationality = nationality;
+		this.preferredLanguage = preferredLanguage;
 		this.userRole = userRole;
 	}
 

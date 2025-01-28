@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.user.dao.UserRepository;
 import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.domain.user.enums.Nationality;
+import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.domain.user.enums.UserRole;
 
 import lombok.AccessLevel;
@@ -22,7 +23,7 @@ public class UserAppender {
 
 	@Transactional
 	public Long appendUser(String email, String uniqueId, String providerId, String username,
-		String nickname, String nationality) {
+		String nickname, String nationality, String languageCode) {
 		User user = User.builder()
 			.username(username)
 			.uniqueId(uniqueId)
@@ -30,6 +31,7 @@ public class UserAppender {
 			.email(email)
 			.nickname(nickname)
 			.nationality(Nationality.valueOf(nationality))
+			.preferredLanguage(PreferredLanguage.fromCode(languageCode))
 			.userRole(UserRole.UNVERIFIED)
 			.build();
 		log.info("user uniqueId: {}", user.getUniqueId());
