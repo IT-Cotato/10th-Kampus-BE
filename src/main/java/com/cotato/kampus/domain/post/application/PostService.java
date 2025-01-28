@@ -156,6 +156,15 @@ public class PostService {
 		// 작성자 검증
 		draftPostIds.forEach(draftPostId -> postValidator.validateDraftPostDelete(draftPostId, userId));
 
+		// 이미지 조회
+		List<String> imageUrls = postImageFinder.findAllDraftPhotos(draftPostIds);
+
+		// S3에서 이미지 삭제
+		s3Uploader.deleteFiles(imageUrls);
+
+		// PostDraftPhoto 삭제
+		postImageDeleter.deleteAll(imageUrls);
+
 		// 삭제 처리
 		postDeleter.deleteDraftAll(draftPostIds);
 
@@ -167,8 +176,8 @@ public class PostService {
 		Long userId = apiUserResolver.getUserId();
 
 		// 임시 저장 게시글 조회
-		List<Long> postDraftIds = postFinder.getPostDraftIdsByBoardAndUser(boardId, userId);
-		List<String> imageUrls = postImageFinder.findAllDraftPhotos(postDraftIds);
+		List<Long> draftPostIds = postFinder.getPostDraftIdsByBoardAndUser(boardId, userId);
+		List<String> imageUrls = postImageFinder.findAllDraftPhotos(draftPostIds);
 
 		// S3에서 이미지 삭제
 		s3Uploader.deleteFiles(imageUrls);
@@ -177,7 +186,7 @@ public class PostService {
 		postImageDeleter.deleteAll(imageUrls);
 
 		// 임시저장 글 삭제
-		postDeleter.deleteDraftAll(postDraftIds);
+		postDeleter.deleteDraftAll(draftPostIds);
 	}
 
 	@Transactional
