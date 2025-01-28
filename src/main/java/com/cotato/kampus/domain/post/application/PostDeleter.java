@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.post.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -7,6 +9,8 @@ import com.cotato.kampus.domain.post.dao.PostDraftRepository;
 import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostDraft;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +28,11 @@ public class PostDeleter {
 		postRepository.delete(post);
 	}
 
-	public void deleteDraft(Long postDraftId){
-		PostDraft postDraft = postFinder.findPostDraft(postDraftId);
-		postDraftRepository.delete(postDraft);
+	public void deleteDraftAll(List<Long> draftPostIds){
+		// 임시 저장글 조회
+		List<PostDraft> drafts = postFinder.findPostDrafts(draftPostIds);
+
+		// 일괄 삭제
+		postDraftRepository.deleteAll(drafts);
 	}
 }

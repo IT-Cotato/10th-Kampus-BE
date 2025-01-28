@@ -58,7 +58,7 @@ public class PostValidator {
 	}
 
 	public void validatePostDraftOwner(PostDraft postDraft, Long userId){
-		if(postDraft.getUserId().equals(userId)){
+		if(!postDraft.getUserId().equals(userId)){
 			throw new AppException(ErrorCode.POST_NOT_AUTHOR);
 		}
 	}

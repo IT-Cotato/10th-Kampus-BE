@@ -148,14 +148,29 @@ public class PostService {
 	}
 
 	@Transactional
-	public void deleteDraftPost(Long draftPostId){
+	public void deleteDraftPosts(List<Long> draftPostIds){
 		// 유저 조회
 		Long userId = apiUserResolver.getUserId();
 
-		postValidator.validateDraftPostDelete(draftPostId, userId);
-		postDeleter.deleteDraft(draftPostId);
+		// 작성자 검증
+		draftPostIds.forEach(draftPostId -> postValidator.validateDraftPostDelete(draftPostId, userId));
+
+		// 삭제 처리
+		postDeleter.deleteDraftAll(draftPostIds);
 
 	}
+
+	// @Transactional
+	// public void deleteAllDraftPost(Long boardId){
+	// 	// 유저 조회
+	// 	Long userId = apiUserResolver.getUserId();
+	//
+	// 	// 작성자 검증
+	// 	postValidator.validateDraftPostDelete(draftPostId, userId);
+	//
+	// 	// 삭제
+	// 	postDeleter.deleteDraft(draftPostId);
+	// }
 
 	@Transactional
 	public Slice<PostDraftWithPhoto> findPostDrafts(Long boardId, int page) {

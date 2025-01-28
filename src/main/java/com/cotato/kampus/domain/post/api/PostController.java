@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -146,14 +147,24 @@ public class PostController {
 		);
 	}
 
-	@DeleteMapping(value = "/draft/{draftPostId}")
-	@Operation(summary = "임시 저장 게시글 삭제", description = "임시 저장글을 삭제합니다.")
+	@DeleteMapping(value = "/draft")
+	@Operation(summary = "임시 저장 게시글 선택 삭제", description = "선택된 임시 저장글들을 삭제합니다.")
 	public ResponseEntity<DataResponse<Void>> deleteDraftPost(
-		@PathVariable Long draftPostId
+		@RequestBody List<Long> draftPostIds
 	){
-		postService.deleteDraftPost(draftPostId);
+		postService.deleteDraftPosts(draftPostIds);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
+
+	//
+	// @DeleteMapping(value = "board/{boardId}/draft")
+	// @Operation(summary = "임시 저장 게시글 전체 삭제", description = "특정 게시판의 모든 임시 저장글을 삭제합니다.")
+	// public ResponseEntity<DataResponse<Void>> deleteAllDraftPost(
+	// 	@PathVariable Long boardId
+	// ){
+	// 	postService.deleteDraftPost(boardId);
+	// 	return ResponseEntity.ok(DataResponse.ok());
+	// }
 
 	@GetMapping("/my")
 	@Operation(summary = "[마이페이지] 내가 쓴 게시글 조회", description = "현재 사용자가 작성한 게시글을 최신순으로 조회합니다.")

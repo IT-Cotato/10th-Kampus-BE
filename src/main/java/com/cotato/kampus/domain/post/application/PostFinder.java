@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.post.application;
 
+import java.util.List;
+
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -129,5 +131,15 @@ public class PostFinder {
 	public PostDraft findPostDraft(Long postDraftId) {
 		return postDraftRepository.findById(postDraftId)
 			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+	}
+
+	public List<PostDraft> findPostDrafts(List<Long> postDraftIds){
+		List<PostDraft> drafts = postDraftRepository.findAllById(postDraftIds);
+
+		if (drafts.size() != postDraftIds.size()) {
+			throw new AppException(ErrorCode.POST_NOT_FOUND);
+		}
+
+		return drafts;
 	}
 }
