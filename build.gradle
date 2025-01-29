@@ -49,6 +49,13 @@ dependencies {
 
 	// Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.1'
+
+	// WebSocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket:3.4.1'
+	implementation 'org.springframework.security:spring-security-messaging'
+
+	// DeepL(Translation)
+	implementation 'com.deepl.api:deepl-java:1.7.0'
 }
 
 tasks.named('test') {
