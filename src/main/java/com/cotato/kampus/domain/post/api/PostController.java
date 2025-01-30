@@ -112,7 +112,7 @@ public class PostController {
 		@ModelAttribute PostUpdateRequest request
 	) throws ImageException {
 		postService.updatePost(postId, request.title(), request.content(), request.postCategory(),
-			request.images() == null ? List.of() : request.images()); // 이미지 없는 경우 빈 리스트로 요청
+			request.newImages() == null ? List.of() : request.newImages()); // 이미지 없는 경우 빈 리스트로 요청
 		return ResponseEntity.ok(DataResponse.ok());
   	}
 
@@ -174,7 +174,7 @@ public class PostController {
 						request.content(),
 						request.postCategory(),
 						request.deletedImageUrls() == null ? List.of() : request.deletedImageUrls(),
-						request.images() == null ? List.of() : request.images());
+						request.newImages() == null ? List.of() : request.newImages());
 
 		// 임시 저장글 삭제
 		postService.deleteDraftPosts(List.of(postDraftId));

@@ -14,7 +14,7 @@ public record PostUpdateRequest(
 	@NotNull
 	String content,
 	PostCategory postCategory,
-	List<MultipartFile> images,
+	List<MultipartFile> newImages,
 	List<String> deletedImageUrls
 ) {
 }
