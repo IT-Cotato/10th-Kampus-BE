@@ -8,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
-import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
 import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
@@ -56,9 +55,11 @@ public class PostService {
 		String title,
 		String content,
 		PostCategory postCategory,
-		Anonymity anonymity,
 		List<MultipartFile> images
 	) throws ImageException {
+
+		// 유저 조회
+		Long userId = apiUserResolver.getUserId();
 
 		// 유효한 이미지만 필터링
 		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
@@ -69,7 +70,7 @@ public class PostService {
 			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
 
 		// 게시글 추가
-		Long postId = postAppender.append(boardId, title, content, postCategory, anonymity);
+		Long postId = postAppender.append(userId, boardId, title, content, postCategory);
 
 		// 게시글 이미지 추가
 		if (!imageUrls.isEmpty()) {
@@ -110,14 +111,14 @@ public class PostService {
 	}
 
 	@Transactional
-	public void updatePost(Long postId, String title, String content, PostCategory postCategory, Anonymity anonymity,
+	public void updatePost(Long postId, String title, String content, PostCategory postCategory,
 		List<MultipartFile> images) throws ImageException {
 		// 1. Post Author 검증
 		Long userId = apiUserResolver.getUserId();
 		postValidator.validatePostOwner(postId, userId);
 
 		// 2. Post 업데이트
-		postUpdater.updatePost(postId, title, content, postCategory, anonymity);
+		postUpdater.updatePost(postId, title, content, postCategory);
 
 		// 3. Post Images 업데이트
 		postImageUpdater.updatePostImages(postId, images);
@@ -151,15 +152,15 @@ public class PostService {
 	}
 
 	@Transactional
-	public void deleteDraftPosts(List<Long> draftPostIds){
+	public void deleteDraftPosts(List<Long> postDraftIds){
 		// 유저 조회
 		Long userId = apiUserResolver.getUserId();
 
 		// 작성자 검증
-		draftPostIds.forEach(draftPostId -> postValidator.validateDraftPostDelete(draftPostId, userId));
+		postDraftIds.forEach(postDraftId -> postValidator.validateDraftPostDelete(postDraftId, userId));
 
 		// 이미지 조회
-		List<String> imageUrls = postImageFinder.findAllDraftPhotos(draftPostIds);
+		List<String> imageUrls = postImageFinder.findAllDraftPhotos(postDraftIds);
 
 		// S3에서 이미지 삭제
 		s3Uploader.deleteFiles(imageUrls);
@@ -168,7 +169,7 @@ public class PostService {
 		postImageDeleter.deleteAll(imageUrls);
 
 		// 삭제 처리
-		postDeleter.deleteDraftAll(draftPostIds);
+		postDeleter.deleteDraftAll(postDraftIds);
 
 	}
 
@@ -200,13 +201,54 @@ public class PostService {
 	}
 
 	@Transactional
-	public PostDraftDetails findDraftDetail(Long draftId){
+	public PostDraftDetails findDraftDetail(Long postDraftId){
 
-		PostDraftDto postDraftDto = postFinder.findPostDraftDto(draftId);
+		PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
 
-		List<String> postDraftPhotos = postImageFinder.findAllDraftPhotos(draftId);
+		List<String> postDraftPhotos = postImageFinder.findAllDraftPhotos(postDraftId);
 
 		return PostDraftDetails.of(postDraftDto, postDraftPhotos);
+	}
+
+	@Transactional
+	public Long publishDraftPost(
+		Long postDraftId,
+		String title,
+		String content,
+		PostCategory postCategory,
+		List<String> deletedImageUrls,
+		List<MultipartFile> newImages) throws ImageException {
+
+		// 1. 유저 조회
+		Long userId = apiUserResolver.getUserId();
+
+		// 2. 임시 저장 게시글 정보 조회
+		PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
+
+		// 3. 기존 임시 저장 이미지 URL 목록 조회
+		List<String> existingImageUrls = postImageFinder.findAllDraftPhotos(postDraftId);
+
+		// 4. 게시글 생성 (임시 저장된 게시글에서 필요한 정보로 새로운 게시글을 생성)
+		Long postId = postAppender.append(userId, postDraftDto.boardId(), title, content, postCategory);
+
+		// 5. 새로 추가된 이미지가 있다면 유효성 검증 후 S3에 업로드
+		List<MultipartFile> validImages = imageValidator.filterValidImages(newImages);
+		List<String> newImageUrls = (validImages.isEmpty()) ?
+			List.of() :
+			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
+
+		// 6. 삭제할 이미지가 유효한지 검증
+		imageValidator.validateDeletableImages(existingImageUrls, deletedImageUrls);
+
+		// 7. 기존 이미지에서 삭제할 이미지 제외하고, 새로 추가된 이미지 합쳐서 최종 이미지 리스트 생성
+		List<String> finalImages = postImageUpdater.getUpdateImageUrls(existingImageUrls, deletedImageUrls, newImageUrls);
+
+		// 8. 최종 이미지가 있으면 게시글에 이미지 추가
+		if (!finalImages.isEmpty()) {
+			postImageAppender.appendAll(postId, finalImages);
+		}
+
+		return postId;
 	}
 
 	@Transactional

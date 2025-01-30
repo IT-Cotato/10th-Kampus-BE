@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.post.application;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -39,5 +40,18 @@ public class PostImageUpdater {
 
 			postPhotoRepository.saveAll(postPhotos);
 		}
+	}
+
+	public List<String> getUpdateImageUrls(List<String> originalImageUrls, List<String> imageUrlsToDelete, List<String> newImageUrls){
+
+		List<String> remainingImages = originalImageUrls.stream()
+			.filter(image -> !imageUrlsToDelete.contains(image))
+			.toList();
+
+		List<String> finalImages = new ArrayList<>();
+		finalImages.addAll(remainingImages);
+		finalImages.addAll(newImageUrls);
+
+		return finalImages;
 	}
 }

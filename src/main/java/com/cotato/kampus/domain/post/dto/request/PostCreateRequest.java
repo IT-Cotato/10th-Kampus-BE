@@ -12,7 +12,6 @@ public record PostCreateRequest(
 	String title,
 	String content,
 	PostCategory postCategory,
-	Anonymity anonymity,
 	List<MultipartFile> images
 ) {
 }

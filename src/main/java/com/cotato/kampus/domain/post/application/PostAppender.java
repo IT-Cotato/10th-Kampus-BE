@@ -26,15 +26,12 @@ public class PostAppender {
 
 	@Transactional
 	public Long append(
+		Long userId,
 		Long boardId,
 		String title,
 		String content,
-		PostCategory postCategory,
-		Anonymity anonymity
+		PostCategory postCategory
 	){
-
-		Long userId = apiUserResolver.getUserId();
-
 		Post post = Post.builder()
 			.userId(userId)
 			.boardId(boardId)
@@ -43,7 +40,7 @@ public class PostAppender {
 			.likes(0L)
 			.scraps(0L)
 			.comments(0L)
-			.anonymity(anonymity)
+			.anonymity(Anonymity.ANONYMOUS)
 			.postStatus(PostStatus.PUBLISHED)
 			.postCategory(postCategory)
 			.nextAnonymousNumber(1L)
