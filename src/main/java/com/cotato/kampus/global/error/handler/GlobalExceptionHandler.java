@@ -3,6 +3,7 @@ package com.cotato.kampus.global.error.handler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -67,5 +68,17 @@ public class GlobalExceptionHandler {
 		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.BAD_REQUEST, request);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 			.body(errorResponse);
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e,
+		HttpServletRequest request) {
+		String errorMessage = e.getBindingResult().getFieldErrors().stream()
+			.findFirst()
+			.map(error -> error.getField() + ": " + error.getDefaultMessage())
+			.orElse("잘못된 요청입니다.");
+
+		ErrorResponse errorResponse = ErrorResponse.of(request, ErrorCode.INVALID_PARAMETER, errorMessage);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 }

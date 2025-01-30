@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.domain.user.enums.Nationality;
+import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.domain.user.enums.UserRole;
 
 import lombok.Builder;
@@ -69,6 +70,7 @@ public class OAuth2Attribute {
 			.username(username)
 			.nickname("nickname")
 			.nationality(Nationality.OTHER)
+			.preferredLanguage(PreferredLanguage.ENGLISH_AMERICAN)
 			.userRole(UserRole.UNVERIFIED)
 			.build();
 	}
