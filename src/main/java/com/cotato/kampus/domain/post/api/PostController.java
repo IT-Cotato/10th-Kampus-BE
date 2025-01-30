@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.post.application.PostService;
+import com.cotato.kampus.domain.post.dto.request.DraftDeleteRequest;
 import com.cotato.kampus.domain.post.dto.request.PostCreateRequest;
 import com.cotato.kampus.domain.post.dto.request.PostDraftRequest;
 import com.cotato.kampus.domain.post.dto.request.PostUpdateRequest;
@@ -150,9 +151,9 @@ public class PostController {
 	@DeleteMapping(value = "/draft")
 	@Operation(summary = "임시 저장 게시글 선택 삭제", description = "선택된 임시 저장글들을 삭제합니다.")
 	public ResponseEntity<DataResponse<Void>> deleteDraftPost(
-		@RequestBody List<Long> draftPostIds
+		@RequestBody DraftDeleteRequest request
 	){
-		postService.deleteDraftPosts(draftPostIds);
+		postService.deleteDraftPosts(request.draftPostIds());
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
