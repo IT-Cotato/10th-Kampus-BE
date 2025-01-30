@@ -33,4 +33,11 @@ public class PostImageFinder {
 			.map(PostDraftPhoto::getPhotoUrl)
 			.toList();
 	}
+
+	public List<String> findAllDraftPhotos(Long postDraftId){
+		return postDraftPhotoRepository.findAllByPostDraftId(postDraftId)
+			.stream()
+			.map(PostDraftPhoto::getPhotoUrl)
+			.toList();
+	}
 }

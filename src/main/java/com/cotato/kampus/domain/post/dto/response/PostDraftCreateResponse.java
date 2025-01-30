@@ -1,7 +1,7 @@
 package com.cotato.kampus.domain.post.dto.response;
 
-public record PostDraftCreateResponse(Long postId) {
-	public static PostDraftCreateResponse of(Long id) {
-		return new PostDraftCreateResponse(id);
+public record PostDraftCreateResponse(Long postDraftId) {
+	public static PostDraftCreateResponse of(Long postDraftId) {
+		return new PostDraftCreateResponse(postDraftId);
 	}
 }

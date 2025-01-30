@@ -24,6 +24,7 @@ import com.cotato.kampus.domain.post.dto.response.MyPostResponse;
 import com.cotato.kampus.domain.post.dto.response.PostCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDeleteResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDetailResponse;
+import com.cotato.kampus.domain.post.dto.response.PostDraftDetailResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftSliceFindResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostSliceFindResponse;
@@ -57,9 +58,9 @@ public class PostController {
 					request.title(),
 					request.content(),
 					request.postCategory(),
-					request.anonymity(),
 					request.images() == null ? List.of() : request.images()
 				)
+
 			)
 		));
 	}
@@ -111,8 +112,8 @@ public class PostController {
 		@PathVariable Long postId,
 		@ModelAttribute PostUpdateRequest request
 	) throws ImageException {
-		postService.updatePost(postId, request.title(), request.content(), request.postCategory(), request.anonymity(),
-			request.images() == null ? List.of() : request.images()); // 이미지 없는 경우 빈 리스트로 요청
+		postService.updatePost(postId, request.title(), request.content(), request.postCategory(),
+			request.newImages() == null ? List.of() : request.newImages()); // 이미지 없는 경우 빈 리스트로 요청
 		return ResponseEntity.ok(DataResponse.ok());
   	}
 
@@ -136,7 +137,7 @@ public class PostController {
 
 	@GetMapping(value = "/boards/{boardId}/draft")
 	@Operation(summary = "임시 저장글 리스트 조회", description = "해당 게시판의 임시 저장글을 최신순으로 조회합니다.")
-	public ResponseEntity<DataResponse<PostDraftSliceFindResponse>> findDraftPost(
+	public ResponseEntity<DataResponse<PostDraftSliceFindResponse>> findDraftPostList(
 		@PathVariable Long boardId,
 		@RequestParam(required = false, defaultValue = "0") int page
 	){
@@ -144,6 +145,43 @@ public class PostController {
 				PostDraftSliceFindResponse.from(
 					postService.findPostDrafts(boardId, page)
 				)
+			)
+		);
+	}
+
+	@GetMapping(value = "/draft/{postDraftId}")
+	@Operation(summary = "임시 저장 게시글 조회", description = "특정 임시 저장글을 조회합니다.")
+	public ResponseEntity<DataResponse<PostDraftDetailResponse>> findDraftPost(
+		@PathVariable Long postDraftId
+	){
+			return ResponseEntity.ok(DataResponse.from(
+				PostDraftDetailResponse.from(
+					postService.findDraftDetail(postDraftId)
+				)
+			)
+		);
+	}
+
+	@PostMapping(value = "/draft/{postDraftId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@Operation(summary = "임시 저장글 수정 발행")
+	public ResponseEntity<DataResponse<PostCreateResponse>> publishDraftPost(
+		@PathVariable Long postDraftId,
+		@ModelAttribute PostUpdateRequest request
+	) throws ImageException{
+		// 게시글 생성
+		Long postId = postService.publishDraftPost(
+						postDraftId,
+						request.title(),
+						request.content(),
+						request.postCategory(),
+						request.deletedImageUrls() == null ? List.of() : request.deletedImageUrls(),
+						request.newImages() == null ? List.of() : request.newImages());
+
+		// 임시 저장글 삭제
+		postService.deleteDraftPosts(List.of(postDraftId));
+
+		return ResponseEntity.ok(DataResponse.from(
+			PostCreateResponse.of(postId)
 			)
 		);
 	}
@@ -180,7 +218,7 @@ public class PostController {
 		);
 	}
 
-  @PostMapping("/{postId}/likes")
+  	@PostMapping("/{postId}/likes")
 	@Operation(summary = "게시글 좋아요", description = "게시글 좋아요")
 	public ResponseEntity<DataResponse<Void>> likePost(
 		@PathVariable Long postId

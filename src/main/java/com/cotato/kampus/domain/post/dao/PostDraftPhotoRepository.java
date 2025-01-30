@@ -13,5 +13,7 @@ public interface PostDraftPhotoRepository extends JpaRepository<PostDraftPhoto, 
 
 	List<PostDraftPhoto> findAllByPostDraftIdIn(List<Long> postDraftId);
 
+	List<PostDraftPhoto> findAllByPostDraftId(Long postDraftId);
+
 	void deleteByPhotoUrlIn(List<String> photoUrls);
 }

@@ -22,11 +22,11 @@ public class PostUpdater {
 	private final PostFinder postFinder;
 
 	@Transactional
-	public void updatePost(Long postId, String title, String content, PostCategory postCategory, Anonymity anonymity) {
+	public void updatePost(Long postId, String title, String content, PostCategory postCategory) {
 		Post post = postRepository.findById(postId)
 			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
 
-		post.update(title, content, postCategory, anonymity);
+		post.update(title, content, postCategory);
 	}
 
 	@Transactional

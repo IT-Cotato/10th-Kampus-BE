@@ -20,6 +20,7 @@ import com.cotato.kampus.domain.post.domain.PostDraftPhoto;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
 import com.cotato.kampus.domain.post.domain.PostScrap;
 import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
+import com.cotato.kampus.domain.post.dto.PostDraftDto;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
@@ -131,6 +132,12 @@ public class PostFinder {
 	public PostDraft findPostDraft(Long postDraftId) {
 		return postDraftRepository.findById(postDraftId)
 			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+	}
+
+	public PostDraftDto findPostDraftDto(Long postDraftId){
+		PostDraft postDraft = findPostDraft(postDraftId);
+
+		return PostDraftDto.from(postDraft);
 	}
 
 	public List<PostDraft> findPostDrafts(List<Long> postDraftIds){

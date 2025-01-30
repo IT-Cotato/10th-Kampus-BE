@@ -59,7 +59,7 @@ public class Post extends BaseTimeEntity {
 	private PostStatus postStatus;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "post_category", nullable = false)
+	@Column(name = "post_category")
 	private PostCategory postCategory;
 
 	@Column(name = "next_ananymous_number", nullable = false)
@@ -82,11 +82,10 @@ public class Post extends BaseTimeEntity {
 		this.nextAnonymousNumber = nextAnonymousNumber;
 	}
 
-	public void update(String title, String content, PostCategory postCategory, Anonymity anonymity) {
+	public void update(String title, String content, PostCategory postCategory) {
 		this.title = title;
 		this.content = content;
 		this.postCategory = postCategory;
-		this.anonymity = anonymity;
   	}
 
   public void increaseNextAnonymousNumber(){
