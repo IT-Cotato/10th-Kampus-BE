@@ -80,4 +80,11 @@ public class User {
 		this.username = username;
 		return this;
 	}
+
+	public User updateDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage) {
+		this.nickname = nickname;
+		this.nationality = nationality;
+		this.preferredLanguage = preferredLanguage;
+		return this;
+	}
 }
