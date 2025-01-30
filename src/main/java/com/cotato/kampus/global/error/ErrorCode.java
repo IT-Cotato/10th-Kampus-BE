@@ -46,6 +46,7 @@ public enum ErrorCode {
 	//User
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다.", "USER-001"),
 	USER_UNVERIFIED(HttpStatus.NOT_FOUND, "학생 인증되지 않은 유저입니다.", "USER-002"),
+	USER_NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다.", "USER-003"),
 
 	//Board
 	BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시판을 찾을 수 없습니다.", "BOARD-001"),
