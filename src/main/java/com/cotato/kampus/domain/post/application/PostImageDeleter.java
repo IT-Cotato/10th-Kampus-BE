@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.post.dao.PostDraftPhotoRepository;
+import com.cotato.kampus.domain.post.dao.PostPhotoRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,13 @@ import lombok.RequiredArgsConstructor;
 public class PostImageDeleter {
 
 	private final PostDraftPhotoRepository postDraftPhotoRepository;
+	private final PostPhotoRepository postPhotoRepository;
 
-	public void deleteAll(List<String> imageUrls){
+	public void deletePostDraftPhotos(List<String> imageUrls){
 		postDraftPhotoRepository.deleteByPhotoUrlIn(imageUrls);
+	}
+
+	public void deletePostPhotos(Long postId){
+		postPhotoRepository.deleteAllByPostId(postId);
 	}
 }

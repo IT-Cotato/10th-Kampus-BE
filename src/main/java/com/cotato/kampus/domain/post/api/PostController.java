@@ -60,6 +60,7 @@ public class PostController {
 					request.postCategory(),
 					request.images() == null ? List.of() : request.images()
 				)
+
 			)
 		));
 	}

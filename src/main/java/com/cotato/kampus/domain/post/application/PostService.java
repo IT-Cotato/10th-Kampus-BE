@@ -86,6 +86,15 @@ public class PostService {
 		Long userId = apiUserResolver.getUserId();
 		postValidator.validatePostOwner(postId, userId);
 
+		// 이미지 조회
+		List<String> imageUrls = postImageFinder.findPostPhotos(postId);
+
+		// S3에서 이미지 삭제
+		s3Uploader.deleteFiles(imageUrls);
+
+		// PostPhoto 삭제
+		postImageDeleter.deletePostPhotos(postId);
+
 		// 게시글 삭제
 		postDeleter.delete(postId);
 
@@ -166,7 +175,7 @@ public class PostService {
 		s3Uploader.deleteFiles(imageUrls);
 
 		// PostDraftPhoto 삭제
-		postImageDeleter.deleteAll(imageUrls);
+		postImageDeleter.deletePostDraftPhotos(imageUrls);
 
 		// 삭제 처리
 		postDeleter.deleteDraftAll(postDraftIds);
@@ -186,7 +195,7 @@ public class PostService {
 		s3Uploader.deleteFiles(imageUrls);
 
 		// PostDraftPhoto 삭제
-		postImageDeleter.deleteAll(imageUrls);
+		postImageDeleter.deletePostDraftPhotos(imageUrls);
 
 		// 임시저장 글 삭제
 		postDeleter.deleteDraftAll(draftPostIds);
