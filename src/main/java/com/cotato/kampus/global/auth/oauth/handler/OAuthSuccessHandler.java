@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.cotato.kampus.domain.auth.applicaon.RefreshService;
+import com.cotato.kampus.domain.auth.application.RefreshService;
 import com.cotato.kampus.global.auth.oauth.service.dto.CustomOAuth2User;
 import com.cotato.kampus.global.util.JwtUtil;
 

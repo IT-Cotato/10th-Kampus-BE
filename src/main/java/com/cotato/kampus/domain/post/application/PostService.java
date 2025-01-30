@@ -14,8 +14,8 @@ import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
+import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.enums.PostCategory;
-import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -34,6 +34,7 @@ public class PostService {
 	private final PostImageAppender postImageAppender;
 	private final PostImageFinder postImageFinder;
 	private final PostImageUpdater postImageUpdater;
+	private final PostImageDeleter postImageDeleter;
 
 	private final PostScrapUpdater postScrapUpdater;
 	private final PostAuthorResolver postAuthorResolver;
@@ -41,10 +42,9 @@ public class PostService {
 	private final S3Uploader s3Uploader;
 
 	private final ImageValidator imageValidator;
-	private final UserValidator userValidator;
-	private final PostScrapValidator postScrapValidator;
 	private final PostLikeAppender postLikeAppender;
 	private final PostLikeValidator postLikeValidator;
+	private final PostValidator postValidator;
 
 	private static final String POST_IMAGE_FOLDER = "post";
 
@@ -81,7 +81,7 @@ public class PostService {
 	public Long deletePost(Long postId) {
 		// 작성자 검증: 현재 사용자가 게시글 작성자인지 확인
 		Long userId = apiUserResolver.getUserId();
-		userValidator.validatePostAuthor(postId, userId);
+		postValidator.validatePostOwner(postId, userId);
 
 		// 게시글 삭제
 		postDeleter.delete(postId);
@@ -112,13 +112,89 @@ public class PostService {
 		List<MultipartFile> images) throws ImageException {
 		// 1. Post Author 검증
 		Long userId = apiUserResolver.getUserId();
-		userValidator.validatePostAuthor(postId, userId);
+		postValidator.validatePostOwner(postId, userId);
 
 		// 2. Post 업데이트
 		postUpdater.updatePost(postId, title, content, postCategory, anonymity);
 
 		// 3. Post Images 업데이트
 		postImageUpdater.updatePostImages(postId, images);
+	}
+
+	@Transactional
+	public Long draftPost(
+		Long boardId,
+		String title,
+		String content,
+		PostCategory postCategory,
+		List<MultipartFile> images
+	) throws ImageException {
+		// 유효한 이미지만 필터링
+		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
+
+		// s3에 이미지 업로드
+		List<String> imageUrls = (validImages.isEmpty()) ?
+			List.of() :
+			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
+
+		// 임시 저장글 추가
+		Long postDraftId = postAppender.draft(boardId, title, content, postCategory);
+
+		// 임시 저장 이미지 추가
+		if (!imageUrls.isEmpty()) {
+			postImageAppender.appendAllDraftImage(postDraftId, imageUrls);
+		}
+
+		return postDraftId;
+	}
+
+	@Transactional
+	public void deleteDraftPosts(List<Long> draftPostIds){
+		// 유저 조회
+		Long userId = apiUserResolver.getUserId();
+
+		// 작성자 검증
+		draftPostIds.forEach(draftPostId -> postValidator.validateDraftPostDelete(draftPostId, userId));
+
+		// 이미지 조회
+		List<String> imageUrls = postImageFinder.findAllDraftPhotos(draftPostIds);
+
+		// S3에서 이미지 삭제
+		s3Uploader.deleteFiles(imageUrls);
+
+		// PostDraftPhoto 삭제
+		postImageDeleter.deleteAll(imageUrls);
+
+		// 삭제 처리
+		postDeleter.deleteDraftAll(draftPostIds);
+
+	}
+
+	@Transactional
+	public void deleteAllDraftPost(Long boardId){
+		// 유저 조회
+		Long userId = apiUserResolver.getUserId();
+
+		// 임시 저장 게시글 조회
+		List<Long> draftPostIds = postFinder.getPostDraftIdsByBoardAndUser(boardId, userId);
+		List<String> imageUrls = postImageFinder.findAllDraftPhotos(draftPostIds);
+
+		// S3에서 이미지 삭제
+		s3Uploader.deleteFiles(imageUrls);
+
+		// PostDraftPhoto 삭제
+		postImageDeleter.deleteAll(imageUrls);
+
+		// 임시저장 글 삭제
+		postDeleter.deleteDraftAll(draftPostIds);
+	}
+
+	@Transactional
+	public Slice<PostDraftWithPhoto> findPostDrafts(Long boardId, int page) {
+
+		Long userId = apiUserResolver.getUserId();
+
+		return postFinder.findPostDrafts(boardId, userId, page);
 	}
 
 	@Transactional
@@ -142,9 +218,11 @@ public class PostService {
 
 	@Transactional
 	public void scrapPost(Long postId){
-		// 스크랩 가능 여부 검증
+		// 유저 조회
 		Long userId = apiUserResolver.getUserId();
-		postScrapValidator.validatePostScrap(postId, userId);
+
+		// 스크랩 가능 여부 검증
+		postValidator.validatePostScrap(postId, userId);
 
 		// 게시글 스크랩 수 추가
 		postUpdater.increaseScraps(postId);

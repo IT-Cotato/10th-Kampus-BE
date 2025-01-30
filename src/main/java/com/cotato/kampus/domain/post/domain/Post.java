@@ -67,7 +67,7 @@ public class Post extends BaseTimeEntity {
 
 	@Builder
 	public Post(Long userId, Long boardId, String title, String content,
-		Long likes, Long scraps, Anonymity anonymity,
+		Long likes, Long scraps, Long comments, Anonymity anonymity,
 		PostStatus postStatus, PostCategory postCategory, Long nextAnonymousNumber) {
 		this.userId = userId;
 		this.boardId = boardId;
@@ -75,6 +75,7 @@ public class Post extends BaseTimeEntity {
 		this.content = content;
 		this.likes = likes;
 		this.scraps = scraps;
+		this.comments = comments;
 		this.anonymity = anonymity;
 		this.postStatus = postStatus;
 		this.postCategory = postCategory;

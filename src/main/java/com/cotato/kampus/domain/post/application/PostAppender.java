@@ -5,6 +5,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
+import com.cotato.kampus.domain.post.dao.PostDraftRepository;
+import com.cotato.kampus.domain.post.domain.PostDraft;
 import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 import com.cotato.kampus.domain.post.dao.PostRepository;
@@ -20,6 +22,7 @@ public class PostAppender {
 
 	private final ApiUserResolver apiUserResolver;
 	private final PostRepository postRepository;
+	private final PostDraftRepository postDraftRepository;
 
 	@Transactional
 	public Long append(
@@ -39,6 +42,7 @@ public class PostAppender {
 			.content(content)
 			.likes(0L)
 			.scraps(0L)
+			.comments(0L)
 			.anonymity(anonymity)
 			.postStatus(PostStatus.PUBLISHED)
 			.postCategory(postCategory)
@@ -46,5 +50,25 @@ public class PostAppender {
 			.build();
 
 		return postRepository.save(post).getId();
+	}
+
+	@Transactional
+	public Long draft(
+		Long boardId,
+		String title,
+		String content,
+		PostCategory postCategory
+	){
+		Long userId = apiUserResolver.getUserId();
+
+		PostDraft postDraft = PostDraft.builder()
+			.userId(userId)
+			.boardId(boardId)
+			.title(title)
+			.content(content)
+			.postCategory(postCategory)
+			.build();
+
+		return postDraftRepository.save(postDraft).getId();
 	}
 }

@@ -27,10 +27,4 @@ public class UserValidator {
 		if (user.getUserRole() == UserRole.UNVERIFIED)
 			throw new AppException(ErrorCode.USER_UNVERIFIED);
 	}
-
-	public void validatePostAuthor(Long authorId, Long userId) {
-		// 작성자가 아닌 경우 예외 처리
-		if (userId != authorId)
-			throw new AppException(ErrorCode.POST_NOT_AUTHOR);
-	}
 }

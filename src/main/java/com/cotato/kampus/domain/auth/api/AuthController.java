@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cotato.kampus.domain.auth.applicaon.AuthService;
+import com.cotato.kampus.domain.auth.application.AuthService;
 import com.cotato.kampus.domain.auth.dto.request.SignupRequest;
 import com.cotato.kampus.domain.auth.dto.response.SignupResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
