@@ -12,6 +12,8 @@ import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
 import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
+import com.cotato.kampus.domain.post.dto.PostDraftDetails;
+import com.cotato.kampus.domain.post.dto.PostDraftDto;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
@@ -195,6 +197,16 @@ public class PostService {
 		Long userId = apiUserResolver.getUserId();
 
 		return postFinder.findPostDrafts(boardId, userId, page);
+	}
+
+	@Transactional
+	public PostDraftDetails findDraftDetail(Long draftId){
+
+		PostDraftDto postDraftDto = postFinder.findPostDraftDto(draftId);
+
+		List<String> postDraftPhotos = postImageFinder.findAllDraftPhotos(draftId);
+
+		return PostDraftDetails.of(postDraftDto, postDraftPhotos);
 	}
 
 	@Transactional
