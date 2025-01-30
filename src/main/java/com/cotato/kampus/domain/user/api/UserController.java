@@ -13,6 +13,7 @@ import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +28,7 @@ public class UserController {
 	@PatchMapping("/details")
 	@Operation(summary = "소셜 로그인(카카오) 이후 유저 세부정보 저장(변경) api", description = "닉네임, 국적, 선호 언어 변경")
 	public ResponseEntity<DataResponse<UserDetailsUpdateResponse>> updateUserDetails(
-		@RequestBody UserDetailsUpdateRequest request) {
+		@RequestBody @Valid UserDetailsUpdateRequest request) {
 		return ResponseEntity.ok(
 			DataResponse.from(
 				UserDetailsUpdateResponse.from(
