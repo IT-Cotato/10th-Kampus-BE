@@ -14,9 +14,11 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserUpdater userUpdater;
+	private final UserValidator userValidator;
 
 	@Transactional
 	public Long updateUserDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage) {
+		userValidator.validateDuplicatedNickname(nickname);
 		return userUpdater.updateDetails(nickname, nationality, preferredLanguage);
 	}
 }
