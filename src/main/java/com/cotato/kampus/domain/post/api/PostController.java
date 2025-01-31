@@ -58,14 +58,7 @@ public class PostController {
 
 		// 게시판이 카테고리 필수인지 확인
 		boolean requiresCategory = boardService.requiresCategory(request.boardId());
-
-		// 카테고리 필수인데 값이 없는 경우 -> 예외 발생
-		if(requiresCategory && (request.postCategory() == null))
-			throw new AppException(ErrorCode.CATEGORY_REQUIRED);
-
-		// 카테고리 필요 없는데 값이 들어온 경우 -> 예외 발생
-		if(!requiresCategory && (request.postCategory() != null))
-			throw new AppException(ErrorCode.CATEGORY_NOT_ALLOWED);
+		postService.validateCategoryForBoard(requiresCategory, request.postCategory());
 
 		return ResponseEntity.ok(DataResponse.from(
 			PostCreateResponse.of(
@@ -126,10 +119,21 @@ public class PostController {
 	@Operation(summary = "게시글 수정", description = "게시글의 내용 수정")
 	public ResponseEntity<DataResponse<Void>> updatePost(
 		@PathVariable Long postId,
-		@ModelAttribute PostUpdateRequest request
+		@Valid @ModelAttribute PostUpdateRequest request
 	) throws ImageException {
-		postService.updatePost(postId, request.title(), request.content(), request.postCategory(),
+
+		// 게시판이 카테고리 필수인지 확인
+		Long boardId = postService.findPostDetail(postId).boardId();
+		boolean requiresCategory = boardService.requiresCategory(boardId);
+		postService.validateCategoryForBoard(requiresCategory, request.postCategory());
+
+		postService.updatePost(
+			postId,
+			request.title(),
+			request.content(),
+			request.postCategory(),
 			request.newImages() == null ? List.of() : request.newImages()); // 이미지 없는 경우 빈 리스트로 요청
+
 		return ResponseEntity.ok(DataResponse.ok());
   	}
 
@@ -182,8 +186,14 @@ public class PostController {
 	@Operation(summary = "임시 저장글 수정 발행")
 	public ResponseEntity<DataResponse<PostCreateResponse>> publishDraftPost(
 		@PathVariable Long postDraftId,
-		@ModelAttribute PostUpdateRequest request
+		@Valid @ModelAttribute PostUpdateRequest request
 	) throws ImageException{
+
+		// 게시판이 카테고리 필수인지 확인
+		Long boardId = postService.findDraftDetail(postDraftId).boardId();
+		boolean requiresCategory = boardService.requiresCategory(boardId);
+		postService.validateCategoryForBoard(requiresCategory, request.postCategory());
+
 		// 게시글 생성
 		Long postId = postService.publishDraftPost(
 						postDraftId,

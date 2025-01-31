@@ -17,6 +17,8 @@ import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.enums.PostCategory;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -309,4 +311,16 @@ public class PostService {
 	public Slice<MyPostWithPhoto> findUserScrapedPosts(int page){
 		return postFinder.findUserScrapedPosts(page);
 	}
+
+
+	public void validateCategoryForBoard(boolean requiresCategory, PostCategory postCategory) {
+		// 카테고리 필수인데 값이 없는 경우 -> 예외 발생
+		if(requiresCategory && (postCategory == null))
+			throw new AppException(ErrorCode.CATEGORY_REQUIRED);
+
+		// 카테고리 필요 없는데 값이 들어온 경우 -> 예외 발생
+		if(!requiresCategory && (postCategory != null))
+			throw new AppException(ErrorCode.CATEGORY_NOT_ALLOWED);
+	}
+
 }
