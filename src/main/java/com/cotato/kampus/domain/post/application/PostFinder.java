@@ -83,7 +83,7 @@ public class PostFinder {
 		Slice<Post> posts = postRepository.findAllByUserId(userId, customPageRequest.of(SORT_PROPERTY));
 
 		return posts.map(post -> {
-			String boardName = boardFinder.findBoard(post.getBoardId()).getBoardName();
+			String boardName = boardFinder.findBoard(post.getBoardId()).boardName();
 
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())
 				.orElse(null);
@@ -104,7 +104,7 @@ public class PostFinder {
 		return postScraps.map(postScrap -> {
 			Post post = getPost(postScrap.getPostId());
 
-			String boardName = boardFinder.findBoard(post.getBoardId()).getBoardName();
+			String boardName = boardFinder.findBoard(post.getBoardId()).boardName();
 
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())
 				.orElse(null);

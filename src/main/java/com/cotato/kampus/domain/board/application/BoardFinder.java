@@ -31,9 +31,11 @@ public class BoardFinder {
 			.toList();
 	}
 
-	public Board findBoard(Long boardId){
-		return boardRepository.findById(boardId)
+	public BoardDto findBoard(Long boardId){
+		Board board = boardRepository.findById(boardId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
+
+		return BoardDto.from(board);
 	}
 
 	public BoardDto findUserUniversityBoard(Long userUniversityId){
