@@ -13,4 +13,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 	List<Board> findAllByUniversityIdIsNull();
 
 	Optional<Board> findByUniversityId(Long universityId);
+
+	boolean existsByUniversityId(Long universityId);
 }
