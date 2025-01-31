@@ -19,11 +19,14 @@ public class UserValidator {
 	private final ApiUserResolver apiUserResolver;
 	private final UserFinder userFinder;
 
-	public void validateStudentVerification() {
-		User user = apiUserResolver.getUser();
+	// 재학생 인증 후 universityId 반환
+	public Long validateStudentVerification(Long userId) {
+		User user = userFinder.findById(userId);
 
 		if (user.getUserRole() == UserRole.UNVERIFIED)
 			throw new AppException(ErrorCode.USER_UNVERIFIED);
+
+		return user.getUniversityId();
 	}
 
 	public void validateDuplicatedNickname(String nickname) {

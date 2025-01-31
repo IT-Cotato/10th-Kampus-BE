@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
+import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.user.application.UserValidator;
 
 import lombok.RequiredArgsConstructor;
@@ -16,20 +17,20 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
 	private final BoardFinder boardFinder;
-	private final UniversityBoardReader universityBoardReader;
 	private final BoardValidator boardValidator;
 	private final BoardFavoriteReader boardFavoriteReader;
 	private final BoardFavoriteAppender boardFavoriteAppender;
 	private final BoardFavoriteDeleter boardFavoriteDeleter;
 	private final UserValidator userValidator;
+	private final ApiUserResolver apiUserResolver;
 
 	public List<BoardWithFavoriteStatusDto> getBoardList(){
 
 		// 즐겨찾는 게시판 조회
 		Set<Long> favoriteBoardIds = boardFavoriteReader.read();
 
-		// 전체 게시판 조회
-		List<BoardWithFavoriteStatusDto> boards = boardFinder.findAll();
+		// 공용 게시판 조회
+		List<BoardWithFavoriteStatusDto> boards = boardFinder.findPublicBoards();
 
 		// 즐겨찾기 여부 매핑
 		return BoardDtoEnhancer.updateFavoriteStatus(boards, favoriteBoardIds);
@@ -40,7 +41,7 @@ public class BoardService {
 		Set<Long> favoriteBoardIds = boardFavoriteReader.read();
 
 		// 전체 게시판 조회
-		List<BoardWithFavoriteStatusDto> boards = boardFinder.findAll();
+		List<BoardWithFavoriteStatusDto> boards = boardFinder.findPublicBoards();
 
 		// 즐겨찾는 게시판만 필터링
 		return BoardDtoEnhancer.filterFavoriteBoards(boards, favoriteBoardIds);
@@ -60,9 +61,14 @@ public class BoardService {
 	}
 
 	public BoardDto getUniversityBoard(){
-		userValidator.validateStudentVerification();
+		// 유저 조회
+		Long userId = apiUserResolver.getUserId();
 
-		return universityBoardReader.read();
+		// 재학생 인증 확인
+		Long userUniversityId = userValidator.validateStudentVerification(userId);
+
+		// 유저 대학교 게시판 조회
+		return boardFinder.findUserUniversityBoard(userUniversityId);
 	}
 
 }

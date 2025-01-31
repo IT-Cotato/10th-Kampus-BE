@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.BoardRepository;
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -20,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class BoardFinder {
 	private final BoardRepository boardRepository;
 
-	public List<BoardWithFavoriteStatusDto> findAll(){
-		return boardRepository.findAll().stream()
+	public List<BoardWithFavoriteStatusDto> findPublicBoards(){
+		return boardRepository.findAllByUniversityIdIsNull().stream()
 			.map(board -> BoardWithFavoriteStatusDto.of(
 				board.getId(),
 				board.getBoardName(),
@@ -33,5 +34,11 @@ public class BoardFinder {
 	public Board findBoard(Long boardId){
 		return boardRepository.findById(boardId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
+	}
+
+	public BoardDto findUserUniversityBoard(Long userUniversityId){
+		Board board = boardRepository.findByUniversityId(userUniversityId)
+			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
+		return BoardDto.from(board);
 	}
 }
