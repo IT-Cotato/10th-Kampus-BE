@@ -39,4 +39,22 @@ public class AdminService {
 		// 게시판 업데이트
 		boardUpdater.update(boardId, boardName, description, isCategoryRequired);
 	}
+
+	@Transactional
+	public void inactiveBoard(Long boardId){
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+
+		// 게시판 비활성화
+		boardUpdater.inactiveBoard(boardId);
+	}
+
+	@Transactional
+	public void activeBoard(Long boardId){
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+
+		// 게시판 활성화
+		boardUpdater.activeBoard(boardId);
+	}
 }

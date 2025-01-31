@@ -62,4 +62,24 @@ public class AdminController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
+	@PostMapping("/boards/{boardId}/inactive")
+	@Operation(summary = "게시판 보관(비활성화)", description = "게시판을 비활성화 합니다.")
+	public ResponseEntity<DataResponse<Void>> inactiveBoard(
+		@PathVariable Long boardId
+	) {
+		adminService.inactiveBoard(boardId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PostMapping("/boards/{boardId}/active")
+	@Operation(summary = "게시판 활성화", description = "보관된 게시판을 다시 활성화 합니다.")
+	public ResponseEntity<DataResponse<Void>> activeBoard(
+		@PathVariable Long boardId
+	) {
+		adminService.activeBoard(boardId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+
+
 }

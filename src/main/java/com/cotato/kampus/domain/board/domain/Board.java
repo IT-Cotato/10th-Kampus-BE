@@ -40,6 +40,10 @@ public class Board extends BaseTimeEntity {
 	@Column(name = "is_category_required", nullable = false)
 	private Boolean isCategoryRequired;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "board_status")
+	private BoardStatus boardStatus;
+
 	@Builder
 	public Board(String boardName, String description, Long universityId, Boolean isCategoryRequired) {
 		this.boardName = boardName;
@@ -52,5 +56,13 @@ public class Board extends BaseTimeEntity {
 		this.boardName = boardName;
 		this.description = description;
 		this.isCategoryRequired = isCategoryRequired;
+	}
+
+	public void active(){
+		this.boardStatus = BoardStatus.ACTIVE;
+	}
+
+	public void inactive(){
+		this.boardStatus = BoardStatus.INACTIVE;
 	}
 }

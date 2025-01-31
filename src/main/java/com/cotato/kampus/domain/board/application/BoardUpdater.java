@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.BoardRepository;
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -27,5 +28,27 @@ public class BoardUpdater {
 		boardRepository.save(board);
 
 		return board.getId();
+	}
+
+	public void inactiveBoard(Long boardId) {
+		Board board = boardRepository.findById(boardId)
+			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
+
+		if(board.getBoardStatus() == BoardStatus.INACTIVE)
+			throw new AppException(ErrorCode.BOARD_ALREADY_INACTIVE);
+
+		board.inactive();
+		boardRepository.save(board);
+	}
+
+	public void activeBoard(Long boardId) {
+		Board board = boardRepository.findById(boardId)
+			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
+
+		if(board.getBoardStatus() == BoardStatus.ACTIVE)
+			throw new AppException(ErrorCode.BOARD_ALREADY_ACTIVE);
+
+		board.active();
+		boardRepository.save(board);
 	}
 }
