@@ -56,7 +56,7 @@ public class PostController {
 		@Parameter(description = "Post creation request")
 		@Valid @ModelAttribute PostCreateRequest request) throws ImageException {
 
-		// 게시판이 카테고리 필수인지 확인
+		// 게시판이 카테고리를 사용하는지 확인
 		boolean requiresCategory = boardService.requiresCategory(request.boardId());
 		postService.validateCategoryForBoard(requiresCategory, request.postCategory());
 
@@ -122,7 +122,7 @@ public class PostController {
 		@Valid @ModelAttribute PostUpdateRequest request
 	) throws ImageException {
 
-		// 게시판이 카테고리 필수인지 확인
+		// 게시판이 카테고리를 사용하는지 확인
 		Long boardId = postService.findPostDetail(postId).boardId();
 		boolean requiresCategory = boardService.requiresCategory(boardId);
 		postService.validateCategoryForBoard(requiresCategory, request.postCategory());
@@ -189,7 +189,7 @@ public class PostController {
 		@Valid @ModelAttribute PostUpdateRequest request
 	) throws ImageException{
 
-		// 게시판이 카테고리 필수인지 확인
+		// 게시판이 카테고리를 사용하는지 확인
 		Long boardId = postService.findDraftDetail(postDraftId).boardId();
 		boolean requiresCategory = boardService.requiresCategory(boardId);
 		postService.validateCategoryForBoard(requiresCategory, request.postCategory());
