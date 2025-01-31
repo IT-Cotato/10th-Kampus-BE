@@ -28,8 +28,12 @@ public class Board extends BaseTimeEntity {
 	@Column(name = "board_name", nullable = false)
 	private String boardName;
 
+	@Column(name = "university_id", nullable = false)
+	private Long universityId;
+
 	@Builder
-	public Board(String boardName) {
+	public Board(String boardName, Long universityId) {
 		this.boardName = boardName;
+		this.universityId = universityId;
 	}
 }
