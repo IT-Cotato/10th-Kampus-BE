@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.admin.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cotato.kampus.domain.admin.application.AdminService;
 import com.cotato.kampus.domain.admin.dto.request.BoardCreateRequest;
 import com.cotato.kampus.domain.admin.dto.request.BoardUpdateRequest;
+import com.cotato.kampus.domain.admin.dto.response.AdminBoardListResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardCreateResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
@@ -44,6 +46,16 @@ public class AdminController {
 				)
 			)
 		);
+	}
+
+	@GetMapping("/boards")
+	@Operation(summary = "게시판 목록 조회", description = "전체 게시판 목록을 조회합니다.")
+	public ResponseEntity<DataResponse<AdminBoardListResponse>> getBoards() {
+		return ResponseEntity.ok(DataResponse.from(
+			AdminBoardListResponse.from(
+				adminService.getAllBoards()
+			)
+		));
 	}
 
 	@PutMapping("/boards/{boardId}")

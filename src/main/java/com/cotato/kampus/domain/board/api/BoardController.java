@@ -31,7 +31,7 @@ public class BoardController {
 	@Operation(summary = "공용 게시판 목록 조회", description = "공용 게시판 목록을 조회합니다. (학교 게시판 제외)")
 	public ResponseEntity<DataResponse<BoardListResponse>> getBoardList() {
 		return ResponseEntity.ok(DataResponse.from(
-			BoardListResponse.of(
+			BoardListResponse.from(
 				boardService.getBoardList()))
 		);
 	}
@@ -40,7 +40,7 @@ public class BoardController {
 	@Operation(summary = "대학교 게시판 조회", description = "(재학생 인증된) 유저의 대학교 게시판을 조회합니다.")
 	public ResponseEntity<DataResponse<BoardResponse>> getUniversityBoard() {
 		return ResponseEntity.ok(DataResponse.from(
-			BoardResponse.of(
+			BoardResponse.from(
 				boardService.getUniversityBoard()
 			)
 		));
@@ -50,7 +50,7 @@ public class BoardController {
 	@Operation(summary = "즐겨찾기 게시판 목록 조회", description = "즐겨찾기에 등록된 게시판 목록을 조회합니다.")
 	public ResponseEntity<DataResponse<BoardListResponse>> getFavoriteBoardList() {
 		return ResponseEntity.ok(DataResponse.from(
-			BoardListResponse.of(
+			BoardListResponse.from(
 				boardService.getFavoriteBoardList()
 			)
 		));
