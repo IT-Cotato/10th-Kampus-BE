@@ -34,4 +34,12 @@ public class UserValidator {
 			throw new AppException(ErrorCode.USER_NICKNAME_DUPLICATED);
 		}
 	}
+
+	public void validateAdminAccess() {
+		User user = apiUserResolver.getUser();
+
+		if(user.getUserRole() != UserRole.ADMIN) {
+			throw new AppException(ErrorCode.USER_NOT_ADMIN);
+		}
+	}
 }
