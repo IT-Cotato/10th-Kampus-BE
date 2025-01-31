@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.board.application.BoardService;
 import com.cotato.kampus.domain.board.dto.response.BoardListResponse;
-import com.cotato.kampus.domain.board.dto.response.BoardResponse;
+import com.cotato.kampus.domain.board.dto.response.BoardWithDescriptionResponse;
 import com.cotato.kampus.domain.board.dto.response.FavoriteBoardResponse;
+import com.cotato.kampus.domain.board.dto.response.UniversityBoardResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,9 +39,9 @@ public class BoardController {
 
 	@GetMapping("/university")
 	@Operation(summary = "대학교 게시판 조회", description = "(재학생 인증된) 유저의 대학교 게시판을 조회합니다.")
-	public ResponseEntity<DataResponse<BoardResponse>> getUniversityBoard() {
+	public ResponseEntity<DataResponse<UniversityBoardResponse>> getUniversityBoard() {
 		return ResponseEntity.ok(DataResponse.from(
-			BoardResponse.from(
+			UniversityBoardResponse.from(
 				boardService.getUniversityBoard()
 			)
 		));
@@ -52,6 +53,18 @@ public class BoardController {
 		return ResponseEntity.ok(DataResponse.from(
 			BoardListResponse.from(
 				boardService.getFavoriteBoardList()
+			)
+		));
+	}
+
+	@GetMapping("/{boardId}")
+	@Operation(summary = "특정 게시판 제목, 설명 조회", description = "특정 게시판의 제목과 설명을 조회합니다.")
+	public ResponseEntity<DataResponse<BoardWithDescriptionResponse>> getBoardWithDescription(
+		@PathVariable Long boardId
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+			BoardWithDescriptionResponse.from(
+				boardService.getBoard(boardId)
 			)
 		));
 	}

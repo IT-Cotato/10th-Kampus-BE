@@ -76,4 +76,8 @@ public class BoardService {
 
 		return boardDto.isCategoryRequired();
 	}
+
+	public BoardDto getBoard(Long boardId){
+		return boardFinder.findBoard(boardId);
+	}
 }
