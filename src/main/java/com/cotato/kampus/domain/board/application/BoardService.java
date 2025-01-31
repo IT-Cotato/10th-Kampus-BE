@@ -67,8 +67,13 @@ public class BoardService {
 		// 재학생 인증 확인
 		Long userUniversityId = userValidator.validateStudentVerification(userId);
 
-		// 유저 대학교 게시판 조회
+		// 대학교 게시판 조회
 		return boardFinder.findUserUniversityBoard(userUniversityId);
 	}
 
+	public Boolean requiresCategory(Long boardId){
+		BoardDto boardDto = boardFinder.findBoard(boardId);
+
+		return boardDto.isCategoryRequired();
+	}
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cotato.kampus.domain.board.application.BoardService;
 import com.cotato.kampus.domain.post.application.PostService;
 import com.cotato.kampus.domain.post.dto.request.DraftDeleteRequest;
 import com.cotato.kampus.domain.post.dto.request.PostCreateRequest;
@@ -29,6 +30,8 @@ import com.cotato.kampus.domain.post.dto.response.PostDraftSliceFindResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostSliceFindResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,12 +48,25 @@ import lombok.RequiredArgsConstructor;
 public class PostController {
 
 	private final PostService postService;
+	private final BoardService boardService;
 
 	@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "게시글 생성", description = "게시글 생성 요청입니다. 사진이 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
 	public ResponseEntity<DataResponse<PostCreateResponse>> createPost(
 		@Parameter(description = "Post creation request")
 		@ModelAttribute PostCreateRequest request) throws ImageException {
+
+		// 게시판이 카테고리 필수인지 확인
+		boolean requiresCategory = boardService.requiresCategory(request.boardId());
+
+		// 카테고리 필수인데 값이 없는 경우 -> 예외 발생
+		if(requiresCategory && (request.postCategory() == null))
+			throw new AppException(ErrorCode.CATEGORY_REQUIRED);
+
+		// 카테고리 필요 없는데 값이 들어온 경우 -> 예외 발생
+		if(!requiresCategory && (request.postCategory() != null))
+			throw new AppException(ErrorCode.CATEGORY_NOT_ALLOWED);
+
 		return ResponseEntity.ok(DataResponse.from(
 			PostCreateResponse.of(
 				postService.createPost(
@@ -60,9 +76,9 @@ public class PostController {
 					request.postCategory(),
 					request.images() == null ? List.of() : request.images()
 				)
-
 			)
-		));
+		)
+		);
 	}
 
 	@GetMapping("/boards/{boardId}")

@@ -28,12 +28,16 @@ public class Board extends BaseTimeEntity {
 	@Column(name = "board_name", nullable = false)
 	private String boardName;
 
-	@Column(name = "university_id", nullable = false)
+	@Column(name = "university_id")
 	private Long universityId;
 
+	@Column(name = "is_category_required", nullable = false)
+	private Boolean isCategoryRequired;
+
 	@Builder
-	public Board(String boardName, Long universityId) {
+	public Board(String boardName, Long universityId, Boolean isCategoryRequired) {
 		this.boardName = boardName;
 		this.universityId = universityId;
+		this.isCategoryRequired = isCategoryRequired;
 	}
 }
