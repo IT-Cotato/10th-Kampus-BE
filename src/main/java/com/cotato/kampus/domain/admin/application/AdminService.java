@@ -16,7 +16,7 @@ public class AdminService {
 	private final BoardAppender boardAppender;
 	private final BoardValidator boardValidator;
 
-	public Long createBoard(String boardName, Long universityId, Boolean isCategoryRequired){
+	public Long createBoard(String boardName, String description, Long universityId, Boolean isCategoryRequired){
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -24,6 +24,6 @@ public class AdminService {
 		if(universityId != null)
 			boardValidator.validateUniversityBoardExists(universityId);
 
-		return boardAppender.appendBoard(boardName, universityId, isCategoryRequired);
+		return boardAppender.appendBoard(boardName, description, universityId, isCategoryRequired);
 	}
 }

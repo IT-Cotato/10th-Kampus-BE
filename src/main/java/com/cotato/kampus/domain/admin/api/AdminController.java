@@ -34,6 +34,7 @@ public class AdminController {
 				BoardCreateResponse.from(
 					adminService.createBoard(
 						request.boardName(),
+						request.description(),
 						request.universityId(),
 						request.isCategoryRequired()
 					)
