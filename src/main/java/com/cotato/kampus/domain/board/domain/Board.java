@@ -1,9 +1,12 @@
 package com.cotato.kampus.domain.board.domain;
 
+import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -42,6 +45,12 @@ public class Board extends BaseTimeEntity {
 		this.boardName = boardName;
 		this.description = description;
 		this.universityId = universityId;
+		this.isCategoryRequired = isCategoryRequired;
+	}
+
+	public void update(String boardName, String description, Boolean isCategoryRequired) {
+		this.boardName = boardName;
+		this.description = description;
 		this.isCategoryRequired = isCategoryRequired;
 	}
 }

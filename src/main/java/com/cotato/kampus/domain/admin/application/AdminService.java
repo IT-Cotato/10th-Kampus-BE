@@ -1,8 +1,10 @@
 package com.cotato.kampus.domain.admin.application;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.application.BoardAppender;
+import com.cotato.kampus.domain.board.application.BoardUpdater;
 import com.cotato.kampus.domain.board.application.BoardValidator;
 import com.cotato.kampus.domain.user.application.UserValidator;
 
@@ -14,8 +16,10 @@ public class AdminService {
 
 	private final UserValidator userValidator;
 	private final BoardAppender boardAppender;
+	private final BoardUpdater boardUpdater;
 	private final BoardValidator boardValidator;
 
+	@Transactional
 	public Long createBoard(String boardName, String description, Long universityId, Boolean isCategoryRequired){
 		// 관리자 검증
 		userValidator.validateAdminAccess();
@@ -25,5 +29,14 @@ public class AdminService {
 			boardValidator.validateUniversityBoardExists(universityId);
 
 		return boardAppender.appendBoard(boardName, description, universityId, isCategoryRequired);
+	}
+
+	@Transactional
+	public void updateBoard(Long boardId, String boardName, String description, Boolean isCategoryRequired){
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+
+		// 게시판 업데이트
+		boardUpdater.update(boardId, boardName, description, isCategoryRequired);
 	}
 }
