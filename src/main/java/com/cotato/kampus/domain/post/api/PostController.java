@@ -54,7 +54,7 @@ public class PostController {
 	@Operation(summary = "게시글 생성", description = "게시글 생성 요청입니다. 사진이 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
 	public ResponseEntity<DataResponse<PostCreateResponse>> createPost(
 		@Parameter(description = "Post creation request")
-		@ModelAttribute PostCreateRequest request) throws ImageException {
+		@Valid @ModelAttribute PostCreateRequest request) throws ImageException {
 
 		// 게시판이 카테고리 필수인지 확인
 		boolean requiresCategory = boardService.requiresCategory(request.boardId());
