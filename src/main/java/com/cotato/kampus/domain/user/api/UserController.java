@@ -1,15 +1,19 @@
 package com.cotato.kampus.domain.user.api;
 
+import java.io.IOException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.user.application.UserService;
+import com.cotato.kampus.domain.user.dto.request.SendMailRequest;
 import com.cotato.kampus.domain.user.dto.request.UserDetailsUpdateRequest;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsResponse;
+import com.cotato.kampus.domain.user.dto.response.SendMailResponse;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsUpdateResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
@@ -54,6 +58,20 @@ public class UserController {
 						request.privacyPolicyAgreement(),
 						request.termsOfServiceAgreement(),
 						request.marketingAgreement()
+					)
+				)
+			)
+		);
+	}
+
+	@PostMapping("/verify/email/send")
+	public ResponseEntity<DataResponse<SendMailResponse>> sendMail(
+		@RequestBody SendMailRequest request
+	) throws IOException {
+			return ResponseEntity.ok(DataResponse.from(
+				SendMailResponse.from(
+					userService.sendMail(
+						request.email(), request.univName()
 					)
 				)
 			)
