@@ -3,8 +3,6 @@ package com.cotato.kampus.domain.comment.application;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.comment.dto.CommentDetail;
 import com.cotato.kampus.domain.comment.dto.CommentSummary;
+import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.user.application.UserValidator;
 
@@ -31,12 +30,15 @@ public class CommentService {
 	private final CommentLikeAppender commentLikeAppender;
 	private final CommentFinder commentFinder;
 	private final CommentMapper commentMapper;
+	private final ApiUserResolver apiUserResolver;
 
 	@Transactional
 	public Long createComment(Long postId, String content, Anonymity anonymity, Long parentId){
+		// 유저 조회
+		Long userId = apiUserResolver.getUserId();
 
 		// 학생 인증 확인
-		userValidator.validateStudentVerification();
+		userValidator.validateStudentVerification(userId);
 
 		// 부모 댓글 유효성 체크
 		commentValidator.validateParent(postId, parentId);
@@ -58,9 +60,11 @@ public class CommentService {
 
 	@Transactional
 	public Long likeComment(Long commentId){
+		// 유저 조회
+		Long userId = apiUserResolver.getUserId();
 
 		// 학생 인증 확인
-		userValidator.validateStudentVerification();
+		userValidator.validateStudentVerification(userId);
 
 		// 댓글 유효성 체크
 		commentValidator.validateCommentStatus(commentId);

@@ -21,4 +21,9 @@ public class BoardValidator {
 			throw new AppException(ErrorCode.BOARD_NOT_FOUND);
 	}
 
+	public void validateUniversityBoardExists(Long universityId){
+		if(boardRepository.existsByUniversityId(universityId)){
+			throw new AppException(ErrorCode.UNIVERSITY_BOARD_DUPLICATED);
+		}
+	}
 }

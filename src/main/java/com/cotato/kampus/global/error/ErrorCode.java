@@ -25,6 +25,8 @@ public enum ErrorCode {
 	POST_SCRAP_FORBIDDEN(HttpStatus.FORBIDDEN, "자신의 게시글을 스크랩 할 수 없습니다.", "POST-005"),
 	POST_SCRAP_DUPLICATED(HttpStatus.FORBIDDEN, "이미 스크랩한 글입니다.", "POST-006"),
 	POST_SCRAP_NOT_EXIST(HttpStatus.FORBIDDEN, "스크랩 되지 않은 게시글은 삭제할 수 없습니다.", "POST-007"),
+	CATEGORY_REQUIRED(HttpStatus.BAD_REQUEST, "이 게시판에서는 카테고리가 필수입니다.", "POST-008"),
+	CATEGORY_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "이 게시판에서는 카테고리를 입력할 수 없습니다.", "POST-009"),
 
 	//Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
@@ -50,11 +52,17 @@ public enum ErrorCode {
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다.", "USER-001"),
 	USER_UNVERIFIED(HttpStatus.NOT_FOUND, "학생 인증되지 않은 유저입니다.", "USER-002"),
 	USER_NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다.", "USER-003"),
+	USER_NOT_ADMIN(HttpStatus.FORBIDDEN, "사용자가 관리자 권한을 갖고 있지 않습니다.", "USER-004"),
 
 	//Board
 	BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시판을 찾을 수 없습니다.", "BOARD-001"),
 	BOARD_ALREADY_FAVORITED(HttpStatus.CONFLICT, "이미 즐겨찾기에 추가된 게시판입니다.", "BOARD-002"),
 	BOARD_FAVORITE_NOT_FOUND(HttpStatus.NOT_FOUND, "즐겨찾기 목록에 없는 게시판입니다.", "BOARD-003"),
+	UNIVERSITY_BOARD_DUPLICATED(HttpStatus.CONFLICT, "이미 해당 대학 게시판이 존재합니다.", "BOARD-004"),
+	BOARD_ALREADY_INACTIVE(HttpStatus.CONFLICT, "이미 게시판이 비활성화 상태입니다.", "BOARD-005"),
+	BOARD_ALREADY_ACTIVE(HttpStatus.CONFLICT, "이미 게시판이 활성화 상태입니다.", "BOARD-006"),
+
+
 
 	//University
 	UNIVERSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 대학을 찾을 수 없습니다.", "UNIVERSITY-001"),

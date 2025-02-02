@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.board.application.BoardService;
 import com.cotato.kampus.domain.board.dto.response.BoardListResponse;
-import com.cotato.kampus.domain.board.dto.response.BoardResponse;
+import com.cotato.kampus.domain.board.dto.response.BoardWithDescriptionResponse;
 import com.cotato.kampus.domain.board.dto.response.FavoriteBoardResponse;
+import com.cotato.kampus.domain.board.dto.response.UniversityBoardResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,20 +28,20 @@ public class BoardController {
 
 	private final BoardService boardService;
 
-	@GetMapping("")
-	@Operation(summary = "게시판 목록 조회", description = "전체 게시판 목록을 조회합니다.")
+	@GetMapping("/public")
+	@Operation(summary = "공용 게시판 목록 조회", description = "공용 게시판 목록을 조회합니다. (학교 게시판 제외)")
 	public ResponseEntity<DataResponse<BoardListResponse>> getBoardList() {
 		return ResponseEntity.ok(DataResponse.from(
-			BoardListResponse.of(
+			BoardListResponse.from(
 				boardService.getBoardList()))
 		);
 	}
 
 	@GetMapping("/university")
-	@Operation(summary = "대학교 게시판 조회", description = "대학교 관련 게시판 정보를 조회합니다.")
-	public ResponseEntity<DataResponse<BoardResponse>> getUniversityBoard() {
+	@Operation(summary = "대학교 게시판 조회", description = "(재학생 인증된) 유저의 대학교 게시판을 조회합니다.")
+	public ResponseEntity<DataResponse<UniversityBoardResponse>> getUniversityBoard() {
 		return ResponseEntity.ok(DataResponse.from(
-			BoardResponse.of(
+			UniversityBoardResponse.from(
 				boardService.getUniversityBoard()
 			)
 		));
@@ -50,8 +51,20 @@ public class BoardController {
 	@Operation(summary = "즐겨찾기 게시판 목록 조회", description = "즐겨찾기에 등록된 게시판 목록을 조회합니다.")
 	public ResponseEntity<DataResponse<BoardListResponse>> getFavoriteBoardList() {
 		return ResponseEntity.ok(DataResponse.from(
-			BoardListResponse.of(
+			BoardListResponse.from(
 				boardService.getFavoriteBoardList()
+			)
+		));
+	}
+
+	@GetMapping("/{boardId}")
+	@Operation(summary = "특정 게시판 제목, 설명 조회", description = "특정 게시판의 제목과 설명을 조회합니다.")
+	public ResponseEntity<DataResponse<BoardWithDescriptionResponse>> getBoardWithDescription(
+		@PathVariable Long boardId
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+			BoardWithDescriptionResponse.from(
+				boardService.getBoard(boardId)
 			)
 		));
 	}

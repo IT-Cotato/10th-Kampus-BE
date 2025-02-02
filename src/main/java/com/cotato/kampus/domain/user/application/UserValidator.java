@@ -19,16 +19,27 @@ public class UserValidator {
 	private final ApiUserResolver apiUserResolver;
 	private final UserFinder userFinder;
 
-	public void validateStudentVerification() {
-		User user = apiUserResolver.getUser();
+	// 재학생 인증 후 universityId 반환
+	public Long validateStudentVerification(Long userId) {
+		User user = userFinder.findById(userId);
 
 		if (user.getUserRole() == UserRole.UNVERIFIED)
 			throw new AppException(ErrorCode.USER_UNVERIFIED);
+
+		return user.getUniversityId();
 	}
 
 	public void validateDuplicatedNickname(String nickname) {
 		if (userFinder.existsByNickname(nickname)) {
 			throw new AppException(ErrorCode.USER_NICKNAME_DUPLICATED);
+		}
+	}
+
+	public void validateAdminAccess() {
+		User user = apiUserResolver.getUser();
+
+		if(user.getUserRole() != UserRole.ADMIN) {
+			throw new AppException(ErrorCode.USER_NOT_ADMIN);
 		}
 	}
 }

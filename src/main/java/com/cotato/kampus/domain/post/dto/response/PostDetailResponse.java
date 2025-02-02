@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.cotato.kampus.domain.post.dto.PostDetails;
+import com.cotato.kampus.domain.post.enums.PostCategory;
 
 public record PostDetailResponse(
 	Long userId,
@@ -12,6 +13,7 @@ public record PostDetailResponse(
 	LocalDateTime createdTime,
 	String title,
 	String content,
+	PostCategory postCategory,
 	Long likes,
 	Long comments,
 	List<String> postPhotoUrls
@@ -24,6 +26,7 @@ public record PostDetailResponse(
 			postDetails.createdTime(),
 			postDetails.title(),
 			postDetails.content(),
+			postDetails.postCategory(),
 			postDetails.likes(),
 			postDetails.comments(),
 			postDetails.postPhotos()
