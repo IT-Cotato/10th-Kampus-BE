@@ -21,6 +21,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven{url 'https://jitpack.io'}
 }
 
 dependencies {
@@ -57,6 +58,9 @@ dependencies {
 
 	// DeepL(Translation)
 	implementation 'com.deepl.api:deepl-java:1.7.0'
+
+	// univcert
+	implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
 }
 
 tasks.named('test') {

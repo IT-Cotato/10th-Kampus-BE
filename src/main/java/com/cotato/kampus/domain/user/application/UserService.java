@@ -1,10 +1,14 @@
 package com.cotato.kampus.domain.user.application;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.user.dto.UserDetailsDto;
+import com.cotato.kampus.domain.university.application.UnivEmailVerifier;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 
@@ -23,6 +27,7 @@ public class UserService {
 	public UserDetailsDto getUserDetails() {
 		return UserDetailsDto.from(apiUserResolver.getUser());
 	}
+	private final UnivEmailVerifier univEmailVerifier;
 
 	@Transactional
 	public Long updateUserDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage,
@@ -36,5 +41,10 @@ public class UserService {
 		agreementAppender.appendAgreement(userId, personalInfoAgreement, privacyPolicyAgreement,
 			termsOfServiceAgreement, marketingAgreement);
 		return userId;
+	}
+
+	@Transactional
+	public Map<String, Object> sendMail(String email, String univName) throws IOException {
+		return univEmailVerifier.sendMail(email, univName);
 	}
 }
