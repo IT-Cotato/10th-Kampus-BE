@@ -3,6 +3,7 @@ package com.cotato.kampus.domain.chat.application;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.chat.dto.ChatRoomDto;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -32,6 +33,14 @@ public class ChatRoomValidator {
 	private void validateDuplicateChatRoom(Long postId, Long senderId) {
 		if (chatRoomFinder.existsByPostIdAndSenderId(postId, senderId)) {
 			throw new AppException(ErrorCode.CHATROOM_DUPLICATED);
+		}
+	}
+
+	// 채팅방에 들어가있지 않은 유저가 조회하는 경우
+	public void validateUser(Long userId, Long chatroomId) {
+		ChatRoomDto chatRoom = chatRoomFinder.findByChatRoomId(chatroomId);
+		if (!chatRoom.senderId().equals(userId) && !chatRoom.receiverId().equals(userId)) {
+			throw new AppException(ErrorCode.CHATROOM_NOT_ENTERED);
 		}
 	}
 }
