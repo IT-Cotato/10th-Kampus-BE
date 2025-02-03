@@ -25,4 +25,11 @@ public class UserUpdater {
 		user.updateDetails(nickname, nationality, preferredLanguage);
 		return user.getId();
 	}
+
+	@Transactional
+	public Long updateVerificationStatus(Long universityId){
+		User user = apiUserResolver.getUser();
+		user.updateVerificationStatus(universityId);
+		return user.getId();
+	}
 }

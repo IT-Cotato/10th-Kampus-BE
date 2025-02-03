@@ -94,4 +94,10 @@ public class User {
 		this.username = username;
 		return this;
 	}
+
+	public User updateVerificationStatus(Long universityId){
+		this.userRole = UserRole.VERIFIED;
+		this.universityId = universityId;
+		return this;
+	}
 }

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.user.dto.UserDetailsDto;
 import com.cotato.kampus.domain.university.application.UnivEmailVerifier;
+import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 
@@ -28,6 +29,7 @@ public class UserService {
 		return UserDetailsDto.from(apiUserResolver.getUser());
 	}
 	private final UnivEmailVerifier univEmailVerifier;
+	private final UnivFinder univFinder;
 
 	@Transactional
 	public Long updateUserDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage,
@@ -46,5 +48,17 @@ public class UserService {
 	@Transactional
 	public Map<String, Object> sendMail(String email, String univName) throws IOException {
 		return univEmailVerifier.sendMail(email, univName);
+	}
+
+	@Transactional
+	public Long verifyEmailCode(String email, String univName, int code) throws IOException {
+		// 코드 인증
+		univEmailVerifier.verifyCode(email, univName, code);
+
+		// 학교 검색
+		Long universityId = univFinder.findUniversityId(univName);
+
+		// 유저 상태 변경, 학교 할당
+		return userUpdater.updateVerificationStatus(universityId);
 	}
 }
