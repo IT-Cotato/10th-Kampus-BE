@@ -77,7 +77,8 @@ public enum ErrorCode {
 
 	INVALID_CHATROOM(HttpStatus.FORBIDDEN, "자신에게 채팅을 할 수 없습니다.", "CHAT-001"),
 	CHATROOM_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 존재하는 채팅 방입니다.", "CHAT-002"),
-	;
+	CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 채팅방을 찾을 수 없습니다.", "CHAT-003"),
+	CHATROOM_NOT_ENTERED(HttpStatus.FORBIDDEN, "채팅방에 입장한 유저가 아닙니다.", "CHAT-004");
 
 	private final HttpStatus httpStatus;
 	private final String message;
