@@ -25,4 +25,9 @@ public class UnivFinder {
 		return university.getId();
 	}
 
+	public University findUniversity(Long universityId){
+		return universityRepository.findById(universityId)
+			.orElseThrow(() -> new AppException(ErrorCode.UNIVERSITY_NOT_FOUND));
+	}
+
 }
