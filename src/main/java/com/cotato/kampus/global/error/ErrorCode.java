@@ -50,11 +50,12 @@ public enum ErrorCode {
 
 	//User
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다.", "USER-001"),
-	USER_UNVERIFIED(HttpStatus.NOT_FOUND, "학생 인증되지 않은 유저입니다.", "USER-002"),
+	USER_UNVERIFIED(HttpStatus.NOT_FOUND, "재학생 인증되지 않은 유저입니다.", "USER-002"),
 	USER_NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다.", "USER-003"),
 	USER_NOT_ADMIN(HttpStatus.FORBIDDEN, "사용자가 관리자 권한을 갖고 있지 않습니다.", "USER-004"),
 	AGREEMENT_ALREADY_EXISTS(HttpStatus.CONFLICT, "해당 유저의 동의 내역이 이미 존재합니다.", "USER-005"),
 	USER_ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 세부정보를 등록한 유저입니다.", "USER-006"),
+	USER_ALREADY_VERIFIED(HttpStatus.NOT_FOUND, "이미 재학생 인증된 유저입니다.", "USER-007"),
 
 	//Board
 	BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시판을 찾을 수 없습니다.", "BOARD-001"),

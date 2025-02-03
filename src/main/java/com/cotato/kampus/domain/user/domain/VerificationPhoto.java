@@ -27,8 +27,16 @@ public class VerificationPhoto extends BaseTimeEntity {
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
+	@Column(name = "university_id", nullable = false)
+	private Long universityId;
+
+	@Column(name = "image_url", nullable = false)
+	private String imageUrl;
+
 	@Builder
-	public VerificationPhoto(Long userId) {
+	public VerificationPhoto(Long userId, Long universityId, String imageUrl) {
 		this.userId = userId;
+		this.universityId = universityId;
+		this.imageUrl = imageUrl;
 	}
 }

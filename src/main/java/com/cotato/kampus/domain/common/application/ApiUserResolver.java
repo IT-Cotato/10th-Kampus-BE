@@ -37,9 +37,7 @@ public class ApiUserResolver {
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		if (principal instanceof AppUserDetails userDetails) {
-			Long userId = userFinder.findByUniqueId(userDetails.getUniqueId()).getId();
-			return userRepository.findById(userId)
-				.orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+			return userFinder.findByUniqueId(userDetails.getUniqueId());
 		} else {
 			throw new AppException(ErrorCode.USER_NOT_FOUND);
 		}

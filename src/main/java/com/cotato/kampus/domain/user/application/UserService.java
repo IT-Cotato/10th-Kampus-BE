@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.user.dto.UserDetailsDto;
@@ -12,6 +13,8 @@ import com.cotato.kampus.domain.university.application.UnivEmailVerifier;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
+import com.cotato.kampus.global.error.exception.ImageException;
+import com.cotato.kampus.global.util.s3.S3Uploader;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +33,10 @@ public class UserService {
 	}
 	private final UnivEmailVerifier univEmailVerifier;
 	private final UnivFinder univFinder;
+	private final S3Uploader s3Uploader;
+	private final VerificationPhotoAppender verificationPhotoAppender;
+
+	private static final String STUDENT_CERT_IMAGE_FOLDER = "student_cert";
 
 	@Transactional
 	public Long updateUserDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage,
@@ -52,6 +59,9 @@ public class UserService {
 
 	@Transactional
 	public Long verifyEmailCode(String email, String univName, int code) throws IOException {
+		// 이미 재학생 인증 되었는지 확인
+		userValidator.validateDuplicateStudentVerification();
+
 		// 코드 인증
 		univEmailVerifier.verifyCode(email, univName, code);
 
@@ -60,5 +70,20 @@ public class UserService {
 
 		// 유저 상태 변경, 학교 할당
 		return userUpdater.updateVerificationStatus(universityId);
+	}
+
+	@Transactional
+	public void uploadCert(Long universityId, MultipartFile certImage) throws ImageException {
+		// 이미 재학생 인증 되었는지 검증
+		Long userId = userValidator.validateDuplicateStudentVerification();
+
+		// 학교 검증
+		univFinder.findUniversity(universityId);
+
+		// s3에 이미지 업로드
+		String imageUrl = s3Uploader.uploadFile(certImage, STUDENT_CERT_IMAGE_FOLDER);
+
+		// 인증서 이미지 추가
+		verificationPhotoAppender.append(userId, universityId, imageUrl);
 	}
 }
