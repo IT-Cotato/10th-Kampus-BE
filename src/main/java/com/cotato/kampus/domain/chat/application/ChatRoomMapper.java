@@ -24,9 +24,8 @@ public class ChatRoomMapper {
 		String title = postFinder.findPost(chatroom.getPostId()).title();
 		ChatMessage lastMessage = chatMessageFinder.findLatestMessage(chatroom.getId());
 
-		String lastMessageContent = lastMessage != null ? lastMessage.getContent() : "";
-		LocalDateTime lastMessageTime = lastMessage != null ? lastMessage.getCreatedTime() : chatroom.getCreatedTime();
-
+		String lastMessageContent = lastMessage != null ? lastMessage.getContent() : null;
+		LocalDateTime lastMessageTime = lastMessage != null ? lastMessage.getCreatedTime() : null;
 		return ChatRoomPreview.of(
 			chatroom.getId(),
 			title,
