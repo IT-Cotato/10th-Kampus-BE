@@ -6,6 +6,7 @@ import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.domain.user.enums.UserRole;
+import com.cotato.kampus.domain.user.enums.UserStatus;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -72,6 +73,7 @@ public class OAuth2Attribute {
 			.nationality(Nationality.OTHER)
 			.preferredLanguage(PreferredLanguage.ENGLISH_AMERICAN)
 			.userRole(UserRole.UNVERIFIED)
+			.userStatus(UserStatus.PENDING_DETAILS)
 			.build();
 	}
 
