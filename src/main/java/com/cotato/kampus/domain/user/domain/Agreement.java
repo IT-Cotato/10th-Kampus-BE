@@ -27,8 +27,25 @@ public class Agreement extends BaseTimeEntity {
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
+	@Column(name = "personal_info_agreement", nullable = false)
+	private boolean personalInfoAgreement;
+
+	@Column(name = "privacy_policy_agreement", nullable = false)
+	private boolean privacyPolicyAgreement;
+
+	@Column(name = "terms_of_service_agreement", nullable = false)
+	private boolean termsOfServiceAgreement;
+
+	@Column(name = "marketing_agreement", nullable = false)
+	private boolean marketingAgreement;
+
 	@Builder
-	public Agreement(Long userId) {
+	public Agreement(Long userId, boolean personalInfoAgreement, boolean privacyPolicyAgreement,
+		boolean termsOfServiceAgreement, boolean marketingAgreement) {
 		this.userId = userId;
+		this.personalInfoAgreement = personalInfoAgreement;
+		this.privacyPolicyAgreement = privacyPolicyAgreement;
+		this.termsOfServiceAgreement = termsOfServiceAgreement;
+		this.marketingAgreement = marketingAgreement;
 	}
 }
