@@ -10,6 +10,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import com.cotato.kampus.domain.auth.application.RefreshService;
+import com.cotato.kampus.domain.user.enums.UserStatus;
 import com.cotato.kampus.global.auth.oauth.service.dto.CustomOAuth2User;
 import com.cotato.kampus.global.util.JwtUtil;
 
@@ -32,6 +33,16 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 	private static final Long ACCESS_TOKEN_EXP = 604800000L; // 일주일
 	private static final Long REFRESH_TOKEN_EXP = 86400000L;
 	private static final String REDIRECT_URL = "https://dc92clgvselcq.cloudfront.net/login";
+	// 개발 환경 관련 상수 - 추후 제거 예정
+	private static final String DEV_ORIGIN = "http://localhost";
+	private static final String DEV_REDIRECT_URL = "http://localhost:5173/login";
+
+	// 개발 환경 체크 함수 - 추후 제거 예정
+	private boolean isDevelopment(HttpServletRequest request) {
+		String referer = request.getHeader("Referer");
+		log.info("Referer: {}", referer);
+		return referer != null && referer.startsWith(DEV_ORIGIN);
+	}
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -41,6 +52,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 		String uniqueId = customOAuth2User.getUniqueId();
 		String username = customOAuth2User.getName();
+		UserStatus userStatus = customOAuth2User.getUserStatus();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
 		GrantedAuthority auth = iterator.next();
@@ -57,7 +69,14 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		// Bearer 토큰을 헤더에 추가
 		response.setHeader(ACCESS_HEADER_NAME, TOKEN_PREFIX + access);
 		response.setHeader(REFRESH_HEADER_NAME, TOKEN_PREFIX + refresh);
-		response.sendRedirect(REDIRECT_URL + "?accessToken=" + access
-			+ "&refreshToken=" + refresh);
+
+		boolean needSetup = userStatus == UserStatus.PENDING_DETAILS;
+
+		// 로컬 환경에서 개발할 때는 로컬로 리다이렉트 되도록 설정(추후 삭제 예정)
+		String finalRedirectUrl = isDevelopment(request) ? DEV_REDIRECT_URL : REDIRECT_URL;
+		log.info("Redirect URL: {}", finalRedirectUrl);
+		response.sendRedirect(finalRedirectUrl + "?accessToken=" + access
+			+ "&refreshToken=" + refresh
+			+ "&needSetup=" + needSetup);
 	}
 }
