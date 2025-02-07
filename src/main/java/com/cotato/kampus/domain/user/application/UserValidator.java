@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.domain.user.enums.UserRole;
+import com.cotato.kampus.domain.user.enums.UserStatus;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -29,17 +30,29 @@ public class UserValidator {
 		return user.getUniversityId();
 	}
 
-	public void validateDuplicatedNickname(String nickname) {
-		if (userFinder.existsByNickname(nickname)) {
-			throw new AppException(ErrorCode.USER_NICKNAME_DUPLICATED);
-		}
-	}
-
 	public void validateAdminAccess() {
 		User user = apiUserResolver.getUser();
 
 		if(user.getUserRole() != UserRole.ADMIN) {
 			throw new AppException(ErrorCode.USER_NOT_ADMIN);
+		}
+	}
+
+	public void validateUserDetailsUpdate(String nickname) {
+		validateUserStatus();
+		validateDuplicatedNickname(nickname);
+	}
+
+	private void validateUserStatus() {
+		User user = apiUserResolver.getUser();
+		if (user.getUserStatus() == UserStatus.ACTIVE) {
+			throw new AppException(ErrorCode.USER_ALREADY_REGISTERED);
+		}
+	}
+
+	private void validateDuplicatedNickname(String nickname) {
+		if (userFinder.existsByNickname(nickname)) {
+			throw new AppException(ErrorCode.USER_NICKNAME_DUPLICATED);
 		}
 	}
 }

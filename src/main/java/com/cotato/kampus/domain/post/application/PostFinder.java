@@ -21,9 +21,9 @@ import com.cotato.kampus.domain.post.domain.PostPhoto;
 import com.cotato.kampus.domain.post.domain.PostScrap;
 import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDraftDto;
+import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
-import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -40,7 +40,7 @@ public class PostFinder {
 	private final PostPhotoRepository postPhotoRepository;
 	private final PostDraftRepository postDraftRepository;
 	private static final Integer PAGE_SIZE = 10;
-	public static final String SORT_PROPERTY = "createdTime";
+	private static final String SORT_PROPERTY = "createdTime";
 	private final ApiUserResolver apiUserResolver;
 	private final BoardFinder boardFinder;
 	private final PostScrapRepository postScrapRepository;
@@ -50,7 +50,6 @@ public class PostFinder {
 		return postRepository.findById(postId)
 			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
 	}
-
 
 	public Slice<PostWithPhotos> findPosts(Long boardId, int page) {
 		// 1. Post 리스트를 Slice로 조회
@@ -75,7 +74,7 @@ public class PostFinder {
 		return PostDto.from(post);
 	}
 
-	public Slice<MyPostWithPhoto> findUserPosts(int page){
+	public Slice<MyPostWithPhoto> findUserPosts(int page) {
 
 		Long userId = apiUserResolver.getUserId();
 
@@ -92,7 +91,7 @@ public class PostFinder {
 		});
 	}
 
-	public Slice<MyPostWithPhoto> findUserScrapedPosts(int page){
+	public Slice<MyPostWithPhoto> findUserScrapedPosts(int page) {
 
 		Long userId = apiUserResolver.getUserId();
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
@@ -113,7 +112,7 @@ public class PostFinder {
 		});
 	}
 
-	public Slice<PostDraftWithPhoto> findPostDrafts(Long boardId, Long userId, int page){
+	public Slice<PostDraftWithPhoto> findPostDrafts(Long boardId, Long userId, int page) {
 
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
 		Slice<PostDraft> postDrafts = postDraftRepository.findAllByBoardIdAndUserIdOrderByCreatedTimeDesc(
@@ -123,7 +122,8 @@ public class PostFinder {
 		);
 
 		return postDrafts.map(postDraft -> {
-			PostDraftPhoto postDraftPhoto = postDraftPhotoRepository.findFirstByPostDraftIdOrderByCreatedTimeDesc(postDraft.getId())
+			PostDraftPhoto postDraftPhoto = postDraftPhotoRepository.findFirstByPostDraftIdOrderByCreatedTimeDesc(
+					postDraft.getId())
 				.orElse(null);
 			return PostDraftWithPhoto.from(postDraft, postDraftPhoto);
 		});
@@ -134,13 +134,13 @@ public class PostFinder {
 			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
 	}
 
-	public PostDraftDto findPostDraftDto(Long postDraftId){
+	public PostDraftDto findPostDraftDto(Long postDraftId) {
 		PostDraft postDraft = findPostDraft(postDraftId);
 
 		return PostDraftDto.from(postDraft);
 	}
 
-	public List<PostDraft> findPostDrafts(List<Long> postDraftIds){
+	public List<PostDraft> findPostDrafts(List<Long> postDraftIds) {
 		List<PostDraft> drafts = postDraftRepository.findAllById(postDraftIds);
 
 		if (drafts.size() != postDraftIds.size()) {
@@ -150,7 +150,7 @@ public class PostFinder {
 		return drafts;
 	}
 
-	public List<Long> getPostDraftIdsByBoardAndUser(Long boardId, Long userId){
+	public List<Long> getPostDraftIdsByBoardAndUser(Long boardId, Long userId) {
 		List<PostDraft> postDrafts = postDraftRepository.findAllByBoardIdAndUserId(boardId, userId);
 
 		return postDrafts.stream()

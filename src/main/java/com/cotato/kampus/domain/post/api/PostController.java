@@ -25,13 +25,11 @@ import com.cotato.kampus.domain.post.dto.response.MyPostResponse;
 import com.cotato.kampus.domain.post.dto.response.PostCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDeleteResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDetailResponse;
+import com.cotato.kampus.domain.post.dto.response.PostDraftCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftDetailResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftSliceFindResponse;
-import com.cotato.kampus.domain.post.dto.response.PostDraftCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostSliceFindResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,16 +59,16 @@ public class PostController {
 		postService.validateCategoryForBoard(requiresCategory, request.postCategory());
 
 		return ResponseEntity.ok(DataResponse.from(
-			PostCreateResponse.of(
-				postService.createPost(
-					request.boardId(),
-					request.title(),
-					request.content(),
-					request.postCategory(),
-					request.images() == null ? List.of() : request.images()
+				PostCreateResponse.of(
+					postService.createPost(
+						request.boardId(),
+						request.title(),
+						request.content(),
+						request.postCategory(),
+						request.images() == null ? List.of() : request.images()
+					)
 				)
 			)
-		)
 		);
 	}
 
@@ -135,7 +133,7 @@ public class PostController {
 			request.newImages() == null ? List.of() : request.newImages()); // 이미지 없는 경우 빈 리스트로 요청
 
 		return ResponseEntity.ok(DataResponse.ok());
-  	}
+	}
 
 	@PostMapping(value = "/draft", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "게시글 임시 저장", description = "게시글을 임시 저장합니다. boardId는 필수 값입니다. 사진이 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
@@ -160,8 +158,8 @@ public class PostController {
 	public ResponseEntity<DataResponse<PostDraftSliceFindResponse>> findDraftPostList(
 		@PathVariable Long boardId,
 		@RequestParam(required = false, defaultValue = "0") int page
-	){
-			return ResponseEntity.ok(DataResponse.from(
+	) {
+		return ResponseEntity.ok(DataResponse.from(
 				PostDraftSliceFindResponse.from(
 					postService.findPostDrafts(boardId, page)
 				)
@@ -173,8 +171,8 @@ public class PostController {
 	@Operation(summary = "임시 저장 게시글 조회", description = "특정 임시 저장글을 조회합니다.")
 	public ResponseEntity<DataResponse<PostDraftDetailResponse>> findDraftPost(
 		@PathVariable Long postDraftId
-	){
-			return ResponseEntity.ok(DataResponse.from(
+	) {
+		return ResponseEntity.ok(DataResponse.from(
 				PostDraftDetailResponse.from(
 					postService.findDraftDetail(postDraftId)
 				)
@@ -187,7 +185,7 @@ public class PostController {
 	public ResponseEntity<DataResponse<PostCreateResponse>> publishDraftPost(
 		@PathVariable Long postDraftId,
 		@Valid @ModelAttribute PostUpdateRequest request
-	) throws ImageException{
+	) throws ImageException {
 
 		// 게시판이 카테고리를 사용하는지 확인
 		Long boardId = postService.findDraftDetail(postDraftId).boardId();
@@ -196,18 +194,18 @@ public class PostController {
 
 		// 게시글 생성
 		Long postId = postService.publishDraftPost(
-						postDraftId,
-						request.title(),
-						request.content(),
-						request.postCategory(),
-						request.deletedImageUrls() == null ? List.of() : request.deletedImageUrls(),
-						request.newImages() == null ? List.of() : request.newImages());
+			postDraftId,
+			request.title(),
+			request.content(),
+			request.postCategory(),
+			request.deletedImageUrls() == null ? List.of() : request.deletedImageUrls(),
+			request.newImages() == null ? List.of() : request.newImages());
 
 		// 임시 저장글 삭제
 		postService.deleteDraftPosts(List.of(postDraftId));
 
 		return ResponseEntity.ok(DataResponse.from(
-			PostCreateResponse.of(postId)
+				PostCreateResponse.of(postId)
 			)
 		);
 	}
@@ -216,17 +214,16 @@ public class PostController {
 	@Operation(summary = "임시 저장 게시글 선택 삭제", description = "선택된 임시 저장글들을 삭제합니다.")
 	public ResponseEntity<DataResponse<Void>> deleteDraftPost(
 		@RequestBody DraftDeleteRequest request
-	){
+	) {
 		postService.deleteDraftPosts(request.draftPostIds());
 		return ResponseEntity.ok(DataResponse.ok());
 	}
-
 
 	@DeleteMapping(value = "boards/{boardId}/draft")
 	@Operation(summary = "임시 저장 게시글 전체 삭제", description = "특정 게시판의 모든 임시 저장글을 삭제합니다.")
 	public ResponseEntity<DataResponse<Void>> deleteAllDraftPost(
 		@PathVariable Long boardId
-	){
+	) {
 		postService.deleteAllDraftPost(boardId);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -235,8 +232,8 @@ public class PostController {
 	@Operation(summary = "[마이페이지] 내가 쓴 게시글 조회", description = "현재 사용자가 작성한 게시글을 최신순으로 조회합니다.")
 	public ResponseEntity<DataResponse<MyPostResponse>> findMyPosts(
 		@RequestParam(required = false, defaultValue = "0") int page
-	){
-			return ResponseEntity.ok(DataResponse.from(
+	) {
+		return ResponseEntity.ok(DataResponse.from(
 				MyPostResponse.from(
 					postService.findUserPosts(page)
 				)
@@ -244,7 +241,7 @@ public class PostController {
 		);
 	}
 
-  	@PostMapping("/{postId}/likes")
+	@PostMapping("/{postId}/likes")
 	@Operation(summary = "게시글 좋아요", description = "게시글 좋아요")
 	public ResponseEntity<DataResponse<Void>> likePost(
 		@PathVariable Long postId
@@ -257,7 +254,7 @@ public class PostController {
 	@Operation(summary = "게시글 스크랩", description = "게시글을 스크랩합니다.")
 	public ResponseEntity<DataResponse<Void>> scrapPost(
 		@PathVariable Long postId
-	){
+	) {
 		postService.scrapPost(postId);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -266,7 +263,7 @@ public class PostController {
 	@Operation(summary = "게시글 스크랩 취소", description = "게시글 스크랩을 해제합니다.")
 	public ResponseEntity<DataResponse<Void>> unscrapPost(
 		@PathVariable Long postId
-	){
+	) {
 		postService.unscrapPost(postId);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -275,7 +272,7 @@ public class PostController {
 	@Operation(summary = "[마이페이지] 스크랩한 게시글 조회", description = "현재 사용자가 스크랩한 게시글을 최신순으로 조회합니다.")
 	public ResponseEntity<DataResponse<MyPostResponse>> findMyScrapedPosts(
 		@RequestParam(required = false, defaultValue = "0") int page
-	){
+	) {
 		return ResponseEntity.ok(DataResponse.from(
 				MyPostResponse.from(
 					postService.findUserScrapedPosts(page)

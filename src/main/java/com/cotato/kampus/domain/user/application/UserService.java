@@ -3,6 +3,8 @@ package com.cotato.kampus.domain.user.application;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.user.dto.UserDetailsDto;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 
@@ -15,10 +17,24 @@ public class UserService {
 
 	private final UserUpdater userUpdater;
 	private final UserValidator userValidator;
+	private final ApiUserResolver apiUserResolver;
+	private final AgreementAppender agreementAppender;
+
+	public UserDetailsDto getUserDetails() {
+		return UserDetailsDto.from(apiUserResolver.getUser());
+	}
 
 	@Transactional
-	public Long updateUserDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage) {
-		userValidator.validateDuplicatedNickname(nickname);
-		return userUpdater.updateDetails(nickname, nationality, preferredLanguage);
+	public Long updateUserDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage,
+		boolean personalInfoAgreement, boolean privacyPolicyAgreement,
+		boolean termsOfServiceAgreement, boolean marketingAgreement) {
+		// 1. 세부정보 등록 가능한지 검증 (활성화 상태, 닉네임 중복 검증)
+		userValidator.validateUserDetailsUpdate(nickname);
+		// 2. 유저 닉네임, 국적, 선호언어 설정
+		Long userId = userUpdater.updateDetails(nickname, nationality, preferredLanguage);
+		// 3. 유저 동의 내역 추가
+		agreementAppender.appendAgreement(userId, personalInfoAgreement, privacyPolicyAgreement,
+			termsOfServiceAgreement, marketingAgreement);
+		return userId;
 	}
 }

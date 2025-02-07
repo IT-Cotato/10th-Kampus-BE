@@ -21,6 +21,7 @@ public class UserUpdater {
 	@Transactional
 	public Long updateDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage) {
 		User user = apiUserResolver.getUser();
+		// 유저 세부정보 업데이트 및 UserStatus를 ACTIVE로 변경
 		user.updateDetails(nickname, nationality, preferredLanguage);
 		return user.getId();
 	}
