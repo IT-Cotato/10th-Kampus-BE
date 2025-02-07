@@ -3,6 +3,7 @@ package com.cotato.kampus.domain.user.domain;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.domain.user.enums.UserRole;
+import com.cotato.kampus.domain.user.enums.UserStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -61,9 +62,13 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	private UserRole userRole = UserRole.UNVERIFIED;
 
+	@Column(name = "user_status", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private UserStatus userStatus = UserStatus.PENDING_DETAILS;
+
 	@Builder
 	public User(String email, String uniqueId, String providerId, String username, String nickname, Long universityId,
-		Nationality nationality, PreferredLanguage preferredLanguage, UserRole userRole) {
+		Nationality nationality, PreferredLanguage preferredLanguage, UserRole userRole, UserStatus userStatus) {
 		this.email = email;
 		this.uniqueId = uniqueId;
 		this.providerId = providerId;
@@ -73,18 +78,20 @@ public class User {
 		this.nationality = nationality;
 		this.preferredLanguage = preferredLanguage;
 		this.userRole = userRole;
-	}
-
-	public User update(String email, String username) {
-		this.email = email;
-		this.username = username;
-		return this;
+		this.userStatus = userStatus;
 	}
 
 	public User updateDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage) {
 		this.nickname = nickname;
 		this.nationality = nationality;
 		this.preferredLanguage = preferredLanguage;
+		this.userStatus = UserStatus.ACTIVE;
+		return this;
+	}
+
+	public User update(String email, String username) {
+		this.email = email;
+		this.username = username;
 		return this;
 	}
 }
