@@ -1,10 +1,10 @@
-package com.cotato.kampus.domain.user.application;
+package com.cotato.kampus.domain.verification.application;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.user.dao.VerificationPhotoRepository;
-import com.cotato.kampus.domain.user.domain.VerificationPhoto;
+import com.cotato.kampus.domain.verification.dao.VerificationPhotoRepository;
+import com.cotato.kampus.domain.verification.domain.VerificationPhoto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

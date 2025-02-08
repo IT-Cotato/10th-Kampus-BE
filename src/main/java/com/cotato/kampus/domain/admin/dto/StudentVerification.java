@@ -2,7 +2,7 @@ package com.cotato.kampus.domain.admin.dto;
 
 import java.time.LocalDateTime;
 
-import com.cotato.kampus.domain.user.domain.VerificationRecord;
+import com.cotato.kampus.domain.verification.domain.VerificationRecord;
 import com.cotato.kampus.domain.user.enums.VerificationStatus;
 import com.cotato.kampus.domain.user.enums.VerificationType;
 

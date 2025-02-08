@@ -1,12 +1,12 @@
-package com.cotato.kampus.domain.user.application;
+package com.cotato.kampus.domain.verification.application;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.user.dao.VerificationRecordRepository;
+import com.cotato.kampus.domain.verification.dao.VerificationRecordRepository;
 import com.cotato.kampus.domain.user.domain.User;
-import com.cotato.kampus.domain.user.domain.VerificationRecord;
+import com.cotato.kampus.domain.verification.domain.VerificationRecord;
 import com.cotato.kampus.domain.user.enums.VerificationStatus;
 import com.cotato.kampus.domain.user.enums.VerificationType;
 

@@ -13,6 +13,8 @@ import com.cotato.kampus.domain.university.application.UnivEmailVerifier;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
+import com.cotato.kampus.domain.verification.application.VerificationPhotoAppender;
+import com.cotato.kampus.domain.verification.application.VerificationRecordAppender;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
