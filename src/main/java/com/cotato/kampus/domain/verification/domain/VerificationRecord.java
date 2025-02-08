@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.user.domain;
+package com.cotato.kampus.domain.verification.domain;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 import com.cotato.kampus.domain.user.enums.VerificationStatus;

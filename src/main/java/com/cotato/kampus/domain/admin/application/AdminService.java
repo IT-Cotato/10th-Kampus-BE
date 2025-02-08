@@ -13,7 +13,7 @@ import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardUpdater;
 import com.cotato.kampus.domain.board.application.BoardValidator;
 import com.cotato.kampus.domain.user.application.UserValidator;
-import com.cotato.kampus.domain.user.application.VerificationRecordFinder;
+import com.cotato.kampus.domain.verification.application.VerificationRecordFinder;
 
 import lombok.RequiredArgsConstructor;
 

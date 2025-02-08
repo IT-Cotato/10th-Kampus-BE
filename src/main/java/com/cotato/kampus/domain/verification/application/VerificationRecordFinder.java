@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.user.application;
+package com.cotato.kampus.domain.verification.application;
 
 import static com.cotato.kampus.domain.post.application.PostFinder.*;
 
@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.admin.dto.StudentVerification;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.university.domain.University;
-import com.cotato.kampus.domain.user.dao.VerificationRecordRepository;
-import com.cotato.kampus.domain.user.domain.VerificationRecord;
+import com.cotato.kampus.domain.verification.dao.VerificationRecordRepository;
+import com.cotato.kampus.domain.verification.domain.VerificationRecord;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 
 import lombok.AccessLevel;
