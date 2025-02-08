@@ -2,15 +2,18 @@ package com.cotato.kampus.domain.admin.application;
 
 import java.util.List;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.admin.dto.BoardDetail;
+import com.cotato.kampus.domain.admin.dto.StudentVerification;
 import com.cotato.kampus.domain.board.application.BoardAppender;
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardUpdater;
 import com.cotato.kampus.domain.board.application.BoardValidator;
 import com.cotato.kampus.domain.user.application.UserValidator;
+import com.cotato.kampus.domain.user.application.VerificationRecordFinder;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +26,7 @@ public class AdminService {
 	private final BoardUpdater boardUpdater;
 	private final BoardValidator boardValidator;
 	private final BoardFinder boardFinder;
+	private final VerificationRecordFinder verificationRecordFinder;
 
 	@Transactional
 	public Long createBoard(String boardName, String description, Long universityId, Boolean isCategoryRequired){
@@ -70,5 +74,13 @@ public class AdminService {
 
 		// 각 게시판의 게시글 수 매핑하여 반환
 		return boardFinder.findAllBoards();
+	}
+
+	@Transactional
+	public Slice<StudentVerification> getVerifications(int page){
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+
+		return verificationRecordFinder.findAll(page);
 	}
 }
