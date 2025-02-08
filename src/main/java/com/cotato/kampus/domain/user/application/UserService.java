@@ -27,6 +27,7 @@ public class UserService {
 	private final UserValidator userValidator;
 	private final ApiUserResolver apiUserResolver;
 	private final AgreementAppender agreementAppender;
+	private final VerificationRecordAppender verificationRecordAppender;
 
 	public UserDetailsDto getUserDetails() {
 		return UserDetailsDto.from(apiUserResolver.getUser());
@@ -68,22 +69,28 @@ public class UserService {
 		// 학교 검색
 		Long universityId = univFinder.findUniversityId(univName);
 
+		// VerificationRecord 추가
+		verificationRecordAppender.appendEmailType(universityId);
+
 		// 유저 상태 변경, 학교 할당
 		return userUpdater.updateVerificationStatus(universityId);
 	}
 
 	@Transactional
-	public void uploadCert(Long universityId, MultipartFile certImage) throws ImageException {
+	public void uploadCert(String univName, MultipartFile certImage) throws ImageException {
 		// 이미 재학생 인증 되었는지 검증
 		Long userId = userValidator.validateDuplicateStudentVerification();
 
-		// 학교 검증
-		univFinder.findUniversity(universityId);
+		// 학교 검색
+		Long universityId = univFinder.findUniversityId(univName);
 
 		// s3에 이미지 업로드
 		String imageUrl = s3Uploader.uploadFile(certImage, STUDENT_CERT_IMAGE_FOLDER);
 
+		// VerificationRecord 추가
+		Long verificationRecordId = verificationRecordAppender.appendPhotoType(userId, universityId);
+
 		// 인증서 이미지 추가
-		verificationPhotoAppender.append(userId, universityId, imageUrl);
+		verificationPhotoAppender.append(verificationRecordId, imageUrl);
 	}
 }
