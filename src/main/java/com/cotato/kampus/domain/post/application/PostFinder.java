@@ -39,8 +39,8 @@ public class PostFinder {
 	private final PostRepository postRepository;
 	private final PostPhotoRepository postPhotoRepository;
 	private final PostDraftRepository postDraftRepository;
-	private static final Integer PAGE_SIZE = 10;
-	private static final String SORT_PROPERTY = "createdTime";
+	public static final Integer PAGE_SIZE = 10;
+	public static final String SORT_PROPERTY = "createdTime";
 	private final ApiUserResolver apiUserResolver;
 	private final BoardFinder boardFinder;
 	private final PostScrapRepository postScrapRepository;

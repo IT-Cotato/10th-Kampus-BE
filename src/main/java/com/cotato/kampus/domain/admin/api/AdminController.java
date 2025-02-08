@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.admin.application.AdminService;
@@ -14,6 +15,7 @@ import com.cotato.kampus.domain.admin.dto.request.BoardCreateRequest;
 import com.cotato.kampus.domain.admin.dto.request.BoardUpdateRequest;
 import com.cotato.kampus.domain.admin.dto.response.AdminBoardListResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardCreateResponse;
+import com.cotato.kampus.domain.admin.dto.response.StudentVerificationListResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -92,6 +94,16 @@ public class AdminController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-
+	@GetMapping("/student-verifications")
+	@Operation(summary = "재학생 인증 목록 조회", description = "재학생 인증 목록을 최신순으로 조회합니다.")
+	public ResponseEntity<DataResponse<StudentVerificationListResponse>> getStudentVerifications(
+		@RequestParam(required = false, defaultValue = "0") int page) {
+			return ResponseEntity.ok(DataResponse.from(
+				StudentVerificationListResponse.from(
+					adminService.getVerifications(page)
+				)
+			)
+		);
+	}
 
 }
