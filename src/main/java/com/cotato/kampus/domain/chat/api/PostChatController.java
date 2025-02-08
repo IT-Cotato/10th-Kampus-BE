@@ -22,6 +22,7 @@ import com.cotato.kampus.domain.chat.dto.ChatRoomPreviewList;
 import com.cotato.kampus.domain.chat.dto.request.ChatMessageRequest;
 import com.cotato.kampus.domain.chat.dto.request.ChatroomRequest;
 import com.cotato.kampus.domain.chat.dto.response.ChatMessageListResponse;
+import com.cotato.kampus.domain.chat.dto.response.ChatRoomDetailResponse;
 import com.cotato.kampus.domain.chat.dto.response.ChatRoomListResponse;
 import com.cotato.kampus.domain.chat.dto.response.ChatroomResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
@@ -82,6 +83,20 @@ public class PostChatController {
 		return ResponseEntity.ok(
 			DataResponse.from(
 				ChatRoomListResponse.from(chatRooms)
+			)
+		);
+	}
+
+	@GetMapping("/chatrooms/{chatroomId}")
+	@Operation(summary = "채팅방 상세 조회", description = "채팅방의 상세 정보를 조회합니다.")
+	@ResponseBody
+	public ResponseEntity<DataResponse<ChatRoomDetailResponse>> getChatRoomDetail(
+		@PathVariable Long chatroomId
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+				ChatRoomDetailResponse.from(
+					postChatService.getChatRoomDetail(chatroomId)
+				)
 			)
 		);
 	}

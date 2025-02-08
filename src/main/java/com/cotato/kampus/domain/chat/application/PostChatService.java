@@ -6,11 +6,15 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.board.application.BoardFinder;
+import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.chat.domain.Chatroom;
+import com.cotato.kampus.domain.chat.dto.ChatRoomDetailDto;
 import com.cotato.kampus.domain.chat.dto.ChatRoomPreview;
 import com.cotato.kampus.domain.chat.dto.ChatRoomPreviewList;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.application.PostFinder;
+import com.cotato.kampus.domain.post.dto.PostDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +30,7 @@ public class PostChatService {
 	private final PostFinder postFinder;
 	private final ChatRoomFinder chatRoomFinder;
 	private final ChatRoomMapper chatRoomMapper;
+	private final BoardFinder boardFinder;
 
 	@Transactional
 	public Long createChatRoom(Long postId) {
@@ -55,5 +60,18 @@ public class PostChatService {
 			.toList();
 
 		return ChatRoomPreviewList.from(previewList, chatRooms.hasNext());
+	}
+
+	public ChatRoomDetailDto getChatRoomDetail(Long chatroomId) {
+		// 1. Find chatroom
+		Chatroom chatroom = chatRoomFinder.findChatroom(chatroomId);
+
+		// 2. Find associated post
+		PostDto postDto = postFinder.findPost(chatroom.getPostId());
+
+		// 3. Find board information
+		BoardDto board = boardFinder.findBoard(postDto.boardId());
+
+		return ChatRoomDetailDto.of(chatroom, postDto, board);
 	}
 }
