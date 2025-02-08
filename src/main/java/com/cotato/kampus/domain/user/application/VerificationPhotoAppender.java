@@ -17,11 +17,10 @@ public class VerificationPhotoAppender {
 	private final VerificationPhotoRepository verificationPhotoRepository;
 
 	@Transactional
-	public void append(Long userId, Long universityId, String imageUrl){
+	public void append(Long verificationRecordId, String imageUrl){
 		VerificationPhoto verificationPhoto = VerificationPhoto.builder()
-			.userId(userId)
-			.universityId(universityId)
 			.imageUrl(imageUrl)
+			.verificationRecordId(verificationRecordId)
 			.build();
 
 		verificationPhotoRepository.save(verificationPhoto);
