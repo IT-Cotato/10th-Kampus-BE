@@ -10,7 +10,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import com.cotato.kampus.domain.auth.application.RefreshService;
-import com.cotato.kampus.domain.user.enums.UserStatus;
 import com.cotato.kampus.global.auth.oauth.service.dto.CustomOAuth2User;
 import com.cotato.kampus.global.util.JwtUtil;
 
@@ -52,7 +51,6 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 		String uniqueId = customOAuth2User.getUniqueId();
 		String username = customOAuth2User.getName();
-		UserStatus userStatus = customOAuth2User.getUserStatus();
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
 		GrantedAuthority auth = iterator.next();
@@ -70,13 +68,9 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 		response.setHeader(ACCESS_HEADER_NAME, TOKEN_PREFIX + access);
 		response.setHeader(REFRESH_HEADER_NAME, TOKEN_PREFIX + refresh);
 
-		boolean needSetup = userStatus == UserStatus.PENDING_DETAILS;
-
 		// 로컬 환경에서 개발할 때는 로컬로 리다이렉트 되도록 설정(추후 삭제 예정)
 		String finalRedirectUrl = isDevelopment(request) ? DEV_REDIRECT_URL : REDIRECT_URL;
 		log.info("Redirect URL: {}", finalRedirectUrl);
-		response.sendRedirect(finalRedirectUrl + "?accessToken=" + access
-			+ "&refreshToken=" + refresh
-			+ "&needSetup=" + needSetup);
+		response.sendRedirect(finalRedirectUrl + "?accessToken=" + access + "&refreshToken=" + refresh);
 	}
 }
