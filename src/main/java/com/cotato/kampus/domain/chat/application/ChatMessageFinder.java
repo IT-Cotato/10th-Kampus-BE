@@ -35,4 +35,10 @@ public class ChatMessageFinder {
 		return chatMessageRepository.findFirstByChatroomIdOrderByCreatedTimeDesc(chatroomId)
 			.orElse(null);
 	}
+
+	public Long findLatestMessageId(Long chatroomId) {
+		ChatMessage chatMessage = chatMessageRepository.findFirstByChatroomIdOrderByCreatedTimeDesc(chatroomId)
+			.orElse(null);
+		return chatMessage.equals(null) ? -1 : chatMessage.getId();
+	}
 }

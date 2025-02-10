@@ -18,6 +18,7 @@ import com.cotato.kampus.domain.chat.application.ChatMessageService;
 import com.cotato.kampus.domain.chat.application.PostChatService;
 import com.cotato.kampus.domain.chat.domain.ChatMessage;
 import com.cotato.kampus.domain.chat.dto.ChatMessageSliceWithUserId;
+import com.cotato.kampus.domain.chat.dto.ChatNotificationResult;
 import com.cotato.kampus.domain.chat.dto.ChatRoomPreviewList;
 import com.cotato.kampus.domain.chat.dto.request.ChatMessageRequest;
 import com.cotato.kampus.domain.chat.dto.request.ChatroomRequest;
@@ -39,7 +40,6 @@ import lombok.RequiredArgsConstructor;
 public class PostChatController {
 
 	private final PostChatService postChatService;
-	private final ChatMessageService chatMessageService;
 	private final SimpMessagingTemplate messagingTemplate;
 
 	@PostMapping("/post")
@@ -60,7 +60,7 @@ public class PostChatController {
 	@Operation(summary = "채팅 조회", description = "채팅방의 채팅을 Slice로 조회하는 Api(기본 20개, 더 조회할 수 있으면 hasNext가 true)")
 	public ResponseEntity<DataResponse<ChatMessageListResponse>> getChatMessages(@PathVariable Long chatroomId,
 		@RequestParam(required = false, defaultValue = "1") int page) {
-		ChatMessageSliceWithUserId messages = chatMessageService.getMessages(page, chatroomId);
+		ChatMessageSliceWithUserId messages = postChatService.getMessages(page, chatroomId);
 		return ResponseEntity.ok(DataResponse.from(
 				ChatMessageListResponse.from(messages)
 			)
@@ -68,10 +68,22 @@ public class PostChatController {
 	}
 
 	@MessageMapping("/chatrooms/{chatroomId}")
-	@Operation(summary = "채팅 보내기", description = "websocket 연결 후, 채팅 메시지 보내는 요청")
+	@Operation(summary = "채팅 보내기")
 	public void sendMessage(@DestinationVariable Long chatroomId, @Payload ChatMessageRequest request) {
-		ChatMessage chatMessage = chatMessageService.saveMessage(request.chatroomId(), request.message());
-		messagingTemplate.convertAndSend("/chatrooms/" + chatroomId, chatMessage);
+		ChatNotificationResult result = postChatService.processNewMessage(chatroomId, request.message());
+
+		// 채팅방 채널로 메시지 전송
+		messagingTemplate.convertAndSend(
+			"/chatrooms/" + chatroomId,
+			result.chatMessage()
+		);
+
+		// 수신자의 알림 채널로 알림 전송
+		messagingTemplate.convertAndSendToUser(
+			result.receiverId().toString(),
+			"/notifications/chat",
+			result.notification()
+		);
 	}
 
 	@GetMapping("/chatrooms")
@@ -99,5 +111,12 @@ public class PostChatController {
 				)
 			)
 		);
+	}
+
+	@PostMapping("/{chatroomId}/read")
+	@Operation(summary = "채팅방 메시지 읽음 처리", description = "채팅방의 모든 메시지를 읽음 처리합니다.")
+	public ResponseEntity<Void> markChatroomAsRead(@PathVariable Long chatroomId) {
+		postChatService.markMessagesAsRead(chatroomId);
+		return ResponseEntity.ok().build();
 	}
 }

@@ -7,11 +7,22 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public record ChatRoomPreview(
 	Long chatroomId,
 	String postTitle,
-	String lastChatMessage,
+	Long lastMessageId,
+	String lastMessageContent,
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	LocalDateTime lastChatTime
+	LocalDateTime lastChatTime,
+	Long unreadCount
 ) {
-	public static ChatRoomPreview of(Long chatroomId, String title, String lastMessage, LocalDateTime lastMessageTime) {
-		return new ChatRoomPreview(chatroomId, title, lastMessage, lastMessageTime);
+	public static ChatRoomPreview of(
+		Long chatroomId,
+		String title,
+		Long lastMessageId,
+		String lastMessageContent,
+		LocalDateTime lastMessageTime,
+		Long unreadCount
+	) {
+		return new ChatRoomPreview(
+			chatroomId, title, lastMessageId, lastMessageContent, lastMessageTime, unreadCount
+		);
 	}
 }
