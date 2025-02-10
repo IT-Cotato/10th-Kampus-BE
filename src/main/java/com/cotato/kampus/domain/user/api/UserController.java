@@ -108,14 +108,14 @@ public class UserController {
 	@PostMapping(value = "/verify/document", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "재학생 서류 사진 제출", description = "재학생 인증 서류 사진을 제출합니다.")
 	public ResponseEntity<DataResponse<Void>> uploadCert(
-		@RequestParam("universityName") @NotNull String univName,
+		@RequestParam("universityId") @NotNull Long universityId,
 		@RequestPart("certImage") MultipartFile certImage
 	) throws ImageException{
 		if (certImage.isEmpty()) {
 			throw new AppException(ErrorCode.EMPTY_FILE_EXCEPTION);
 		}
 
-		userService.uploadCert(univName, certImage);
+		userService.uploadCert(universityId, certImage);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 }
