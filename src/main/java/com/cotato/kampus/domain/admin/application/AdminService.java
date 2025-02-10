@@ -107,4 +107,14 @@ public class AdminService {
 		// 유저 상태 변경, 학교 할당
 		userUpdater.updateVerificationStatus(userId, universityId);
 	}
+
+	@Transactional
+	public void rejectStudentVerification(Long verificationRecordId){
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+
+		verificationRecordUpdater.reject(verificationRecordId);
+	}
+
+
 }

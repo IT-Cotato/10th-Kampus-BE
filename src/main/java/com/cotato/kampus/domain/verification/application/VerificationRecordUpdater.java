@@ -25,4 +25,12 @@ public class VerificationRecordUpdater {
 
 		verificationRecordRepository.save(verificationRecord);
 	}
+
+	public void reject(Long verificationRecordId){
+		VerificationRecord verificationRecord = verificationRecordFinder.find(verificationRecordId);
+
+		verificationRecord.setStatus(VerificationStatus.REJECTED);
+
+		verificationRecordRepository.save(verificationRecord);
+	}
 }
