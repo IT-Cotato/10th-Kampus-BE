@@ -28,7 +28,8 @@ public class CorsConfig {
 		CorsConfiguration config = new CorsConfiguration();
 
 		config.setAllowCredentials(true);
-		config.setAllowedOrigins(List.of(ORIGINS));
+		// config.setAllowedOrigins(List.of(ORIGINS));
+		config.addAllowedOrigin("*");
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
 		config.setExposedHeaders(List.of(ALLOWED_HEADERS));
