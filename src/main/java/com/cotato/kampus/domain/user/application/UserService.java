@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.university.domain.University;
 import com.cotato.kampus.domain.user.dto.UserDetailsDto;
 import com.cotato.kampus.domain.university.application.UnivEmailVerifier;
 import com.cotato.kampus.domain.university.application.UnivFinder;
@@ -57,8 +58,9 @@ public class UserService {
 	}
 
 	@Transactional
-	public Map<String, Object> sendMail(String email, String univName) throws IOException {
-		return univEmailVerifier.sendMail(email, univName);
+	public Map<String, Object> sendMail(String email, Long universityId) throws IOException {
+		University university = univFinder.findUniversity(universityId);
+		return univEmailVerifier.sendMail(email, university.getUniversityName());
 	}
 
 	@Transactional

@@ -83,7 +83,7 @@ public class UserController {
 			return ResponseEntity.ok(DataResponse.from(
 				SendMailResponse.from(
 					userService.sendMail(
-						request.email(), request.univName()
+						request.email(), request.universityId()
 					)
 				)
 			)
