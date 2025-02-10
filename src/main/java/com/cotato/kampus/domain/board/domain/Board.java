@@ -45,11 +45,12 @@ public class Board extends BaseTimeEntity {
 	private BoardStatus boardStatus;
 
 	@Builder
-	public Board(String boardName, String description, Long universityId, Boolean isCategoryRequired) {
+	public Board(String boardName, String description, Long universityId, Boolean isCategoryRequired, BoardStatus boardStatus) {
 		this.boardName = boardName;
 		this.description = description;
 		this.universityId = universityId;
 		this.isCategoryRequired = isCategoryRequired;
+		this.boardStatus = boardStatus;
 	}
 
 	public void update(String boardName, String description, Boolean isCategoryRequired) {
