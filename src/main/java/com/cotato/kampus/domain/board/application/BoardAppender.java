@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.BoardRepository;
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.enums.BoardStatus;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class BoardAppender {
 			.description(description)
 			.universityId(universityId)
 			.isCategoryRequired(isCategoryRequired)
+			.boardStatus(BoardStatus.ACTIVE)
 			.build();
 
 		return boardRepository.save(board).getId();
