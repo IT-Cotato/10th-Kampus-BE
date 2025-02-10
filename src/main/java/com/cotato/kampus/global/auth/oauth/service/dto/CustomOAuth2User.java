@@ -7,8 +7,6 @@ import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import com.cotato.kampus.domain.user.enums.UserStatus;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,9 +41,5 @@ public class CustomOAuth2User implements OAuth2User {
 	@Override
 	public String getName() {
 		return OAuthUserRequest.getUsername();
-	}
-
-	public UserStatus getUserStatus() {
-		return OAuthUserRequest.getUserStatus();
 	}
 }
