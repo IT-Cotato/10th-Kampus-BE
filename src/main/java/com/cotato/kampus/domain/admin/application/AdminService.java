@@ -12,8 +12,12 @@ import com.cotato.kampus.domain.board.application.BoardAppender;
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardUpdater;
 import com.cotato.kampus.domain.board.application.BoardValidator;
+import com.cotato.kampus.domain.university.application.UnivFinder;
+import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.verification.application.VerificationRecordFinder;
+import com.cotato.kampus.domain.verification.application.VerificationRecordUpdater;
+import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,6 +31,9 @@ public class AdminService {
 	private final BoardValidator boardValidator;
 	private final BoardFinder boardFinder;
 	private final VerificationRecordFinder verificationRecordFinder;
+	private final VerificationRecordUpdater verificationRecordUpdater;
+	private final UnivFinder univFinder;
+	private final UserUpdater userUpdater;
 
 	@Transactional
 	public Long createBoard(String boardName, String description, Long universityId, Boolean isCategoryRequired){
@@ -82,5 +89,22 @@ public class AdminService {
 		userValidator.validateAdminAccess();
 
 		return verificationRecordFinder.findAll(page);
+	}
+
+	@Transactional
+	public void approveStudentVerification(Long verificationRecordId){
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+
+		verificationRecordUpdater.approve(verificationRecordId);
+
+		VerificationRecordDto verificationRecordDto = verificationRecordFinder.findDto(verificationRecordId);
+
+		Long userId = verificationRecordDto.userId();
+
+		Long universityId = verificationRecordDto.universityId();
+
+		// 유저 상태 변경, 학교 할당
+		userUpdater.updateVerificationStatus(userId, universityId);
 	}
 }

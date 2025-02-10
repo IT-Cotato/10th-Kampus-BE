@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class UserUpdater {
 
 	private final ApiUserResolver apiUserResolver;
+	private final UserFinder userFinder;
 
 	@Transactional
 	public Long updateDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage) {
@@ -27,8 +28,8 @@ public class UserUpdater {
 	}
 
 	@Transactional
-	public Long updateVerificationStatus(Long universityId){
-		User user = apiUserResolver.getUser();
+	public Long updateVerificationStatus(Long userId, Long universityId){
+		User user = userFinder.findById(userId);
 		user.updateVerificationStatus(universityId);
 		return user.getId();
 	}

@@ -30,6 +30,7 @@ public class UserService {
 	private final ApiUserResolver apiUserResolver;
 	private final AgreementAppender agreementAppender;
 	private final VerificationRecordAppender verificationRecordAppender;
+	private final UserFinder userFinder;
 
 	public UserDetailsDto getUserDetails() {
 		return UserDetailsDto.from(apiUserResolver.getUser());
@@ -74,8 +75,11 @@ public class UserService {
 		// VerificationRecord 추가
 		verificationRecordAppender.appendEmailType(universityId);
 
+		// 유저 조회
+		Long userId = apiUserResolver.getUserId();
+
 		// 유저 상태 변경, 학교 할당
-		return userUpdater.updateVerificationStatus(universityId);
+		return userUpdater.updateVerificationStatus(userId, universityId);
 	}
 
 	@Transactional
