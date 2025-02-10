@@ -116,7 +116,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/student-verifications/{verificationRecordId}/reject")
-	@Operation(summary = "재학생 인증 승인", description = "재학생 인증 요청을 반려합니다.")
+	@Operation(summary = "재학생 인증 반려", description = "재학생 인증 요청을 반려합니다.")
 	public ResponseEntity<DataResponse<Void>> rejectStudentVerification(
 		@PathVariable Long verificationRecordId
 	){
