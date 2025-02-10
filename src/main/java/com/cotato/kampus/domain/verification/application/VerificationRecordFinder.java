@@ -12,7 +12,10 @@ import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.university.domain.University;
 import com.cotato.kampus.domain.verification.dao.VerificationRecordRepository;
 import com.cotato.kampus.domain.verification.domain.VerificationRecord;
+import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -37,4 +40,15 @@ public class VerificationRecordFinder {
 			return StudentVerification.of(record, university.getUniversityName());
 		});
 	}
+
+	public VerificationRecord find(Long verificationRecordId) {
+		return verificationRecordRepository.findById(verificationRecordId)
+			.orElseThrow(() -> new AppException(ErrorCode.RECORD_NOT_FOUND));
+	}
+
+	public VerificationRecordDto findDto(Long verificationRecordId){
+		VerificationRecord record = find(verificationRecordId);
+		return VerificationRecordDto.from(record);
+	}
+
 }

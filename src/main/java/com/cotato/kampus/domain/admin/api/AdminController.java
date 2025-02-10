@@ -106,4 +106,13 @@ public class AdminController {
 		);
 	}
 
+	@PostMapping("/student-verifications/{verificationRecordId}/approve")
+	@Operation(summary = "재학생 인증 승인", description = "재학생 인증 요청을 승인합니다.")
+	public ResponseEntity<DataResponse<Void>> approveStudentVerification(
+		@PathVariable Long verificationRecordId
+	){
+		adminService.approveStudentVerification(verificationRecordId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
 }

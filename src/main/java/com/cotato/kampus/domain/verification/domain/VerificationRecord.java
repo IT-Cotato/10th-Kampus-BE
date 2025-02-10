@@ -50,4 +50,8 @@ public class VerificationRecord extends BaseTimeEntity {
 		this.verificationStatus = verificationStatus;
 	}
 
+	public void setStatus(VerificationStatus verificationStatus) {
+		this.verificationStatus = verificationStatus;
+	}
+
 }
