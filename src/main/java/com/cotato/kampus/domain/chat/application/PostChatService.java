@@ -47,10 +47,15 @@ public class PostChatService {
 	private final ChatMessageCounter chatMessageCounter;
 	private final MessageReadStatusUpdater messageReadStatusUpdater;
 
+	private final ChatroomMetadataAppender chatroomMetadataAppender;
+	private final ChatroomMetadataUpdater chatroomMetadataUpdater;
+
 	@Transactional
 	public Long createChatRoom(Long postId) {
-		// 1. 게시글 작성자를 조회
-		Long receiverId = postFinder.findPost(postId).userId();
+		// 1. 게시글 정보 조회
+		PostDto post = postFinder.findPost(postId);
+		Long receiverId = post.userId();
+		String postTitle = post.title();
 
 		// 2. 채팅을 건 유저를 조회
 		Long senderId = apiUserResolver.getUserId();
@@ -59,7 +64,18 @@ public class PostChatService {
 		chatRoomValidator.validateNewChatRoom(postId, senderId, receiverId);
 
 		// 4. 채팅방 생성
-		return chatRoomAppender.appendChatRoom(postId, senderId, receiverId);
+		Long chatroomId = chatRoomAppender.appendChatRoom(postId, senderId, receiverId);
+
+		// 5. 채팅방 리스트 조회시 사용되는 뷰 생성
+		chatroomMetadataAppender.appendChatroomMetadatas(
+			chatroomId,
+			postId,
+			postTitle,
+			senderId,
+			receiverId
+		);
+
+		return chatroomId;
 	}
 
 	public ChatRoomPreviewList findChatRooms(int page) {
@@ -105,10 +121,13 @@ public class PostChatService {
 		// 4. 발신자의 읽음 상태 업데이트 (메시지를 보낸 사람은 자동으로 읽음 처리)
 		messageReadStatusUpdater.updateStatus(chatroomId, senderId, chatMessage.getId());
 
-		// 5. 수신자가 읽지 않은 메시지의 개수를 계산
+		// 5. 채팅방 메타데이터 업데이트
+		chatroomMetadataUpdater.updateMetadatasOnNewMessage(chatroomId, chatMessage, senderId);
+
+		// 6. 수신자가 읽지 않은 메시지의 개수를 계산
 		Long unreadCount = chatMessageCounter.countUnreadMessages(chatroomId, receiverId);
 
-		// 6. 알림 결과를 저장하여 리턴
+		// 7. 알림 결과를 저장하여 리턴
 		return ChatNotificationResult.of(chatMessage, ChatNotification.from(chatMessage, unreadCount), receiverId);
 	}
 
