@@ -42,8 +42,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
-		config.enableSimpleBroker("/chatrooms");
+		config.enableSimpleBroker("/chatrooms", "/user");
 		config.setApplicationDestinationPrefixes("/app");
+		config.setUserDestinationPrefix("/user");  // 유저별 구독을 위한 prefix 설정
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
 			messages
 				.simpDestMatchers("/app/**").permitAll()  // 메시지 전송 권한
-				.simpSubscribeDestMatchers("/chatrooms/**").permitAll() // 구독 권한
+				.simpSubscribeDestMatchers("/chatrooms/**", "/user/notifications/**").permitAll()
 				.anyMessage().permitAll();
 		}
 

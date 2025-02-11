@@ -102,10 +102,13 @@ public class PostChatService {
 		// 3. 메시지 수신자 id 조회
 		Long receiverId = chatMemberFinder.findReceiverId(chatroomId, senderId);
 
-		// 4. 수신자가 읽지 않은 메시지의 개수를 계산
+		// 4. 발신자의 읽음 상태 업데이트 (메시지를 보낸 사람은 자동으로 읽음 처리)
+		messageReadStatusUpdater.updateStatus(chatroomId, senderId, chatMessage.getId());
+
+		// 5. 수신자가 읽지 않은 메시지의 개수를 계산
 		Long unreadCount = chatMessageCounter.countUnreadMessages(chatroomId, receiverId);
 
-		// 5. 알림 결과를 저장하여 리턴
+		// 6. 알림 결과를 저장하여 리턴
 		return ChatNotificationResult.of(chatMessage, ChatNotification.from(chatMessage, unreadCount), receiverId);
 	}
 

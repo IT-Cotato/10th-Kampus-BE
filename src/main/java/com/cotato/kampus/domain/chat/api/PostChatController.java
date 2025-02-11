@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cotato.kampus.domain.chat.application.ChatMessageService;
 import com.cotato.kampus.domain.chat.application.PostChatService;
-import com.cotato.kampus.domain.chat.domain.ChatMessage;
 import com.cotato.kampus.domain.chat.dto.ChatMessageSliceWithUserId;
 import com.cotato.kampus.domain.chat.dto.ChatNotificationResult;
 import com.cotato.kampus.domain.chat.dto.ChatRoomPreviewList;
