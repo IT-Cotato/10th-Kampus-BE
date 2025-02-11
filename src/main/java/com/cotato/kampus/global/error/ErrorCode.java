@@ -63,6 +63,7 @@ public enum ErrorCode {
 	UNIVERSITY_BOARD_DUPLICATED(HttpStatus.CONFLICT, "이미 해당 대학 게시판이 존재합니다.", "BOARD-004"),
 	BOARD_ALREADY_INACTIVE(HttpStatus.CONFLICT, "이미 게시판이 비활성화 상태입니다.", "BOARD-005"),
 	BOARD_ALREADY_ACTIVE(HttpStatus.CONFLICT, "이미 게시판이 활성화 상태입니다.", "BOARD-006"),
+	BOARD_NOT_VALIDATE(HttpStatus.BAD_REQUEST, "게시판이 유효하지 않습니다.", "BOARD-007"),
 
 	//University
 	UNIVERSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 대학을 찾을 수 없습니다.", "UNIVERSITY-001"),

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cotato.kampus.domain.board.application.BoardValidator;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
@@ -50,6 +51,7 @@ public class PostService {
 	private final PostValidator postValidator;
 
 	private static final String POST_IMAGE_FOLDER = "post";
+	private final BoardValidator boardValidator;
 
 	@Transactional
 	public Long createPost(
@@ -70,6 +72,9 @@ public class PostService {
 		List<String> imageUrls = (validImages.isEmpty()) ?
 			List.of() :
 			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
+
+		// 게시판 유표성 검증
+		boardValidator.validateBoardExistsAndActive(boardId);
 
 		// 게시글 추가
 		Long postId = postAppender.append(userId, boardId, title, content, postCategory);

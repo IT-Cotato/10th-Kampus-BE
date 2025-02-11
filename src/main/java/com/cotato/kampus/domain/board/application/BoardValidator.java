@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.BoardRepository;
+import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -15,10 +17,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardValidator {
 	private final BoardRepository boardRepository;
+	private final BoardFinder boardFinder;
 
-	public void validateBoardExists(Long boardId){
+	public void validateBoardExistsAndActive(Long boardId){
 		if(!boardRepository.existsById(boardId))
 			throw new AppException(ErrorCode.BOARD_NOT_FOUND);
+
+		BoardDto boardDto = boardFinder.findBoard(boardId);
+		if(boardDto.boardStatus()!= BoardStatus.ACTIVE)
+			throw new AppException(ErrorCode.BOARD_NOT_VALIDATE);
 	}
 
 	public void validateUniversityBoardExists(Long universityId){
