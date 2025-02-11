@@ -10,6 +10,7 @@ import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.chat.domain.ChatMessage;
 import com.cotato.kampus.domain.chat.domain.Chatroom;
+import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
 import com.cotato.kampus.domain.chat.dto.ChatMessageSlice;
 import com.cotato.kampus.domain.chat.dto.ChatMessageSliceWithUserId;
 import com.cotato.kampus.domain.chat.dto.ChatNotification;
@@ -34,7 +35,6 @@ public class PostChatService {
 	private final ChatRoomValidator chatRoomValidator;
 	private final ChatRoomAppender chatRoomAppender;
 	private final ChatRoomFinder chatRoomFinder;
-	private final ChatRoomMapper chatRoomMapper;
 
 	private final ApiUserResolver apiUserResolver;
 	private final ChatMemberFinder chatMemberFinder;
@@ -44,11 +44,12 @@ public class PostChatService {
 
 	private final ChatMessageFinder chatMessageFinder;
 	private final ChatMessageAppender chatMessageAppender;
-	private final ChatMessageCounter chatMessageCounter;
 	private final MessageReadStatusUpdater messageReadStatusUpdater;
 
 	private final ChatroomMetadataAppender chatroomMetadataAppender;
 	private final ChatroomMetadataUpdater chatroomMetadataUpdater;
+	private final ChatroomMetadataFinder chatroomMetadataFinder;
+	private final ChatroomMetadataMapper chatroomMetadataMapper;
 
 	@Transactional
 	public Long createChatRoom(Long postId) {
@@ -82,16 +83,16 @@ public class PostChatService {
 		// 1. 유저 정보를 조회
 		Long userId = apiUserResolver.getUserId();
 
-		// 2. user가 속한 채팅방을 조회
-		Slice<Chatroom> chatRooms = chatRoomFinder.findChatRooms(userId, page);
+		// 2. 해당 유저의 채팅방 메타데이터를 lastChatTime 내림차순으로 조회
+		Slice<ChatroomMetadata> chatRoomMetadatas = chatroomMetadataFinder.findChatRoomMetadatas(userId, page);
 
-		// 3. 채팅방의 마지막 메시지와 채팅 시간 필드, 읽지 않은 메시지 수를 추가하여 매핑
-		List<ChatRoomPreview> previewList = chatRooms.getContent()
+		// 3. ChatRoomPreview로 변환
+		List<ChatRoomPreview> previewList = chatRoomMetadatas.getContent()
 			.stream()
-			.map((chatroom) -> chatRoomMapper.toChatRoomPreview(chatroom, userId))
+			.map(chatroomMetadataMapper::toChatRoomPreview)
 			.toList();
 
-		return ChatRoomPreviewList.from(previewList, chatRooms.hasNext());
+		return ChatRoomPreviewList.from(previewList, chatRoomMetadatas.hasNext());
 	}
 
 	public ChatRoomDetailDto getChatRoomDetail(Long chatroomId) {
@@ -122,10 +123,12 @@ public class PostChatService {
 		messageReadStatusUpdater.updateStatus(chatroomId, senderId, chatMessage.getId());
 
 		// 5. 채팅방 메타데이터 업데이트
-		chatroomMetadataUpdater.updateMetadatasOnNewMessage(chatroomId, chatMessage, senderId);
+		chatroomMetadataUpdater.updateSenderMetadata(chatroomId, chatMessage, senderId);
+		ChatroomMetadata receiverMetadata = chatroomMetadataUpdater.updateReceiverMetadata(chatroomId, chatMessage,
+			receiverId);
 
 		// 6. 수신자가 읽지 않은 메시지의 개수를 계산
-		Long unreadCount = chatMessageCounter.countUnreadMessages(chatroomId, receiverId);
+		Long unreadCount = receiverMetadata.getUnreadCount();
 
 		// 7. 알림 결과를 저장하여 리턴
 		return ChatNotificationResult.of(chatMessage, ChatNotification.from(chatMessage, unreadCount), receiverId);
@@ -147,8 +150,9 @@ public class PostChatService {
 	public void markMessagesAsRead(Long chatroomId) {
 		Long userId = apiUserResolver.getUserId();
 		// 1. 채팅방의 가장 최근 메시지 ID 조회
-		Long latestMessageId = chatMessageFinder.findLatestMessageId(chatroomId);
+		ChatMessage latestMessage = chatMessageFinder.findLatestMessage(chatroomId);
 		// 2. 해당 사용자의 메시지 읽음 상태 조회 또는 생성
-		messageReadStatusUpdater.updateStatus(chatroomId, userId, latestMessageId);
+		messageReadStatusUpdater.updateStatus(chatroomId, userId, latestMessage.getId());
+		chatroomMetadataUpdater.resetReadCount(chatroomId, userId);
 	}
 }
