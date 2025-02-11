@@ -16,7 +16,8 @@ public class CorsConfig {
 		"http://localhost:5173",
 		"http://localhost:8000",
 		"http://54.180.123.60:8080",
-		"https://kampus.kro.kr"
+		"https://kampus.kro.kr",
+		"https://dc92clgvselcq.cloudfront.net"
 	};
 
 	private static final String[] ALLOWED_HEADERS = {
