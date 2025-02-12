@@ -41,4 +41,9 @@ public class ChatRoomFinder {
 			customPageRequest.of(SORT_PROPERTY)
 		);
 	}
+
+	public Chatroom findChatroom(Long chatroomId) {
+		return chatRoomRepository.findById(chatroomId)
+			.orElseThrow(() -> new AppException(ErrorCode.CHATROOM_NOT_FOUND));
+	}
 }
