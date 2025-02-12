@@ -1,12 +1,23 @@
 package com.cotato.kampus.domain.user.application;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.university.domain.University;
 import com.cotato.kampus.domain.user.dto.UserDetailsDto;
+import com.cotato.kampus.domain.university.application.UnivEmailVerifier;
+import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
+import com.cotato.kampus.domain.verification.application.VerificationPhotoAppender;
+import com.cotato.kampus.domain.verification.application.VerificationRecordAppender;
+import com.cotato.kampus.global.error.exception.ImageException;
+import com.cotato.kampus.global.util.s3.S3Uploader;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,10 +30,18 @@ public class UserService {
 	private final UserValidator userValidator;
 	private final ApiUserResolver apiUserResolver;
 	private final AgreementAppender agreementAppender;
+	private final VerificationRecordAppender verificationRecordAppender;
+	private final UserFinder userFinder;
 
 	public UserDetailsDto getUserDetails() {
 		return UserDetailsDto.from(apiUserResolver.getUser());
 	}
+	private final UnivEmailVerifier univEmailVerifier;
+	private final UnivFinder univFinder;
+	private final S3Uploader s3Uploader;
+	private final VerificationPhotoAppender verificationPhotoAppender;
+
+	private static final String STUDENT_CERT_IMAGE_FOLDER = "student_cert";
 
 	@Transactional
 	public Long updateUserDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage,
@@ -36,5 +55,47 @@ public class UserService {
 		agreementAppender.appendAgreement(userId, personalInfoAgreement, privacyPolicyAgreement,
 			termsOfServiceAgreement, marketingAgreement);
 		return userId;
+	}
+
+	@Transactional
+	public Map<String, Object> sendMail(String email, Long universityId) throws IOException {
+		University university = univFinder.findUniversity(universityId);
+		return univEmailVerifier.sendMail(email, university.getUniversityName());
+	}
+
+	@Transactional
+	public Long verifyEmailCode(String email, Long universityId, int code) throws IOException {
+		// 이미 재학생 인증 되었는지 확인
+		userValidator.validateDuplicateStudentVerification();
+
+		// 학교 이름 조회
+		String univName = univFinder.findUniversity(universityId).getUniversityName();
+
+		// 코드 인증
+		univEmailVerifier.verifyCode(email, univName, code);
+
+		// VerificationRecord 추가
+		verificationRecordAppender.appendEmailType(universityId);
+
+		// 유저 조회
+		Long userId = apiUserResolver.getUserId();
+
+		// 유저 상태 변경, 학교 할당
+		return userUpdater.updateVerificationStatus(userId, universityId);
+	}
+
+	@Transactional
+	public void uploadCert(Long universityId, MultipartFile certImage) throws ImageException {
+		// 이미 재학생 인증 되었는지 검증
+		Long userId = userValidator.validateDuplicateStudentVerification();
+
+		// s3에 이미지 업로드
+		String imageUrl = s3Uploader.uploadFile(certImage, STUDENT_CERT_IMAGE_FOLDER);
+
+		// VerificationRecord 추가
+		Long verificationRecordId = verificationRecordAppender.appendPhotoType(userId, universityId);
+
+		// 인증서 이미지 추가
+		verificationPhotoAppender.append(verificationRecordId, imageUrl);
 	}
 }

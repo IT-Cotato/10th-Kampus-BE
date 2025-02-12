@@ -30,6 +30,16 @@ public class UserValidator {
 		return user.getUniversityId();
 	}
 
+	// 재학생 인증 중복 요청 검증
+	public Long validateDuplicateStudentVerification(){
+		User user = apiUserResolver.getUser();
+
+		if(user.getUserRole() == UserRole.VERIFIED)
+			throw new AppException(ErrorCode.USER_ALREADY_VERIFIED);
+
+		return user.getId();
+	}
+
 	public void validateAdminAccess() {
 		User user = apiUserResolver.getUser();
 

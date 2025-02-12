@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.user.domain;
+package com.cotato.kampus.domain.verification.domain;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
@@ -24,11 +24,16 @@ public class VerificationPhoto extends BaseTimeEntity {
 	@Column(name = "verification_photo_id")
 	private Long id;
 
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
+	@Column(name = "image_url", nullable = false)
+	private String imageUrl;
+
+	@Column(name = "verification_record_id", nullable = false)
+	private Long verificationRecordId;
+
 
 	@Builder
-	public VerificationPhoto(Long userId) {
-		this.userId = userId;
+	public VerificationPhoto(String imageUrl, Long verificationRecordId) {
+		this.imageUrl = imageUrl;
+		this.verificationRecordId = verificationRecordId;
 	}
 }
