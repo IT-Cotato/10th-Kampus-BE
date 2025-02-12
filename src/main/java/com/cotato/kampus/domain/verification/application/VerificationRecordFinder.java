@@ -27,6 +27,8 @@ public class VerificationRecordFinder {
 
 	private final VerificationRecordRepository verificationRecordRepository;
 	private final UnivFinder univFinder;
+	private static final Integer PAGE_SIZE = 10;
+	private static final String SORT_PROPERTY = "createdTime";
 
 	public Slice<StudentVerification> findAll(int page){
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
