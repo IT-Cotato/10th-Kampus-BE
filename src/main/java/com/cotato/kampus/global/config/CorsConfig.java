@@ -13,9 +13,11 @@ public class CorsConfig {
 
 	private static final String[] ORIGINS = {
 		"http://localhost:3000",
+		"http://localhost:5173",
 		"http://localhost:8000",
 		"http://54.180.123.60:8080",
-		"https://kampus.kro.kr"
+		"https://kampus.kro.kr",
+		"https://dc92clgvselcq.cloudfront.net"
 	};
 
 	private static final String[] ALLOWED_HEADERS = {
@@ -28,8 +30,7 @@ public class CorsConfig {
 		CorsConfiguration config = new CorsConfiguration();
 
 		config.setAllowCredentials(true);
-		// config.setAllowedOrigins(List.of(ORIGINS));
-		config.addAllowedOrigin("*");
+		config.setAllowedOrigins(List.of(ORIGINS));
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
 		config.setExposedHeaders(List.of(ALLOWED_HEADERS));
