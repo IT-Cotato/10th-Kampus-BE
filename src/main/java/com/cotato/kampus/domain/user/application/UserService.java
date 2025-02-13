@@ -2,16 +2,18 @@ package com.cotato.kampus.domain.user.application;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.university.domain.University;
-import com.cotato.kampus.domain.user.dto.UserDetailsDto;
 import com.cotato.kampus.domain.university.application.UnivEmailVerifier;
 import com.cotato.kampus.domain.university.application.UnivFinder;
+import com.cotato.kampus.domain.university.domain.University;
+import com.cotato.kampus.domain.user.domain.User;
+import com.cotato.kampus.domain.user.dto.UserDetailsDto;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.domain.verification.application.VerificationPhotoAppender;
@@ -31,17 +33,24 @@ public class UserService {
 	private final ApiUserResolver apiUserResolver;
 	private final AgreementAppender agreementAppender;
 	private final VerificationRecordAppender verificationRecordAppender;
-	private final UserFinder userFinder;
 
-	public UserDetailsDto getUserDetails() {
-		return UserDetailsDto.from(apiUserResolver.getUser());
-	}
 	private final UnivEmailVerifier univEmailVerifier;
 	private final UnivFinder univFinder;
 	private final S3Uploader s3Uploader;
 	private final VerificationPhotoAppender verificationPhotoAppender;
 
 	private static final String STUDENT_CERT_IMAGE_FOLDER = "student_cert";
+
+	public UserDetailsDto getUserDetails() {
+		User user = apiUserResolver.getUser();
+		return Optional.ofNullable(user.getUniversityId())
+			.map(id -> UserDetailsDto.of(
+				user,
+				id,
+				univFinder.findUniversity(id).getUniversityName()
+			))
+			.orElse(UserDetailsDto.of(user, -1L, ""));
+	}
 
 	@Transactional
 	public Long updateUserDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage,

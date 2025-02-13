@@ -10,15 +10,20 @@ public record UserDetailsDto(
 	String nickname,
 	Nationality nationality,
 	PreferredLanguage preferredLanguage,
-	UserStatus userStatus
+	UserStatus userStatus,
+	Long universityId,
+	String universityName
 ) {
-	public static UserDetailsDto from(User user) {
+
+	public static UserDetailsDto of(User user, Long universityId, String universityName) {
 		return new UserDetailsDto(
 			user.getId(),
 			user.getNickname(),
 			user.getNationality(),
 			user.getPreferredLanguage(),
-			user.getUserStatus()
+			user.getUserStatus(),
+			universityId,
+			universityName
 		);
 	}
 }
