@@ -14,9 +14,11 @@ import com.cotato.kampus.domain.notification.dto.request.FcmRequest;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "FCM 알림 API", description = "FCM 알림 관련 API")
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @RequestMapping("/v1/api/fcm")
