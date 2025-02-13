@@ -30,6 +30,11 @@ jobs:
       - name: application-prod.yml 파일 내용 확인
         run: cat ./src/main/resources/application-prod.yml
 
+      - name: Firebase 인증 파일 생성
+        run: |
+          mkdir -p ./src/main/resources/firebase
+          echo "${{ secrets.FIREBASE_KEY }}" | base64 --decode > ./src/main/resources/firebase/serviceAccountKey.json
+
       - name: gradlew에 실행 권한 부여하기
         run: chmod +x ./gradlew
       - name: 테스트 및 빌드하기
