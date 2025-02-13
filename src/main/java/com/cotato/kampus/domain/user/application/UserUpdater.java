@@ -41,8 +41,8 @@ public class UserUpdater {
 	@Transactional
 	public void updateDeviceToken(String deviceToken) {
 		User user = apiUserResolver.getUser();
-		// user.updateDeviceToken(deviceToken);
+		user.updateDeviceToken(deviceToken);
 
-		userRepository.save(user.updateDeviceToken(deviceToken));
+		// userRepository.save(user.updateDeviceToken(deviceToken));
 	}
 }
