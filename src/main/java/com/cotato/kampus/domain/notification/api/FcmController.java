@@ -26,6 +26,8 @@ public class FcmController {
 
 	// Client가 Server로 알림 생성 요청
 	@PostMapping("/pushMessage")
+	@Operation(summary = "푸시 알림 전송", description =
+	"푸시 메시지를 전송합니다.")
 	public ResponseEntity<DataResponse<Void>> pushMessage(
 		@RequestBody FcmRequestDto requestDto) throws IOException
 	{
