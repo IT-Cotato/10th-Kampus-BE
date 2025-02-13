@@ -6,12 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.notification.application.FcmService;
 import com.cotato.kampus.domain.notification.dto.FcmRequestDto;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +39,15 @@ public class FcmController {
 			requestDto.body()
 		);
 
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PostMapping("/register")
+	@Operation(summary = "디바이스 토큰 등록 API", description = "로그인한 사용자의 FCM 디바이스 토큰을 등록(업데이트)합니다.")
+	public ResponseEntity<DataResponse<Void>> registerDeviceToken(
+		@RequestParam String deviceToken
+	) {
+		fcmService.registerDeviceToken(deviceToken);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 }

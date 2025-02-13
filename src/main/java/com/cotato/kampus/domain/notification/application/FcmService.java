@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.notification.dto.FcmMessage;
+import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +32,7 @@ import okhttp3.Response;
 public class FcmService {
 
 	private final ObjectMapper objectMapper;
+	private final UserUpdater userUpdater;
 
 	@Value("${fcm.file_path}")
 	private String FIREBASE_CONFIG_PATH;
@@ -42,6 +44,7 @@ public class FcmService {
 	private String GOOGLE_API_URI;
 
 	// 메시지를 구성하고 토큰을 받아 FCM으로 메시지를 처리
+	@Transactional
 	public void sendMessageTo(String targetToken, String title, String body) throws IOException {
 		String message = makeMessage(targetToken, title, body);
 
@@ -95,5 +98,10 @@ public class FcmService {
 
 			throw new AppException(ErrorCode.GOOGLE_REQUEST_TOKEN_ERROR);
 		}
+	}
+
+	@Transactional
+	public void registerDeviceToken(String deviceToken){
+		userUpdater.updateDeviceToken(deviceToken);
 	}
 }
