@@ -43,7 +43,7 @@ public class UserController {
 	private final UserService userService;
 
 	@GetMapping("/details")
-	@Operation(summary = "유저 정보 조회 api", description = "닉네임, 국적, 선호 언어 조회")
+	@Operation(summary = "유저 정보 조회 api", description = "닉네임, 국적, 선호 언어, 학교(인증한 유저), setup 필요여부 조회")
 	public ResponseEntity<DataResponse<UserDetailsResponse>> getUserDetails() {
 		return ResponseEntity.ok(
 			DataResponse.from(
