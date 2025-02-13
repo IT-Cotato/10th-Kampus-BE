@@ -91,8 +91,12 @@ public enum ErrorCode {
 	CHATROOM_METADATA_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 채팅방 메타데이터를 찾을 수 없습니다.", "CHAT-006"),
 
 	// Verification
-	RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "재학생 인증 요청 기록을 찾을 수 없습니다.", "VERIFICATION-001");
+	RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "재학생 인증 요청 기록을 찾을 수 없습니다.", "VERIFICATION-001"),
 
+	// fcm
+	GOOGLE_REQUEST_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "google request token error", "FCM-001")
+
+	;
 	private final HttpStatus httpStatus;
 	private final String message;
 	private final String code;

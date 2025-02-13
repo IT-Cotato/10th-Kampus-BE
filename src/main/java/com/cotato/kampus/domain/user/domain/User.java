@@ -58,6 +58,9 @@ public class User {
 	@Enumerated(EnumType.STRING)
 	private PreferredLanguage preferredLanguage = PreferredLanguage.ENGLISH_AMERICAN;
 
+	@Column(name = "device_token")
+	private String deviceToken;
+
 	@Column(name = "user_role", nullable = false)
 	@Enumerated(EnumType.STRING)
 	private UserRole userRole = UserRole.UNVERIFIED;
@@ -98,6 +101,11 @@ public class User {
 	public User updateVerificationStatus(Long universityId){
 		this.userRole = UserRole.VERIFIED;
 		this.universityId = universityId;
+		return this;
+	}
+
+	public User updateDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
 		return this;
 	}
 }
