@@ -61,6 +61,10 @@ dependencies {
 
 	// univcert
 	implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
+
+	// FCM
+	implementation 'com.google.firebase:firebase-admin:9.1.1'
+	implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 }
 
 tasks.named('test') {
