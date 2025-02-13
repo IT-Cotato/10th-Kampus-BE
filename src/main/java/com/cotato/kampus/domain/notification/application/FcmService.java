@@ -67,16 +67,9 @@ public class FcmService {
 	private String makeMessage(String targetToken, String title, String body)
 		throws com.fasterxml.jackson.core.JsonProcessingException { // JsonParseException, JsonProcessingException
 
-		FcmMessage fcmMessage = FcmMessage.builder()
-			.message(FcmMessage.Message.builder()
-				.token(targetToken)
-				.notification(FcmMessage.Notification.builder()
-					.title(title)
-					.body(body)
-					.image(null)
-					.build()
-				).build())
-			.validateOnly(false).build();
+		FcmMessage.Notification notification = FcmMessage.Notification.of(title, body, null);
+		FcmMessage.Message message = FcmMessage.Message.of(notification, targetToken);
+		FcmMessage fcmMessage = FcmMessage.of(false, message);
 		return objectMapper.writeValueAsString(fcmMessage);
 	}
 

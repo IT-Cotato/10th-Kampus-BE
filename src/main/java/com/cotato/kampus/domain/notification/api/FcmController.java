@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.notification.application.FcmService;
-import com.cotato.kampus.domain.notification.dto.FcmRequestDto;
+import com.cotato.kampus.domain.notification.dto.request.FcmRequest;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +29,7 @@ public class FcmController {
 	@Operation(summary = "푸시 알림 전송", description =
 	"푸시 메시지를 전송합니다.")
 	public ResponseEntity<DataResponse<Void>> pushMessage(
-		@RequestBody FcmRequestDto requestDto) throws IOException
+		@RequestBody FcmRequest requestDto) throws IOException
 	{
 		System.out.println(requestDto.deviceToken()
 		+ " " + requestDto.title()
