@@ -13,17 +13,18 @@ import com.cotato.kampus.domain.board.application.BoardAppender;
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardUpdater;
 import com.cotato.kampus.domain.board.application.BoardValidator;
-import com.cotato.kampus.domain.cardNews.application.CardNewsAppender;
-import com.cotato.kampus.domain.cardNews.application.CardNewsImageAppender;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.post.application.PostAppender;
+import com.cotato.kampus.domain.post.application.PostImageAppender;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.verification.application.VerificationRecordFinder;
 import com.cotato.kampus.domain.verification.application.VerificationRecordUpdater;
 import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -44,13 +45,12 @@ public class AdminService {
 	private final UserUpdater userUpdater;
 	private final ImageValidator imageValidator;
 	private final S3Uploader s3Uploader;
-	private final CardNewsAppender cardNewsAppender;
-	private final CardNewsImageAppender cardNewsImageAppender;
 	private final UnivFinder univFinder;
 
 	private static final String CARDNEWS_IMAGE_FOLDER = "cardNews";
 	private final ApiUserResolver apiUserResolver;
 	private final PostAppender postAppender;
+	private final PostImageAppender postImageAppender;
 
 	public Long createBoard(String boardName, String description, String universityName, Boolean isCategoryRequired){
 		// 관리자 검증
@@ -137,19 +137,23 @@ public class AdminService {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
-		// 유효한 이미지만 필터링
+		// 유효한 이미지만 필터링, 이미지 없는 경우 예외처리
 		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
+		if (validImages.isEmpty()) {
+			throw new AppException(ErrorCode.IMAGE_NOT_FOUND);
+		}
 
 		// s3에 이미지 업로드
 		List<String> imageUrls = (validImages.isEmpty()) ?
 			List.of() :
 			s3Uploader.uploadFiles(validImages, CARDNEWS_IMAGE_FOLDER);
 
-		// cardNews 추가
+		// 카드뉴스 추가
 		Long userId = apiUserResolver.getUserId();
-		Long cardNewsId = cardNewsAppender.append(userId, title);
+		Long boardId = boardFinder.findCardNewsBoardId();
+		Long postId = postAppender.appendCardNews(userId, boardId, title);
 
-		// cardNewsImage 추가
-		cardNewsImageAppender.appendAll(cardNewsId, imageUrls);
+		// 카드뉴스 사진 추가
+		postImageAppender.appendAll(postId, imageUrls);
 	}
 }

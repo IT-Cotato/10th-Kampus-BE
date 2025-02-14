@@ -68,4 +68,21 @@ public class PostAppender {
 
 		return postDraftRepository.save(postDraft).getId();
 	}
+
+	@Transactional
+	public Long appendCardNews(
+		Long userId,
+		Long boardId,
+		String title
+	){
+		Post post = Post.builder()
+			.userId(userId)
+			.boardId(boardId)
+			.title(title)
+			.anonymity(Anonymity.IDENTIFIED)
+			.postStatus(PostStatus.PUBLISHED)
+			.build();
+
+		return postRepository.save(post).getId();
+	}
 }
