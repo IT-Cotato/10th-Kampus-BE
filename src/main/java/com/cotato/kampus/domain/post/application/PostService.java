@@ -6,7 +6,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardValidator;
+import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
@@ -18,6 +20,8 @@ import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.enums.PostCategory;
+import com.cotato.kampus.domain.user.application.UserFinder;
+import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -52,6 +56,8 @@ public class PostService {
 
 	private static final String POST_IMAGE_FOLDER = "post";
 	private final BoardValidator boardValidator;
+	private final BoardFinder boardFinder;
+	private final UserFinder userFinder;
 
 	@Transactional
 	public Long createPost(
@@ -61,10 +67,6 @@ public class PostService {
 		PostCategory postCategory,
 		List<MultipartFile> images
 	) throws ImageException {
-
-		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
-
 		// 유효한 이미지만 필터링
 		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
 
@@ -73,11 +75,16 @@ public class PostService {
 			List.of() :
 			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
 
-		// 게시판 유표성 검증
-		boardValidator.validateBoardExistsAndActive(boardId);
+		// 게시판, 유저 조회
+		BoardDto boardDto = boardFinder.findBoard(boardId);
+		UserDto userDto = userFinder.getUserDtoById(apiUserResolver.getUserId());
+
+		// 게시판 검증
+		boardValidator.validateBoardIsActive(boardDto);
+		boardValidator.validateBoardAccess(userDto, boardDto);
 
 		// 게시글 추가
-		Long postId = postAppender.append(userId, boardId, title, content, postCategory);
+		Long postId = postAppender.append(userDto.id(), boardDto.boardId(), title, content, postCategory);
 
 		// 게시글 이미지 추가
 		if (!imageUrls.isEmpty()) {

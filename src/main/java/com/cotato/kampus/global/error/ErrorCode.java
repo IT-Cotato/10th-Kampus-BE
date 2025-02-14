@@ -66,8 +66,8 @@ public enum ErrorCode {
 	BOARD_ALREADY_INACTIVE(HttpStatus.CONFLICT, "이미 게시판이 비활성화 상태입니다.", "BOARD-005"),
 	BOARD_ALREADY_ACTIVE(HttpStatus.CONFLICT, "이미 게시판이 활성화 상태입니다.", "BOARD-006"),
 	BOARD_NOT_VALIDATE(HttpStatus.BAD_REQUEST, "게시판이 유효하지 않습니다.", "BOARD-007"),
-	BOARD_NAME_DUPLICATED(HttpStatus.BAD_REQUEST, "게시판 이름이 이미 존재합니다.", "BOARD-007"),
-
+	BOARD_NAME_DUPLICATED(HttpStatus.BAD_REQUEST, "게시판 이름이 이미 존재합니다.", "BOARD-008"),
+	BOARD_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 게시판 접근 자격이 없습니다.", "BOARD-009"),
 	// Code
 	INVALID_CODE(HttpStatus.BAD_REQUEST, "인증 코드가 일치하지 않습니다.", "CODE-001"),
 
