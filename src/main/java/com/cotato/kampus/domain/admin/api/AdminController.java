@@ -36,17 +36,17 @@ public class AdminController {
 
 	private final AdminService adminService;
 
-	@PostMapping("/boards")
+	@PostMapping(value = "/boards",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "게시판 생성", description = "게시판을 생성합니다. 학교 게시판이 아닌 경우 universityId를 null로 주세요")
 	public ResponseEntity<DataResponse<BoardCreateResponse>> createBoard(
-		@Valid @RequestBody BoardCreateRequest request
+		@Valid @ModelAttribute BoardCreateRequest request
 	) {
 			return ResponseEntity.ok(DataResponse.from(
 				BoardCreateResponse.from(
 					adminService.createBoard(
 						request.boardName(),
 						request.description(),
-						request.universityId(),
+						request.universityName(),
 						request.isCategoryRequired()
 					)
 				)

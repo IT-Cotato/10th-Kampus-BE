@@ -33,4 +33,10 @@ public class BoardValidator {
 			throw new AppException(ErrorCode.UNIVERSITY_BOARD_DUPLICATED);
 		}
 	}
+
+	public void validateUniqueName(String boardName){
+		if(boardRepository.existsByBoardName(boardName)){
+			throw new AppException(ErrorCode.BOARD_NAME_DUPLICATED);
+		}
+	}
 }

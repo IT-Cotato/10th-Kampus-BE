@@ -17,6 +17,7 @@ import com.cotato.kampus.domain.cardNews.application.CardNewsAppender;
 import com.cotato.kampus.domain.cardNews.application.CardNewsImageAppender;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
+import com.cotato.kampus.domain.post.application.PostAppender;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
@@ -45,19 +46,29 @@ public class AdminService {
 	private final S3Uploader s3Uploader;
 	private final CardNewsAppender cardNewsAppender;
 	private final CardNewsImageAppender cardNewsImageAppender;
+	private final UnivFinder univFinder;
 
-	private static final String CARDNEWS_IMAGE_FOLDER = "CardNews";
+	private static final String CARDNEWS_IMAGE_FOLDER = "cardNews";
 	private final ApiUserResolver apiUserResolver;
+	private final PostAppender postAppender;
 
-	public Long createBoard(String boardName, String description, Long universityId, Boolean isCategoryRequired){
+	public Long createBoard(String boardName, String description, String universityName, Boolean isCategoryRequired){
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
-		// 학교 게시판인 경우 이미 존재하는지 확인
-		if(universityId != null)
+		// 게시판 이름 중복 검사
+		boardValidator.validateUniqueName(boardName);
+
+		// 학교 게시판인 경우
+		if(universityName != null) {
+			Long universityId = univFinder.findUniversityId(universityName);
 			boardValidator.validateUniversityBoardExists(universityId);
 
-		return boardAppender.appendBoard(boardName, description, universityId, isCategoryRequired);
+			return boardAppender.appendUniversityBoard(boardName, description, universityId, isCategoryRequired);
+		}
+
+		// 일반 게시판인 경우
+		return boardAppender.appendBoard(boardName, description, isCategoryRequired);
 	}
 
 	public void updateBoard(Long boardId, String boardName, String description, Boolean isCategoryRequired){

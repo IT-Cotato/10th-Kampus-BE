@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.board.domain;
 
 import com.cotato.kampus.domain.board.enums.BoardStatus;
+import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -41,16 +42,21 @@ public class Board extends BaseTimeEntity {
 	private Boolean isCategoryRequired;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "board_status")
+	@Column(name = "board_status", nullable = false)
 	private BoardStatus boardStatus;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "board_type", nullable = false)
+	private BoardType boardType;
+
 	@Builder
-	public Board(String boardName, String description, Long universityId, Boolean isCategoryRequired, BoardStatus boardStatus) {
+	public Board(String boardName, String description, Long universityId, Boolean isCategoryRequired, BoardStatus boardStatus, BoardType boardType) {
 		this.boardName = boardName;
 		this.description = description;
 		this.universityId = universityId;
 		this.isCategoryRequired = isCategoryRequired;
 		this.boardStatus = boardStatus;
+		this.boardType = boardType;
 	}
 
 	public void update(String boardName, String description, Boolean isCategoryRequired) {
