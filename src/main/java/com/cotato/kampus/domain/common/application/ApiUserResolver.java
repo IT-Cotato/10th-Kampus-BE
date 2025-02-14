@@ -4,7 +4,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.cotato.kampus.domain.user.application.UserFinder;
-import com.cotato.kampus.domain.user.dao.UserRepository;
 import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.global.auth.nativeapp.AppUserDetails;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -20,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ApiUserResolver {
 
 	private final UserFinder userFinder;
-	private final UserRepository userRepository;
 
 	public Long getUserId() {
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
