@@ -33,7 +33,7 @@ public class CommentService {
 	private final ApiUserResolver apiUserResolver;
 
 	@Transactional
-	public Long createComment(Long postId, String content, Anonymity anonymity, Long parentId){
+	public Long createComment(Long postId, String content, Long parentId){
 		// 유저 조회
 		Long userId = apiUserResolver.getUserId();
 
@@ -44,12 +44,10 @@ public class CommentService {
 		commentValidator.validateParent(postId, parentId);
 
 		// 익명 번호 할당
-		Optional<Long> anonymousNumber = authorResolver.allocateAnonymousNumber(postId, anonymity);
+		Long anonymousNumber = authorResolver.allocateAnonymousNumber(postId);
 
 		// 댓글 추가
-		Long commentId = commentAppender.append(postId, content, anonymity, anonymousNumber, parentId);
-
-		return commentId;
+		return commentAppender.append(postId, content, anonymousNumber, parentId);
 	}
 
 	@Transactional

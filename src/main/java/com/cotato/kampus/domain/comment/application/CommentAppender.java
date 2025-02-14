@@ -24,11 +24,9 @@ public class CommentAppender {
 	private final ApiUserResolver apiUserResolver;
 
 	@Transactional
-	public Long append(Long postId, String content, Anonymity anonymity, Optional<Long> anonymousNumber, Long parentId){
+	public Long append(Long postId, String content, Long anonymousNumber, Long parentId){
 
 		Long userId = apiUserResolver.getUserId();
-
-		Long anonymousNumberValue = anonymousNumber.orElse(null);
 
 		Comment comment = Comment.builder()
 			.userId(userId)
@@ -37,9 +35,9 @@ public class CommentAppender {
 			.likes(0L)
 			.reportStatus(ReportStatus.NORMAL)
 			.commentStatus(CommentStatus.NORMAL)
-			.anonymity(anonymity)
+			.anonymity(Anonymity.ANONYMOUS)
 			.reports(0L)
-			.anonymousNumber(anonymousNumberValue)
+			.anonymousNumber(anonymousNumber)
 			.parentId(parentId)
 			.build();
 

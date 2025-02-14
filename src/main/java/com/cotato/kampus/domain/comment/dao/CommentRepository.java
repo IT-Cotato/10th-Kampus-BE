@@ -14,7 +14,7 @@ import com.cotato.kampus.domain.common.enums.Anonymity;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-	Optional<Comment> findFirstByPostIdAndUserIdAndAnonymity(Long postId, Long userId, Anonymity anonymity);
+	Optional<Comment> findFirstByPostIdAndUserId(Long postId, Long userId);
 
 	boolean existsByParentId(Long parentId);
 
