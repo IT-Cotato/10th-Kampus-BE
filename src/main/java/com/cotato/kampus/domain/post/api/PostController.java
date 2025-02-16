@@ -29,6 +29,7 @@ import com.cotato.kampus.domain.post.dto.response.PostDraftCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftDetailResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftSliceFindResponse;
 import com.cotato.kampus.domain.post.dto.response.PostSliceFindResponse;
+import com.cotato.kampus.domain.post.dto.response.SearchKeywordListResponse;
 import com.cotato.kampus.domain.post.dto.response.SearchedPostResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -292,6 +293,16 @@ public class PostController {
 		return ResponseEntity.ok(DataResponse.from(
 			SearchedPostResponse.from(
 				postService.searchAllPosts(keyword, page)
+			)
+		));
+	}
+
+	@GetMapping("/search/keywords")
+	@Operation(summary = "게시글 검색 키워드 조회", description = "게시글 검색 키워드를 조회합니다.(최대 5개, 최신순 정렬)")
+	public ResponseEntity<DataResponse<SearchKeywordListResponse>> searchAllPosts() {
+		return ResponseEntity.ok(DataResponse.from(
+			SearchKeywordListResponse.from(
+				postService.findSearchKeyword()
 			)
 		));
 	}

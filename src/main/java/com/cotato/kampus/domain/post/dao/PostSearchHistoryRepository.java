@@ -14,4 +14,6 @@ public interface PostSearchHistoryRepository extends JpaRepository<PostSearchHis
 	List<PostSearchHistory> findTop5ByUserIdOrderByCreatedTimeDesc(Long userId);
 
 	Optional<PostSearchHistory> findByUserIdAndKeyword(Long userId, String keyword);
+
+	List<PostSearchHistory> findByUserIdOrderByCreatedTimeDesc(Long userId);
 }
