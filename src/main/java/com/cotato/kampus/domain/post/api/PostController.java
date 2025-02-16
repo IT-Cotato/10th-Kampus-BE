@@ -2,8 +2,10 @@ package com.cotato.kampus.domain.post.api;
 
 import java.util.List;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -46,6 +48,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "게시글(Post) API", description = "게시글 관련 API(게시판 API는 Board)")
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Validated
 @RequestMapping("/v1/api/posts")
 public class PostController {
 
@@ -288,7 +291,7 @@ public class PostController {
 	@GetMapping("/search")
 	@Operation(summary = "전체 게시글 검색")
 	public ResponseEntity<DataResponse<SearchedPostResponse>> searchAllPosts(
-		@RequestParam @NotBlank String keyword,
+		@Valid @RequestParam @NotBlank @Length(min = 2, max = 10, message = "keyword는 2자 이상 10자 이하로 구성해야 합니다.") String keyword,
 		@RequestParam(required = false, defaultValue = "1") int page
 	) {
 		return ResponseEntity.ok(DataResponse.from(
@@ -301,7 +304,7 @@ public class PostController {
 	@GetMapping("/search/{boardId}")
 	@Operation(summary = "게시판 내 게시글 검색")
 	public ResponseEntity<DataResponse<SearchedPostResponse>> searchBoardPosts(
-		@RequestParam @NotBlank String keyword,
+		@Valid @RequestParam @NotBlank @Length(min = 2, max = 10, message = "keyword는 2자 이상 10자 이하로 구성해야 합니다.") String keyword,
 		@PathVariable Long boardId,
 		@RequestParam(required = false, defaultValue = "1") int page
 	) {
