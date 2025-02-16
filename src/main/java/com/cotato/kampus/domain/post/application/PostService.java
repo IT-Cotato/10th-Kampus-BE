@@ -51,6 +51,8 @@ public class PostService {
 	private final PostLikeValidator postLikeValidator;
 	private final PostValidator postValidator;
 
+	private final PostSearchHistoryAppender postSearchHistoryAppender;
+
 	private static final String POST_IMAGE_FOLDER = "post";
 	private final BoardValidator boardValidator;
 
@@ -326,6 +328,10 @@ public class PostService {
 	}
 
 	public Slice<SearchedPost> searchAllPosts(String keyword, int page) {
+		// 최대 5개 까지 키워드 저장
+		Long userId = apiUserResolver.getUserId();
+		postSearchHistoryAppender.append(userId, keyword);
+		// 검색 결과 리턴
 		return postFinder.searchAllPosts(keyword, page);
 	}
 }
