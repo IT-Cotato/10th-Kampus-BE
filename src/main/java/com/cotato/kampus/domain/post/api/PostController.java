@@ -29,6 +29,7 @@ import com.cotato.kampus.domain.post.dto.response.PostDraftCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftDetailResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftSliceFindResponse;
 import com.cotato.kampus.domain.post.dto.response.PostSliceFindResponse;
+import com.cotato.kampus.domain.post.dto.response.SearchKeywordDeleteResponse;
 import com.cotato.kampus.domain.post.dto.response.SearchKeywordListResponse;
 import com.cotato.kampus.domain.post.dto.response.SearchedPostResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
@@ -303,6 +304,17 @@ public class PostController {
 		return ResponseEntity.ok(DataResponse.from(
 			SearchKeywordListResponse.from(
 				postService.findSearchKeyword()
+			)
+		));
+	}
+
+	@DeleteMapping("search/keywords/{keywordId}")
+	@Operation(summary = "게시글 검색 키워드 단건 삭제", description = "게시글 검색 키워드 Id를 통해 삭제합니다.")
+	public ResponseEntity<DataResponse<SearchKeywordDeleteResponse>> deleteKeyword(
+		@PathVariable Long keywordId) {
+		return ResponseEntity.ok(DataResponse.from(
+			SearchKeywordDeleteResponse.from(
+				postService.deleteSearchKeyword(keywordId)
 			)
 		));
 	}

@@ -16,6 +16,8 @@ import com.cotato.kampus.domain.post.dto.PostDraftDetails;
 import com.cotato.kampus.domain.post.dto.PostDraftDto;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
+import com.cotato.kampus.domain.post.dto.PostSearchHistoryList;
+import com.cotato.kampus.domain.post.dto.PostSearchHistoryWithUserId;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.dto.SearchedPost;
 import com.cotato.kampus.domain.post.enums.PostCategory;
@@ -52,6 +54,10 @@ public class PostService {
 	private final PostValidator postValidator;
 
 	private final PostSearchHistoryAppender postSearchHistoryAppender;
+	private final PostSearchHistoryFinder postSearchHistoryFinder;
+	private final PostSearchHistoryValidator postSearchHistoryValidator;
+	private final PostSearchHistoryDeleter postSearchHistoryDeleter;
+
 
 	private static final String POST_IMAGE_FOLDER = "post";
 	private final BoardValidator boardValidator;
@@ -333,5 +339,18 @@ public class PostService {
 		postSearchHistoryAppender.append(userId, keyword);
 		// 검색 결과 리턴
 		return postFinder.searchAllPosts(keyword, page);
+	}
+
+	public PostSearchHistoryList findSearchKeyword() {
+		Long userId = apiUserResolver.getUserId();
+		return postSearchHistoryFinder.findByUserId(userId);
+	}
+
+	@Transactional
+	public Long deleteSearchKeyword(Long keywordId) {
+		Long userId = apiUserResolver.getUserId();
+		postSearchHistoryValidator.validateUser(userId, keywordId);
+		postSearchHistoryDeleter.deleteHistory(keywordId);
+		return keywordId;
 	}
 }
