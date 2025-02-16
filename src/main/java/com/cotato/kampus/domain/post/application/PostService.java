@@ -14,9 +14,10 @@ import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
 import com.cotato.kampus.domain.post.dto.PostDraftDetails;
 import com.cotato.kampus.domain.post.dto.PostDraftDto;
+import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
-import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
+import com.cotato.kampus.domain.post.dto.SearchedPost;
 import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -168,7 +169,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public void deleteDraftPosts(List<Long> postDraftIds){
+	public void deleteDraftPosts(List<Long> postDraftIds) {
 		// 유저 조회
 		Long userId = apiUserResolver.getUserId();
 
@@ -190,7 +191,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public void deleteAllDraftPost(Long boardId){
+	public void deleteAllDraftPost(Long boardId) {
 		// 유저 조회
 		Long userId = apiUserResolver.getUserId();
 
@@ -217,7 +218,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public PostDraftDetails findDraftDetail(Long postDraftId){
+	public PostDraftDetails findDraftDetail(Long postDraftId) {
 
 		PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
 
@@ -257,7 +258,8 @@ public class PostService {
 		imageValidator.validateDeletableImages(existingImageUrls, deletedImageUrls);
 
 		// 7. 기존 이미지에서 삭제할 이미지 제외하고, 새로 추가된 이미지 합쳐서 최종 이미지 리스트 생성
-		List<String> finalImages = postImageUpdater.getUpdateImageUrls(existingImageUrls, deletedImageUrls, newImageUrls);
+		List<String> finalImages = postImageUpdater.getUpdateImageUrls(existingImageUrls, deletedImageUrls,
+			newImageUrls);
 
 		// 8. 최종 이미지가 있으면 게시글에 이미지 추가
 		if (!finalImages.isEmpty()) {
@@ -287,7 +289,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public void scrapPost(Long postId){
+	public void scrapPost(Long postId) {
 		// 유저 조회
 		Long userId = apiUserResolver.getUserId();
 
@@ -302,7 +304,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public void unscrapPost(Long postId){
+	public void unscrapPost(Long postId) {
 		// 유저 조회
 		Long userId = apiUserResolver.getUserId();
 
@@ -313,15 +315,17 @@ public class PostService {
 		postScrapUpdater.delete(postId, userId);
 	}
 
-	public Slice<MyPostWithPhoto> findUserScrapedPosts(int page){
+	public Slice<MyPostWithPhoto> findUserScrapedPosts(int page) {
 		return postFinder.findUserScrapedPosts(page);
 	}
 
-
 	public void validateCategoryForBoard(boolean requiresCategory, PostCategory postCategory) {
 		// 카테고리 필요 없는데 값이 들어온 경우 -> 예외 발생
-		if(!requiresCategory && (postCategory != null))
+		if (!requiresCategory && (postCategory != null))
 			throw new AppException(ErrorCode.CATEGORY_NOT_ALLOWED);
 	}
 
+	public Slice<SearchedPost> searchAllPosts(String keyword, int page) {
+		return postFinder.searchAllPosts(keyword, page);
+	}
 }

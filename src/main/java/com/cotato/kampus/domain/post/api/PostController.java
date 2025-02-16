@@ -29,6 +29,7 @@ import com.cotato.kampus.domain.post.dto.response.PostDraftCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftDetailResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftSliceFindResponse;
 import com.cotato.kampus.domain.post.dto.response.PostSliceFindResponse;
+import com.cotato.kampus.domain.post.dto.response.SearchedPostResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
 
@@ -36,6 +37,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -279,5 +281,18 @@ public class PostController {
 				)
 			)
 		);
+	}
+
+	@GetMapping("/search")
+	@Operation(summary = "전체 게시글 검색")
+	public ResponseEntity<DataResponse<SearchedPostResponse>> searchAllPosts(
+		@RequestParam @NotBlank String keyword,
+		@RequestParam(required = false, defaultValue = "1") int page
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+			SearchedPostResponse.from(
+				postService.searchAllPosts(keyword, page)
+			)
+		));
 	}
 }
