@@ -31,7 +31,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 	private static final String TOKEN_PREFIX = "Bearer";
 	private static final Long ACCESS_TOKEN_EXP = 604800000L; // 일주일
 	private static final Long REFRESH_TOKEN_EXP = 86400000L;
-	private static final String REDIRECT_URL = "https://dc92clgvselcq.cloudfront.net/login";
+	private static final String REDIRECT_URL = "https://kampusapp.kro.kr/login";
 	// 개발 환경 관련 상수 - 추후 제거 예정
 	private static final String DEV_ORIGIN = "http://localhost";
 	private static final String DEV_REDIRECT_URL = "http://localhost:5173/login";
