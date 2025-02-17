@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cotato.kampus.domain.chat.application.PostChatService;
-import com.cotato.kampus.domain.chat.dto.ChatMessageSliceWithUserId;
+import com.cotato.kampus.domain.chat.dto.ChatMessageSliceSnapshot;
 import com.cotato.kampus.domain.chat.dto.ChatNotificationResult;
 import com.cotato.kampus.domain.chat.dto.ChatRoomPreviewList;
 import com.cotato.kampus.domain.chat.dto.request.ChatMessageRequest;
@@ -59,7 +59,7 @@ public class PostChatController {
 	@Operation(summary = "채팅 조회", description = "채팅방의 채팅을 Slice로 조회하는 Api(기본 20개, 더 조회할 수 있으면 hasNext가 true)")
 	public ResponseEntity<DataResponse<ChatMessageListResponse>> getChatMessages(@PathVariable Long chatroomId,
 		@RequestParam(required = false, defaultValue = "1") int page) {
-		ChatMessageSliceWithUserId messages = postChatService.getMessages(page, chatroomId);
+		ChatMessageSliceSnapshot messages = postChatService.getMessages(page, chatroomId);
 		return ResponseEntity.ok(DataResponse.from(
 				ChatMessageListResponse.from(messages)
 			)

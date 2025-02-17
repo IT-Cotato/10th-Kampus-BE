@@ -12,7 +12,7 @@ import com.cotato.kampus.domain.chat.domain.ChatMessage;
 import com.cotato.kampus.domain.chat.domain.Chatroom;
 import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
 import com.cotato.kampus.domain.chat.dto.ChatMessageSlice;
-import com.cotato.kampus.domain.chat.dto.ChatMessageSliceWithUserId;
+import com.cotato.kampus.domain.chat.dto.ChatMessageSliceSnapshot;
 import com.cotato.kampus.domain.chat.dto.ChatNotification;
 import com.cotato.kampus.domain.chat.dto.ChatNotificationResult;
 import com.cotato.kampus.domain.chat.dto.ChatRoomDetailDto;
@@ -46,6 +46,7 @@ public class PostChatService {
 	private final ChatMessageFinder chatMessageFinder;
 	private final ChatMessageAppender chatMessageAppender;
 	private final ChatMessageDeleter chatMessageDeleter;
+	private final ChatMessageProcessor chatMessageProcessor;
 	private final MessageReadStatusUpdater messageReadStatusUpdater;
 	private final MessageReadStatusDeleter messageReadStatusDeleter;
 
@@ -138,16 +139,13 @@ public class PostChatService {
 		return ChatNotificationResult.of(chatMessage, ChatNotification.from(chatMessage, unreadCount), receiverId);
 	}
 
-	public ChatMessageSliceWithUserId getMessages(int page, Long chatroomId) {
-		// 1. 조회한 유저 id 조회
+	public ChatMessageSliceSnapshot getMessages(int page, Long chatroomId) {
 		Long userId = apiUserResolver.getUserId();
-
-		// 2. 조회한 유저가 채팅방에 있는 유저인지 조회
 		chatRoomValidator.validateUser(userId, chatroomId);
 
-		// 3. Slice로 채팅 메시지 조회하여 현재 유저 id와 함께 반환
 		ChatMessageSlice chatMessageSlice = chatMessageFinder.findAllByChatRoomId(page, chatroomId);
-		return ChatMessageSliceWithUserId.from(userId, chatMessageSlice);
+		// 조회 시점의 읽는 상태를 추가하여 반환
+		return chatMessageProcessor.attachReadStatus(chatMessageSlice, chatroomId, userId);
 	}
 
 	@Transactional
