@@ -13,4 +13,6 @@ public interface ChatroomMetadataRepository extends JpaRepository<ChatroomMetada
 	Slice<ChatroomMetadata> findAllByUserIdOrderByLastChatTimeDesc(Long userId, Pageable pageable);
 
 	Optional<ChatroomMetadata> findByChatroomIdAndUserId(Long chatroomId, Long senderId);
+
+	void deleteAllByChatroomId(Long chatroomId);
 }

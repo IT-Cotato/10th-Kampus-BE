@@ -6,6 +6,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -109,6 +110,14 @@ public class PostChatController {
 				)
 			)
 		);
+	}
+
+	@DeleteMapping("/chatrooms/{chatroomId}")
+	@Operation(summary = "채팅방 삭제", description = "채팅방과 관련된 모든 데이터(메시지, 읽음 상태, 메타데이터)를 삭제합니다.")
+	@ResponseBody
+	public ResponseEntity<DataResponse<Void>> deleteChatroom(@PathVariable Long chatroomId) {
+		postChatService.deleteChatroom(chatroomId);
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@PostMapping("/{chatroomId}/read")

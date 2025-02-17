@@ -35,6 +35,7 @@ public class PostChatService {
 	private final ChatRoomValidator chatRoomValidator;
 	private final ChatRoomAppender chatRoomAppender;
 	private final ChatRoomFinder chatRoomFinder;
+	private final ChatRoomDeleter chatroomDeleter;
 
 	private final ApiUserResolver apiUserResolver;
 	private final ChatMemberFinder chatMemberFinder;
@@ -44,12 +45,15 @@ public class PostChatService {
 
 	private final ChatMessageFinder chatMessageFinder;
 	private final ChatMessageAppender chatMessageAppender;
+	private final ChatMessageDeleter chatMessageDeleter;
 	private final MessageReadStatusUpdater messageReadStatusUpdater;
+	private final MessageReadStatusDeleter messageReadStatusDeleter;
 
 	private final ChatroomMetadataAppender chatroomMetadataAppender;
 	private final ChatroomMetadataUpdater chatroomMetadataUpdater;
 	private final ChatroomMetadataFinder chatroomMetadataFinder;
 	private final ChatroomMetadataMapper chatroomMetadataMapper;
+	private final ChatroomMetadataDeleter chatroomMetadataDeleter;
 
 	@Transactional
 	public Long createChatRoom(Long postId) {
@@ -154,5 +158,26 @@ public class PostChatService {
 		// 2. 해당 사용자의 메시지 읽음 상태 조회 또는 생성
 		messageReadStatusUpdater.updateStatus(chatroomId, userId, latestMessage.getId());
 		chatroomMetadataUpdater.resetReadCount(chatroomId, userId);
+	}
+
+	@Transactional
+	public void deleteChatroom(Long chatroomId) {
+		// 1. 현재 사용자 ID 조회
+		Long userId = apiUserResolver.getUserId();
+
+		// 2. 채팅방 멤버 검증
+		chatRoomValidator.validateUser(userId, chatroomId);
+
+		// 3. 채팅 메시지 삭제(sender, receiver)
+		chatMessageDeleter.deleteByChatroomId(chatroomId);
+
+		// 4. 읽음 상태 삭제(sender, receiver)
+		messageReadStatusDeleter.deleteByChatroomId(chatroomId);
+
+		// 5. 채팅방 메타데이터 삭제(sender, receiver)
+		chatroomMetadataDeleter.deleteByChatroomId(chatroomId);
+
+		// 6. 채팅방 삭제
+		chatroomDeleter.deleteById(chatroomId);
 	}
 }
