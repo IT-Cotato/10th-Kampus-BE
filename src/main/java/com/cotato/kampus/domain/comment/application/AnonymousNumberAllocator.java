@@ -29,7 +29,7 @@ public class AnonymousNumberAllocator {
 	public Long allocateAnonymousNumber(Long postId){
 		// 해당 Post에 현재 User의 댓글 작성 여부 확인
 		Optional<Comment> comment = commentRepository.findFirstByPostIdAndUserId(
-			postId, apiUserResolver.getUserId()
+			postId, apiUserResolver.getCurrentUserId()
 		);
 
 		return comment.map(Comment::getAnonymousNumber)

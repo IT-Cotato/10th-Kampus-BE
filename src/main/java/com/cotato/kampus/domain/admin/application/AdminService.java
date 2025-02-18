@@ -156,7 +156,7 @@ public class AdminService {
 			s3Uploader.uploadFiles(validImages, CARDNEWS_IMAGE_FOLDER);
 
 		// 카드뉴스 추가
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 		Long boardId = boardFinder.findCardNewsBoardId();
 		Long postId = postAppender.appendCardNews(userId, boardId, title);
 

@@ -56,7 +56,7 @@ public class PostAppender {
 		String content,
 		PostCategory postCategory
 	){
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		PostDraft postDraft = PostDraft.builder()
 			.userId(userId)

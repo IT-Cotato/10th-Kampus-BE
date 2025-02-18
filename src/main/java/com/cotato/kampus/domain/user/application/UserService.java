@@ -34,7 +34,7 @@ public class UserService {
 	private final UserFinder userFinder;
 
 	public UserDetailsDto getUserDetails() {
-		return UserDetailsDto.from(apiUserResolver.getUser());
+		return UserDetailsDto.from(apiUserResolver.getCurrentUser());
 	}
 	private final UnivEmailVerifier univEmailVerifier;
 	private final UnivFinder univFinder;
@@ -78,7 +78,7 @@ public class UserService {
 		verificationRecordAppender.appendEmailType(universityId);
 
 		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 유저 상태 변경, 학교 할당
 		return userUpdater.updateVerificationStatus(userId, universityId);

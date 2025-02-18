@@ -23,7 +23,7 @@ public class ProductAppender {
 	@Transactional
 	public Long append(String title, Long sellPrice, String description, ProductCategory productCategory) {
 
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		Product product = Product.builder()
 			.title(title)

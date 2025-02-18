@@ -65,7 +65,7 @@ public class BoardService {
 
 	public BoardDto getUniversityBoard(){
 		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 재학생 인증 확인
 		Long userUniversityId = userValidator.validateStudentVerification(userId);

@@ -33,7 +33,7 @@ public class CommentService {
 	@Transactional
 	public Long createComment(Long postId, String content, Long parentId){
 		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 학생 인증 확인
 		userValidator.validateStudentVerification(userId);
@@ -57,7 +57,7 @@ public class CommentService {
 	@Transactional
 	public Long likeComment(Long commentId){
 		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 학생 인증 확인
 		userValidator.validateStudentVerification(userId);

@@ -77,7 +77,7 @@ public class PostService {
 
 		// 게시판, 유저 조회
 		BoardDto boardDto = boardFinder.findBoard(boardId);
-		UserDto userDto = userFinder.getUserDtoById(apiUserResolver.getUserId());
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
 		// 게시판 검증
 		boardValidator.validateBoardIsActive(boardDto);
@@ -97,7 +97,7 @@ public class PostService {
 	@Transactional
 	public Long deletePost(Long postId) {
 		// 작성자 검증: 현재 사용자가 게시글 작성자인지 확인
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 		postValidator.validatePostOwner(postId, userId);
 
 		// 이미지 조회
@@ -137,7 +137,7 @@ public class PostService {
 	public void updatePost(Long postId, String title, String content, PostCategory postCategory,
 		List<MultipartFile> images) throws ImageException {
 		// 1. Post Author 검증
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 		postValidator.validatePostOwner(postId, userId);
 
 		// 2. Post 업데이트
@@ -177,7 +177,7 @@ public class PostService {
 	@Transactional
 	public void deleteDraftPosts(List<Long> postDraftIds){
 		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 작성자 검증
 		postDraftIds.forEach(postDraftId -> postValidator.validateDraftPostDelete(postDraftId, userId));
@@ -199,7 +199,7 @@ public class PostService {
 	@Transactional
 	public void deleteAllDraftPost(Long boardId){
 		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 임시 저장 게시글 조회
 		List<Long> draftPostIds = postFinder.getPostDraftIdsByBoardAndUser(boardId, userId);
@@ -218,7 +218,7 @@ public class PostService {
 	@Transactional
 	public Slice<PostDraftWithPhoto> findPostDrafts(Long boardId, int page) {
 
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		return postFinder.findPostDrafts(boardId, userId, page);
 	}
@@ -243,7 +243,7 @@ public class PostService {
 		List<MultipartFile> newImages) throws ImageException {
 
 		// 1. 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 2. 임시 저장 게시글 정보 조회
 		PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
@@ -277,7 +277,7 @@ public class PostService {
 	@Transactional
 	public void likePost(Long postId) {
 		// 1. userId 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 2. 좋아요 제약 조건 검증(자신의 게시글, 이미 좋아요한 게시글)
 		postLikeValidator.validatePostLike(postId, userId);
@@ -296,7 +296,7 @@ public class PostService {
 	@Transactional
 	public void scrapPost(Long postId){
 		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 스크랩 가능 여부 검증
 		postValidator.validatePostScrap(postId, userId);
@@ -311,7 +311,7 @@ public class PostService {
 	@Transactional
 	public void unscrapPost(Long postId){
 		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 게시글 스크랩 수 감소
 		postUpdater.decreaseScraps(postId);
