@@ -12,7 +12,7 @@ import com.cotato.kampus.domain.chat.domain.ChatMessage;
 import com.cotato.kampus.domain.chat.domain.Chatroom;
 import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
 import com.cotato.kampus.domain.chat.dto.ChatMessageSlice;
-import com.cotato.kampus.domain.chat.dto.ChatMessageSliceWithUserId;
+import com.cotato.kampus.domain.chat.dto.ChatMessageSliceSnapshot;
 import com.cotato.kampus.domain.chat.dto.ChatNotification;
 import com.cotato.kampus.domain.chat.dto.ChatNotificationResult;
 import com.cotato.kampus.domain.chat.dto.ChatRoomDetailDto;
@@ -35,6 +35,7 @@ public class PostChatService {
 	private final ChatRoomValidator chatRoomValidator;
 	private final ChatRoomAppender chatRoomAppender;
 	private final ChatRoomFinder chatRoomFinder;
+	private final ChatRoomDeleter chatroomDeleter;
 
 	private final ApiUserResolver apiUserResolver;
 	private final ChatMemberFinder chatMemberFinder;
@@ -44,12 +45,16 @@ public class PostChatService {
 
 	private final ChatMessageFinder chatMessageFinder;
 	private final ChatMessageAppender chatMessageAppender;
+	private final ChatMessageDeleter chatMessageDeleter;
+	private final ChatMessageProcessor chatMessageProcessor;
 	private final MessageReadStatusUpdater messageReadStatusUpdater;
+	private final MessageReadStatusDeleter messageReadStatusDeleter;
 
 	private final ChatroomMetadataAppender chatroomMetadataAppender;
 	private final ChatroomMetadataUpdater chatroomMetadataUpdater;
 	private final ChatroomMetadataFinder chatroomMetadataFinder;
 	private final ChatroomMetadataMapper chatroomMetadataMapper;
+	private final ChatroomMetadataDeleter chatroomMetadataDeleter;
 
 	@Transactional
 	public Long createChatRoom(Long postId) {
@@ -134,16 +139,13 @@ public class PostChatService {
 		return ChatNotificationResult.of(chatMessage, ChatNotification.from(chatMessage, unreadCount), receiverId);
 	}
 
-	public ChatMessageSliceWithUserId getMessages(int page, Long chatroomId) {
-		// 1. 조회한 유저 id 조회
+	public ChatMessageSliceSnapshot getMessages(int page, Long chatroomId) {
 		Long userId = apiUserResolver.getCurrentUserId();
-
-		// 2. 조회한 유저가 채팅방에 있는 유저인지 조회
 		chatRoomValidator.validateUser(userId, chatroomId);
 
-		// 3. Slice로 채팅 메시지 조회하여 현재 유저 id와 함께 반환
 		ChatMessageSlice chatMessageSlice = chatMessageFinder.findAllByChatRoomId(page, chatroomId);
-		return ChatMessageSliceWithUserId.from(userId, chatMessageSlice);
+		// 조회 시점의 읽는 상태를 추가하여 반환
+		return chatMessageProcessor.attachReadStatus(chatMessageSlice, chatroomId, userId);
 	}
 
 	@Transactional
@@ -154,5 +156,26 @@ public class PostChatService {
 		// 2. 해당 사용자의 메시지 읽음 상태 조회 또는 생성
 		messageReadStatusUpdater.updateStatus(chatroomId, userId, latestMessage.getId());
 		chatroomMetadataUpdater.resetReadCount(chatroomId, userId);
+	}
+
+	@Transactional
+	public void deleteChatroom(Long chatroomId) {
+		// 1. 현재 사용자 ID 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		// 2. 채팅방 멤버 검증
+		chatRoomValidator.validateUser(userId, chatroomId);
+
+		// 3. 채팅 메시지 삭제(sender, receiver)
+		chatMessageDeleter.deleteByChatroomId(chatroomId);
+
+		// 4. 읽음 상태 삭제(sender, receiver)
+		messageReadStatusDeleter.deleteByChatroomId(chatroomId);
+
+		// 5. 채팅방 메타데이터 삭제(sender, receiver)
+		chatroomMetadataDeleter.deleteByChatroomId(chatroomId);
+
+		// 6. 채팅방 삭제
+		chatroomDeleter.deleteById(chatroomId);
 	}
 }
