@@ -48,11 +48,14 @@ public class BoardService {
 	}
 
 	public Long addFavoriteBoard(Long boardId) {
-		// 게시판이 존재하는지 확인
-		boardValidator.validateBoardExistsAndActive(boardId);
+		// 게시판 조회
+		BoardDto boardDto = boardFinder.findBoard(boardId);
+
+		// 게시판 검증
+		boardValidator.validateBoardIsActive(boardDto);
 
 		// 즐겨찾기 추가
-		return boardFavoriteAppender.appendFavoriteBoard(boardId);
+		return boardFavoriteAppender.appendFavoriteBoard(boardDto.boardId());
 	}
 
 	public Long removeFavoriteBoard(Long boardId) {
@@ -62,7 +65,7 @@ public class BoardService {
 
 	public BoardDto getUniversityBoard(){
 		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 재학생 인증 확인
 		Long userUniversityId = userValidator.validateStudentVerification(userId);

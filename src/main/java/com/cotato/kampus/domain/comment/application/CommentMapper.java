@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentMapper {
 
-	private final AuthorResolver authorResolver;
+	private final AnonymousNumberAllocator anonymousNumberAllocator;
 
 	public List<CommentDetail> buildCommentHierarchy(List<CommentDto> commentDtos){
 		Map<Long, CommentDetail> commentMap = new HashMap<>();
@@ -29,7 +29,7 @@ public class CommentMapper {
 		for (CommentDto commentDto : commentDtos) {
 			CommentDetail detail = CommentDetail.of(
 				commentDto,
-				authorResolver.resolveAuthorName(commentDto),
+				anonymousNumberAllocator.resolveAuthorName(commentDto),
 				new ArrayList<>()
 			);
 			commentMap.put(commentDto.commentId(), detail);

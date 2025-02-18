@@ -64,7 +64,7 @@ public class PostChatService {
 		String postTitle = post.title();
 
 		// 2. 채팅을 건 유저를 조회
-		Long senderId = apiUserResolver.getUserId();
+		Long senderId = apiUserResolver.getCurrentUserId();
 
 		// 3. 채팅방 생성 검증(보내는 사람 == 받는 사람 or 이미 있는 채팅방)
 		chatRoomValidator.validateNewChatRoom(postId, senderId, receiverId);
@@ -86,7 +86,7 @@ public class PostChatService {
 
 	public ChatRoomPreviewList findChatRooms(int page) {
 		// 1. 유저 정보를 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 2. 해당 유저의 채팅방 메타데이터를 lastChatTime 내림차순으로 조회
 		Slice<ChatroomMetadata> chatRoomMetadatas = chatroomMetadataFinder.findChatRoomMetadatas(userId, page);
@@ -116,7 +116,7 @@ public class PostChatService {
 	@Transactional
 	public ChatNotificationResult processNewMessage(Long chatroomId, String message) {
 		// 1. 메시지 보내는 유저의 id 조회
-		Long senderId = apiUserResolver.getUserId();
+		Long senderId = apiUserResolver.getCurrentUserId();
 
 		// 2. 메시지 저장
 		ChatMessage chatMessage = chatMessageAppender.appendChatMessage(senderId, chatroomId, message);
@@ -140,7 +140,7 @@ public class PostChatService {
 	}
 
 	public ChatMessageSliceSnapshot getMessages(int page, Long chatroomId) {
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 		chatRoomValidator.validateUser(userId, chatroomId);
 
 		ChatMessageSlice chatMessageSlice = chatMessageFinder.findAllByChatRoomId(page, chatroomId);
@@ -150,7 +150,7 @@ public class PostChatService {
 
 	@Transactional
 	public void markMessagesAsRead(Long chatroomId) {
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 		// 1. 채팅방의 가장 최근 메시지 ID 조회
 		ChatMessage latestMessage = chatMessageFinder.findLatestMessage(chatroomId);
 		// 2. 해당 사용자의 메시지 읽음 상태 조회 또는 생성
@@ -161,7 +161,7 @@ public class PostChatService {
 	@Transactional
 	public void deleteChatroom(Long chatroomId) {
 		// 1. 현재 사용자 ID 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 2. 채팅방 멤버 검증
 		chatRoomValidator.validateUser(userId, chatroomId);

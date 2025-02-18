@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
-import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.user.dao.UserRepository;
@@ -30,7 +29,7 @@ public class PostAuthorResolver {
 			.orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
 		// 현재 사용자가 게시글 작성자인지 확인
-		Boolean isAuthor = apiUserResolver.getUserId().equals(author.getId());
+		Boolean isAuthor = apiUserResolver.getCurrentUserId().equals(author.getId());
 
 		if (postDto.anonymity().equals(Anonymity.ANONYMOUS)) {
 			// 익명 사용자 정보 반환

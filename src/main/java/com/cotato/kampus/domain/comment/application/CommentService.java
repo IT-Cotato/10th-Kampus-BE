@@ -1,7 +1,6 @@
 package com.cotato.kampus.domain.comment.application;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,6 @@ import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.comment.dto.CommentDetail;
 import com.cotato.kampus.domain.comment.dto.CommentSummary;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.user.application.UserValidator;
 
 import lombok.AccessLevel;
@@ -26,16 +24,16 @@ public class CommentService {
 	private final CommentAppender commentAppender;
 	private final CommentValidator commentValidator;
 	private final CommentDeleter commentDeleter;
-	private final AuthorResolver authorResolver;
+	private final AnonymousNumberAllocator anonymousNumberAllocator;
 	private final CommentLikeAppender commentLikeAppender;
 	private final CommentFinder commentFinder;
 	private final CommentMapper commentMapper;
 	private final ApiUserResolver apiUserResolver;
 
 	@Transactional
-	public Long createComment(Long postId, String content, Anonymity anonymity, Long parentId){
+	public Long createComment(Long postId, String content, Long parentId){
 		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 학생 인증 확인
 		userValidator.validateStudentVerification(userId);
@@ -44,12 +42,10 @@ public class CommentService {
 		commentValidator.validateParent(postId, parentId);
 
 		// 익명 번호 할당
-		Optional<Long> anonymousNumber = authorResolver.allocateAnonymousNumber(postId, anonymity);
+		Long anonymousNumber = anonymousNumberAllocator.allocateAnonymousNumber(postId);
 
 		// 댓글 추가
-		Long commentId = commentAppender.append(postId, content, anonymity, anonymousNumber, parentId);
-
-		return commentId;
+		return commentAppender.append(postId, content, anonymousNumber, parentId);
 	}
 
 	@Transactional
@@ -61,7 +57,7 @@ public class CommentService {
 	@Transactional
 	public Long likeComment(Long commentId){
 		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 학생 인증 확인
 		userValidator.validateStudentVerification(userId);

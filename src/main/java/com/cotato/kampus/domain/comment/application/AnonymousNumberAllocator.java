@@ -19,27 +19,21 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class AuthorResolver {
+public class AnonymousNumberAllocator {
 
 	private final CommentRepository commentRepository;
 	private final ApiUserResolver apiUserResolver;
 	private final PostUpdater postUpdater;
 	private final UserFinder userFinder;
 
-	public Optional<Long> allocateAnonymousNumber(Long postId, Anonymity anonymity){
+	public Long allocateAnonymousNumber(Long postId){
+		// 해당 Post에 현재 User의 댓글 작성 여부 확인
+		Optional<Comment> comment = commentRepository.findFirstByPostIdAndUserId(
+			postId, apiUserResolver.getCurrentUserId()
+		);
 
-		// 익명인 경우
-		if(anonymity == Anonymity.ANONYMOUS){
-			// 해당 Post에 현재 User의 댓글 작성 여부 확인
-			Optional<Comment> comment = commentRepository.findFirstByPostIdAndUserIdAndAnonymity(
-				postId, apiUserResolver.getUserId(), anonymity
-			);
-
-			return comment.map(Comment::getAnonymousNumber)
-				.or(() -> Optional.ofNullable(postUpdater.increaseNextAnonymousNumber(postId)));
-		} else {
-			return Optional.empty();
-		}
+		return comment.map(Comment::getAnonymousNumber)
+			.orElseGet(() ->(postUpdater.increaseNextAnonymousNumber(postId)));
 	}
 
 	public String resolveAuthorName(CommentDto commentDto){
