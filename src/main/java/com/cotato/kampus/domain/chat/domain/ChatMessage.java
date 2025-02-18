@@ -33,14 +33,10 @@ public class ChatMessage extends BaseTimeEntity {
 	@Column(name = "content", nullable = false, length = 500)
 	private String content;
 
-	@Column(name = "is_read", nullable = false)
-	private Boolean isRead;
-
 	@Builder
-	public ChatMessage(Long chatroomId, Long senderId, String content, Boolean isRead) {
+	public ChatMessage(Long chatroomId, Long senderId, String content) {
 		this.chatroomId = chatroomId;
 		this.senderId = senderId;
 		this.content = content;
-		this.isRead = isRead;
 	}
 }

@@ -1,21 +1,23 @@
 package com.cotato.kampus.domain.chat.dto.response;
 
-import com.cotato.kampus.domain.chat.domain.ChatMessage;
+import com.cotato.kampus.domain.chat.dto.ChatMessageSnapshot;
 
 public record ChatMessageResponse(
-	Long chatRoomId,
+	Long id,
+	Long chatroomId,
 	Long senderId,
 	String content,
 	boolean isRead,
 	boolean isMine
 ) {
-	public static ChatMessageResponse from(ChatMessage chatMessage, Long currentUserId) {
+	public static ChatMessageResponse from(ChatMessageSnapshot snapshot) {
 		return new ChatMessageResponse(
-			chatMessage.getChatroomId(),
-			chatMessage.getSenderId(),
-			chatMessage.getContent(),
-			chatMessage.getIsRead(),
-			chatMessage.getSenderId().equals(currentUserId)
+			snapshot.id(),
+			snapshot.chatroomId(),
+			snapshot.senderId(),
+			snapshot.content(),
+			snapshot.isRead(),
+			snapshot.isMine()
 		);
 	}
 }
