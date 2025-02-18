@@ -9,17 +9,18 @@ import com.cotato.kampus.domain.post.enums.PostCategory;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public record PostCreateRequest(
 	@NotNull
 	Long boardId,
 
 	@NotBlank
-	@Max(30)
+	@Size(max=30)
 	String title,
 
 	@NotBlank
-	@Max(1000)
+	@Size(max=1000)
 	String content,
 
 	PostCategory postCategory,
