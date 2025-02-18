@@ -101,7 +101,7 @@ public class AdminController {
 	@GetMapping("/student-verifications")
 	@Operation(summary = "재학생 인증 목록 조회", description = "재학생 인증 목록을 최신순으로 조회합니다.")
 	public ResponseEntity<DataResponse<StudentVerificationListResponse>> getStudentVerifications(
-		@RequestParam(required = false, defaultValue = "0") int page) {
+		@RequestParam(required = false, defaultValue = "1") int page) {
 			return ResponseEntity.ok(DataResponse.from(
 				StudentVerificationListResponse.from(
 					adminService.getVerifications(page)
