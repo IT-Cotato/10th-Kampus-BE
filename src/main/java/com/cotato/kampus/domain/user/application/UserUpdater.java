@@ -25,7 +25,7 @@ public class UserUpdater {
 
 	@Transactional
 	public Long updateDetails(String nickname, Nationality nationality, PreferredLanguage preferredLanguage) {
-		User user = apiUserResolver.getUser();
+		User user = apiUserResolver.getCurrentUser();
 		// 유저 세부정보 업데이트 및 UserStatus를 ACTIVE로 변경
 		user.updateDetails(nickname, nationality, preferredLanguage);
 		return user.getId();
@@ -40,7 +40,7 @@ public class UserUpdater {
 
 	@Transactional
 	public void updateDeviceToken(String deviceToken) {
-		User user = apiUserResolver.getUser();
+		User user = apiUserResolver.getCurrentUser();
 		user.updateDeviceToken(deviceToken);
 
 		// userRepository.save(user.updateDeviceToken(deviceToken));

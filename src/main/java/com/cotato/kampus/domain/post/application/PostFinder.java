@@ -77,7 +77,7 @@ public class PostFinder {
 
 	public Slice<MyPostWithPhoto> findUserPosts(int page) {
 
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
 		Slice<Post> posts = postRepository.findAllByUserId(userId, customPageRequest.of(SORT_PROPERTY));
@@ -94,7 +94,7 @@ public class PostFinder {
 
 	public Slice<MyPostWithPhoto> findUserScrapedPosts(int page) {
 
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
 
 		// 스크랩된 포스트만 조회

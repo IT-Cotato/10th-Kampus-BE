@@ -1,7 +1,5 @@
 package com.cotato.kampus.domain.comment.application;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +22,9 @@ public class CommentAppender {
 	private final ApiUserResolver apiUserResolver;
 
 	@Transactional
-	public Long append(Long postId, String content, Anonymity anonymity, Optional<Long> anonymousNumber, Long parentId){
+	public Long append(Long postId, String content, Long anonymousNumber, Long parentId){
 
-		Long userId = apiUserResolver.getUserId();
-
-		Long anonymousNumberValue = anonymousNumber.orElse(null);
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		Comment comment = Comment.builder()
 			.userId(userId)
@@ -37,9 +33,9 @@ public class CommentAppender {
 			.likes(0L)
 			.reportStatus(ReportStatus.NORMAL)
 			.commentStatus(CommentStatus.NORMAL)
-			.anonymity(anonymity)
+			.anonymity(Anonymity.ANONYMOUS)
 			.reports(0L)
-			.anonymousNumber(anonymousNumberValue)
+			.anonymousNumber(anonymousNumber)
 			.parentId(parentId)
 			.build();
 

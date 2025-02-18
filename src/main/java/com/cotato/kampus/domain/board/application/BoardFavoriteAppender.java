@@ -22,7 +22,7 @@ public class BoardFavoriteAppender {
 	@Transactional
 	public Long appendFavoriteBoard(Long boardId) {
 		// 즐겨찾기 여부 중복 체크
-		boolean exists = boardFavoriteRepository.existsByUserIdAndBoardId(apiUserResolver.getUserId(), boardId);
+		boolean exists = boardFavoriteRepository.existsByUserIdAndBoardId(apiUserResolver.getCurrentUserId(), boardId);
 		if(exists){
 			throw new AppException(ErrorCode.BOARD_ALREADY_FAVORITED);
 		}
@@ -30,7 +30,7 @@ public class BoardFavoriteAppender {
 		// 즐겨찾기 추가
 		BoardFavorite boardFavorite = BoardFavorite.builder()
 			.boardId(boardId)
-			.userId(apiUserResolver.getUserId())
+			.userId(apiUserResolver.getCurrentUserId())
 			.build();
 
 		return boardFavoriteRepository.save(boardFavorite).getBoardId();

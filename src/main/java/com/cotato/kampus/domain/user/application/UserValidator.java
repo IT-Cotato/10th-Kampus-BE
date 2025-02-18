@@ -32,7 +32,7 @@ public class UserValidator {
 
 	// 재학생 인증 중복 요청 검증
 	public Long validateDuplicateStudentVerification(){
-		User user = apiUserResolver.getUser();
+		User user = apiUserResolver.getCurrentUser();
 
 		if(user.getUserRole() == UserRole.VERIFIED)
 			throw new AppException(ErrorCode.USER_ALREADY_VERIFIED);
@@ -41,7 +41,7 @@ public class UserValidator {
 	}
 
 	public void validateAdminAccess() {
-		User user = apiUserResolver.getUser();
+		User user = apiUserResolver.getCurrentUser();
 
 		if(user.getUserRole() != UserRole.ADMIN) {
 			throw new AppException(ErrorCode.USER_NOT_ADMIN);
@@ -54,7 +54,7 @@ public class UserValidator {
 	}
 
 	private void validateUserStatus() {
-		User user = apiUserResolver.getUser();
+		User user = apiUserResolver.getCurrentUser();
 		if (user.getUserStatus() == UserStatus.ACTIVE) {
 			throw new AppException(ErrorCode.USER_ALREADY_REGISTERED);
 		}
