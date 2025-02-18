@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.cotato.kampus.domain.user.dao.UserRepository;
 import com.cotato.kampus.domain.user.domain.User;
+import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -24,6 +25,11 @@ public class UserFinder {
 	public User findById(Long userId) {
 		return userRepository.findById(userId)
 			.orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+	}
+
+	public UserDto getUserDtoById(Long userId) {
+		User user = findById(userId);
+		return UserDto.from(user);
 	}
 
 	public Boolean existsByNickname(String nickname) {

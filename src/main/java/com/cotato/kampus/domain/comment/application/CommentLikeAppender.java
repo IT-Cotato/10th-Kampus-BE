@@ -24,7 +24,7 @@ public class CommentLikeAppender {
 
 	public Long append(Long commentId){
 
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		boolean alreadyLiked = commentLikeRepository.existsByUserIdAndCommentId(userId, commentId);
 

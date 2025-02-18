@@ -43,7 +43,6 @@ public class CommentController {
 					commentService.createComment(
 						postId,
 						request.content(),
-						request.anonymity(),
 						request.parentId()
 					)
 				)

@@ -23,7 +23,7 @@ public class BoardFavoriteReader {
 
 	@Transactional
 	public Set<Long> read() {
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 		return boardFavoriteRepository.findAllByUserId(userId)
 			.stream()
 			.map(BoardFavorite::getBoardId)

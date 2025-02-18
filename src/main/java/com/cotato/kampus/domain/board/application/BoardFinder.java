@@ -10,6 +10,7 @@ import com.cotato.kampus.domain.board.dao.BoardRepository;
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
+import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -59,6 +60,13 @@ public class BoardFinder {
 		Board board = boardRepository.findByUniversityId(userUniversityId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 		return BoardDto.from(board);
+	}
+
+	public Long findCardNewsBoardId(){
+		Board board = boardRepository.findByBoardType(BoardType.CARDNEWS)
+			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
+
+		return board.getId();
 	}
 
 }
