@@ -31,7 +31,7 @@ import com.cotato.kampus.global.util.s3.S3Uploader;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class AdminService {
 
@@ -52,6 +52,7 @@ public class AdminService {
 	private final PostAppender postAppender;
 	private final PostImageAppender postImageAppender;
 
+	@Transactional
 	public Long createBoard(String boardName, String description, String universityName, Boolean isCategoryRequired){
 		// 관리자 검증
 		userValidator.validateAdminAccess();
@@ -71,6 +72,7 @@ public class AdminService {
 		return boardAppender.appendBoard(boardName, description, isCategoryRequired);
 	}
 
+	@Transactional
 	public void updateBoard(Long boardId, String boardName, String description, Boolean isCategoryRequired){
 		// 관리자 검증
 		userValidator.validateAdminAccess();
@@ -79,6 +81,7 @@ public class AdminService {
 		boardUpdater.update(boardId, boardName, description, isCategoryRequired);
 	}
 
+	@Transactional
 	public void inactiveBoard(Long boardId){
 		// 관리자 검증
 		userValidator.validateAdminAccess();
@@ -87,6 +90,7 @@ public class AdminService {
 		boardUpdater.inactiveBoard(boardId);
 	}
 
+	@Transactional
 	public void activeBoard(Long boardId){
 		// 관리자 검증
 		userValidator.validateAdminAccess();
@@ -110,6 +114,7 @@ public class AdminService {
 		return verificationRecordFinder.findAll(page);
 	}
 
+	@Transactional
 	public void approveStudentVerification(Long verificationRecordId){
 		// 관리자 검증
 		userValidator.validateAdminAccess();
@@ -126,6 +131,7 @@ public class AdminService {
 		userUpdater.updateVerificationStatus(userId, universityId);
 	}
 
+	@Transactional
 	public void rejectStudentVerification(Long verificationRecordId){
 		// 관리자 검증
 		userValidator.validateAdminAccess();
@@ -133,6 +139,7 @@ public class AdminService {
 		verificationRecordUpdater.reject(verificationRecordId);
 	}
 
+	@Transactional
 	public void createCardNews(String title, List<MultipartFile> images) throws ImageException {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
