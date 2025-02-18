@@ -10,6 +10,8 @@ public record UserDetailsResponse(
 	String nickname,
 	Nationality nationality,
 	PreferredLanguage preferredLanguage,
+	Long universityId,
+	String universityName,
 	boolean needSetup
 ) {
 	public static UserDetailsResponse from(UserDetailsDto userDetails) {
@@ -18,6 +20,8 @@ public record UserDetailsResponse(
 			userDetails.nickname(),
 			userDetails.nationality(),
 			userDetails.preferredLanguage(),
+			userDetails.universityId(),
+			userDetails.universityName(),
 			userDetails.userStatus().equals(UserStatus.PENDING_DETAILS)
 		);
 	}
