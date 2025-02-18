@@ -38,10 +38,10 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "board_id", nullable = false)
 	private Long boardId;
 
-	@Column(name = "title", nullable = false)
+	@Column(name = "title", length = 30, nullable = false)
 	private String title;
 
-	@Column(name = "content", columnDefinition = "text")
+	@Column(name = "content", length = 1000)
 	private String content;
 
 	@Column(name = "likes", nullable = false)
