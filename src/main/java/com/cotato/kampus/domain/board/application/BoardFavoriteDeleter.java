@@ -22,7 +22,7 @@ public class BoardFavoriteDeleter {
 	@Transactional
 	public void deleteFavoriteBoard(Long boardId) {
 		// 즐겨찾기 여부 체크
-		BoardFavorite boardFavorite = boardFavoriteRepository.findByUserIdAndBoardId(apiUserResolver.getUserId(), boardId)
+		BoardFavorite boardFavorite = boardFavoriteRepository.findByUserIdAndBoardId(apiUserResolver.getCurrentUserId(), boardId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_FAVORITE_NOT_FOUND));
 
 		boardFavoriteRepository.delete(boardFavorite);

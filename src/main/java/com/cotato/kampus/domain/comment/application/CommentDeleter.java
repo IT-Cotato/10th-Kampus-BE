@@ -25,7 +25,7 @@ public class CommentDeleter {
 
 	public Long delete(Long commentId) {
 
-		User user = apiUserResolver.getUser();
+		User user = apiUserResolver.getCurrentUser();
 		Comment comment = commentFinder.findComment(commentId);
 
 		// 작성자 검증

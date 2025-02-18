@@ -43,7 +43,7 @@ public class CommentFinder {
 
 	public Slice<CommentSummary> findUserComments(int page){
 
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdTime"));
 		Slice<Comment> comments = commentRepository.findAllByUserId(userId, pageRequest);

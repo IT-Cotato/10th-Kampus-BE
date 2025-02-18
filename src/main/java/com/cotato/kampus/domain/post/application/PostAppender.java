@@ -56,7 +56,7 @@ public class PostAppender {
 		String content,
 		PostCategory postCategory
 	){
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		PostDraft postDraft = PostDraft.builder()
 			.userId(userId)
@@ -67,5 +67,22 @@ public class PostAppender {
 			.build();
 
 		return postDraftRepository.save(postDraft).getId();
+	}
+
+	@Transactional
+	public Long appendCardNews(
+		Long userId,
+		Long boardId,
+		String title
+	){
+		Post post = Post.builder()
+			.userId(userId)
+			.boardId(boardId)
+			.title(title)
+			.anonymity(Anonymity.IDENTIFIED)
+			.postStatus(PostStatus.PUBLISHED)
+			.build();
+
+		return postRepository.save(post).getId();
 	}
 }
