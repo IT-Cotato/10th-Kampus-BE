@@ -79,7 +79,7 @@ public class PostController {
 		description = "BoardId에 해당하는 게시글을 정렬 기준에 따라 조회합니다.(기본값: 최신순, 페이지당 게시글 수: 10)")
 	public ResponseEntity<DataResponse<PostSliceFindResponse>> findPosts(
 		@PathVariable Long boardId,
-		@RequestParam(required = false, defaultValue = "0") int page,
+		@RequestParam(required = false, defaultValue = "1") int page,
 		@Parameter(
 			name = "sort",
 			description = "정렬 기준 (recent: 최신순, old: 오래된순, likes: 좋아요순)",
@@ -168,7 +168,7 @@ public class PostController {
 	@Operation(summary = "임시 저장글 리스트 조회", description = "해당 게시판의 임시 저장글을 최신순으로 조회합니다.")
 	public ResponseEntity<DataResponse<PostDraftSliceFindResponse>> findDraftPostList(
 		@PathVariable Long boardId,
-		@RequestParam(required = false, defaultValue = "0") int page
+		@RequestParam(required = false, defaultValue = "1") int page
 	) {
 		return ResponseEntity.ok(DataResponse.from(
 				PostDraftSliceFindResponse.from(
@@ -242,7 +242,7 @@ public class PostController {
 	@GetMapping("/my")
 	@Operation(summary = "[마이페이지] 내가 쓴 게시글 조회", description = "현재 사용자가 작성한 게시글을 최신순으로 조회합니다.")
 	public ResponseEntity<DataResponse<MyPostResponse>> findMyPosts(
-		@RequestParam(required = false, defaultValue = "0") int page
+		@RequestParam(required = false, defaultValue = "1") int page
 	) {
 		return ResponseEntity.ok(DataResponse.from(
 				MyPostResponse.from(
