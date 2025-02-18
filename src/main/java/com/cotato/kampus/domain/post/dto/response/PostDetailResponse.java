@@ -5,11 +5,13 @@ import java.util.List;
 
 import com.cotato.kampus.domain.post.dto.PostDetails;
 import com.cotato.kampus.domain.post.enums.PostCategory;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record PostDetailResponse(
 	Long userId,
 	String username,
 	Boolean isAuthor,
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	LocalDateTime createdTime,
 	String title,
 	String content,
