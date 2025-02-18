@@ -11,7 +11,6 @@ import com.cotato.kampus.domain.board.application.BoardValidator;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
-import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
 import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
 import com.cotato.kampus.domain.post.dto.PostDraftDetails;
@@ -46,13 +45,14 @@ public class PostService {
 	private final PostImageDeleter postImageDeleter;
 
 	private final PostScrapUpdater postScrapUpdater;
-	private final PostAuthorResolver postAuthorResolver;
+	private final PostScrapFinder postScrapFinder;
 	private final ApiUserResolver apiUserResolver;
 	private final S3Uploader s3Uploader;
 
 	private final ImageValidator imageValidator;
 	private final PostLikeAppender postLikeAppender;
 	private final PostLikeValidator postLikeValidator;
+	private final PostLikeFinder postLikeFinder;
 	private final PostValidator postValidator;
 
 	private static final String POST_IMAGE_FOLDER = "post";
@@ -127,11 +127,16 @@ public class PostService {
 		// 2. Post의 이미지 조회
 		List<String> postPhotos = postImageFinder.findPostPhotos(postId);
 
-		// 3. 유저가 익명인지 아닌지 조회 + 게시글 작성자인지 확인
-		AnonymousOrPostAuthor author = postAuthorResolver.getAuthor(postDto);
+		// 3. 유저 조회
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
-		// 4. 게시글 세부 내역 리턴
-		return PostDetails.of(author, postDto, postPhotos);
+		// 4. 게시글 작성자 여부, 좋아요 여부, 스크랩 여부 조회
+		boolean isAuthor = postDto.userId().equals(userDto.id());
+		boolean isLiked = postLikeFinder.isPostLikedByUser(userDto.id(), postId);
+		boolean isScrapped = postScrapFinder.isPostScrappedByUser(userDto.id(), postId);
+
+		// 5. 게시글 세부 내역 리턴
+		return PostDetails.of(postDto, postPhotos, isAuthor, isLiked, isScrapped);
 	}
 
 	@Transactional
