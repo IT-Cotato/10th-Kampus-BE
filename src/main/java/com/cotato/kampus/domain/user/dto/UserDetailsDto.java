@@ -15,13 +15,13 @@ public record UserDetailsDto(
 	String universityName
 ) {
 
-	public static UserDetailsDto of(User user, Long universityId, String universityName) {
+	public static UserDetailsDto of(UserDto user, Long universityId, String universityName) {
 		return new UserDetailsDto(
-			user.getId(),
-			user.getNickname(),
-			user.getNationality(),
-			user.getPreferredLanguage(),
-			user.getUserStatus(),
+			user.id(),
+			user.nickname(),
+			user.nationality(),
+			user.preferredLanguage(),
+			user.userStatus(),
 			universityId,
 			universityName
 		);

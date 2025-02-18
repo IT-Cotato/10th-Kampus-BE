@@ -12,8 +12,8 @@ import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.university.application.UnivEmailVerifier;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.university.domain.University;
-import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.domain.user.dto.UserDetailsDto;
+import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.domain.verification.application.VerificationPhotoAppender;
@@ -42,8 +42,8 @@ public class UserService {
 	private static final String STUDENT_CERT_IMAGE_FOLDER = "student_cert";
 
 	public UserDetailsDto getUserDetails() {
-		User user = apiUserResolver.getUser();
-		return Optional.ofNullable(user.getUniversityId())
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		return Optional.ofNullable(user.universityId())
 			.map(id -> UserDetailsDto.of(
 				user,
 				id,
@@ -87,7 +87,7 @@ public class UserService {
 		verificationRecordAppender.appendEmailType(universityId);
 
 		// 유저 조회
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 유저 상태 변경, 학교 할당
 		return userUpdater.updateVerificationStatus(userId, universityId);
