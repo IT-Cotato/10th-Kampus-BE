@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class AuthorResolver {
+public class AnonymousNumberAllocator {
 
 	private final CommentRepository commentRepository;
 	private final ApiUserResolver apiUserResolver;

@@ -1,7 +1,6 @@
 package com.cotato.kampus.domain.comment.application;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,6 @@ import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.comment.dto.CommentDetail;
 import com.cotato.kampus.domain.comment.dto.CommentSummary;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.user.application.UserValidator;
 
 import lombok.AccessLevel;
@@ -26,7 +24,7 @@ public class CommentService {
 	private final CommentAppender commentAppender;
 	private final CommentValidator commentValidator;
 	private final CommentDeleter commentDeleter;
-	private final AuthorResolver authorResolver;
+	private final AnonymousNumberAllocator anonymousNumberAllocator;
 	private final CommentLikeAppender commentLikeAppender;
 	private final CommentFinder commentFinder;
 	private final CommentMapper commentMapper;
@@ -44,7 +42,7 @@ public class CommentService {
 		commentValidator.validateParent(postId, parentId);
 
 		// 익명 번호 할당
-		Long anonymousNumber = authorResolver.allocateAnonymousNumber(postId);
+		Long anonymousNumber = anonymousNumberAllocator.allocateAnonymousNumber(postId);
 
 		// 댓글 추가
 		return commentAppender.append(postId, content, anonymousNumber, parentId);
