@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "post")
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Post extends BaseTimeEntity {
 
 	@Id
@@ -35,19 +38,22 @@ public class Post extends BaseTimeEntity {
 	@Column(name = "board_id", nullable = false)
 	private Long boardId;
 
-	@Column(name = "title", nullable = false)
+	@Column(name = "title", length = 30, nullable = false)
 	private String title;
 
-	@Column(name = "content", nullable = false, columnDefinition = "text")
+	@Column(name = "content", length = 1000)
 	private String content;
 
 	@Column(name = "likes", nullable = false)
+	@Builder.Default
 	private Long likes = 0L;
 
 	@Column(name = "scraps", nullable = false)
+	@Builder.Default
 	private Long scraps = 0L;
 
 	@Column(name = "comments", nullable = false)
+	@Builder.Default
 	private Long comments = 0L;
 
 	@Enumerated(EnumType.STRING)
@@ -63,24 +69,8 @@ public class Post extends BaseTimeEntity {
 	private PostCategory postCategory;
 
 	@Column(name = "next_ananymous_number", nullable = false)
+	@Builder.Default
 	private Long nextAnonymousNumber = 1L;
-
-	@Builder
-	public Post(Long userId, Long boardId, String title, String content,
-		Long likes, Long scraps, Long comments, Anonymity anonymity,
-		PostStatus postStatus, PostCategory postCategory, Long nextAnonymousNumber) {
-		this.userId = userId;
-		this.boardId = boardId;
-		this.title = title;
-		this.content = content;
-		this.likes = likes;
-		this.scraps = scraps;
-		this.comments = comments;
-		this.anonymity = anonymity;
-		this.postStatus = postStatus;
-		this.postCategory = postCategory;
-		this.nextAnonymousNumber = nextAnonymousNumber;
-	}
 
 	public void update(String title, String content, PostCategory postCategory) {
 		this.title = title;

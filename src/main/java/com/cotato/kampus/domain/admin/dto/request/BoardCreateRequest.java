@@ -1,12 +1,13 @@
 package com.cotato.kampus.domain.admin.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record BoardCreateRequest(
-	@NotNull
+	@NotBlank
 	String boardName,
 	String description,
-	Long universityId,
+	String universityName,
 	@NotNull
 	Boolean isCategoryRequired
 ) {

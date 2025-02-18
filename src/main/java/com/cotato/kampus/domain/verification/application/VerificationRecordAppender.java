@@ -24,7 +24,7 @@ public class VerificationRecordAppender {
 
 	@Transactional
 	public Long appendEmailType(Long universityId) {
-		User user = apiUserResolver.getUser();
+		User user = apiUserResolver.getCurrentUser();
 		VerificationRecord verificationRecord = VerificationRecord.builder()
 			.userId(user.getId())
 			.universityId(universityId)

@@ -1,7 +1,9 @@
 package com.cotato.kampus.domain.admin.api;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,10 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cotato.kampus.domain.admin.application.AdminService;
 import com.cotato.kampus.domain.admin.dto.request.BoardCreateRequest;
 import com.cotato.kampus.domain.admin.dto.request.BoardUpdateRequest;
+import com.cotato.kampus.domain.admin.dto.request.CardNewsCreateRequest;
 import com.cotato.kampus.domain.admin.dto.response.AdminBoardListResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardCreateResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationListResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
+import com.cotato.kampus.global.error.exception.ImageException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,17 +36,17 @@ public class AdminController {
 
 	private final AdminService adminService;
 
-	@PostMapping("/boards")
+	@PostMapping(value = "/boards",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "게시판 생성", description = "게시판을 생성합니다. 학교 게시판이 아닌 경우 universityId를 null로 주세요")
 	public ResponseEntity<DataResponse<BoardCreateResponse>> createBoard(
-		@Valid @RequestBody BoardCreateRequest request
+		@Valid @ModelAttribute BoardCreateRequest request
 	) {
 			return ResponseEntity.ok(DataResponse.from(
 				BoardCreateResponse.from(
 					adminService.createBoard(
 						request.boardName(),
 						request.description(),
-						request.universityId(),
+						request.universityName(),
 						request.isCategoryRequired()
 					)
 				)
@@ -124,4 +128,15 @@ public class AdminController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
+	@PostMapping(value = "/cardNews", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@Operation(summary = "카드뉴스 등록", description = "카드뉴스를 등록합니다.")
+	public ResponseEntity<DataResponse<Void>> createCardNews(
+		@Valid @ModelAttribute CardNewsCreateRequest request
+	) throws ImageException {
+		adminService.createCardNews(
+			request.title(),
+			request.images()
+		);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
 }

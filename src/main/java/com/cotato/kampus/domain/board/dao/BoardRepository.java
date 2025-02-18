@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.enums.BoardType;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
@@ -15,4 +16,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 	Optional<Board> findByUniversityId(Long universityId);
 
 	boolean existsByUniversityId(Long universityId);
+
+	boolean existsByBoardName(String boardName);
+
+	Optional<Board> findByBoardType(BoardType boardType);
 }

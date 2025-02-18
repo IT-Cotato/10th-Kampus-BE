@@ -29,7 +29,7 @@ public class TranslationService {
 		PostDto post = postFinder.findPost(postId);
 
 		// 2. 사용자의 선호 언어 조회
-		PreferredLanguage preferredLanguage = apiUserResolver.getUser().getPreferredLanguage();
+		PreferredLanguage preferredLanguage = apiUserResolver.getCurrentUser().getPreferredLanguage();
 
 		// 3. 번역
 		return postTranslator.translatePost(post.title(), post.content(), preferredLanguage.getCode());
@@ -49,7 +49,7 @@ public class TranslationService {
 		translationValidator.validateText(content);
 
 		// 2. 사용자의 선호 언어 조회
-		PreferredLanguage preferredLanguage = apiUserResolver.getUser().getPreferredLanguage();
+		PreferredLanguage preferredLanguage = apiUserResolver.getCurrentUser().getPreferredLanguage();
 
 		// 3. 번역
 		return postTranslator.translateText(content, preferredLanguage.getCode());
