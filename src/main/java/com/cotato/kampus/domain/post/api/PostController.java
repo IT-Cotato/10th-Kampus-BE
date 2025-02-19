@@ -31,11 +31,16 @@ import com.cotato.kampus.domain.post.dto.response.PostDraftCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftDetailResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftSliceFindResponse;
 import com.cotato.kampus.domain.post.dto.response.PostSliceFindResponse;
+import com.cotato.kampus.domain.post.dto.response.SearchKeywordDeleteResponse;
+import com.cotato.kampus.domain.post.dto.response.SearchKeywordListResponse;
+import com.cotato.kampus.domain.post.dto.response.SearchedPostResponse;
+import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
