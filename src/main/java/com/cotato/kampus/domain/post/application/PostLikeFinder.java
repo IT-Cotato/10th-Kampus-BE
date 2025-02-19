@@ -24,6 +24,6 @@ public class PostLikeFinder {
 
 	public PostLike findPostLikeByUserAndPost(Long postId, Long userId) {
 		return postLikeRepository.findByUserIdAndPostId(userId, postId)
-			.orElseThrow(() -> new AppException(ErrorCode.POST_LIKE_FORBIDDEN));
+			.orElseThrow(() -> new AppException(ErrorCode.POST_UNLIKE_FORBIDDEN));
 	}
 }

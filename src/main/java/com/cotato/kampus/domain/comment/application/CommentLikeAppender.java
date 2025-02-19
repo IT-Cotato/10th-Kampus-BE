@@ -18,13 +18,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentLikeAppender {
 
-	private final ApiUserResolver apiUserResolver;
 	private final CommentLikeRepository commentLikeRepository;
 	private final CommentFinder commentFinder;
 
-	public Long append(Long commentId){
-
-		Long userId = apiUserResolver.getCurrentUserId();
+	@Transactional
+	public void append(Long userId, Long commentId){
 
 		boolean alreadyLiked = commentLikeRepository.existsByUserIdAndCommentId(userId, commentId);
 
@@ -39,10 +37,13 @@ public class CommentLikeAppender {
 				.userId(userId)
 				.build();
 
-		Comment comment = commentFinder.findComment(commentId);
-		comment.increaseLikes();
+		commentLikeRepository.save(commentLike);
+	}
 
-		return commentLikeRepository.save(commentLike).getId();
+	@Transactional
+	public void delete(Long userId, Long commentId){
+		CommentLike commentLike = commentFinder.findCommentLike(userId, commentId);
+		commentLikeRepository.delete(commentLike);
 
 	}
 }

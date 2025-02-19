@@ -20,7 +20,7 @@ public enum ErrorCode {
 	//Post
 	POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글을 찾을 수 없습니다.", "POST-001"),
 	POST_NOT_AUTHOR(HttpStatus.FORBIDDEN, "게시글 작성자가 아닙니다.", "POST-002"),
-	POST_LIKE_FORBIDDEN(HttpStatus.FORBIDDEN, "좋아요 내역이 없는 게시글입니다.", "POST-003"),
+	POST_UNLIKE_FORBIDDEN(HttpStatus.FORBIDDEN, "좋아요 내역이 없는 게시글입니다.", "POST-003"),
 	POST_LIKE_DUPLICATED(HttpStatus.FORBIDDEN, "이미 좋아요한 게시글입니다.", "POST-004"),
 	POST_SCRAP_FORBIDDEN(HttpStatus.FORBIDDEN, "자신의 게시글을 스크랩 할 수 없습니다.", "POST-005"),
 	POST_SCRAP_DUPLICATED(HttpStatus.FORBIDDEN, "이미 스크랩한 글입니다.", "POST-006"),
@@ -41,6 +41,7 @@ public enum ErrorCode {
 	COMMENT_NOT_AUTHOR(HttpStatus.FORBIDDEN, "댓글 작성자가 아니므로 삭제할 수 없습니다.", "COMMENT-002"),
 	INVALID_COMMENT(HttpStatus.BAD_REQUEST, "유효하지 않은 댓글입니다.", "COMMENT-004"),
 	ALREADY_LIKED(HttpStatus.BAD_REQUEST, "이미 좋아요를 누른 댓글입니다.", "COMMENT-005"),
+	COMMENT_UNLIKE_FORBIDDEN(HttpStatus.BAD_REQUEST, "댓글 좋아요 취소가 불가능합니다.", "COMMENT-006"),
 
 	//File
 	FILE_EXTENSION_FAULT(HttpStatus.BAD_REQUEST, "F-001", "해당 파일 확장자 명이 존재하지 않습니다."),
