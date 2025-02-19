@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.comment.application;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.springframework.data.domain.Slice;
@@ -8,8 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.comment.dto.CommentDetail;
-import com.cotato.kampus.domain.comment.dto.CommentSummary;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.post.application.PostFinder;
+import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.user.application.UserValidator;
 
 import lombok.AccessLevel;
@@ -29,6 +32,7 @@ public class CommentService {
 	private final CommentFinder commentFinder;
 	private final CommentMapper commentMapper;
 	private final ApiUserResolver apiUserResolver;
+	private final PostFinder postFinder;
 
 	@Transactional
 	public Long createComment(Long postId, String content, Long parentId){
@@ -82,8 +86,16 @@ public class CommentService {
 	}
 
 	@Transactional
-	public Slice<CommentSummary> findUserComments(int page){
+	public Slice<PostWithPhotos> getCommentedPosts(int page){
+		// 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
 
-		return commentFinder.findUserComments(page);
+		// 유저가 댓글 단 게시글 ID를 최신순으로 가져오기
+		List<Long> postIds = commentFinder.findRecentPostIdsByUserId(userId);
+
+		// 최신 댓글 기준으로 정렬된 게시글 가져오기
+		Slice<PostWithPhotos> posts = postFinder.findUserCommentedPosts(postIds, page);
+
+		return posts;
 	}
 }

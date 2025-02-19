@@ -50,4 +50,11 @@ public class CommentFinder {
 
 		return comments.map(CommentSummary::from);
 	}
+
+	// Comment 테이블에서 유저가 최근에 댓글 단 순서로 게시글 ID 가져오기
+	public List<Long> findRecentPostIdsByUserId(Long userId){
+		return commentRepository.findRecentPostIdsByUserId(userId)
+			.stream()
+			.toList();
+	}
 }
