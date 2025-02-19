@@ -110,6 +110,9 @@ public class AdminService {
 
 		// 게시판 활성화
 		boardUpdater.activeBoard(boardId);
+
+		// 게시글 상태 변경
+		postUpdater.revertPendingPosts(boardId);
 	}
 
 	@Transactional

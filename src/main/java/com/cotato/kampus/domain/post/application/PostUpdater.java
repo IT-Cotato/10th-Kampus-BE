@@ -72,4 +72,11 @@ public class PostUpdater {
 
 		posts.forEach(post -> post.updateStatus(PostStatus.PENDING));
 	}
+
+	@Transactional
+	public void revertPendingPosts(Long boardId) {
+		List<Post> posts = postRepository.findAllByBoardId(boardId);
+
+		posts.forEach(post -> post.updateStatus(PostStatus.PUBLISHED));
+	}
 }
