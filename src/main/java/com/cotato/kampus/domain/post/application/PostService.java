@@ -124,6 +124,15 @@ public class PostService {
 	}
 
 	public Slice<PostWithPhotos> findPosts(Long boardId, int page, PostSortType sortType) {
+		// 현재 사용자 정보 조회
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		BoardDto board = boardFinder.findBoardDto(boardId);
+
+		// 게시판 접근 권한 검증
+		boardValidator.validateBoardIsActive(board);
+		boardValidator.validateBoardAccess(user, board);
+
+		// 검증 통과 후 게시글 조회
 		return postFinder.findPosts(boardId, page, sortType);
 	}
 
