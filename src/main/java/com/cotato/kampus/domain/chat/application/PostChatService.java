@@ -21,6 +21,7 @@ import com.cotato.kampus.domain.chat.dto.ChatRoomPreviewList;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.application.PostFinder;
 import com.cotato.kampus.domain.post.dto.PostDto;
+import com.cotato.kampus.domain.post.dto.PostReferenceDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -103,14 +104,16 @@ public class PostChatService {
 	public ChatRoomDetailDto getChatRoomDetail(Long chatroomId) {
 		// 1. Find chatroom
 		Chatroom chatroom = chatRoomFinder.findChatroom(chatroomId);
+		// 2. 게시글 정보 가져옴
+		PostReferenceDto postReference = postFinder.findPostReference(chatroom.getPostId());
 
-		// 2. Find associated post
-		PostDto postDto = postFinder.findPost(chatroom.getPostId());
-
-		// 3. Find board information
-		BoardDto board = boardFinder.findBoardDto(postDto.boardId());
-
-		return ChatRoomDetailDto.of(chatroom, postDto, board);
+		// 3. 게시글이 삭제된 경우
+		if (postReference.isDeleted()) {
+			return ChatRoomDetailDto.ofDeleted(chatroom, postReference);
+		}
+		// 4. 게시글이 존재하는 경우
+		BoardDto board = boardFinder.findBoardDto(postReference.boardId());
+		return ChatRoomDetailDto.of(chatroom, postReference, board);
 	}
 
 	@Transactional
