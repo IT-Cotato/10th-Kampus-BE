@@ -340,7 +340,7 @@ public class PostService {
 
 	public Slice<SearchedPost> searchAllPosts(String keyword, int page) {
 		// 최대 5개 까지 키워드 저장
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 		postSearchHistoryAppender.append(userId, keyword);
 		// 검색 결과 리턴
 		return postFinder.searchAllPosts(keyword, page);
@@ -348,19 +348,19 @@ public class PostService {
 
 	public Slice<SearchedPost> searchBoardPosts(String keyword, Long boardId, int page) {
 		// 최대 5개 까지 키워드 저장
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 		postSearchHistoryAppender.append(userId, keyword);
 		return postFinder.searchBoardPosts(keyword, boardId, page);
 	}
 
 	public PostSearchHistoryList findSearchKeyword() {
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 		return postSearchHistoryFinder.findByUserId(userId);
 	}
 
 	@Transactional
 	public Long deleteSearchKeyword(Long keywordId) {
-		Long userId = apiUserResolver.getUserId();
+		Long userId = apiUserResolver.getCurrentUserId();
 		postSearchHistoryValidator.validateUser(userId, keywordId);
 		postSearchHistoryDeleter.deleteHistory(keywordId);
 		return keywordId;
