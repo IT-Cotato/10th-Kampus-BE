@@ -12,9 +12,10 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Transactional(readOnly = true)
-public class PostLikeAppender {
+public class PostLikeUpdater {
 
 	private final PostLikeRepository postLikeRepository;
+	private final PostLikeFinder postLikeFinder;
 
 	public void appendPostLike(Long postId, Long userId) {
 		postLikeRepository.save(
@@ -23,5 +24,10 @@ public class PostLikeAppender {
 				.userId(userId)
 				.build()
 		);
+	}
+
+	public void deletePostLike(Long postId, Long userId) {
+		PostLike postLike = postLikeFinder.findPostLikeByUserAndPost(postId, userId);
+		postLikeRepository.delete(postLike);
 	}
 }

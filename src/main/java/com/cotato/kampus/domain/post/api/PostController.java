@@ -268,6 +268,15 @@ public class PostController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
+	@DeleteMapping("/{postId}/likes")
+	@Operation(summary = "게시글 좋아요 취소", description = "게시글 좋아요 취소")
+	public ResponseEntity<DataResponse<Void>> unlikePost(
+		@PathVariable Long postId
+	) {
+		postService.unlikePost(postId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
 	@PostMapping("/{postId}/scrap")
 	@Operation(summary = "게시글 스크랩", description = "게시글을 스크랩합니다.")
 	public ResponseEntity<DataResponse<Void>> scrapPost(

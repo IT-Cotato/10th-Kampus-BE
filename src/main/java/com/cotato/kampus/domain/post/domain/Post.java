@@ -94,6 +94,10 @@ public class Post extends BaseTimeEntity {
 		this.likes++;
 	}
 
+	public void decreaseLikes() {
+		this.likes--;
+	}
+
 	public void updateStatus(PostStatus postStatus) {
 		this.postStatus = postStatus;
 	}

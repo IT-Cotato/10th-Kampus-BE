@@ -52,7 +52,7 @@ public class PostService {
 	private final S3Uploader s3Uploader;
 
 	private final ImageValidator imageValidator;
-	private final PostLikeAppender postLikeAppender;
+	private final PostLikeUpdater postLikeUpdater;
 	private final PostLikeValidator postLikeValidator;
 	private final PostLikeFinder postLikeFinder;
 	private final PostValidator postValidator;
@@ -297,10 +297,22 @@ public class PostService {
 		postLikeValidator.validatePostLike(postId, userId);
 
 		// 3. 좋아요 추가
-		postLikeAppender.appendPostLike(postId, userId);
+		postLikeUpdater.appendPostLike(postId, userId);
 
 		// 4. post의 likes + 1
 		postUpdater.increasePostLike(postId);
+	}
+
+	@Transactional
+	public void unlikePost(Long postId) {
+		// 1. userId 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		// 2. 좋아요 삭제
+		postLikeUpdater.deletePostLike(postId, userId);
+
+		// 3. post의 likes - 1
+		postUpdater.decreasePostLike(postId);
 	}
 
 	public Slice<MyPostWithPhoto> findUserPosts(int page) {

@@ -17,21 +17,12 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class PostLikeValidator {
 
-	private final PostRepository postRepository;
 	private final PostLikeRepository postLikeRepository;
+	private final PostFinder postFinder;
 
 	public void validatePostLike(Long postId, Long userId) {
-		Post post = postRepository.findById(postId)
-			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
-
-		validateAuthor(post, userId);
+		Post post = postFinder.getPost(postId);
 		validateDuplicateLike(postId, userId);
-	}
-
-	private void validateAuthor(Post post, Long userId) {
-		if (post.getUserId().equals(userId)) {
-			throw new AppException(ErrorCode.POST_LIKE_FORBIDDEN);
-		}
 	}
 
 	private void validateDuplicateLike(Long postId, Long userId) {
