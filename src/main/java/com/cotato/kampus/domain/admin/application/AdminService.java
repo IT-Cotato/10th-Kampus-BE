@@ -1,8 +1,10 @@
 package com.cotato.kampus.domain.admin.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Slice;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +18,9 @@ import com.cotato.kampus.domain.board.application.BoardValidator;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.post.application.PostAppender;
+import com.cotato.kampus.domain.post.application.PostDeleter;
 import com.cotato.kampus.domain.post.application.PostImageAppender;
+import com.cotato.kampus.domain.post.application.PostUpdater;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
@@ -51,9 +55,11 @@ public class AdminService {
 	private final ApiUserResolver apiUserResolver;
 	private final PostAppender postAppender;
 	private final PostImageAppender postImageAppender;
+	private final PostDeleter postDeleter;
+	private final PostUpdater postUpdater;
 
 	@Transactional
-	public Long createBoard(String boardName, String description, String universityName, Boolean isCategoryRequired){
+	public Long createBoard(String boardName, String description, String universityName, Boolean isCategoryRequired) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -73,7 +79,7 @@ public class AdminService {
 	}
 
 	@Transactional
-	public void updateBoard(Long boardId, String boardName, String description, Boolean isCategoryRequired){
+	public void updateBoard(Long boardId, String boardName, String description, Boolean isCategoryRequired) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -82,7 +88,7 @@ public class AdminService {
 	}
 
 	@Transactional
-	public void inactiveBoard(Long boardId){
+	public void inactiveBoard(Long boardId) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -91,7 +97,7 @@ public class AdminService {
 	}
 
 	@Transactional
-	public void activeBoard(Long boardId){
+	public void activeBoard(Long boardId) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -99,7 +105,33 @@ public class AdminService {
 		boardUpdater.activeBoard(boardId);
 	}
 
-	public List<BoardDetail> getAllBoards(){
+	@Transactional
+	public void pendingBoard(Long boardId) {
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+
+		// 게시판 삭제 대기 상태로 변경
+		boardUpdater.pendingBoard(boardId);
+
+		// 포함된 게시글 상태 변경
+		postUpdater.pendingPost(boardId);
+	}
+
+	@Scheduled(cron = "0 0 3 * * *")
+	public void deleteExpiredBoards() {
+		// 삭제할 게시판 조회
+		List<Long> expiredBoardIds = boardFinder.findExpiredBoardIds(LocalDateTime.now());
+
+		// 포함된 게시글 삭제
+		postDeleter.deletePostsByBoardIds(expiredBoardIds);
+
+		// 게시판 삭제
+		boardUpdater.deleteExpiredBoards();
+	}
+
+
+
+	public List<BoardDetail> getAllBoards() {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -107,7 +139,7 @@ public class AdminService {
 		return boardFinder.findAllBoards();
 	}
 
-	public Slice<StudentVerification> getVerifications(int page){
+	public Slice<StudentVerification> getVerifications(int page) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -115,7 +147,7 @@ public class AdminService {
 	}
 
 	@Transactional
-	public void approveStudentVerification(Long verificationRecordId){
+	public void approveStudentVerification(Long verificationRecordId) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -132,7 +164,7 @@ public class AdminService {
 	}
 
 	@Transactional
-	public void rejectStudentVerification(Long verificationRecordId){
+	public void rejectStudentVerification(Long verificationRecordId) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 

@@ -35,4 +35,8 @@ public class PostDeleter {
 		// 일괄 삭제
 		postDraftRepository.deleteAll(drafts);
 	}
+
+	public void deletePostsByBoardIds(List<Long> boardIds){
+		postRepository.deleteAllByBoardIdIn(boardIds);
+	}
 }

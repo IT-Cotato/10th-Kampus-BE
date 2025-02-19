@@ -49,7 +49,7 @@ public class BoardService {
 
 	public Long addFavoriteBoard(Long boardId) {
 		// 게시판 조회
-		BoardDto boardDto = boardFinder.findBoard(boardId);
+		BoardDto boardDto = boardFinder.findBoardDto(boardId);
 
 		// 게시판 검증
 		boardValidator.validateBoardIsActive(boardDto);
@@ -75,12 +75,12 @@ public class BoardService {
 	}
 
 	public Boolean requiresCategory(Long boardId){
-		BoardDto boardDto = boardFinder.findBoard(boardId);
+		BoardDto boardDto = boardFinder.findBoardDto(boardId);
 
 		return boardDto.isCategoryRequired();
 	}
 
 	public BoardDto getBoard(Long boardId){
-		return boardFinder.findBoard(boardId);
+		return boardFinder.findBoardDto(boardId);
 	}
 }

@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.board.domain;
 
+import java.time.LocalDateTime;
+
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
@@ -49,6 +51,9 @@ public class Board extends BaseTimeEntity {
 	@Column(name = "board_type", nullable = false)
 	private BoardType boardType;
 
+	@Column(name = "deletion_scheduled_at")
+	private LocalDateTime deletionScheduledAt;
+
 	@Builder
 	public Board(String boardName, String description, Long universityId, Boolean isCategoryRequired, BoardStatus boardStatus, BoardType boardType) {
 		this.boardName = boardName;
@@ -65,11 +70,11 @@ public class Board extends BaseTimeEntity {
 		this.isCategoryRequired = isCategoryRequired;
 	}
 
-	public void active(){
-		this.boardStatus = BoardStatus.ACTIVE;
+	public void updateStatus(BoardStatus boardStatus) {
+		this.boardStatus = boardStatus;
 	}
 
-	public void inactive(){
-		this.boardStatus = BoardStatus.INACTIVE;
+	public void setDeletionScheduledAt(LocalDateTime deletionScheduledAt) {
+		this.deletionScheduledAt = deletionScheduledAt;
 	}
 }
