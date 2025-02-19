@@ -18,7 +18,9 @@ import com.cotato.kampus.domain.post.dto.PostDraftDetails;
 import com.cotato.kampus.domain.post.dto.PostDraftDto;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
+import com.cotato.kampus.domain.post.dto.PostSearchHistoryList;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
+import com.cotato.kampus.domain.post.dto.SearchedPost;
 import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.domain.user.application.UserFinder;
@@ -54,6 +56,11 @@ public class PostService {
 	private final PostLikeAppender postLikeAppender;
 	private final PostLikeValidator postLikeValidator;
 	private final PostValidator postValidator;
+
+	private final PostSearchHistoryAppender postSearchHistoryAppender;
+	private final PostSearchHistoryFinder postSearchHistoryFinder;
+	private final PostSearchHistoryValidator postSearchHistoryValidator;
+	private final PostSearchHistoryDeleter postSearchHistoryDeleter;
 
 	private static final String POST_IMAGE_FOLDER = "post";
 	private final BoardValidator boardValidator;
@@ -332,4 +339,31 @@ public class PostService {
 			throw new AppException(ErrorCode.CATEGORY_NOT_ALLOWED);
 	}
 
+	public Slice<SearchedPost> searchAllPosts(String keyword, int page) {
+		// 최대 5개 까지 키워드 저장
+		Long userId = apiUserResolver.getCurrentUserId();
+		postSearchHistoryAppender.append(userId, keyword);
+		// 검색 결과 리턴
+		return postFinder.searchAllPosts(keyword, page);
+	}
+
+	public Slice<SearchedPost> searchBoardPosts(String keyword, Long boardId, int page) {
+		// 최대 5개 까지 키워드 저장
+		Long userId = apiUserResolver.getCurrentUserId();
+		postSearchHistoryAppender.append(userId, keyword);
+		return postFinder.searchBoardPosts(keyword, boardId, page);
+	}
+
+	public PostSearchHistoryList findSearchKeyword() {
+		Long userId = apiUserResolver.getCurrentUserId();
+		return postSearchHistoryFinder.findByUserId(userId);
+	}
+
+	@Transactional
+	public Long deleteSearchKeyword(Long keywordId) {
+		Long userId = apiUserResolver.getCurrentUserId();
+		postSearchHistoryValidator.validateUser(userId, keywordId);
+		postSearchHistoryDeleter.deleteHistory(keywordId);
+		return keywordId;
+	}
 }
