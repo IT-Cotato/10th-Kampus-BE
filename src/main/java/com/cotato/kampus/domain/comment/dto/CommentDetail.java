@@ -12,6 +12,8 @@ public record CommentDetail(
 	@Schema(example = "11")
 	Long commentId,
 
+	Long parentId,
+
 	@Schema(example = "NORMAL")
 	CommentStatus commentStatus,
 
@@ -37,6 +39,7 @@ public record CommentDetail(
 	public static CommentDetail of(CommentDto commentDto, String author, List<CommentDetail> replies, boolean isLiked) {
 		return new CommentDetail(
 			commentDto.commentId(),
+			commentDto.parentId(),
 			commentDto.commentStatus(),
 			author,
 			commentDto.content(),
