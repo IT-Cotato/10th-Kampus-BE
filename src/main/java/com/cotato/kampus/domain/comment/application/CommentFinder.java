@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.comment.dao.CommentLikeRepository;
 import com.cotato.kampus.domain.comment.dao.CommentRepository;
 import com.cotato.kampus.domain.comment.domain.Comment;
+import com.cotato.kampus.domain.comment.domain.CommentLike;
 import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.comment.dto.CommentSummary;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -27,7 +28,6 @@ public class CommentFinder {
 
 	private final CommentRepository commentRepository;
 	private final CommentLikeRepository commentLikeRepository;
-	private final ApiUserResolver apiUserResolver;
 
 	public Comment findComment(Long commentId){
 		return commentRepository.findById(commentId)
@@ -43,20 +43,16 @@ public class CommentFinder {
 		return commentDtos;
 	}
 
-	public Slice<CommentSummary> findUserComments(int page){
-
-		Long userId = apiUserResolver.getCurrentUserId();
-
-		PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createdTime"));
-		Slice<Comment> comments = commentRepository.findAllByUserId(userId, pageRequest);
-
-		return comments.map(CommentSummary::from);
-	}
-
 	// Comment 테이블에서 유저가 최근에 댓글 단 순서로 게시글 ID 가져오기
 	public List<Long> findRecentPostIdsByUserId(Long userId){
 		return commentRepository.findRecentPostIdsByUserId(userId)
 			.stream()
 			.toList();
 	}
+
+	public CommentLike findCommentLike(Long userId, Long commentId){
+		return commentLikeRepository.findByUserIdAndCommentId(userId, commentId)
+			.orElseThrow(() -> new AppException(ErrorCode.COMMENT_UNLIKE_FORBIDDEN));
+	}
+
 }

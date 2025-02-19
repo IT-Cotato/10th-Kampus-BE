@@ -52,7 +52,7 @@ public class PostService {
 	private final S3Uploader s3Uploader;
 
 	private final ImageValidator imageValidator;
-	private final PostLikeAppender postLikeAppender;
+	private final PostLikeUpdater postLikeUpdater;
 	private final PostLikeValidator postLikeValidator;
 	private final PostLikeFinder postLikeFinder;
 	private final PostValidator postValidator;
@@ -293,14 +293,26 @@ public class PostService {
 		// 1. userId 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
-		// 2. 좋아요 제약 조건 검증(자신의 게시글, 이미 좋아요한 게시글)
-		postLikeValidator.validatePostLike(postId, userId);
+		// 2. 좋아요 제약 조건 검증(이미 좋아요한 게시글)
+		postLikeValidator.validateDuplicateLike(postId, userId);
 
 		// 3. 좋아요 추가
-		postLikeAppender.appendPostLike(postId, userId);
+		postLikeUpdater.appendPostLike(postId, userId);
 
 		// 4. post의 likes + 1
 		postUpdater.increasePostLike(postId);
+	}
+
+	@Transactional
+	public void unlikePost(Long postId) {
+		// 1. userId 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		// 2. 좋아요 삭제
+		postLikeUpdater.deletePostLike(postId, userId);
+
+		// 3. post의 likes - 1
+		postUpdater.decreasePostLike(postId);
 	}
 
 	public Slice<MyPostWithPhoto> findUserPosts(int page) {
@@ -312,8 +324,8 @@ public class PostService {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
-		// 스크랩 가능 여부 검증
-		postValidator.validatePostScrap(postId, userId);
+		// 스크랩 중복 검증
+		postValidator.validateDuplicatedScrap(postId, userId);
 
 		// 게시글 스크랩 수 추가
 		postUpdater.increaseScraps(postId);

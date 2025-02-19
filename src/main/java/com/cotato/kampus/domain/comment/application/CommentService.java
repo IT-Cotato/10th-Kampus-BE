@@ -25,6 +25,7 @@ public class CommentService {
 
 	private final UserValidator userValidator;
 	private final CommentAppender commentAppender;
+	private final CommentUpdater commentUpdater;
 	private final CommentValidator commentValidator;
 	private final CommentDeleter commentDeleter;
 	private final AnonymousNumberAllocator anonymousNumberAllocator;
@@ -59,7 +60,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public Long likeComment(Long commentId){
+	public void likeComment(Long commentId){
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -70,7 +71,22 @@ public class CommentService {
 		commentValidator.validateCommentStatus(commentId);
 
 		// 좋아요 추가
-		return commentLikeAppender.append(commentId);
+		commentLikeAppender.append(userId, commentId);
+
+		// 댓글 좋아요 수 증가
+		commentUpdater.increaseCommentLikes(commentId);
+	}
+
+	@Transactional
+	public void unlikeComment(Long commentId){
+		// 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		// 좋아요 삭제
+		commentLikeAppender.delete(userId, commentId);
+
+		// 댓글 좋아요 수 감소
+		commentUpdater.decreaseCommentLikes(commentId);
 	}
 
 	@Transactional
