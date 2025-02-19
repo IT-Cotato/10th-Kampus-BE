@@ -107,4 +107,9 @@ public class UserService {
 		// 인증서 이미지 추가
 		verificationPhotoAppender.append(verificationRecordId, imageUrl);
 	}
+
+	// 닉네임 가능하면 true
+	public Boolean checkNicknameAvailability(String nickname) {
+		return userValidator.checkNicknameAvailability(nickname);
+	}
 }
