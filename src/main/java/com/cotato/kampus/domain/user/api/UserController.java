@@ -16,11 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.user.application.UserService;
 import com.cotato.kampus.domain.user.dto.request.ConfirmMailRequest;
+import com.cotato.kampus.domain.user.dto.request.NicknameCheckRequest;
 import com.cotato.kampus.domain.user.dto.request.SendMailRequest;
 import com.cotato.kampus.domain.user.dto.request.UserDetailsUpdateRequest;
-import com.cotato.kampus.domain.user.dto.response.UserDetailsResponse;
 import com.cotato.kampus.domain.user.dto.response.ConfirmMailResponse;
+import com.cotato.kampus.domain.user.dto.response.NicknameCheckResponse;
 import com.cotato.kampus.domain.user.dto.response.SendMailResponse;
+import com.cotato.kampus.domain.user.dto.response.UserDetailsResponse;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsUpdateResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -75,12 +77,24 @@ public class UserController {
 		);
 	}
 
+	@PostMapping("/check-nickname")
+	@Operation(summary = "닉네임 중복 체크", description = "입력된 닉네임의 사용 가능 여부를 확인합니다.")
+	public ResponseEntity<DataResponse<NicknameCheckResponse>> checkNicknameAvailability(
+		@RequestBody @Valid NicknameCheckRequest request) {
+		return ResponseEntity.ok(
+			DataResponse.from(
+				NicknameCheckResponse.from(userService.checkNicknameAvailability(request.nickname())
+				)
+			)
+		);
+	}
+
 	@PostMapping("/verify/email/send")
 	@Operation(summary = "학교 메일 인증 코드 요청", description = "학교 이메일로 인증 코드를 요청합니다.")
 	public ResponseEntity<DataResponse<SendMailResponse>> sendVerificationCode(
 		@RequestBody SendMailRequest request
 	) throws IOException {
-			return ResponseEntity.ok(DataResponse.from(
+		return ResponseEntity.ok(DataResponse.from(
 				SendMailResponse.from(
 					userService.sendMail(
 						request.email(), request.universityId()
@@ -95,7 +109,7 @@ public class UserController {
 	public ResponseEntity<DataResponse<ConfirmMailResponse>> verifyEmailCode(
 		@RequestBody ConfirmMailRequest request
 	) throws IOException {
-			return ResponseEntity.ok(DataResponse.from(
+		return ResponseEntity.ok(DataResponse.from(
 				ConfirmMailResponse.from(
 					userService.verifyEmailCode(
 						request.email(), request.universityId(), request.code()
@@ -110,7 +124,7 @@ public class UserController {
 	public ResponseEntity<DataResponse<Void>> uploadCert(
 		@RequestParam("universityId") @NotNull Long universityId,
 		@RequestPart("certImage") MultipartFile certImage
-	) throws ImageException{
+	) throws ImageException {
 		if (certImage.isEmpty()) {
 			throw new AppException(ErrorCode.EMPTY_FILE_EXCEPTION);
 		}
