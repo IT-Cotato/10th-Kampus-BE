@@ -31,10 +31,10 @@ public class UserValidator {
 	}
 
 	// 재학생 인증 중복 요청 검증
-	public Long validateDuplicateStudentVerification(){
+	public Long validateDuplicateStudentVerification() {
 		User user = apiUserResolver.getCurrentUser();
 
-		if(user.getUserRole() == UserRole.VERIFIED)
+		if (user.getUserRole() == UserRole.VERIFIED)
 			throw new AppException(ErrorCode.USER_ALREADY_VERIFIED);
 
 		return user.getId();
@@ -43,7 +43,7 @@ public class UserValidator {
 	public void validateAdminAccess() {
 		User user = apiUserResolver.getCurrentUser();
 
-		if(user.getUserRole() != UserRole.ADMIN) {
+		if (user.getUserRole() != UserRole.ADMIN) {
 			throw new AppException(ErrorCode.USER_NOT_ADMIN);
 		}
 	}
@@ -64,5 +64,11 @@ public class UserValidator {
 		if (userFinder.existsByNickname(nickname)) {
 			throw new AppException(ErrorCode.USER_NICKNAME_DUPLICATED);
 		}
+	}
+
+	// 실시간 중복 닉네임 검증시 사용!
+	public boolean checkNicknameAvailability(String nickname) {
+		// 이미 있는 유저 닉네임이면 false
+		return !userFinder.existsByNickname(nickname);
 	}
 }
