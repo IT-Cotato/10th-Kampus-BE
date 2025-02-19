@@ -73,7 +73,7 @@ public class CommentService {
 		// 좋아요 추가
 		commentLikeAppender.append(userId, commentId);
 
-		// 댓글 좋아요 수 증ㅇ가
+		// 댓글 좋아요 수 증가
 		commentUpdater.increaseCommentLikes(commentId);
 	}
 
