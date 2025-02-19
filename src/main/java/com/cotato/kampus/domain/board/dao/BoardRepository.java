@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 
 @Repository
@@ -23,4 +24,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 	Optional<Board> findByBoardType(BoardType boardType);
 
 	List<Board> findByDeletionScheduledAtBefore(LocalDateTime now);
+
+	List<Board> findAllByBoardStatus(BoardStatus boardStatus);
 }

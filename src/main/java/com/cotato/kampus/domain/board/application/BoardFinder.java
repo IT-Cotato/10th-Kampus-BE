@@ -11,6 +11,7 @@ import com.cotato.kampus.domain.board.dao.BoardRepository;
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
+import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -26,11 +27,19 @@ public class BoardFinder {
 	private final BoardRepository boardRepository;
 	private final PostRepository postRepository;
 
-	public List<BoardDetail> findAllBoards() {
+	public List<BoardDetail> findAllBoards(BoardStatus boardStatus) {
+		List<BoardDto> boards;
+
 		// 전체 게시판 조회
-		List<BoardDto> boards = boardRepository.findAll().stream()
-			.map(BoardDto::from)
-			.toList();
+		if(boardStatus == null) {
+			boards = boardRepository.findAll().stream()
+				.map(BoardDto::from)
+				.toList();
+		} else {
+			boards = boardRepository.findAllByBoardStatus(boardStatus).stream()
+				.map(BoardDto::from)
+				.toList();
+		}
 
 		// 게시판 별 게시글 수 매핑
 		return boards.stream()
