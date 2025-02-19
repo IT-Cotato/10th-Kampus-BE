@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.board.application;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -25,20 +27,30 @@ public class BoardService {
 	private final ApiUserResolver apiUserResolver;
 
 	public List<BoardWithFavoriteStatusDto> getBoardList(){
+		// 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 즐겨찾는 게시판 조회
-		Set<Long> favoriteBoardIds = boardFavoriteReader.read();
+		Set<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
 
 		// 공용 게시판 조회
 		List<BoardWithFavoriteStatusDto> boards = boardFinder.findPublicBoards();
 
 		// 즐겨찾기 여부 매핑
-		return BoardDtoEnhancer.updateFavoriteStatus(boards, favoriteBoardIds);
+		List<BoardWithFavoriteStatusDto> boardWithFavorites = new ArrayList<>(BoardDtoEnhancer.updateFavoriteStatus(boards, favoriteBoardIds));
+
+		// 즐겨찾기 게시판이 위로 오도록 정렬
+		boardWithFavorites.sort(Comparator.comparing(BoardWithFavoriteStatusDto::isFavorite).reversed());
+
+		return boardWithFavorites;
 	}
 
 	public List<BoardWithFavoriteStatusDto> getFavoriteBoardList() {
+		// 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
 		// 즐겨찾는 게시판 조회
-		Set<Long> favoriteBoardIds = boardFavoriteReader.read();
+		Set<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
 
 		// 전체 게시판 조회
 		List<BoardWithFavoriteStatusDto> boards = boardFinder.findPublicBoards();
