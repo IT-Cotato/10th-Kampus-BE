@@ -6,7 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.post.enums.PostCategory;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
