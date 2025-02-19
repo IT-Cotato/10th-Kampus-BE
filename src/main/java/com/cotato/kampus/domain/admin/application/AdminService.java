@@ -15,6 +15,7 @@ import com.cotato.kampus.domain.board.application.BoardAppender;
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardUpdater;
 import com.cotato.kampus.domain.board.application.BoardValidator;
+import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.post.application.PostAppender;
@@ -129,14 +130,12 @@ public class AdminService {
 		boardUpdater.deleteExpiredBoards();
 	}
 
-
-
-	public List<BoardDetail> getAllBoards() {
+	public List<BoardDetail> getBoards(BoardStatus boardStatus) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
 		// 각 게시판의 게시글 수 매핑하여 반환
-		return boardFinder.findAllBoards();
+		return boardFinder.findAllBoards(boardStatus);
 	}
 
 	public Slice<StudentVerification> getVerifications(int page) {

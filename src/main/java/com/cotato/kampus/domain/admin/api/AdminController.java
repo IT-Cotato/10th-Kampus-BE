@@ -20,10 +20,13 @@ import com.cotato.kampus.domain.admin.dto.request.CardNewsCreateRequest;
 import com.cotato.kampus.domain.admin.dto.response.AdminBoardListResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardCreateResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationListResponse;
+import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -56,11 +59,14 @@ public class AdminController {
 	}
 
 	@GetMapping("/boards")
-	@Operation(summary = "게시판 목록 조회", description = "전체 게시판 목록을 조회합니다.")
-	public ResponseEntity<DataResponse<AdminBoardListResponse>> getBoards() {
+	@Operation(summary = "게시판 목록 조회", description = "전체 게시판 목록을 조회합니다. " +
+		"특정 상태를 조회하려면 status 파라미터를 사용하고, 전체 게시판 조회 시에는 status를 비워두시면 됩니다.")
+	public ResponseEntity<DataResponse<AdminBoardListResponse>> getBoards(
+		@RequestParam(value = "status", required = false) BoardStatus boardStatus
+	) {
 		return ResponseEntity.ok(DataResponse.from(
 			AdminBoardListResponse.from(
-				adminService.getAllBoards()
+				adminService.getBoards(boardStatus)
 			)
 		));
 	}
