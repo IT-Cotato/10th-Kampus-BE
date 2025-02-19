@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Pattern;
 
 public record UserDetailsUpdateRequest(
 	@NotBlank
-	@Pattern(regexp = "^[a-z]{5,20}$", message = "닉네임은 5~20자의 영어 소문자(a-z)만 입력 가능합니다.")
+	@Pattern(regexp = "^[a-z0-9]{5,20}$", message = "닉네임은 5~20자의 영어 소문자(a-z)와 숫자(0-9)만 입력 가능합니다.")
 	String nickname,
 
 	@NotNull(message = "국적을 입력해야 합니다.")

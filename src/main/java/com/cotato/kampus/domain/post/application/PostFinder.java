@@ -25,9 +25,10 @@ import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDraftDto;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
+import com.cotato.kampus.domain.post.dto.PostReferenceDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
-import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.domain.post.dto.SearchedPost;
+import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -64,7 +65,7 @@ public class PostFinder {
 
 		// 3. Post -> PostWithPhotos 매핑
 		return posts.map(post -> {
-			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeDesc(post.getId())
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
 				.orElse(null);
 			return PostWithPhotos.from(post, postPhoto);
 		});
@@ -91,16 +92,16 @@ public class PostFinder {
 		};
 	}
 
-	public Slice<PostWithPhotos> findUserCommentedPosts(List<Long> postIds, int page){
+	public Slice<PostWithPhotos> findUserCommentedPosts(List<Long> postIds, int page) {
 
 		// CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-		PageRequest pageRequest = PageRequest.of(page-1, PAGE_SIZE);
+		PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
 		String orderList = postIds.stream().map(String::valueOf).collect(Collectors.joining(","));
 		Slice<Post> posts = postRepository.findPostsByIdsInOrder(postIds, orderList, pageRequest);
 
 		// 3. Post -> PostWithPhotos 매핑
 		return posts.map(post -> {
-			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeDesc(post.getId())
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
 				.orElse(null);
 			return PostWithPhotos.from(post, postPhoto);
 		});
@@ -112,6 +113,12 @@ public class PostFinder {
 			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
 
 		return PostDto.from(post);
+	}
+
+	public PostReferenceDto findPostReference(Long postId) {
+		return postRepository.findById(postId)
+			.map(PostReferenceDto::from)
+			.orElse(PostReferenceDto.deleted());
 	}
 
 	public Slice<MyPostWithPhoto> findUserPosts(int page) {
@@ -214,10 +221,9 @@ public class PostFinder {
 	private Slice<SearchedPost> mapToSearchedPost(Slice<Post> posts) {
 		return posts.map(post -> {
 			String boardName = boardFinder.findBoard(post.getBoardId()).getBoardName();
-			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeDesc(post.getId())
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
 				.orElse(null);
 			return SearchedPost.of(post, boardName, postPhoto);
 		});
 	}
-
 }

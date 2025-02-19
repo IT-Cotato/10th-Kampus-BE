@@ -18,15 +18,15 @@ import com.cotato.kampus.domain.admin.dto.request.BoardCreateRequest;
 import com.cotato.kampus.domain.admin.dto.request.BoardUpdateRequest;
 import com.cotato.kampus.domain.admin.dto.request.CardNewsCreateRequest;
 import com.cotato.kampus.domain.admin.dto.response.AdminBoardListResponse;
+import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsPreview;
 import com.cotato.kampus.domain.admin.dto.response.BoardCreateResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationListResponse;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
+import com.cotato.kampus.domain.post.dto.response.AdminCardNewsListResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -40,12 +40,12 @@ public class AdminController {
 
 	private final AdminService adminService;
 
-	@PostMapping(value = "/boards",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value = "/boards", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "게시판 생성", description = "게시판을 생성합니다. 학교 게시판이 아닌 경우 universityId를 null로 주세요")
 	public ResponseEntity<DataResponse<BoardCreateResponse>> createBoard(
 		@Valid @ModelAttribute BoardCreateRequest request
 	) {
-			return ResponseEntity.ok(DataResponse.from(
+		return ResponseEntity.ok(DataResponse.from(
 				BoardCreateResponse.from(
 					adminService.createBoard(
 						request.boardName(),
@@ -76,13 +76,13 @@ public class AdminController {
 	public ResponseEntity<DataResponse<Void>> updateBoard(
 		@PathVariable Long boardId,
 		@RequestBody BoardUpdateRequest request
-	){
+	) {
 		adminService.updateBoard(
 			boardId,
 			request.boardName(),
 			request.description(),
 			request.isCategoryRequired()
-			);
+		);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -98,9 +98,9 @@ public class AdminController {
 
 	@DeleteMapping("/boards/{boardId}")
 	@Operation(summary = "게시판 삭제", description = "게시판을 삭제합니다. 30일간 삭제 대기 상태이며 이후 영구 삭제됩니다.")
-	public ResponseEntity<DataResponse<Void>> deleteBoard (
+	public ResponseEntity<DataResponse<Void>> deleteBoard(
 		@PathVariable Long boardId
-	){
+	) {
 		adminService.pendingBoard(boardId);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -116,9 +116,9 @@ public class AdminController {
 
 	@GetMapping("/student-verifications")
 	@Operation(summary = "재학생 인증 목록 조회", description = "재학생 인증 목록을 최신순으로 조회합니다.")
-	public ResponseEntity<DataResponse<StudentVerificationListResponse>> getStudentVerifications (
+	public ResponseEntity<DataResponse<StudentVerificationListResponse>> getStudentVerifications(
 		@RequestParam(required = false, defaultValue = "1") int page) {
-			return ResponseEntity.ok(DataResponse.from(
+		return ResponseEntity.ok(DataResponse.from(
 				StudentVerificationListResponse.from(
 					adminService.getVerifications(page)
 				)
@@ -130,7 +130,7 @@ public class AdminController {
 	@Operation(summary = "재학생 인증 승인", description = "재학생 인증 요청을 승인합니다.")
 	public ResponseEntity<DataResponse<Void>> approveStudentVerification(
 		@PathVariable Long verificationRecordId
-	){
+	) {
 		adminService.approveStudentVerification(verificationRecordId);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -139,7 +139,7 @@ public class AdminController {
 	@Operation(summary = "재학생 인증 반려", description = "재학생 인증 요청을 반려합니다.")
 	public ResponseEntity<DataResponse<Void>> rejectStudentVerification(
 		@PathVariable Long verificationRecordId
-	){
+	) {
 		adminService.rejectStudentVerification(verificationRecordId);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
@@ -154,5 +154,17 @@ public class AdminController {
 			request.images()
 		);
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@GetMapping(value = "/cardNews")
+	@Operation(summary = "카드뉴스 조회", description = "카드뉴스 목록을 조회합니다,")
+	public ResponseEntity<DataResponse<AdminCardNewsListResponse>> getAllCardNews(
+		@RequestParam(required = false, defaultValue = "1") int page
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+			AdminCardNewsListResponse.from(
+				adminService.getAllCardNews(page)
+			)
+		));
 	}
 }
