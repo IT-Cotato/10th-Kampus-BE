@@ -65,7 +65,7 @@ public class BoardUpdater {
 		}
 
 		board.updateStatus(BoardStatus.PENDING_DELETION);
-		board.setDeletionScheduledAt(LocalDateTime.now());
+		board.setDeletionScheduledAt(LocalDateTime.now().plusDays(30));
 	}
 
 	@Transactional

@@ -92,7 +92,7 @@ public class AdminController {
 
 	@DeleteMapping("/boards/{boardId}")
 	@Operation(summary = "게시판 삭제", description = "게시판을 삭제합니다. 30일간 삭제 대기 상태이며 이후 영구 삭제됩니다.")
-	public ResponseEntity<DataResponse<Void>> deleteBoard(
+	public ResponseEntity<DataResponse<Void>> deleteBoard (
 		@PathVariable Long boardId
 	){
 		adminService.pendingBoard(boardId);
@@ -110,7 +110,7 @@ public class AdminController {
 
 	@GetMapping("/student-verifications")
 	@Operation(summary = "재학생 인증 목록 조회", description = "재학생 인증 목록을 최신순으로 조회합니다.")
-	public ResponseEntity<DataResponse<StudentVerificationListResponse>> getStudentVerifications(
+	public ResponseEntity<DataResponse<StudentVerificationListResponse>> getStudentVerifications (
 		@RequestParam(required = false, defaultValue = "1") int page) {
 			return ResponseEntity.ok(DataResponse.from(
 				StudentVerificationListResponse.from(
