@@ -289,7 +289,7 @@ public class PostController {
 	@GetMapping("/my/scrap")
 	@Operation(summary = "[마이페이지] 스크랩한 게시글 조회", description = "현재 사용자가 스크랩한 게시글을 최신순으로 조회합니다.")
 	public ResponseEntity<DataResponse<MyPostResponse>> findMyScrapedPosts(
-		@RequestParam(required = false, defaultValue = "0") int page
+		@RequestParam(required = false, defaultValue = "1") int page
 	) {
 		return ResponseEntity.ok(DataResponse.from(
 				MyPostResponse.from(
