@@ -64,7 +64,7 @@ public class PostFinder {
 
 		// 3. Post -> PostWithPhotos 매핑
 		return posts.map(post -> {
-			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeDesc(post.getId())
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
 				.orElse(null);
 			return PostWithPhotos.from(post, postPhoto);
 		});
@@ -100,7 +100,7 @@ public class PostFinder {
 
 		// 3. Post -> PostWithPhotos 매핑
 		return posts.map(post -> {
-			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeDesc(post.getId())
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
 				.orElse(null);
 			return PostWithPhotos.from(post, postPhoto);
 		});
@@ -214,7 +214,7 @@ public class PostFinder {
 	private Slice<SearchedPost> mapToSearchedPost(Slice<Post> posts) {
 		return posts.map(post -> {
 			String boardName = boardFinder.findBoard(post.getBoardId()).getBoardName();
-			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeDesc(post.getId())
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
 				.orElse(null);
 			return SearchedPost.of(post, boardName, postPhoto);
 		});

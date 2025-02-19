@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.admin.dto.BoardDetail;
 import com.cotato.kampus.domain.admin.dto.StudentVerification;
+import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsPreview;
 import com.cotato.kampus.domain.board.application.BoardAppender;
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardUpdater;
@@ -20,8 +21,12 @@ import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.post.application.PostAppender;
 import com.cotato.kampus.domain.post.application.PostDeleter;
+import com.cotato.kampus.domain.post.application.PostFinder;
 import com.cotato.kampus.domain.post.application.PostImageAppender;
 import com.cotato.kampus.domain.post.application.PostUpdater;
+import com.cotato.kampus.domain.post.domain.PostPhoto;
+import com.cotato.kampus.domain.post.dto.PostWithPhotos;
+import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
@@ -58,6 +63,7 @@ public class AdminService {
 	private final PostImageAppender postImageAppender;
 	private final PostDeleter postDeleter;
 	private final PostUpdater postUpdater;
+	private final PostFinder postFinder;
 
 	@Transactional
 	public Long createBoard(String boardName, String description, String universityName, Boolean isCategoryRequired) {
@@ -193,5 +199,18 @@ public class AdminService {
 
 		// 카드뉴스 사진 추가
 		postImageAppender.appendAll(postId, imageUrls);
+	}
+
+	public Slice<AdminCardNewsPreview> getAllCardNews(int page) {
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+
+		// 카드뉴스 게시판 조회
+		Long cardNewsBoardId = boardFinder.findCardNewsBoardId();
+
+		// 카드뉴스 조회
+		Slice<PostWithPhotos> posts = postFinder.findPosts(cardNewsBoardId, page, PostSortType.recent);
+
+		return posts.map(AdminCardNewsPreview::from);
 	}
 }
