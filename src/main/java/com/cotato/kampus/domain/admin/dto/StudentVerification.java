@@ -5,10 +5,12 @@ import java.time.LocalDateTime;
 import com.cotato.kampus.domain.verification.domain.VerificationRecord;
 import com.cotato.kampus.domain.user.enums.VerificationStatus;
 import com.cotato.kampus.domain.user.enums.VerificationType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record StudentVerification(
 	Long verificationRecordId,
-	LocalDateTime joinDate,
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	LocalDateTime verificationRequestDate,
 	String univName,
 	VerificationType verificationType,
 	VerificationStatus verificationStatus
