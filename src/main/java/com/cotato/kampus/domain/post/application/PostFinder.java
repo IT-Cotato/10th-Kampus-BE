@@ -1,7 +1,9 @@
 package com.cotato.kampus.domain.post.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -87,6 +89,22 @@ public class PostFinder {
 				pageRequest.of(sortType.getProperty())
 			);
 		};
+	}
+
+	public Slice<PostWithPhotos> findUserCommentedPosts(List<Long> postIds, int page){
+
+		// CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+		PageRequest pageRequest = PageRequest.of(page-1, PAGE_SIZE);
+		String orderList = postIds.stream().map(String::valueOf).collect(Collectors.joining(","));
+		Slice<Post> posts = postRepository.findPostsByIdsInOrder(postIds, orderList, pageRequest);
+
+		// 3. Post -> PostWithPhotos 매핑
+		return posts.map(post -> {
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeDesc(post.getId())
+				.orElse(null);
+			return PostWithPhotos.from(post, postPhoto);
+		});
+
 	}
 
 	public PostDto findPost(Long postId) {
@@ -201,4 +219,5 @@ public class PostFinder {
 			return SearchedPost.of(post, boardName, postPhoto);
 		});
 	}
+
 }

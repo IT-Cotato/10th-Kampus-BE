@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.post.dao;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,4 +29,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@Query("SELECT p FROM Post p WHERE (p.boardId = :boardId) AND (p.title LIKE %:keyword% OR p.content LIKE %:keyword%) ORDER BY p.createdTime DESC")
 	Slice<Post> searchAllByBoardId(@Param("keyword") String keyword, @Param("boardId") Long boardId, Pageable pageable);
+
+	@Query(value = """
+		SELECT * From Post p
+		WHERE p.post_id IN (:postIds)
+		ORDER BY FIELD(p.post_id, :orderList) DESC
+	""", nativeQuery = true)
+	Slice<Post> findPostsByIdsInOrder(
+		@Param("postIds") List<Long> postIds,
+		@Param("orderList") String orderList,
+		Pageable pageable);
 }
