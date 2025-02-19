@@ -1,8 +1,10 @@
 package com.cotato.kampus.domain.admin.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Slice;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +18,9 @@ import com.cotato.kampus.domain.board.application.BoardValidator;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.post.application.PostAppender;
+import com.cotato.kampus.domain.post.application.PostDeleter;
 import com.cotato.kampus.domain.post.application.PostImageAppender;
+import com.cotato.kampus.domain.post.application.PostUpdater;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
@@ -51,6 +55,8 @@ public class AdminService {
 	private final ApiUserResolver apiUserResolver;
 	private final PostAppender postAppender;
 	private final PostImageAppender postImageAppender;
+	private final PostDeleter postDeleter;
+	private final PostUpdater postUpdater;
 
 	@Transactional
 	public Long createBoard(String boardName, String description, String universityName, Boolean isCategoryRequired){
@@ -98,6 +104,32 @@ public class AdminService {
 		// 게시판 활성화
 		boardUpdater.activeBoard(boardId);
 	}
+
+	@Transactional
+	public void pendingBoard(Long boardId){
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+
+		// 게시판 삭제 대기 상태로 변경
+		boardUpdater.pendingBoard(boardId);
+
+		// 포함된 게시글 상태 변경
+		postUpdater.pendingPost(boardId);
+	}
+
+	@Scheduled(cron = "0 0 3 * * *")
+	public void deleteExpiredBoards(){
+		// 삭제할 게시판 조회
+		List<Long> expiredBoardIds = boardFinder.findExpiredBoardIds(LocalDateTime.now());
+
+		// 포함된 게시글 삭제
+		postDeleter.deletePostsByBoardIds(expiredBoardIds);
+
+		// 게시판 삭제
+		boardUpdater.deleteExpiredBoards();
+	}
+
+
 
 	public List<BoardDetail> getAllBoards(){
 		// 관리자 검증

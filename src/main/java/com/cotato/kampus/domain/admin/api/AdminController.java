@@ -2,6 +2,7 @@ package com.cotato.kampus.domain.admin.api;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -86,6 +87,15 @@ public class AdminController {
 		@PathVariable Long boardId
 	) {
 		adminService.inactiveBoard(boardId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@DeleteMapping("/boards/{boardId}")
+	@Operation(summary = "게시판 삭제", description = "게시판을 삭제합니다. 30일간 삭제 대기 상태이며 이후 영구 삭제됩니다.")
+	public ResponseEntity<DataResponse<Void>> deleteBoard(
+		@PathVariable Long boardId
+	){
+		adminService.pendingBoard(boardId);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 

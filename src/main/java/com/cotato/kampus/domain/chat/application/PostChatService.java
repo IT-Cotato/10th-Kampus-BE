@@ -108,7 +108,7 @@ public class PostChatService {
 		PostDto postDto = postFinder.findPost(chatroom.getPostId());
 
 		// 3. Find board information
-		BoardDto board = boardFinder.findBoard(postDto.boardId());
+		BoardDto board = boardFinder.findBoardDto(postDto.boardId());
 
 		return ChatRoomDetailDto.of(chatroom, postDto, board);
 	}

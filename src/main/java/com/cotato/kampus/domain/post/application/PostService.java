@@ -84,7 +84,7 @@ public class PostService {
 			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
 
 		// 게시판, 유저 조회
-		BoardDto boardDto = boardFinder.findBoard(boardId);
+		BoardDto boardDto = boardFinder.findBoardDto(boardId);
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
 		// 게시판 검증

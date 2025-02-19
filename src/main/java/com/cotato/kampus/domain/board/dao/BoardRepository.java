@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.board.dao;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +21,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 	boolean existsByBoardName(String boardName);
 
 	Optional<Board> findByBoardType(BoardType boardType);
+
+	List<Board> findByDeletionScheduledAtBefore(LocalDateTime now);
 }

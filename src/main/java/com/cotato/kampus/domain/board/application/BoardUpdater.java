@@ -1,5 +1,8 @@
 package com.cotato.kampus.domain.board.application;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +21,11 @@ import lombok.RequiredArgsConstructor;
 public class BoardUpdater {
 
 	private final BoardRepository boardRepository;
+	private final BoardFinder boardFinder;
 
+	@Transactional
 	public Long update(Long boardId, String boardName, String description, Boolean isCategoryRequired) {
-		Board board = boardRepository.findById(boardId)
-			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
+		Board board =  boardFinder.findBoard(boardId);
 
 		board.update(boardName, description, isCategoryRequired);
 
@@ -30,25 +34,45 @@ public class BoardUpdater {
 		return board.getId();
 	}
 
+	@Transactional
 	public void inactiveBoard(Long boardId) {
-		Board board = boardRepository.findById(boardId)
-			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
+		Board board =  boardFinder.findBoard(boardId);
 
 		if(board.getBoardStatus() == BoardStatus.INACTIVE)
 			throw new AppException(ErrorCode.BOARD_ALREADY_INACTIVE);
 
-		board.inactive();
+		board.updateStatus(BoardStatus.INACTIVE);
 		boardRepository.save(board);
 	}
 
+	@Transactional
 	public void activeBoard(Long boardId) {
-		Board board = boardRepository.findById(boardId)
-			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
+		Board board =  boardFinder.findBoard(boardId);
 
 		if(board.getBoardStatus() == BoardStatus.ACTIVE)
 			throw new AppException(ErrorCode.BOARD_ALREADY_ACTIVE);
 
-		board.active();
+		board.updateStatus(BoardStatus.ACTIVE);
 		boardRepository.save(board);
+	}
+
+	@Transactional
+	public void pendingBoard(Long boardId){
+		Board board =  boardFinder.findBoard(boardId);
+
+		if(board.getBoardStatus() == BoardStatus.PENDING_DELETION){
+			throw new AppException(ErrorCode.BOARD_ALREADY_PENDING);
+		}
+
+		board.updateStatus(BoardStatus.PENDING_DELETION);
+		board.setDeletionScheduledAt(LocalDateTime.now());
+	}
+
+	@Transactional
+	public void deleteExpiredBoards(){
+		LocalDateTime now = LocalDateTime.now();
+		List<Board> expiredBoards = boardRepository.findByDeletionScheduledAtBefore(now);
+
+		boardRepository.deleteAll(expiredBoards);
 	}
 }
