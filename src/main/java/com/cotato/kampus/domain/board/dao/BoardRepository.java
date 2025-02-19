@@ -13,7 +13,7 @@ import com.cotato.kampus.domain.board.enums.BoardType;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-	List<Board> findAllByUniversityIdIsNull();
+	List<Board> findAllByUniversityIdIsNullAndBoardStatus(BoardStatus status);
 
 	Optional<Board> findByUniversityId(Long universityId);
 
