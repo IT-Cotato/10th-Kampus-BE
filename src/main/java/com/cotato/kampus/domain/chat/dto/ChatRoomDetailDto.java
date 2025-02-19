@@ -31,7 +31,7 @@ public record ChatRoomDetailDto(
 			post.postId(),
 			post.title(),
 			-1L,
-			"[삭제된 게시판]",
+			"",
 			chatroom.getInitialSenderId(),
 			chatroom.getInitialReceiverId()
 		);

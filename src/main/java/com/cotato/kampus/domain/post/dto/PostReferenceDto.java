@@ -18,6 +18,6 @@ public record PostReferenceDto(
 	}
 
 	public static PostReferenceDto deleted() {
-		return new PostReferenceDto(-1L, "[삭제된 게시글]", -1L, true);
+		return new PostReferenceDto(-1L, "", -1L, true);
 	}
 }
