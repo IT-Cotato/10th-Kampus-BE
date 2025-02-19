@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.comment.dao.CommentLikeRepository;
 import com.cotato.kampus.domain.comment.dao.CommentRepository;
 import com.cotato.kampus.domain.comment.domain.Comment;
 import com.cotato.kampus.domain.comment.dto.CommentDto;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class CommentFinder {
 
 	private final CommentRepository commentRepository;
+	private final CommentLikeRepository commentLikeRepository;
 	private final ApiUserResolver apiUserResolver;
 
 	public Comment findComment(Long commentId){

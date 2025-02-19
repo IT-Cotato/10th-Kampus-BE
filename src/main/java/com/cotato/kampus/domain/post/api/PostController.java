@@ -2,8 +2,10 @@ package com.cotato.kampus.domain.post.api;
 
 import java.util.List;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,6 +31,9 @@ import com.cotato.kampus.domain.post.dto.response.PostDraftCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftDetailResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDraftSliceFindResponse;
 import com.cotato.kampus.domain.post.dto.response.PostSliceFindResponse;
+import com.cotato.kampus.domain.post.dto.response.SearchKeywordDeleteResponse;
+import com.cotato.kampus.domain.post.dto.response.SearchKeywordListResponse;
+import com.cotato.kampus.domain.post.dto.response.SearchedPostResponse;
 import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -38,12 +43,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "게시글(Post) API", description = "게시글 관련 API(게시판 API는 Board)")
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Validated
 @RequestMapping("/v1/api/posts")
 public class PostController {
 
@@ -282,7 +289,7 @@ public class PostController {
 	@GetMapping("/my/scrap")
 	@Operation(summary = "[마이페이지] 스크랩한 게시글 조회", description = "현재 사용자가 스크랩한 게시글을 최신순으로 조회합니다.")
 	public ResponseEntity<DataResponse<MyPostResponse>> findMyScrapedPosts(
-		@RequestParam(required = false, defaultValue = "0") int page
+		@RequestParam(required = false, defaultValue = "1") int page
 	) {
 		return ResponseEntity.ok(DataResponse.from(
 				MyPostResponse.from(
@@ -290,5 +297,53 @@ public class PostController {
 				)
 			)
 		);
+	}
+
+	@GetMapping("/search")
+	@Operation(summary = "전체 게시글 검색")
+	public ResponseEntity<DataResponse<SearchedPostResponse>> searchAllPosts(
+		@RequestParam @NotBlank @Length(min = 2, max = 10, message = "keyword는 2자 이상 10자 이하로 구성해야 합니다.") String keyword,
+		@RequestParam(required = false, defaultValue = "1") int page
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+			SearchedPostResponse.from(
+				postService.searchAllPosts(keyword, page)
+			)
+		));
+	}
+
+	@GetMapping("/search/{boardId}")
+	@Operation(summary = "게시판 내 게시글 검색")
+	public ResponseEntity<DataResponse<SearchedPostResponse>> searchBoardPosts(
+		@RequestParam @NotBlank @Length(min = 2, max = 10, message = "keyword는 2자 이상 10자 이하로 구성해야 합니다.") String keyword,
+		@PathVariable Long boardId,
+		@RequestParam(required = false, defaultValue = "1") int page
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+			SearchedPostResponse.from(
+				postService.searchBoardPosts(keyword, boardId, page)
+			)
+		));
+	}
+
+	@GetMapping("/search/keywords")
+	@Operation(summary = "게시글 검색 키워드 조회", description = "게시글 검색 키워드를 조회합니다.(최대 5개, 최신순 정렬)")
+	public ResponseEntity<DataResponse<SearchKeywordListResponse>> searchAllPosts() {
+		return ResponseEntity.ok(DataResponse.from(
+			SearchKeywordListResponse.from(
+				postService.findSearchKeyword()
+			)
+		));
+	}
+
+	@DeleteMapping("search/keywords/{keywordId}")
+	@Operation(summary = "게시글 검색 키워드 단건 삭제", description = "게시글 검색 키워드 Id를 통해 삭제합니다.")
+	public ResponseEntity<DataResponse<SearchKeywordDeleteResponse>> deleteKeyword(
+		@PathVariable Long keywordId) {
+		return ResponseEntity.ok(DataResponse.from(
+			SearchKeywordDeleteResponse.from(
+				postService.deleteSearchKeyword(keywordId)
+			)
+		));
 	}
 }

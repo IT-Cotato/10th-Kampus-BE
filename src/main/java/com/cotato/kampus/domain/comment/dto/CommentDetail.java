@@ -24,6 +24,9 @@ public record CommentDetail(
 	@Schema(example = "3")
 	Long likes,
 
+	@Schema(example = "true")
+	boolean isLiked,
+
 	@Schema(example = "2025-01-17T21:03:30.218321")
 	LocalDateTime createdTime,
 
@@ -31,13 +34,14 @@ public record CommentDetail(
 	@Schema(description = "댓글의 대댓글 리스트")
 	List<CommentDetail> replies
 ) {
-	public static CommentDetail of(CommentDto commentDto, String author, List<CommentDetail> replies) {
+	public static CommentDetail of(CommentDto commentDto, String author, List<CommentDetail> replies, boolean isLiked) {
 		return new CommentDetail(
 			commentDto.commentId(),
 			commentDto.commentStatus(),
 			author,
 			commentDto.content(),
 			commentDto.likes(),
+			isLiked,
 			commentDto.createdTime(),
 			replies
 		);

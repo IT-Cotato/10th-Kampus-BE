@@ -27,6 +27,7 @@ import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.enums.PostSortType;
+import com.cotato.kampus.domain.post.dto.SearchedPost;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -195,6 +196,28 @@ public class PostFinder {
 		return postDrafts.stream()
 			.map(PostDraft::getId)
 			.toList();
+	}
+
+	public Slice<SearchedPost> searchAllPosts(String keyword, int page) {
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+		Slice<Post> posts = postRepository.searchAll(keyword, customPageRequest.of(SORT_PROPERTY));
+		return mapToSearchedPost(posts);
+	}
+
+	public Slice<SearchedPost> searchBoardPosts(String keyword, Long boardId, int page) {
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+		Slice<Post> posts = postRepository.searchAllByBoardId(keyword, boardId, customPageRequest.of(SORT_PROPERTY));
+		return mapToSearchedPost(posts);
+	}
+
+	// 게시글 검색 결과에 사진과 게시판을 매핑
+	private Slice<SearchedPost> mapToSearchedPost(Slice<Post> posts) {
+		return posts.map(post -> {
+			String boardName = boardFinder.findBoard(post.getBoardId()).boardName();
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeDesc(post.getId())
+				.orElse(null);
+			return SearchedPost.of(post, boardName, postPhoto);
+		});
 	}
 
 }

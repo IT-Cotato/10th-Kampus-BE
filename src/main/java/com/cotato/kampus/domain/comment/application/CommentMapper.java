@@ -8,6 +8,8 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.comment.dao.CommentLikeRepository;
+import com.cotato.kampus.domain.comment.domain.Comment;
 import com.cotato.kampus.domain.comment.dto.CommentDetail;
 import com.cotato.kampus.domain.comment.dto.CommentDto;
 
@@ -20,8 +22,9 @@ import lombok.RequiredArgsConstructor;
 public class CommentMapper {
 
 	private final AnonymousNumberAllocator anonymousNumberAllocator;
+	private final CommentLikeRepository commentLikeRepository;
 
-	public List<CommentDetail> buildCommentHierarchy(List<CommentDto> commentDtos){
+	public List<CommentDetail> buildCommentHierarchy(List<CommentDto> commentDtos, Long userId){
 		Map<Long, CommentDetail> commentMap = new HashMap<>();
 		List<CommentDetail> rootComments = new ArrayList<>();
 
@@ -30,7 +33,8 @@ public class CommentMapper {
 			CommentDetail detail = CommentDetail.of(
 				commentDto,
 				anonymousNumberAllocator.resolveAuthorName(commentDto),
-				new ArrayList<>()
+				new ArrayList<>(),
+				commentLikeRepository.existsByUserIdAndCommentId(userId, commentDto.commentId())
 			);
 			commentMap.put(commentDto.commentId(), detail);
 		}
@@ -47,4 +51,5 @@ public class CommentMapper {
 		}
 		return rootComments;
 	}
+
 }

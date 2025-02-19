@@ -11,14 +11,15 @@ import com.cotato.kampus.domain.board.application.BoardValidator;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
-import com.cotato.kampus.domain.post.dto.AnonymousOrPostAuthor;
 import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
 import com.cotato.kampus.domain.post.dto.PostDraftDetails;
 import com.cotato.kampus.domain.post.dto.PostDraftDto;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
+import com.cotato.kampus.domain.post.dto.PostSearchHistoryList;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
+import com.cotato.kampus.domain.post.dto.SearchedPost;
 import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.domain.user.application.UserFinder;
@@ -46,14 +47,20 @@ public class PostService {
 	private final PostImageDeleter postImageDeleter;
 
 	private final PostScrapUpdater postScrapUpdater;
-	private final PostAuthorResolver postAuthorResolver;
+	private final PostScrapFinder postScrapFinder;
 	private final ApiUserResolver apiUserResolver;
 	private final S3Uploader s3Uploader;
 
 	private final ImageValidator imageValidator;
 	private final PostLikeAppender postLikeAppender;
 	private final PostLikeValidator postLikeValidator;
+	private final PostLikeFinder postLikeFinder;
 	private final PostValidator postValidator;
+
+	private final PostSearchHistoryAppender postSearchHistoryAppender;
+	private final PostSearchHistoryFinder postSearchHistoryFinder;
+	private final PostSearchHistoryValidator postSearchHistoryValidator;
+	private final PostSearchHistoryDeleter postSearchHistoryDeleter;
 
 	private static final String POST_IMAGE_FOLDER = "post";
 	private final BoardValidator boardValidator;
@@ -127,11 +134,16 @@ public class PostService {
 		// 2. Post의 이미지 조회
 		List<String> postPhotos = postImageFinder.findPostPhotos(postId);
 
-		// 3. 유저가 익명인지 아닌지 조회 + 게시글 작성자인지 확인
-		AnonymousOrPostAuthor author = postAuthorResolver.getAuthor(postDto);
+		// 3. 유저 조회
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
-		// 4. 게시글 세부 내역 리턴
-		return PostDetails.of(author, postDto, postPhotos);
+		// 4. 게시글 작성자 여부, 좋아요 여부, 스크랩 여부 조회
+		boolean isAuthor = postDto.userId().equals(userDto.id());
+		boolean isLiked = postLikeFinder.isPostLikedByUser(userDto.id(), postId);
+		boolean isScrapped = postScrapFinder.isPostScrappedByUser(userDto.id(), postId);
+
+		// 5. 게시글 세부 내역 리턴
+		return PostDetails.of(postDto, postPhotos, isAuthor, isLiked, isScrapped);
 	}
 
 	@Transactional
@@ -332,4 +344,31 @@ public class PostService {
 			throw new AppException(ErrorCode.CATEGORY_NOT_ALLOWED);
 	}
 
+	public Slice<SearchedPost> searchAllPosts(String keyword, int page) {
+		// 최대 5개 까지 키워드 저장
+		Long userId = apiUserResolver.getCurrentUserId();
+		postSearchHistoryAppender.append(userId, keyword);
+		// 검색 결과 리턴
+		return postFinder.searchAllPosts(keyword, page);
+	}
+
+	public Slice<SearchedPost> searchBoardPosts(String keyword, Long boardId, int page) {
+		// 최대 5개 까지 키워드 저장
+		Long userId = apiUserResolver.getCurrentUserId();
+		postSearchHistoryAppender.append(userId, keyword);
+		return postFinder.searchBoardPosts(keyword, boardId, page);
+	}
+
+	public PostSearchHistoryList findSearchKeyword() {
+		Long userId = apiUserResolver.getCurrentUserId();
+		return postSearchHistoryFinder.findByUserId(userId);
+	}
+
+	@Transactional
+	public Long deleteSearchKeyword(Long keywordId) {
+		Long userId = apiUserResolver.getCurrentUserId();
+		postSearchHistoryValidator.validateUser(userId, keywordId);
+		postSearchHistoryDeleter.deleteHistory(keywordId);
+		return keywordId;
+	}
 }
