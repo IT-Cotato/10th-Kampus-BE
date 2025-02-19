@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.board.application;
 
+import java.util.Objects;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,15 +39,23 @@ public class BoardValidator {
 		}
 	}
 
-	public void validateBoardAccess(UserDto userDto, BoardDto boardDto){
+	public void validatePostCreationAccess(UserDto userDto, BoardDto boardDto) {
 		// 학교 게시판인 경우 자격 검증
-		if((boardDto.boardType() == BoardType.UNIVERSITY) &&
-			(boardDto.universityId()!= userDto.universityId())){
+		if (boardDto.boardType() == BoardType.UNIVERSITY &&
+			!Objects.equals(boardDto.universityId(), userDto.universityId())) {
 			throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
 		}
 
 		// 카드뉴스 게시판 접근 불가
-		if(boardDto.boardType() == BoardType.CARDNEWS)
+		if (boardDto.boardType() == BoardType.CARDNEWS)
 			throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
+	}
+
+	public void validateUniversityAccess(UserDto userDto, BoardDto boardDto) {
+		// 학교 게시판인 경우 자격 검증
+		if (boardDto.boardType() == BoardType.UNIVERSITY &&
+			!Objects.equals(boardDto.universityId(), userDto.universityId())) {
+			throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
+		}
 	}
 }
