@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.board.application;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -49,7 +50,14 @@ public class BoardFinder {
 			.toList();
 	}
 
-	public BoardDto findBoard(Long boardId){
+	public Board findBoard(Long boardId){
+		Board board = boardRepository.findById(boardId)
+			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
+
+		return board;
+	}
+
+	public BoardDto findBoardDto(Long boardId){
 		Board board = boardRepository.findById(boardId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 
@@ -67,6 +75,12 @@ public class BoardFinder {
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 
 		return board.getId();
+	}
+
+	public List<Long> findExpiredBoardIds(LocalDateTime now){
+		List<Board> expiredBoards = boardRepository.findByDeletionScheduledAtBefore(now);
+
+		return expiredBoards.stream().map(Board::getId).toList();
 	}
 
 }
