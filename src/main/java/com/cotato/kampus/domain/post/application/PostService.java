@@ -89,7 +89,7 @@ public class PostService {
 
 		// 게시판 검증
 		boardValidator.validateBoardIsActive(boardDto);
-		boardValidator.validateBoardAccess(userDto, boardDto);
+		boardValidator.validatePostCreationAccess(userDto, boardDto);
 
 		// 게시글 추가
 		Long postId = postAppender.append(userDto.id(), boardDto.boardId(), title, content, postCategory);
@@ -130,7 +130,7 @@ public class PostService {
 
 		// 게시판 접근 권한 검증
 		boardValidator.validateBoardIsActive(board);
-		boardValidator.validateBoardAccess(user, board);
+		boardValidator.validateUniversityAccess(user, board);
 
 		// 검증 통과 후 게시글 조회
 		return postFinder.findPosts(boardId, page, sortType);
