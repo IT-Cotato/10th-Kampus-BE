@@ -22,6 +22,7 @@ import com.cotato.kampus.domain.post.dto.PostSearchHistoryList;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.dto.SearchedPost;
 import com.cotato.kampus.domain.post.enums.PostCategory;
+import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.domain.user.application.UserFinder;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -122,8 +123,8 @@ public class PostService {
 		return postId;
 	}
 
-	public Slice<PostWithPhotos> findPosts(Long boardId, int page) {
-		return postFinder.findPosts(boardId, page);
+	public Slice<PostWithPhotos> findPosts(Long boardId, int page, PostSortType sortType) {
+		return postFinder.findPosts(boardId, page, sortType);
 	}
 
 	public PostDetails findPostDetail(Long postId) {

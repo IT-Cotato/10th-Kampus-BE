@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.user.dto;
 
 import com.cotato.kampus.domain.user.domain.User;
+import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.domain.user.enums.UserStatus;
@@ -14,6 +15,7 @@ public record UserDto(
 	String nickname,
 	Long universityId,
 	String profileImage,
+	Nationality nationality,
 	PreferredLanguage preferredLanguage,
 	String deviceToken,
 	UserRole userRole,
@@ -29,6 +31,7 @@ public record UserDto(
 			user.getNickname(),
 			user.getUniversityId(),
 			user.getProfileImage(),
+			user.getNationality(),
 			user.getPreferredLanguage(),
 			user.getDeviceToken(),
 			user.getUserRole(),

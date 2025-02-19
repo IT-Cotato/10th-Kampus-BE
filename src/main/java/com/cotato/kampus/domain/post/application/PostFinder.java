@@ -24,6 +24,7 @@ import com.cotato.kampus.domain.post.dto.PostDraftDto;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
+import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.domain.post.dto.SearchedPost;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -52,20 +53,40 @@ public class PostFinder {
 			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
 	}
 
-	public Slice<PostWithPhotos> findPosts(Long boardId, int page) {
+	public Slice<PostWithPhotos> findPosts(Long boardId, int page, PostSortType sortType) {
 		// 1. Post 리스트를 Slice로 조회
-		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-		Slice<Post> posts = postRepository.findAllByBoardIdOrderByCreatedTimeDesc(
-			boardId,
-			customPageRequest.of(SORT_PROPERTY)
-		);
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, sortType.getDirection());
 
-		// 2. Post -> PostWithPhotos 매핑
+		// 2. 정렬 기준에 맞게 조회
+		Slice<Post> posts = findPostsBySort(boardId, customPageRequest, sortType);
+
+		// 3. Post -> PostWithPhotos 매핑
 		return posts.map(post -> {
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeDesc(post.getId())
 				.orElse(null);
 			return PostWithPhotos.from(post, postPhoto);
 		});
+	}
+
+	// 정렬 기준에 맞는 조회 로직 수행
+	private Slice<Post> findPostsBySort(Long boardId, CustomPageRequest pageRequest, PostSortType sortType) {
+		return switch (sortType) {
+			// 최신순
+			case recent -> postRepository.findAllByBoardIdOrderByCreatedTimeDesc(
+				boardId,
+				pageRequest.of(sortType.getProperty())
+			);
+			// 오래된순
+			case old -> postRepository.findAllByBoardIdOrderByCreatedTimeAsc(
+				boardId,
+				pageRequest.of(sortType.getProperty())
+			);
+			// 좋아요순(좋아요가 같을 경우 최신순)
+			case likes -> postRepository.findAllByBoardIdOrderByLikesDescCreatedTimeDesc(
+				boardId,
+				pageRequest.of(sortType.getProperty())
+			);
+		};
 	}
 
 	public PostDto findPost(Long postId) {

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
 import com.cotato.kampus.domain.post.enums.PostCategory;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record PostWithPhotos(
 	Long id,
@@ -13,6 +14,7 @@ public record PostWithPhotos(
 	String content,
 	Long likes,
 	Long comments,
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	LocalDateTime createdTime,
 	String thumbnailUrl) {
 

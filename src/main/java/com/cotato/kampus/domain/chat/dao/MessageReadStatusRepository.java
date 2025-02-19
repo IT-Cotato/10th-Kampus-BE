@@ -10,4 +10,6 @@ import com.cotato.kampus.domain.chat.domain.MessageReadStatus;
 @Repository
 public interface MessageReadStatusRepository extends JpaRepository<MessageReadStatus, Long> {
 	Optional<MessageReadStatus> findByChatroomIdAndUserId(Long chatroomId, Long userId);
+
+	void deleteAllByChatroomId(Long chatroomId);
 }

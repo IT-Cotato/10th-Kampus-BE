@@ -22,7 +22,6 @@ public class ChatMessageAppender {
 			.chatroomId(chatRoomId)
 			.senderId(senderId)
 			.content(content)
-			.isRead(false)
 			.build();
 		return chatMessageRepository.save(chatMessage);
 	}

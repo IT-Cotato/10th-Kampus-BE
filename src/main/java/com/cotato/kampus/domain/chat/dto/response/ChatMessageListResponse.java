@@ -1,26 +1,22 @@
 package com.cotato.kampus.domain.chat.dto.response;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.cotato.kampus.domain.chat.dto.ChatMessageSliceWithUserId;
+import com.cotato.kampus.domain.chat.dto.ChatMessageSliceSnapshot;
 
 public record ChatMessageListResponse(
-	Long currentUserId,
 	List<ChatMessageResponse> messages,
 	boolean hasNext
 ) {
-	public static ChatMessageListResponse from(ChatMessageSliceWithUserId sliceWithUserId) {
-		Long currentUserId = sliceWithUserId.currentUserId();
-		List<ChatMessageResponse> responseMessages = sliceWithUserId.messages()
-			.chatMessages()
+	public static ChatMessageListResponse from(ChatMessageSliceSnapshot sliceSnapshot) {
+		List<ChatMessageResponse> responseMessages = sliceSnapshot.messages()
 			.stream()
-			.map(chatMessage -> ChatMessageResponse.from(chatMessage, currentUserId))
-			.collect(Collectors.toList());
+			.map(ChatMessageResponse::from)
+			.toList();
+
 		return new ChatMessageListResponse(
-			currentUserId,
 			responseMessages,
-			sliceWithUserId.messages().chatMessages().hasNext()
+			sliceSnapshot.hasNext()
 		);
 	}
 }
