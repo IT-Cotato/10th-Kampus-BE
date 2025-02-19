@@ -15,6 +15,7 @@ import com.deepl.api.DeepLException;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -105,7 +106,7 @@ public class GlobalExceptionHandler {
 		log.error("ConstraintViolation Exception 발생: {}", e.getMessage());
 		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
 		String errorMessage = e.getConstraintViolations().stream()
-			.map(violation -> violation.getMessage())
+			.map(ConstraintViolation::getMessage)
 			.findFirst()
 			.orElse("잘못된 요청입니다.");
 		ErrorResponse errorResponse = ErrorResponse.of(request, ErrorCode.INVALID_PARAMETER, errorMessage);

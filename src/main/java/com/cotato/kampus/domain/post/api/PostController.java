@@ -291,7 +291,7 @@ public class PostController {
 	@GetMapping("/search")
 	@Operation(summary = "전체 게시글 검색")
 	public ResponseEntity<DataResponse<SearchedPostResponse>> searchAllPosts(
-		@Valid @RequestParam @NotBlank @Length(min = 2, max = 10, message = "keyword는 2자 이상 10자 이하로 구성해야 합니다.") String keyword,
+		@RequestParam @NotBlank @Length(min = 2, max = 10, message = "keyword는 2자 이상 10자 이하로 구성해야 합니다.") String keyword,
 		@RequestParam(required = false, defaultValue = "1") int page
 	) {
 		return ResponseEntity.ok(DataResponse.from(
@@ -304,7 +304,7 @@ public class PostController {
 	@GetMapping("/search/{boardId}")
 	@Operation(summary = "게시판 내 게시글 검색")
 	public ResponseEntity<DataResponse<SearchedPostResponse>> searchBoardPosts(
-		@Valid @RequestParam @NotBlank @Length(min = 2, max = 10, message = "keyword는 2자 이상 10자 이하로 구성해야 합니다.") String keyword,
+		@RequestParam @NotBlank @Length(min = 2, max = 10, message = "keyword는 2자 이상 10자 이하로 구성해야 합니다.") String keyword,
 		@PathVariable Long boardId,
 		@RequestParam(required = false, defaultValue = "1") int page
 	) {
