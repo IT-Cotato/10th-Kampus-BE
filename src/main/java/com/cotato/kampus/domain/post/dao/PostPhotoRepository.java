@@ -11,7 +11,7 @@ import com.cotato.kampus.domain.post.domain.PostPhoto;
 @Repository
 public interface PostPhotoRepository extends JpaRepository<PostPhoto, Long> {
 
-	Optional<PostPhoto> findFirstByPostIdOrderByCreatedTimeDesc(Long postId);
+	Optional<PostPhoto> findFirstByPostIdOrderByCreatedTime(Long postId);
 
 	Optional<PostPhoto> findFirstByPostIdOrderByCreatedTimeAsc(Long postId);
 
