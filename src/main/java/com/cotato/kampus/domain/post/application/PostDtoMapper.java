@@ -11,6 +11,7 @@ import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.dto.HomeBoardAndPostPreview;
 import com.cotato.kampus.domain.post.dao.PostPhotoRepository;
+import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
@@ -26,6 +27,7 @@ public class PostDtoMapper {
 
 	private final BoardFinder boardFinder;
 	private final PostPhotoRepository postPhotoRepository;
+	private final PostRepository postRepository;
 
 	public List<HomeBoardAndPostPreview> mapToHomeBoardAndPostPreviews(List<PostDto> trendingPosts) {
 		// boardId -> BoardDto 매핑
@@ -42,6 +44,18 @@ public class PostDtoMapper {
 			.map(postDto -> HomeBoardAndPostPreview.from(
 				boardDtoMap.get(postDto.boardId()), postDto)
 			).toList();
+	}
+
+	public List<HomeBoardAndPostPreview> mapToHomeBoardAndPostPreviewsByBoardDtos(List<BoardDto> boardDtos) {
+		// 각 boardId에 대해 가장 최근의 PostDto 조회
+		return boardDtos.stream()
+			.map(boardDto -> {
+				PostDto latestPost = postRepository.findTopByBoardIdOrderByCreatedTimeDesc(boardDto.boardId())
+					.map(PostDto::from)
+					.orElse(null);
+				return HomeBoardAndPostPreview.from(boardDto, latestPost);
+			})
+			.toList();
 	}
 
 	public List<TrendingPostPreview> toTrendingPostPreviews(List<Post> posts) {

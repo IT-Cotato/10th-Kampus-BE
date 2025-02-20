@@ -2,6 +2,7 @@ package com.cotato.kampus.domain.post.application;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -79,7 +80,7 @@ public class PostFinder {
 		});
 	}
 
-	public Slice<CardNewsPreview> findAllCardNews(Long userId, int page){
+	public Slice<CardNewsPreview> findAllCardNews(Long userId, int page) {
 		// 1. Post 리스트를 Slice로 조회
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
 
@@ -87,7 +88,8 @@ public class PostFinder {
 		Long cardNewsBoardId = boardFinder.findCardNewsBoardId();
 
 		// 3. 최신순 정렬로 조회
-		Slice<Post> posts = postRepository.findAllByBoardIdOrderByCreatedTimeDesc(cardNewsBoardId, customPageRequest.of(SORT_PROPERTY));
+		Slice<Post> posts = postRepository.findAllByBoardIdOrderByCreatedTimeDesc(cardNewsBoardId,
+			customPageRequest.of(SORT_PROPERTY));
 
 		return posts.map(post -> {
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
@@ -100,7 +102,7 @@ public class PostFinder {
 
 	}
 
-	public List<PostDto> findTrendingPosts(Long userUnivId){
+	public List<PostDto> findTrendingPosts(Long userUnivId) {
 		List<Long> trendingPostIds = trendingPostRepository.findAllPostIds();
 
 		List<Post> trendingPosts = postRepository.findTop5TrendingPosts(trendingPostIds, userUnivId);
@@ -117,13 +119,14 @@ public class PostFinder {
 		List<Long> trendingPostIds = trendingPostRepository.findAllPostIds();
 
 		// 트렌딩 게시글 조회
-		Slice<Post> trendingPosts = postRepository.findTrendingPosts(trendingPostIds, userUnivId, customPageRequest.of(SORT_PROPERTY));
+		Slice<Post> trendingPosts = postRepository.findTrendingPosts(trendingPostIds, userUnivId,
+			customPageRequest.of(SORT_PROPERTY));
 
-		List<TrendingPostPreview> trendingPostPreviews = postDtoMapper.toTrendingPostPreviews(trendingPosts.getContent());
+		List<TrendingPostPreview> trendingPostPreviews = postDtoMapper.toTrendingPostPreviews(
+			trendingPosts.getContent());
 
 		return new SliceImpl<>(trendingPostPreviews, customPageRequest.of(SORT_PROPERTY), trendingPosts.hasNext());
 	}
-
 
 	// 정렬 기준에 맞는 조회 로직 수행
 	private Slice<Post> findPostsBySort(Long boardId, CustomPageRequest pageRequest, PostSortType sortType) {
