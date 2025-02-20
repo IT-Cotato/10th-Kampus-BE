@@ -24,10 +24,10 @@ public class Notice extends BaseTimeEntity {
 	@Column(name = "notice_id")
 	private Long id;
 
-	@Column(name = "title", nullable = false)
+	@Column(name = "title", length = 50, nullable = false)
 	private String title;
 
-	@Column(name = "content", columnDefinition = "text", nullable = false)
+	@Column(name = "content", columnDefinition = "text", length = 1000, nullable = false)
 	private String content;
 
 	@Builder
