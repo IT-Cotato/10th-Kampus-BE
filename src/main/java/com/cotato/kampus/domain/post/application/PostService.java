@@ -11,6 +11,7 @@ import com.cotato.kampus.domain.board.application.BoardValidator;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
+import com.cotato.kampus.domain.post.dto.CardNewsPreview;
 import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
 import com.cotato.kampus.domain.post.dto.PostDraftDetails;
@@ -134,6 +135,14 @@ public class PostService {
 
 		// 검증 통과 후 게시글 조회
 		return postFinder.findPosts(boardId, page, sortType);
+	}
+
+	public Slice<CardNewsPreview> findAllCardNews(int page) {
+		// 현재 사용자 정보 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		// 카드뉴스 조회
+		return postFinder.findAllCardNews(userId, page);
 	}
 
 	public PostDetails findPostDetail(Long postId) {

@@ -23,6 +23,7 @@ import com.cotato.kampus.domain.post.dto.request.DraftDeleteRequest;
 import com.cotato.kampus.domain.post.dto.request.PostCreateRequest;
 import com.cotato.kampus.domain.post.dto.request.PostDraftRequest;
 import com.cotato.kampus.domain.post.dto.request.PostUpdateRequest;
+import com.cotato.kampus.domain.post.dto.response.CardNewsListResponse;
 import com.cotato.kampus.domain.post.dto.response.MyPostResponse;
 import com.cotato.kampus.domain.post.dto.response.PostCreateResponse;
 import com.cotato.kampus.domain.post.dto.response.PostDeleteResponse;
@@ -99,6 +100,20 @@ public class PostController {
 			DataResponse.from(
 				PostSliceFindResponse.from(
 					postService.findPosts(boardId, page, sort)
+				)
+			)
+		);
+	}
+
+	@GetMapping("/cardNews")
+	@Operation(summary = "카드뉴스 게시글 목록 조회", description = "카드뉴스 목록을 조회합니다.")
+	public ResponseEntity<DataResponse<CardNewsListResponse>> findAllCardNews(
+		@RequestParam(required = false, defaultValue = "1") int page
+	) {
+		return ResponseEntity.ok(
+			DataResponse.from(
+				CardNewsListResponse.from(
+					postService.findAllCardNews(page)
 				)
 			)
 		);
