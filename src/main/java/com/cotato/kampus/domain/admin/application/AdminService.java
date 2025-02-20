@@ -180,7 +180,7 @@ public class AdminService {
 	}
 
 	@Transactional
-	public void createCardNews(String title, List<MultipartFile> images) throws ImageException {
+	public void createCardNews(String title, String content, List<MultipartFile> images) throws ImageException {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -198,7 +198,7 @@ public class AdminService {
 		// 카드뉴스 추가
 		Long userId = apiUserResolver.getCurrentUserId();
 		Long boardId = boardFinder.findCardNewsBoardId();
-		Long postId = postAppender.appendCardNews(userId, boardId, title);
+		Long postId = postAppender.appendCardNews(userId, boardId, title, content);
 
 		// 카드뉴스 사진 추가
 		postImageAppender.appendAll(postId, imageUrls);
