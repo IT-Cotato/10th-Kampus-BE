@@ -89,7 +89,7 @@ public class UserController {
 				UserInfoUpdateResponse.from(
 					userService.updateUserInfo(
 						request.nickname(),
-						request.preferredLanguage()
+						PreferredLanguage.fromName(request.preferredLanguage())
 					)
 				)
 			)
