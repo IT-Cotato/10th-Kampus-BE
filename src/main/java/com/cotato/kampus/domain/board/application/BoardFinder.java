@@ -50,7 +50,7 @@ public class BoardFinder {
 	}
 
 	public List<BoardWithFavoriteStatusDto> findPublicBoards(){
-		return boardRepository.findAllByUniversityIdIsNull().stream()
+		return boardRepository.findAllByUniversityIdIsNullAndBoardStatus(BoardStatus.ACTIVE).stream()
 			.map(board -> BoardWithFavoriteStatusDto.of(
 				board.getId(),
 				board.getBoardName(),

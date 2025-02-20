@@ -19,11 +19,9 @@ import lombok.RequiredArgsConstructor;
 public class BoardFavoriteReader {
 
 	private final BoardFavoriteRepository boardFavoriteRepository;
-	private final ApiUserResolver apiUserResolver;
 
 	@Transactional
-	public Set<Long> read() {
-		Long userId = apiUserResolver.getCurrentUserId();
+	public Set<Long> findFavoriteBoardIds(Long userId) {
 		return boardFavoriteRepository.findAllByUserId(userId)
 			.stream()
 			.map(BoardFavorite::getBoardId)
