@@ -38,8 +38,10 @@ public class SecurityConfig {
 	private static final String API_ROOT_URL = "/v1/api/**";
 	private static final String[] WHITE_LIST = {
 		"/v1/api/auth/signup",
-		"/v1/api/products",
+		"/v1/api/products/**",
 		"/v1/api/boards/**",
+		"/v1/api/users/**",
+		"/v1/api/admin/**",
 		"/websocket/**",
 		"/v1/api/chats/**",
 		"/swagger-ui/**",
