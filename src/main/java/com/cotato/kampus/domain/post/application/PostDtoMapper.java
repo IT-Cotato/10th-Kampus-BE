@@ -73,7 +73,8 @@ public class PostDtoMapper {
 			.map(post -> {
 				PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
 					.orElse(null);
-				return TrendingPostPreview.from(post, boardNameMap.get(post.getBoardId()), postPhoto);
+				return TrendingPostPreview.from(post, post.getBoardId(), boardNameMap.get(post.getBoardId()),
+					postPhoto);
 			})
 			.toList();
 	}

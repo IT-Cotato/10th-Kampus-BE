@@ -22,7 +22,7 @@ public class TrendingPostAppender {
 	public void appendTrendingPost(Long postId) {
 		Post post = postFinder.getPost(postId);
 
-		if (post.getLikes() >= 10) {
+		if (post.getLikes() >= 3) {
 			TrendingPost trendingPost = TrendingPost.builder()
 				.postId(postId)
 				.boardId(post.getBoardId())
