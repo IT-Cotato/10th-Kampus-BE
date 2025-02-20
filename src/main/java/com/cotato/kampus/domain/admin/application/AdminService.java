@@ -34,6 +34,7 @@ import com.cotato.kampus.domain.user.application.UserFinder;
 import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
+import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.domain.verification.application.VerificationRecordFinder;
 import com.cotato.kampus.domain.verification.application.VerificationRecordUpdater;
 import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
@@ -231,5 +232,13 @@ public class AdminService {
 		userValidator.validateAdminAccess();
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 		return AdminUserInfo.from(userDto);
+	}
+
+	@Transactional
+	public void changeUserRole(Long userId, UserRole role) {
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+		// 유저 권한 변경
+		userUpdater.updateRole(userId, role);
 	}
 }

@@ -30,7 +30,6 @@ public enum ErrorCode {
 	HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글 검색 기록이 존재하지 않습니다.", "POST-010"),
 	HISTORY_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "자신의 검색 기록만 삭제할 수 있습니다.", "POST-011"),
 
-
 	//Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
 	IMAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "이미지는 필수입니다. 이미지를 첨부해주세요.", "IMAGE-002"),
@@ -61,6 +60,7 @@ public enum ErrorCode {
 	AGREEMENT_ALREADY_EXISTS(HttpStatus.CONFLICT, "해당 유저의 동의 내역이 이미 존재합니다.", "USER-005"),
 	USER_ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 세부정보를 등록한 유저입니다.", "USER-006"),
 	USER_ALREADY_VERIFIED(HttpStatus.NOT_FOUND, "이미 재학생 인증된 유저입니다.", "USER-007"),
+	USER_ROLE_ALREADY_ASSIGNED(HttpStatus.CONFLICT, "같은 권한으로 변경할 수 없습니다.", "USER-008"),
 
 	//Board
 	BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시판을 찾을 수 없습니다.", "BOARD-001"),
@@ -102,9 +102,7 @@ public enum ErrorCode {
 	RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "재학생 인증 요청 기록을 찾을 수 없습니다.", "VERIFICATION-001"),
 
 	// fcm
-	GOOGLE_REQUEST_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "google request token error", "FCM-001")
-
-	;
+	GOOGLE_REQUEST_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "google request token error", "FCM-001");
 	private final HttpStatus httpStatus;
 	private final String message;
 	private final String code;
