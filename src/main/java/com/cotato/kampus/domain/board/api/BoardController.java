@@ -59,7 +59,7 @@ public class BoardController {
 	}
 
 	@GetMapping("/trending")
-	@Operation(summary = "트렌딩 게시판 미리보기 (홈화면)", description = "트렌딩 게시판의 최근 5개 게시글+게시판을 조회합니다.")
+	@Operation(summary = "트렌딩 게시판 미리보기 (홈화면)", description = "트렌딩 게시판의 최근 5개 게시글+게시판을 조회합니다. (타학교 게시판은 제외)")
 	public ResponseEntity<DataResponse<HomeBoardAndPostPreviewResponse>> getTrendingPreview() {
 		return ResponseEntity.ok(
 			DataResponse.from(
