@@ -1,15 +1,19 @@
 package com.cotato.kampus.domain.board.dto.response;
 
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatus;
 
 public record BoardWithDescriptionResponse(
+	Long boardId,
 	String boardName,
-	String description
+	String description,
+	Boolean isFavorite
 ) {
-	public static BoardWithDescriptionResponse from(BoardDto boardDto) {
+	public static BoardWithDescriptionResponse from(BoardWithFavoriteStatus boardWithFavoriteStatus) {
 		return new BoardWithDescriptionResponse(
-			boardDto.boardName(),
-			boardDto.description()
+			boardWithFavoriteStatus.boardId(),
+			boardWithFavoriteStatus.boardName(),
+			boardWithFavoriteStatus.description(),
+			boardWithFavoriteStatus.isFavorite()
 		);
 	}
 }

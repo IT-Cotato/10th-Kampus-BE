@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.board.dao.BoardRepository;
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.dto.BoardDto;
-import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
+import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatus;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -42,13 +42,9 @@ public class BoardFinder {
 		return boards;
 	}
 
-	public List<BoardWithFavoriteStatusDto> findPublicBoards() {
+	public List<BoardDto> findPublicBoards() {
 		return boardRepository.findAllByUniversityIdIsNullAndBoardStatus(BoardStatus.ACTIVE).stream()
-			.map(board -> BoardWithFavoriteStatusDto.of(
-				board.getId(),
-				board.getBoardName(),
-				false
-			))
+			.map(BoardDto::from)
 			.toList();
 	}
 
