@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.post.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -58,4 +59,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		""")
 	Slice<Post> findTrendingPosts(@Param("postIds") List<Long> postIds, @Param("userUnivId") Long userUnivId,
 		Pageable pageable);
+
+	Optional<Post> findTopByBoardIdOrderByCreatedTimeDesc(Long boardId);
 }

@@ -3,7 +3,6 @@ package com.cotato.kampus.domain.board.application;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,19 +33,9 @@ public class BoardDtoEnhancer {
 
 	}
 
-	public List<BoardWithFavoriteStatus> updateFavoriteStatus(List<BoardDto> boardDtos, Set<Long> favoriteBoardIds) {
+	public List<BoardWithFavoriteStatus> updateFavoriteStatus(List<BoardDto> boardDtos, List<Long> favoriteBoardIds) {
 		return boardDtos.stream()
 			.map(boardDto -> BoardWithFavoriteStatus.from(boardDto, favoriteBoardIds.contains(boardDto.boardId())
-			))
-			.toList();
-	}
-
-	public List<BoardWithFavoriteStatus> filterFavoriteBoards(List<BoardDto> boardDtos, Set<Long> favoriteBoardIds) {
-		return boardDtos.stream()
-			.filter(boardDto -> favoriteBoardIds.contains(boardDto.boardId()))
-			.map(boardDto -> BoardWithFavoriteStatus.from(
-				boardDto,
-				true
 			))
 			.toList();
 	}

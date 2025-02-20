@@ -49,11 +49,11 @@ public class BoardController {
 	}
 
 	@GetMapping("/favorite")
-	@Operation(summary = "즐겨찾기 게시판 목록 조회", description = "즐겨찾기에 등록된 게시판 목록을 조회합니다.")
-	public ResponseEntity<DataResponse<BoardListResponse>> getFavoriteBoardList() {
+	@Operation(summary = "즐겨찾기 게시판 목록 조회 (홈화면)", description = "즐겨찾기에 등록된 게시판과 각 게시판의 최신 글을 조회합니다.")
+	public ResponseEntity<DataResponse<HomeBoardAndPostPreviewResponse>> getFavoriteBoardPreview() {
 		return ResponseEntity.ok(DataResponse.from(
-			BoardListResponse.from(
-				boardService.getFavoriteBoardList()
+			HomeBoardAndPostPreviewResponse.from(
+				boardService.getFavoriteBoardPreview()
 			)
 		));
 	}

@@ -39,7 +39,7 @@ public class BoardService {
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 즐겨찾는 게시판 조회
-		Set<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
+		List<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
 
 		// 공용 게시판 조회
 		List<BoardDto> boards = boardFinder.findPublicBoards();
@@ -54,18 +54,15 @@ public class BoardService {
 		return boardWithFavorites;
 	}
 
-	public List<BoardWithFavoriteStatus> getFavoriteBoardList() {
+	public List<HomeBoardAndPostPreview> getFavoriteBoardPreview() {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 즐겨찾는 게시판 조회
-		Set<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
+		List<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
+		List<BoardDto> boardDtos = boardFinder.findBoardDtos(favoriteBoardIds);
 
-		// 전체 공용 게시판 조회
-		List<BoardDto> boards = boardFinder.findPublicBoards();
-
-		// 즐겨찾는 게시판만 필터링
-		return boardDtoEnhancer.filterFavoriteBoards(boards, favoriteBoardIds);
+		return postDtoMapper.mapToHomeBoardAndPostPreviewsByBoardDtos(boardDtos);
 	}
 
 	public Long addFavoriteBoard(Long boardId) {

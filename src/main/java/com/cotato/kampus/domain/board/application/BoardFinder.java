@@ -44,6 +44,12 @@ public class BoardFinder {
 		return boards;
 	}
 
+	public List<BoardDto> findBoardDtos(List<Long> boardIds) {
+		return boardIds.stream()
+			.map(this::findBoardDto)
+			.toList();
+	}
+
 	public List<BoardDto> findPublicBoards() {
 		return boardRepository.findAllByUniversityIdIsNullAndBoardStatus(BoardStatus.ACTIVE).stream()
 			.map(BoardDto::from)
