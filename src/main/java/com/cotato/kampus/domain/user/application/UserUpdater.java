@@ -35,6 +35,13 @@ public class UserUpdater {
 	}
 
 	@Transactional
+	public Long updateDetails(String nickname, PreferredLanguage preferredLanguage) {
+		User user = apiUserResolver.getCurrentUser();
+		user.updateInfo(nickname, preferredLanguage);
+		return user.getId();
+	}
+
+	@Transactional
 	public Long updateVerificationStatus(Long userId, Long universityId) {
 		User user = userFinder.findById(userId);
 		user.updateVerificationStatus(universityId);

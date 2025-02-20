@@ -19,11 +19,13 @@ import com.cotato.kampus.domain.user.dto.request.ConfirmMailRequest;
 import com.cotato.kampus.domain.user.dto.request.NicknameCheckRequest;
 import com.cotato.kampus.domain.user.dto.request.SendMailRequest;
 import com.cotato.kampus.domain.user.dto.request.UserDetailsUpdateRequest;
+import com.cotato.kampus.domain.user.dto.request.UserInfoUpdateRequest;
 import com.cotato.kampus.domain.user.dto.response.ConfirmMailResponse;
 import com.cotato.kampus.domain.user.dto.response.NicknameCheckResponse;
 import com.cotato.kampus.domain.user.dto.response.SendMailResponse;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsResponse;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsUpdateResponse;
+import com.cotato.kampus.domain.user.dto.response.UserInfoUpdateResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -71,6 +73,22 @@ public class UserController {
 						request.privacyPolicyAgreement(),
 						request.termsOfServiceAgreement(),
 						request.marketingAgreement()
+					)
+				)
+			)
+		);
+	}
+
+	@PatchMapping("/info")
+	@Operation(summary = "[마이페이지] 유저 정보 수정", description = "닉네임, 선호 언어 수정(첫 로그인 이후에는 이거말고 /details 사용하세요!!!!)")
+	public ResponseEntity<DataResponse<UserInfoUpdateResponse>> updateUserInfo(
+		@RequestBody @Valid UserInfoUpdateRequest request) {
+		return ResponseEntity.ok(
+			DataResponse.from(
+				UserInfoUpdateResponse.from(
+					userService.updateUserInfo(
+						request.nickname(),
+						request.preferredLanguage()
 					)
 				)
 			)
