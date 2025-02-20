@@ -58,7 +58,7 @@ public class BoardController {
 	}
 
 	@GetMapping("/{boardId}")
-	@Operation(summary = "특정 게시판 제목, 설명 조회", description = "특정 게시판의 제목과 설명을 조회합니다.")
+	@Operation(summary = "특정 게시판 제목, 설명, 즐겨찾기 여부 조회", description = "특정 게시판의 제목, 설명, 즐겨찾기 여부를 조회합니다.")
 	public ResponseEntity<DataResponse<BoardWithDescriptionResponse>> getBoardWithDescription(
 		@PathVariable Long boardId
 	) {
