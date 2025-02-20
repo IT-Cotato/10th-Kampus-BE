@@ -22,21 +22,25 @@ public class UnivFinder {
 	private final VerificationRecordRepository verificationRecordRepository;
 
 	public Long findUniversityId(String universityName) {
-		University university =  universityRepository.findByUniversityName(universityName)
+		University university = universityRepository.findByUniversityName(universityName)
 			.orElseThrow(() -> new AppException(ErrorCode.UNIVERSITY_NOT_FOUND));
 
 		return university.getId();
 	}
 
-	public Long findUniversityId(Long verificationRecordId){
+	public Long findUniversityId(Long verificationRecordId) {
 		return verificationRecordRepository.findById(verificationRecordId)
 			.orElseThrow(() -> new AppException(ErrorCode.UNIVERSITY_NOT_FOUND))
 			.getUniversityId();
 	}
 
-	public University findUniversity(Long universityId){
+	public University findUniversity(Long universityId) {
 		return universityRepository.findById(universityId)
 			.orElseThrow(() -> new AppException(ErrorCode.UNIVERSITY_NOT_FOUND));
+	}
+
+	public String findUniversityName(Long universityId) {
+		return findUniversity(universityId).getUniversityName();
 	}
 
 }

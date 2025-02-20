@@ -13,6 +13,7 @@ import com.cotato.kampus.domain.admin.dto.AdminBoardDetail;
 import com.cotato.kampus.domain.admin.dto.AdminUserInfo;
 import com.cotato.kampus.domain.admin.dto.StudentVerification;
 import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsPreview;
+import com.cotato.kampus.domain.admin.dto.response.BoardInfo;
 import com.cotato.kampus.domain.board.application.BoardAppender;
 import com.cotato.kampus.domain.board.application.BoardDtoEnhancer;
 import com.cotato.kampus.domain.board.application.BoardFinder;
@@ -20,6 +21,7 @@ import com.cotato.kampus.domain.board.application.BoardUpdater;
 import com.cotato.kampus.domain.board.application.BoardValidator;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
+import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.post.application.PostAppender;
@@ -157,12 +159,20 @@ public class AdminService {
 		return boardDtoEnhancer.mapToAdminBoardDetail(boardDtos);
 	}
 
-	public BoardDto getBoard(Long boardId) {
+	public BoardInfo getBoard(Long boardId) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
 		// 게시판 조회
-		return boardFinder.findBoardDto(boardId);
+		BoardDto boardDto = boardFinder.findBoardDto(boardId);
+
+		// 대학 이름 조회
+		if(boardDto.boardType().equals(BoardType.UNIVERSITY)) {
+			String universityName = univFinder.findUniversityName(boardDto.universityId());
+			return BoardInfo.from(boardDto, universityName);
+		}
+
+		return BoardInfo.from(boardDto, null);
 	}
 
 	public Slice<StudentVerification> getVerifications(int page) {

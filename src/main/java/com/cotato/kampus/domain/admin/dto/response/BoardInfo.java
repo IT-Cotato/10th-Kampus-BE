@@ -4,7 +4,7 @@ import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 
-public record BoardInfoResponse(
+public record BoardInfo(
 	Long boardId,
 	String boardName,
 	String description,
@@ -14,16 +14,16 @@ public record BoardInfoResponse(
 	BoardStatus boardStatus,
 	BoardType boardType
 ) {
-	public static BoardInfoResponse from(BoardInfo boardInfo) {
-		return new BoardInfoResponse(
-			boardInfo.boardId(),
-			boardInfo.boardName(),
-			boardInfo.description(),
-			boardInfo.isUniversityBoard(),
-			boardInfo.universityName(),
-			boardInfo.isCategoryRequired(),
-			boardInfo.boardStatus(),
-			boardInfo.boardType()
+	public static BoardInfo from(BoardDto board, String universityName){
+		return new BoardInfo(
+			board.boardId(),
+			board.boardName(),
+			board.description(),
+			board.universityId() != null,
+			universityName,
+			board.isCategoryRequired(),
+			board.boardStatus(),
+			board.boardType()
 		);
 	}
 }
