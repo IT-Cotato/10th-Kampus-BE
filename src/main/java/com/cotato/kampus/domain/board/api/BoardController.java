@@ -12,6 +12,7 @@ import com.cotato.kampus.domain.board.application.BoardService;
 import com.cotato.kampus.domain.board.dto.response.BoardListResponse;
 import com.cotato.kampus.domain.board.dto.response.BoardWithDescriptionResponse;
 import com.cotato.kampus.domain.board.dto.response.FavoriteBoardResponse;
+import com.cotato.kampus.domain.board.dto.response.HomeBoardAndPostPreviewResponse;
 import com.cotato.kampus.domain.board.dto.response.UniversityBoardResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
@@ -55,6 +56,18 @@ public class BoardController {
 				boardService.getFavoriteBoardList()
 			)
 		));
+	}
+
+	@GetMapping("/trending")
+	@Operation(summary = "트렌딩 게시판 미리보기 (홈화면)", description = "트렌딩 게시판의 최근 5개 게시글+게시판을 조회합니다.")
+	public ResponseEntity<DataResponse<HomeBoardAndPostPreviewResponse>> getTrendingPreview() {
+		return ResponseEntity.ok(
+			DataResponse.from(
+				HomeBoardAndPostPreviewResponse.from(
+					boardService.getTrendingPreview()
+				)
+			)
+		);
 	}
 
 	@GetMapping("/{boardId}")

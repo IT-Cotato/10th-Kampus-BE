@@ -16,6 +16,7 @@ import com.cotato.kampus.domain.post.dao.PostDraftRepository;
 import com.cotato.kampus.domain.post.dao.PostPhotoRepository;
 import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.domain.post.dao.PostScrapRepository;
+import com.cotato.kampus.domain.post.dao.TrendingPostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostDraft;
 import com.cotato.kampus.domain.post.domain.PostDraftPhoto;
@@ -51,6 +52,7 @@ public class PostFinder {
 	private final BoardFinder boardFinder;
 	private final PostScrapRepository postScrapRepository;
 	private final PostDraftPhotoRepository postDraftPhotoRepository;
+	private final TrendingPostRepository trendingPostRepository;
 
 	public Post getPost(Long postId) {
 		return postRepository.findById(postId)
@@ -93,6 +95,15 @@ public class PostFinder {
 
 	}
 
+	public List<PostDto> findTrendingPosts(Long userUnivId){
+		List<Long> trendingPostIds = trendingPostRepository.findAllPostIds();
+
+		List<Post> trendingPosts = postRepository.findTop5TrendingPosts(trendingPostIds, userUnivId);
+
+		return trendingPosts.stream()
+			.map(PostDto::from)
+			.toList();
+	}
 
 	// 정렬 기준에 맞는 조회 로직 수행
 	private Slice<Post> findPostsBySort(Long boardId, CustomPageRequest pageRequest, PostSortType sortType) {

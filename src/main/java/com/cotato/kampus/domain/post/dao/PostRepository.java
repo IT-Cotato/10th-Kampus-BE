@@ -36,4 +36,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	void deleteAllByBoardIdIn(List<Long> boardId);
 
 	List<Post> findAllByBoardId(Long boardId);
+
+	@Query("""
+		SELECT p FROM Post p
+		JOIN Board b ON p.boardId = b.id
+		WHERE p.id IN :postIds
+		AND (b.boardType <> 'UNIVERSITY' OR b.universityId = :userUnivId)
+		ORDER BY p.createdTime DESC
+		LIMIT 5		
+	""")
+	List<Post> findTop5TrendingPosts(@Param("postIds") List<Long> postIds, @Param("userUnivId") Long userUnivId);
 }

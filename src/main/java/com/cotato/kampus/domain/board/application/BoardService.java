@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatus;
+import com.cotato.kampus.domain.board.dto.HomeBoardAndPostPreview;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.post.application.PostDtoMapper;
+import com.cotato.kampus.domain.post.application.PostFinder;
+import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 
@@ -27,6 +31,8 @@ public class BoardService {
 	private final BoardFavoriteDeleter boardFavoriteDeleter;
 	private final UserValidator userValidator;
 	private final ApiUserResolver apiUserResolver;
+	private final PostFinder postFinder;
+	private final PostDtoMapper postDtoMapper;
 
 	public List<BoardWithFavoriteStatus> getBoardList() {
 		// 유저 조회
@@ -102,5 +108,16 @@ public class BoardService {
 		BoardDto boardDto = boardFinder.findBoardDto(boardId);
 
 		return boardDtoEnhancer.mapToBoardWithFavoriteStatus(boardDto, userDto);
+	}
+
+	public List<HomeBoardAndPostPreview> getTrendingPreview() {
+		// 유저 정보 조회
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
+		Long userUnivId = userDto.universityId();
+
+		// Trending 게시글 조회 (타 대학 게시글 제외)
+		List<PostDto> trendingPosts = postFinder.findTrendingPosts(userUnivId);
+
+		return postDtoMapper.mapToHomeBoardAndPostPreviews(trendingPosts);
 	}
 }
