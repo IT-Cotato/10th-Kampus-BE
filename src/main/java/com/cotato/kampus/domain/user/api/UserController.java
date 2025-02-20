@@ -26,6 +26,7 @@ import com.cotato.kampus.domain.user.dto.response.SendMailResponse;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsResponse;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsUpdateResponse;
 import com.cotato.kampus.domain.user.dto.response.UserInfoUpdateResponse;
+import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -68,7 +69,7 @@ public class UserController {
 					userService.updateUserDetails(
 						request.nickname(),
 						request.nationality(),
-						request.preferredLanguage(),
+						PreferredLanguage.fromName(request.preferredLanguage()),
 						request.personalInfoAgreement(),
 						request.privacyPolicyAgreement(),
 						request.termsOfServiceAgreement(),

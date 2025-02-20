@@ -1,7 +1,6 @@
 package com.cotato.kampus.domain.user.dto.request;
 
 import com.cotato.kampus.domain.user.enums.Nationality;
-import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
@@ -17,7 +16,7 @@ public record UserDetailsUpdateRequest(
 	Nationality nationality,
 
 	@NotNull(message = "선호 언어를 입력해야 합니다.")
-	PreferredLanguage preferredLanguage,
+	String preferredLanguage,
 
 	@NotNull(message = "개인정보 수집 및 이용 동의는 필수입니다.")
 	@AssertTrue(message = "개인정보 수집 및 이용에 동의해야 합니다.")
