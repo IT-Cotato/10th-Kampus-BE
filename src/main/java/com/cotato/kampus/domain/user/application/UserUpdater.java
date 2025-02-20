@@ -8,6 +8,9 @@ import com.cotato.kampus.domain.user.dao.UserRepository;
 import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
+import com.cotato.kampus.domain.user.enums.UserRole;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +35,7 @@ public class UserUpdater {
 	}
 
 	@Transactional
-	public Long updateVerificationStatus(Long userId, Long universityId){
+	public Long updateVerificationStatus(Long userId, Long universityId) {
 		User user = userFinder.findById(userId);
 		user.updateVerificationStatus(universityId);
 		return user.getId();
@@ -44,5 +47,15 @@ public class UserUpdater {
 		user.updateDeviceToken(deviceToken);
 
 		// userRepository.save(user.updateDeviceToken(deviceToken));
+	}
+
+	@Transactional
+	public void updateRole(Long userId, UserRole role) {
+		User user = userFinder.findById(userId);
+		if (user.getUserRole() == role) {
+			// 이미 같은 권한을 가지고 있는 경우
+			throw new AppException(ErrorCode.USER_ROLE_ALREADY_ASSIGNED);
+		}
+		user.updateRole(role);
 	}
 }
