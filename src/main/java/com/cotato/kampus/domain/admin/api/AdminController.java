@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,7 +18,9 @@ import com.cotato.kampus.domain.admin.application.AdminService;
 import com.cotato.kampus.domain.admin.dto.request.BoardCreateRequest;
 import com.cotato.kampus.domain.admin.dto.request.BoardUpdateRequest;
 import com.cotato.kampus.domain.admin.dto.request.CardNewsCreateRequest;
+import com.cotato.kampus.domain.admin.dto.request.ChangeUserRoleRequest;
 import com.cotato.kampus.domain.admin.dto.response.AdminBoardListResponse;
+import com.cotato.kampus.domain.admin.dto.response.AdminUserDetailsResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardCreateResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardInfoResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationListResponse;
@@ -178,5 +181,23 @@ public class AdminController {
 				adminService.getAllCardNews(page)
 			)
 		));
+	}
+
+	@GetMapping("/users/details")
+	@Operation(summary = "관리자 정보 조회", description = "관리자의 이름, 이메일, 권한을 조회합니다.")
+	public ResponseEntity<DataResponse<AdminUserDetailsResponse>> getAdminUserDetails() {
+		return ResponseEntity.ok(DataResponse.from(
+			AdminUserDetailsResponse.from(
+				adminService.getAdminUserDetails()
+			)
+		));
+	}
+
+	@PatchMapping("/users/roles")
+	@Operation(summary = "관리자 권한 변경", description = "UserId를 통해 유저의 권한 변경")
+	public ResponseEntity<DataResponse<Void>> changeUserRole(
+		@RequestBody ChangeUserRoleRequest request) {
+		adminService.changeUserRole(request.userId(), request.role());
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 }
