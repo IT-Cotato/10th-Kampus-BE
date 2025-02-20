@@ -9,10 +9,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.admin.dto.AdminBoardDetail;
+import com.cotato.kampus.domain.board.dao.BoardFavoriteRepository;
 import com.cotato.kampus.domain.board.dto.BoardDto;
-import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
+import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatus;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.post.dao.PostRepository;
+import com.cotato.kampus.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,23 +25,27 @@ import lombok.RequiredArgsConstructor;
 public class BoardDtoEnhancer {
 
 	private final PostRepository postRepository;
+	private final BoardFavoriteRepository boardFavoriteRepository;
 
-	public List<BoardWithFavoriteStatusDto> updateFavoriteStatus(List<BoardWithFavoriteStatusDto> boardWithFavoriteStatusDtos, Set<Long> favoriteBoardIds) {
-		return boardWithFavoriteStatusDtos.stream()
-			.map(boardDto -> BoardWithFavoriteStatusDto.of(
-				boardDto.boardId(),
-				boardDto.boardName(),
-				favoriteBoardIds.contains(boardDto.boardId())
+	public BoardWithFavoriteStatus mapToBoardWithFavoriteStatus(BoardDto boardDto, UserDto userDto) {
+		Boolean isFavorite = boardFavoriteRepository.existsByUserIdAndBoardId(userDto.id(), boardDto.boardId());
+
+		return BoardWithFavoriteStatus.from(boardDto, isFavorite);
+
+	}
+
+	public List<BoardWithFavoriteStatus> updateFavoriteStatus(List<BoardDto> boardDtos, Set<Long> favoriteBoardIds) {
+		return boardDtos.stream()
+			.map(boardDto -> BoardWithFavoriteStatus.from(boardDto, favoriteBoardIds.contains(boardDto.boardId())
 			))
 			.toList();
 	}
 
-	public List<BoardWithFavoriteStatusDto> filterFavoriteBoards(List<BoardWithFavoriteStatusDto> boardWithFavoriteStatusDtos, Set<Long> favoriteBoardIds) {
-		return boardWithFavoriteStatusDtos.stream()
+	public List<BoardWithFavoriteStatus> filterFavoriteBoards(List<BoardDto> boardDtos, Set<Long> favoriteBoardIds) {
+		return boardDtos.stream()
 			.filter(boardDto -> favoriteBoardIds.contains(boardDto.boardId()))
-			.map(boardDto -> BoardWithFavoriteStatusDto.of(
-				boardDto.boardId(),
-				boardDto.boardName(),
+			.map(boardDto -> BoardWithFavoriteStatus.from(
+				boardDto,
 				true
 			))
 			.toList();
@@ -54,7 +60,7 @@ public class BoardDtoEnhancer {
 				Long postCount = postRepository.countByBoardId(board.boardId());
 
 				// 삭제 대기인 게시글은 삭제 날짜 카운트 반환
-				if(board.boardStatus().equals(BoardStatus.PENDING_DELETION)) {
+				if (board.boardStatus().equals(BoardStatus.PENDING_DELETION)) {
 					// 삭제까지 남은 날짜
 					Long deletionCountDown = ChronoUnit.DAYS.between(now, board.deletionScheduledAt());
 					return AdminBoardDetail.of(board, postCount, deletionCountDown);
@@ -63,4 +69,5 @@ public class BoardDtoEnhancer {
 				return AdminBoardDetail.of(board, postCount, null);
 			}).toList();
 	}
+
 }

@@ -2,12 +2,12 @@ package com.cotato.kampus.domain.board.dto.response;
 
 import java.util.List;
 
-import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
+import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatus;
 
 public record BoardListResponse(
-	List<BoardWithFavoriteStatusDto> boards
+	List<BoardWithFavoriteStatus> boards
 ) {
-	public static BoardListResponse from(List<BoardWithFavoriteStatusDto> boards){
+	public static BoardListResponse from(List<BoardWithFavoriteStatus> boards){
 		return new BoardListResponse(boards);
 	}
 }
