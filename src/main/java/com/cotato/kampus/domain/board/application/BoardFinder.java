@@ -28,13 +28,15 @@ public class BoardFinder {
 	public List<BoardDto> findAllBoards(BoardStatus boardStatus) {
 		List<BoardDto> boards;
 
-		// 전체 게시판 조회
+		// 전체 게시판 조회 (카드뉴스 제외)
 		if (boardStatus == null) {
 			boards = boardRepository.findAll().stream()
+				.filter(board -> !board.getBoardType().equals(BoardType.CARDNEWS))
 				.map(BoardDto::from)
 				.toList();
 		} else {
 			boards = boardRepository.findAllByBoardStatus(boardStatus).stream()
+				.filter(board -> !board.getBoardType().equals(BoardType.CARDNEWS))
 				.map(BoardDto::from)
 				.toList();
 		}
