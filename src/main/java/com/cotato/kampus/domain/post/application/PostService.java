@@ -23,7 +23,6 @@ import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.dto.SearchedPost;
 import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.enums.PostSortType;
-import com.cotato.kampus.domain.user.application.UserFinder;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -66,6 +65,7 @@ public class PostService {
 	private static final String POST_IMAGE_FOLDER = "post";
 	private final BoardValidator boardValidator;
 	private final BoardFinder boardFinder;
+	private final TrendingPostAppender trendingPostAppender;
 
 	@Transactional
 	public Long createPost(
@@ -320,7 +320,7 @@ public class PostService {
 		postUpdater.increasePostLike(postId);
 
 		// 5. Trending 게시판 조건 만족 시 추가
-		postAppender.appendTrendingPost(postId);
+		trendingPostAppender.appendTrendingPost(postId);
 	}
 
 	@Transactional
