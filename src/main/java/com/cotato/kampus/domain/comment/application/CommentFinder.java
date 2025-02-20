@@ -34,6 +34,10 @@ public class CommentFinder {
 			.orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
 	}
 
+	public CommentDto findCommentDto(Long commentId){
+		return CommentDto.from(findComment(commentId));
+	}
+
 	public List<CommentDto> findComments(Long postId){
 		List<Comment> comments = commentRepository.findAllByPostIdOrderByCreatedTimeAsc(postId);
 		List<CommentDto> commentDtos = comments.stream()

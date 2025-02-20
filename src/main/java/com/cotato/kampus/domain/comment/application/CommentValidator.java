@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.comment.domain.Comment;
+import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.comment.enums.CommentStatus;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -58,6 +59,12 @@ public class CommentValidator {
 		Comment comment = commentFinder.findComment(commentId);
 		if (comment.getCommentStatus() != CommentStatus.NORMAL) {
 			throw new AppException(ErrorCode.INVALID_COMMENT);
+		}
+	}
+
+	public void validateCommentAuthor(Long userId, CommentDto commentDto){
+		if(!commentDto.userId().equals(userId)){
+			throw new AppException(ErrorCode.COMMENT_NOT_AUTHOR);
 		}
 	}
 }
