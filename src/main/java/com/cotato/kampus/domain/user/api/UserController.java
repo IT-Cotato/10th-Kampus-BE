@@ -132,7 +132,7 @@ public class UserController {
 		return ResponseEntity.ok(DataResponse.from(
 				ConfirmMailResponse.from(
 					userService.verifyEmailCode(
-						request.email(), request.universityId(), request.code()
+						request.email(), request.universityName(), request.code()
 					)
 				)
 			)

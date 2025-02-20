@@ -72,17 +72,15 @@ public class UserService {
 	}
 
 	@Transactional
-	public Long verifyEmailCode(String email, Long universityId, int code) throws IOException {
+	public Long verifyEmailCode(String email, String universityName, int code) throws IOException {
 		// 이미 재학생 인증 되었는지 확인
 		userValidator.validateDuplicateStudentVerification();
 
-		// 학교 이름 조회
-		String univName = univFinder.findUniversity(universityId).getUniversityName();
-
 		// 코드 인증
-		univEmailVerifier.verifyCode(email, univName, code);
+		univEmailVerifier.verifyCode(email, universityName, code);
 
 		// VerificationRecord 추가
+		Long universityId = univFinder.findUniversityId(universityName);
 		verificationRecordAppender.appendEmailType(universityId);
 
 		// 유저 조회
