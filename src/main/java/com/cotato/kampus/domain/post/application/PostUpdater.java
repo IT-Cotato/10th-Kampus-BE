@@ -43,6 +43,20 @@ public class PostUpdater {
 	}
 
 	@Transactional
+	public void increaseComments(Long postId){
+		Post post = postFinder.getPost(postId);
+
+		post.increaseComments();
+	}
+
+	@Transactional
+	public void decreaseComments(Long postId){
+		Post post = postFinder.getPost(postId);
+
+		post.decreaseComments();
+	}
+
+	@Transactional
 	public Long increaseNextAnonymousNumber(Long postId) {
 		Post post = postFinder.getPost(postId);
 		Long currentAnonymousNumber = post.getNextAnonymousNumber();

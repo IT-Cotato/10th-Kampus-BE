@@ -76,10 +76,10 @@ public class Post extends BaseTimeEntity {
 		this.title = title;
 		this.content = content;
 		this.postCategory = postCategory;
-  	}
+	}
 
-  public void increaseNextAnonymousNumber(){
-			this.nextAnonymousNumber++;
+	public void increaseNextAnonymousNumber() {
+		this.nextAnonymousNumber++;
 	}
 
 	public void increaseScraps() {
@@ -96,6 +96,14 @@ public class Post extends BaseTimeEntity {
 
 	public void decreaseLikes() {
 		this.likes--;
+	}
+
+	public void increaseComments() {
+		this.comments++;
+	}
+
+	public void decreaseComments() {
+		this.comments--;
 	}
 
 	public void updateStatus(PostStatus postStatus) {
