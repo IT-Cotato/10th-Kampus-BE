@@ -76,7 +76,7 @@ public class AdminService {
 		boardValidator.validateUniqueName(boardName);
 
 		// 학교 게시판인 경우
-		if(universityName != null) {
+		if (universityName != null) {
 			Long universityId = univFinder.findUniversityId(universityName);
 			boardValidator.validateUniversityBoardExists(universityId);
 
@@ -150,6 +150,14 @@ public class AdminService {
 
 		// 게시판 게시글 수, 삭제까지 남은 날짜 수 매핑
 		return boardDtoEnhancer.mapToAdminBoardDetail(boardDtos);
+	}
+
+	public BoardDto getBoard(Long boardId) {
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+
+		// 게시판 조회
+		return boardFinder.findBoardDto(boardId);
 	}
 
 	public Slice<StudentVerification> getVerifications(int page) {
