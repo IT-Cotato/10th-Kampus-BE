@@ -1,7 +1,10 @@
 package com.cotato.kampus.domain.post.dto;
 
+import java.time.LocalDateTime;
+
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record CardNewsPreview(
 	Long postId,
@@ -10,7 +13,9 @@ public record CardNewsPreview(
 	Long likes,
 	Long comments,
 	String thumbnailUrl,
-	Boolean isScrapped
+	Boolean isScrapped,
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	LocalDateTime createdTime
 ) {
 	public static CardNewsPreview from(Post post, PostPhoto postPhoto, Boolean isScrapped) {
 		return new CardNewsPreview(
@@ -20,7 +25,8 @@ public record CardNewsPreview(
 			post.getLikes(),
 			post.getComments(),
 			postPhoto != null ? postPhoto.getPhotoUrl() : null,
-			isScrapped
+			isScrapped,
+			post.getCreatedTime()
 		);
 	}
 }
