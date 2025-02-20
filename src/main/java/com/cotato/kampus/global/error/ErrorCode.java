@@ -102,7 +102,11 @@ public enum ErrorCode {
 	RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "재학생 인증 요청 기록을 찾을 수 없습니다.", "VERIFICATION-001"),
 
 	// fcm
-	GOOGLE_REQUEST_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "google request token error", "FCM-001");
+	GOOGLE_REQUEST_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "google request token error", "FCM-001"),
+
+	// Notice
+	NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 공지를 찾을 수 없습니다.", "NOTICE-001");
+
 	private final HttpStatus httpStatus;
 	private final String message;
 	private final String code;
