@@ -105,7 +105,16 @@ public enum ErrorCode {
 	GOOGLE_REQUEST_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "google request token error", "FCM-001"),
 
 	// Notice
-	NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 공지를 찾을 수 없습니다.", "NOTICE-001");
+	NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 공지를 찾을 수 없습니다.", "NOTICE-001"),
+
+	// Language
+	INVALID_LANGUAGE_CODE(HttpStatus.BAD_REQUEST, "유효하지 않은 언어 코드입니다.", "LANGUAGE-001"),
+	INVALID_LANGUAGE_NAME(HttpStatus.BAD_REQUEST, "유효하지 않은 언어명입니다.", "LANGUAGE-002"),
+
+	// Nationality
+	INVALID_NATIONALITY_CODE(HttpStatus.BAD_REQUEST, "유효하지 않은 국가 코드입니다.", "NATIONALITY-001"),
+	INVALID_NATIONALITY_NAME(HttpStatus.BAD_REQUEST, "유효하지 않은 국가명입니다.", "NATIONALITY-002"),
+	;
 
 	private final HttpStatus httpStatus;
 	private final String message;

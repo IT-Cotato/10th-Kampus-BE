@@ -78,4 +78,8 @@ public class UserValidator {
 		// 이미 있는 유저 닉네임이면 false
 		return !userFinder.existsByNickname(nickname);
 	}
+
+	public void validateUserInfoUpdate(String nickname) {
+		validateDuplicatedNickname(nickname);
+	}
 }

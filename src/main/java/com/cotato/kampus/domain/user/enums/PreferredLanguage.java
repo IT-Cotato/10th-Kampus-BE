@@ -1,5 +1,8 @@
 package com.cotato.kampus.domain.user.enums;
 
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
+
 public enum PreferredLanguage {
 	ARABIC("Arabic", "AR"),
 	BULGARIAN("Bulgarian", "BG"),
@@ -57,7 +60,7 @@ public enum PreferredLanguage {
 				return language;
 			}
 		}
-		throw new IllegalArgumentException("No matching language for code: " + code);
+		throw new AppException(ErrorCode.INVALID_LANGUAGE_CODE);
 	}
 
 	public static PreferredLanguage fromName(String name) {
@@ -66,6 +69,6 @@ public enum PreferredLanguage {
 				return language;
 			}
 		}
-		throw new IllegalArgumentException("No matching language for name: " + name);
+		throw new AppException(ErrorCode.INVALID_LANGUAGE_NAME);
 	}
 }

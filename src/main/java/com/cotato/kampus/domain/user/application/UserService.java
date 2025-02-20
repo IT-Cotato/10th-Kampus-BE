@@ -112,4 +112,12 @@ public class UserService {
 	public Boolean checkNicknameAvailability(String nickname) {
 		return userValidator.checkNicknameAvailability(nickname);
 	}
+
+	@Transactional
+	public Long updateUserInfo(String nickname, PreferredLanguage preferredLanguage) {
+		// 닉네임 검증
+		userValidator.validateUserInfoUpdate(nickname);
+		// 2. 유저 닉네임, 선호언어 설정
+		return userUpdater.updateDetails(nickname, preferredLanguage);
+	}
 }

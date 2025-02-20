@@ -112,4 +112,9 @@ public class User {
 	public void updateRole(UserRole role) {
 		this.userRole = role;
 	}
+
+	public void updateInfo(String nickname, PreferredLanguage preferredLanguage) {
+		this.nickname = nickname;
+		this.preferredLanguage = preferredLanguage;
+	}
 }
