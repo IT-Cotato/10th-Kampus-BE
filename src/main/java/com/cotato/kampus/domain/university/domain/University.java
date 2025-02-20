@@ -24,7 +24,7 @@ public class University extends BaseTimeEntity {
 	@Column(name = "university_id")
 	private Long id;
 
-	@Column(name = "university_name", nullable = false, length = 10)
+	@Column(name = "university_name", nullable = false, length = 20)
 	private String universityName; // 추후에 Enum으로 변경 필요
 
 	@Builder
