@@ -15,11 +15,11 @@ public record PostCreateRequest(
 	Long boardId,
 
 	@NotBlank
-	@Size(max=30)
+	@Size(max = 50, message = "제목은 최대 50자까지 입력할 수 있습니다.")
 	String title,
 
 	@NotBlank
-	@Size(max=1000)
+	@Size(max = 1000, message = "내용은 최대 1000자까지 입력할 수 있습니다.")
 	String content,
 
 	PostCategory postCategory,
