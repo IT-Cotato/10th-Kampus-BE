@@ -1,11 +1,7 @@
 package com.cotato.kampus.domain.post.application;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
@@ -13,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.application.BoardFinder;
-import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.dao.PostDraftPhotoRepository;
 import com.cotato.kampus.domain.post.dao.PostDraftRepository;
@@ -31,6 +27,7 @@ import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDraftDto;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
+import com.cotato.kampus.domain.post.dto.PostPreview;
 import com.cotato.kampus.domain.post.dto.PostReferenceDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.dto.SearchedPost;
@@ -149,21 +146,21 @@ public class PostFinder {
 		};
 	}
 
-	public Slice<PostWithPhotos> findUserCommentedPosts(List<Long> postIds, int page) {
-
-		// CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-		PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
-		String orderList = postIds.stream().map(String::valueOf).collect(Collectors.joining(","));
-		Slice<Post> posts = postRepository.findPostsByIdsInOrder(postIds, orderList, pageRequest);
-
-		// 3. Post -> PostWithPhotos 매핑
-		return posts.map(post -> {
-			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
-				.orElse(null);
-			return PostWithPhotos.from(post, postPhoto);
-		});
-
-	}
+	// public Slice<PostWithPhotos> findUserCommentedPosts(List<Long> postIds, int page) {
+	//
+	// 	// CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+	// 	PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+	// 	String orderList = postIds.stream().map(String::valueOf).collect(Collectors.joining(","));
+	// 	Slice<Post> posts = postRepository.findPostsByIdsInOrder(postIds, orderList, pageRequest);
+	//
+	// 	// 3. Post -> PostWithPhotos 매핑
+	// 	return posts.map(post -> {
+	// 		PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
+	// 			.orElse(null);
+	// 		return PostWithPhotos.from(post, postPhoto);
+	// 	});
+	//
+	// }
 
 	public PostDto findPost(Long postId) {
 		Post post = postRepository.findById(postId)
@@ -186,12 +183,12 @@ public class PostFinder {
 		Slice<Post> posts = postRepository.findAllByUserId(userId, customPageRequest.of(SORT_PROPERTY));
 
 		return posts.map(post -> {
-			String boardName = boardFinder.findBoardDto(post.getBoardId()).boardName();
+			BoardDto boardDto = boardFinder.findBoardDto(post.getBoardId());
 
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())
 				.orElse(null);
 
-			return MyPostWithPhoto.from(post, boardName, postPhoto);
+			return MyPostWithPhoto.from(post, boardDto, postPhoto);
 		});
 	}
 
@@ -206,13 +203,12 @@ public class PostFinder {
 		// 스크랩된 포스트에 해당하는 Post를 찾아서 반환
 		return postScraps.map(postScrap -> {
 			Post post = getPost(postScrap.getPostId());
-
-			String boardName = boardFinder.findBoardDto(post.getBoardId()).boardName();
+			BoardDto boardDto = boardFinder.findBoardDto(post.getBoardId());
 
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())
 				.orElse(null);
 
-			return MyPostWithPhoto.from(post, boardName, postPhoto);
+			return MyPostWithPhoto.from(post, boardDto, postPhoto);
 		});
 	}
 
@@ -281,6 +277,19 @@ public class PostFinder {
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
 				.orElse(null);
 			return SearchedPost.of(post, boardName, postPhoto);
+		});
+	}
+
+	@Transactional
+	public Slice<PostPreview> getCommentedPosts(Long userId, int page) {
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+		// 한 번의 JOIN 쿼리로 게시글 정보 조회
+		Slice<Post> posts = postRepository.findPostsByUserComments(userId, customPageRequest.of(SORT_PROPERTY));
+
+		return posts.map(post -> {
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
+				.orElse(null);
+			return PostPreview.from(post, postPhoto);
 		});
 	}
 }

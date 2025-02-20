@@ -61,4 +61,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 		Pageable pageable);
 
 	Optional<Post> findTopByBoardIdOrderByCreatedTimeDesc(Long boardId);
+
+	@Query("""
+		    SELECT DISTINCT p
+		    FROM Post p
+		    JOIN Comment c ON p.id = c.postId
+		    WHERE c.userId = :userId
+		    GROUP BY p.id
+		    ORDER BY MAX(c.createdTime) DESC
+		""")
+	Slice<Post> findPostsByUserComments(@Param("userId") Long userId, Pageable pageable);
 }
