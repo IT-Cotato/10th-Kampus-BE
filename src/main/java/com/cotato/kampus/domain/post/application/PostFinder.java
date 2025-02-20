@@ -1,8 +1,6 @@
 package com.cotato.kampus.domain.post.application;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.application.BoardFinder;
-import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.dao.PostDraftPhotoRepository;
 import com.cotato.kampus.domain.post.dao.PostDraftRepository;
@@ -186,12 +184,12 @@ public class PostFinder {
 		Slice<Post> posts = postRepository.findAllByUserId(userId, customPageRequest.of(SORT_PROPERTY));
 
 		return posts.map(post -> {
-			String boardName = boardFinder.findBoardDto(post.getBoardId()).boardName();
+			BoardDto boardDto = boardFinder.findBoardDto(post.getBoardId());
 
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())
 				.orElse(null);
 
-			return MyPostWithPhoto.from(post, boardName, postPhoto);
+			return MyPostWithPhoto.from(post, boardDto, postPhoto);
 		});
 	}
 
@@ -206,13 +204,12 @@ public class PostFinder {
 		// 스크랩된 포스트에 해당하는 Post를 찾아서 반환
 		return postScraps.map(postScrap -> {
 			Post post = getPost(postScrap.getPostId());
-
-			String boardName = boardFinder.findBoardDto(post.getBoardId()).boardName();
+			BoardDto boardDto = boardFinder.findBoardDto(post.getBoardId());
 
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())
 				.orElse(null);
 
-			return MyPostWithPhoto.from(post, boardName, postPhoto);
+			return MyPostWithPhoto.from(post, boardDto, postPhoto);
 		});
 	}
 
