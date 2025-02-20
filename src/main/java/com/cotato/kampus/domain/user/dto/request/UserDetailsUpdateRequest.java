@@ -1,7 +1,5 @@
 package com.cotato.kampus.domain.user.dto.request;
 
-import com.cotato.kampus.domain.user.enums.Nationality;
-
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +11,7 @@ public record UserDetailsUpdateRequest(
 	String nickname,
 
 	@NotNull(message = "국적을 입력해야 합니다.")
-	Nationality nationality,
+	String nationality,
 
 	@NotNull(message = "선호 언어를 입력해야 합니다.")
 	String preferredLanguage,
