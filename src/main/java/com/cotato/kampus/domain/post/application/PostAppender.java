@@ -31,7 +31,7 @@ public class PostAppender {
 		String title,
 		String content,
 		PostCategory postCategory
-	){
+	) {
 		Post post = Post.builder()
 			.userId(userId)
 			.boardId(boardId)
@@ -55,7 +55,7 @@ public class PostAppender {
 		String title,
 		String content,
 		PostCategory postCategory
-	){
+	) {
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		PostDraft postDraft = PostDraft.builder()
@@ -75,7 +75,7 @@ public class PostAppender {
 		Long boardId,
 		String title,
 		String content
-	){
+	) {
 		Post post = Post.builder()
 			.userId(userId)
 			.boardId(boardId)
@@ -87,4 +87,5 @@ public class PostAppender {
 
 		return postRepository.save(post).getId();
 	}
+
 }
