@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.user.domain.User;
+import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.domain.user.enums.UserStatus;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -44,6 +45,12 @@ public class UserValidator {
 		User user = apiUserResolver.getCurrentUser();
 
 		if (user.getUserRole() != UserRole.ADMIN) {
+			throw new AppException(ErrorCode.USER_NOT_ADMIN);
+		}
+	}
+
+	public void validateAdminAccess(UserDto userDto) {
+		if (userDto.userRole() != UserRole.ADMIN) {
 			throw new AppException(ErrorCode.USER_NOT_ADMIN);
 		}
 	}

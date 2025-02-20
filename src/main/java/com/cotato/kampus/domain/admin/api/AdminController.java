@@ -172,7 +172,7 @@ public class AdminController {
 	}
 
 	@GetMapping("/users/details")
-	@Operation(summary = "관리자 정보 조회", description = "관리자의 이름")
+	@Operation(summary = "관리자 정보 조회", description = "관리자의 이름, 이메일, 권한을 조회합니다.")
 	public ResponseEntity<DataResponse<AdminUserDetailsResponse>> getAdminUserDetails() {
 		return ResponseEntity.ok(DataResponse.from(
 			AdminUserDetailsResponse.from(

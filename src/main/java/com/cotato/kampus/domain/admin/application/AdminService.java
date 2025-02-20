@@ -229,8 +229,8 @@ public class AdminService {
 
 	// 관리자 정보 조회
 	public AdminUserInfo getAdminUserDetails() {
-		userValidator.validateAdminAccess();
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
+		userValidator.validateAdminAccess(userDto);
 		return AdminUserInfo.from(userDto);
 	}
 
