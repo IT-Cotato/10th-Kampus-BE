@@ -4,7 +4,7 @@ import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
 
 public record TrendingPostPreview(
-	Long postId,
+	Long id,
 	Long boardId,
 	String boardName,
 	String title,

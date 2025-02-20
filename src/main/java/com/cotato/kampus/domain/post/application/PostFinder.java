@@ -289,7 +289,8 @@ public class PostFinder {
 		return posts.map(post -> {
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
 				.orElse(null);
-			return PostPreview.from(post, postPhoto);
+			BoardDto board = boardFinder.findBoardDto(post.getBoardId());
+			return PostPreview.from(post, board, postPhoto);
 		});
 	}
 }
