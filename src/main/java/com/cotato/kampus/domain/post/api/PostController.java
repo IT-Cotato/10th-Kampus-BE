@@ -35,6 +35,7 @@ import com.cotato.kampus.domain.post.dto.response.PostSliceFindResponse;
 import com.cotato.kampus.domain.post.dto.response.SearchKeywordDeleteResponse;
 import com.cotato.kampus.domain.post.dto.response.SearchKeywordListResponse;
 import com.cotato.kampus.domain.post.dto.response.SearchedPostResponse;
+import com.cotato.kampus.domain.post.dto.response.TrendingListResponse;
 import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -114,6 +115,20 @@ public class PostController {
 			DataResponse.from(
 				CardNewsListResponse.from(
 					postService.findAllCardNews(page)
+				)
+			)
+		);
+	}
+
+	@GetMapping("/trending")
+	@Operation(summary = "트렌딩 게시판의 게시글 목록 조회", description = "트렌딩 게시판의 전체 게시글을 조회합니다.")
+	public ResponseEntity<DataResponse<TrendingListResponse>> findTrendingPosts(
+		@RequestParam(required = false, defaultValue = "1") int page
+	) {
+		return ResponseEntity.ok(
+			DataResponse.from(
+				TrendingListResponse.from(
+					postService.findTrendingPosts(page)
 				)
 			)
 		);

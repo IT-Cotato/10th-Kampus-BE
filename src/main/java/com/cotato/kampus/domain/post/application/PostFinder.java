@@ -1,15 +1,18 @@
 package com.cotato.kampus.domain.post.application;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.application.BoardFinder;
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.dao.PostDraftPhotoRepository;
 import com.cotato.kampus.domain.post.dao.PostDraftRepository;
@@ -30,6 +33,7 @@ import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostReferenceDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.dto.SearchedPost;
+import com.cotato.kampus.domain.post.dto.TrendingPostPreview;
 import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -53,6 +57,7 @@ public class PostFinder {
 	private final PostScrapRepository postScrapRepository;
 	private final PostDraftPhotoRepository postDraftPhotoRepository;
 	private final TrendingPostRepository trendingPostRepository;
+	private final PostDtoMapper postDtoMapper;
 
 	public Post getPost(Long postId) {
 		return postRepository.findById(postId)
@@ -104,6 +109,21 @@ public class PostFinder {
 			.map(PostDto::from)
 			.toList();
 	}
+
+	public Slice<TrendingPostPreview> findAllTrendingPosts(Long userUnivId, int page) {
+
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+
+		List<Long> trendingPostIds = trendingPostRepository.findAllPostIds();
+
+		// 트렌딩 게시글 조회
+		Slice<Post> trendingPosts = postRepository.findTrendingPosts(trendingPostIds, userUnivId, customPageRequest.of(SORT_PROPERTY));
+
+		List<TrendingPostPreview> trendingPostPreviews = postDtoMapper.toTrendingPostPreviews(trendingPosts.getContent());
+
+		return new SliceImpl<>(trendingPostPreviews, customPageRequest.of(SORT_PROPERTY), trendingPosts.hasNext());
+	}
+
 
 	// 정렬 기준에 맞는 조회 로직 수행
 	private Slice<Post> findPostsBySort(Long boardId, CustomPageRequest pageRequest, PostSortType sortType) {

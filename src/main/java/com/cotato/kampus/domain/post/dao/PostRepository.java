@@ -31,19 +31,31 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 	Slice<Post> searchAllByBoardId(@Param("keyword") String keyword, @Param("boardId") Long boardId, Pageable pageable);
 
 	@Query(value = "SELECT * From Post p WHERE p.post_id IN (:postIds) ORDER BY FIELD(p.post_id, :orderList) DESC", nativeQuery = true)
-	Slice<Post> findPostsByIdsInOrder(@Param("postIds") List<Long> postIds, @Param("orderList") String orderList, Pageable pageable);
+	Slice<Post> findPostsByIdsInOrder(@Param("postIds") List<Long> postIds, @Param("orderList") String orderList,
+		Pageable pageable);
 
 	void deleteAllByBoardIdIn(List<Long> boardId);
 
 	List<Post> findAllByBoardId(Long boardId);
 
 	@Query("""
-		SELECT p FROM Post p
-		JOIN Board b ON p.boardId = b.id
-		WHERE p.id IN :postIds
-		AND (b.boardType <> 'UNIVERSITY' OR b.universityId = :userUnivId)
-		ORDER BY p.createdTime DESC
-		LIMIT 5		
-	""")
+			SELECT p FROM Post p
+			JOIN Board b ON p.boardId = b.id
+			WHERE p.id IN :postIds
+			AND (b.boardType <> 'UNIVERSITY' OR b.universityId = :userUnivId)
+			ORDER BY p.createdTime DESC
+			LIMIT 5		
+		""")
 	List<Post> findTop5TrendingPosts(@Param("postIds") List<Long> postIds, @Param("userUnivId") Long userUnivId);
+
+	@Query("""
+				SELECT p FROM Post p
+				JOIN Board b ON p.boardId = b.id
+				WHERE p.id IN :postIds
+				AND b.boardStatus = 'ACTIVE'
+				AND (b.boardType <> 'UNIVERSITY' OR b.universityId = :userUnivId)
+				ORDER BY p.createdTime DESC
+		""")
+	Slice<Post> findTrendingPosts(@Param("postIds") List<Long> postIds, @Param("userUnivId") Long userUnivId,
+		Pageable pageable);
 }
