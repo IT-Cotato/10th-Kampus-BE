@@ -21,6 +21,7 @@ import com.cotato.kampus.domain.post.domain.PostDraft;
 import com.cotato.kampus.domain.post.domain.PostDraftPhoto;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
 import com.cotato.kampus.domain.post.domain.PostScrap;
+import com.cotato.kampus.domain.post.dto.CardNewsPreview;
 import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDraftDto;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
@@ -70,6 +71,28 @@ public class PostFinder {
 			return PostWithPhotos.from(post, postPhoto);
 		});
 	}
+
+	public Slice<CardNewsPreview> findAllCardNews(Long userId, int page){
+		// 1. Post 리스트를 Slice로 조회
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+
+		// 2. 카드뉴스 게시판 조회
+		Long cardNewsBoardId = boardFinder.findCardNewsBoardId();
+
+		// 3. 최신순 정렬로 조회
+		Slice<Post> posts = postRepository.findAllByBoardIdOrderByCreatedTimeDesc(cardNewsBoardId, customPageRequest.of(SORT_PROPERTY));
+
+		return posts.map(post -> {
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
+				.orElse(null);
+
+			Boolean isScrapped = postScrapRepository.existsByUserIdAndPostId(userId, post.getId());
+
+			return CardNewsPreview.from(post, postPhoto, isScrapped);
+		});
+
+	}
+
 
 	// 정렬 기준에 맞는 조회 로직 수행
 	private Slice<Post> findPostsBySort(Long boardId, CustomPageRequest pageRequest, PostSortType sortType) {

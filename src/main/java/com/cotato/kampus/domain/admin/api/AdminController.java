@@ -151,6 +151,7 @@ public class AdminController {
 	) throws ImageException {
 		adminService.createCardNews(
 			request.title(),
+		request.content(),
 			request.images()
 		);
 		return ResponseEntity.ok(DataResponse.ok());

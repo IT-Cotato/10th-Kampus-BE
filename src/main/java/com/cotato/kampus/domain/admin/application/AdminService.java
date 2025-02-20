@@ -9,13 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cotato.kampus.domain.admin.dto.BoardDetail;
+import com.cotato.kampus.domain.admin.dto.AdminBoardDetail;
 import com.cotato.kampus.domain.admin.dto.StudentVerification;
 import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsPreview;
 import com.cotato.kampus.domain.board.application.BoardAppender;
+import com.cotato.kampus.domain.board.application.BoardDtoEnhancer;
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardUpdater;
 import com.cotato.kampus.domain.board.application.BoardValidator;
+import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
@@ -24,7 +26,6 @@ import com.cotato.kampus.domain.post.application.PostDeleter;
 import com.cotato.kampus.domain.post.application.PostFinder;
 import com.cotato.kampus.domain.post.application.PostImageAppender;
 import com.cotato.kampus.domain.post.application.PostUpdater;
-import com.cotato.kampus.domain.post.domain.PostPhoto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.domain.university.application.UnivFinder;
@@ -50,6 +51,7 @@ public class AdminService {
 	private final BoardUpdater boardUpdater;
 	private final BoardValidator boardValidator;
 	private final BoardFinder boardFinder;
+	private final BoardDtoEnhancer boardDtoEnhancer;
 	private final VerificationRecordFinder verificationRecordFinder;
 	private final VerificationRecordUpdater verificationRecordUpdater;
 	private final UserUpdater userUpdater;
@@ -139,12 +141,15 @@ public class AdminService {
 		boardUpdater.deleteExpiredBoards();
 	}
 
-	public List<BoardDetail> getBoards(BoardStatus boardStatus) {
+	public List<AdminBoardDetail> getBoards(BoardStatus boardStatus) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
 		// 각 게시판의 게시글 수 매핑하여 반환
-		return boardFinder.findAllBoards(boardStatus);
+		List<BoardDto> boardDtos = boardFinder.findAllBoards(boardStatus);
+
+		// 게시판 게시글 수, 삭제까지 남은 날짜 수 매핑
+		return boardDtoEnhancer.mapToAdminBoardDetail(boardDtos);
 	}
 
 	public Slice<StudentVerification> getVerifications(int page) {
@@ -180,7 +185,7 @@ public class AdminService {
 	}
 
 	@Transactional
-	public void createCardNews(String title, List<MultipartFile> images) throws ImageException {
+	public void createCardNews(String title, String content, List<MultipartFile> images) throws ImageException {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -198,7 +203,7 @@ public class AdminService {
 		// 카드뉴스 추가
 		Long userId = apiUserResolver.getCurrentUserId();
 		Long boardId = boardFinder.findCardNewsBoardId();
-		Long postId = postAppender.appendCardNews(userId, boardId, title);
+		Long postId = postAppender.appendCardNews(userId, boardId, title, content);
 
 		// 카드뉴스 사진 추가
 		postImageAppender.appendAll(postId, imageUrls);

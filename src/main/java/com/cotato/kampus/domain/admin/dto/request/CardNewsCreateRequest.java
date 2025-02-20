@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 public record CardNewsCreateRequest(
 	@NotBlank
 	String title,
+	String content,
 	@NotNull(message = "이미지는 필수입니다.")
 	List<MultipartFile> images
 ) {

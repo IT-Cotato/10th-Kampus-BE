@@ -6,14 +6,12 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.admin.dto.BoardDetail;
 import com.cotato.kampus.domain.board.dao.BoardRepository;
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatusDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
-import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -24,14 +22,14 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardFinder {
-	private final BoardRepository boardRepository;
-	private final PostRepository postRepository;
 
-	public List<BoardDetail> findAllBoards(BoardStatus boardStatus) {
+	private final BoardRepository boardRepository;
+
+	public List<BoardDto> findAllBoards(BoardStatus boardStatus) {
 		List<BoardDto> boards;
 
 		// 전체 게시판 조회
-		if(boardStatus == null) {
+		if (boardStatus == null) {
 			boards = boardRepository.findAll().stream()
 				.map(BoardDto::from)
 				.toList();
@@ -41,15 +39,10 @@ public class BoardFinder {
 				.toList();
 		}
 
-		// 게시판 별 게시글 수 매핑
-		return boards.stream()
-			.map(board -> {
-				Long postCount = postRepository.countByBoardId(board.boardId());
-				return BoardDetail.of(board, postCount);
-			}).toList();
+		return boards;
 	}
 
-	public List<BoardWithFavoriteStatusDto> findPublicBoards(){
+	public List<BoardWithFavoriteStatusDto> findPublicBoards() {
 		return boardRepository.findAllByUniversityIdIsNullAndBoardStatus(BoardStatus.ACTIVE).stream()
 			.map(board -> BoardWithFavoriteStatusDto.of(
 				board.getId(),
@@ -59,34 +52,34 @@ public class BoardFinder {
 			.toList();
 	}
 
-	public Board findBoard(Long boardId){
+	public Board findBoard(Long boardId) {
 		Board board = boardRepository.findById(boardId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 
 		return board;
 	}
 
-	public BoardDto findBoardDto(Long boardId){
+	public BoardDto findBoardDto(Long boardId) {
 		Board board = boardRepository.findById(boardId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 
 		return BoardDto.from(board);
 	}
 
-	public BoardDto findUserUniversityBoard(Long userUniversityId){
+	public BoardDto findUserUniversityBoard(Long userUniversityId) {
 		Board board = boardRepository.findByUniversityId(userUniversityId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 		return BoardDto.from(board);
 	}
 
-	public Long findCardNewsBoardId(){
+	public Long findCardNewsBoardId() {
 		Board board = boardRepository.findByBoardType(BoardType.CARDNEWS)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 
 		return board.getId();
 	}
 
-	public List<Long> findExpiredBoardIds(LocalDateTime now){
+	public List<Long> findExpiredBoardIds(LocalDateTime now) {
 		List<Board> expiredBoards = boardRepository.findByDeletionScheduledAtBefore(now);
 
 		return expiredBoards.stream().map(Board::getId).toList();

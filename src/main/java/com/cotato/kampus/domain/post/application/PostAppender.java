@@ -73,12 +73,14 @@ public class PostAppender {
 	public Long appendCardNews(
 		Long userId,
 		Long boardId,
-		String title
+		String title,
+		String content
 	){
 		Post post = Post.builder()
 			.userId(userId)
 			.boardId(boardId)
 			.title(title)
+			.content(content)
 			.anonymity(Anonymity.IDENTIFIED)
 			.postStatus(PostStatus.PUBLISHED)
 			.build();

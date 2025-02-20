@@ -20,13 +20,14 @@ public class BoardService {
 
 	private final BoardFinder boardFinder;
 	private final BoardValidator boardValidator;
+	private final BoardDtoEnhancer boardDtoEnhancer;
 	private final BoardFavoriteReader boardFavoriteReader;
 	private final BoardFavoriteAppender boardFavoriteAppender;
 	private final BoardFavoriteDeleter boardFavoriteDeleter;
 	private final UserValidator userValidator;
 	private final ApiUserResolver apiUserResolver;
 
-	public List<BoardWithFavoriteStatusDto> getBoardList(){
+	public List<BoardWithFavoriteStatusDto> getBoardList() {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -37,7 +38,8 @@ public class BoardService {
 		List<BoardWithFavoriteStatusDto> boards = boardFinder.findPublicBoards();
 
 		// 즐겨찾기 여부 매핑
-		List<BoardWithFavoriteStatusDto> boardWithFavorites = new ArrayList<>(BoardDtoEnhancer.updateFavoriteStatus(boards, favoriteBoardIds));
+		List<BoardWithFavoriteStatusDto> boardWithFavorites = new ArrayList<>(
+			boardDtoEnhancer.updateFavoriteStatus(boards, favoriteBoardIds));
 
 		// 즐겨찾기 게시판이 위로 오도록 정렬
 		boardWithFavorites.sort(Comparator.comparing(BoardWithFavoriteStatusDto::isFavorite).reversed());
@@ -56,7 +58,7 @@ public class BoardService {
 		List<BoardWithFavoriteStatusDto> boards = boardFinder.findPublicBoards();
 
 		// 즐겨찾는 게시판만 필터링
-		return BoardDtoEnhancer.filterFavoriteBoards(boards, favoriteBoardIds);
+		return boardDtoEnhancer.filterFavoriteBoards(boards, favoriteBoardIds);
 	}
 
 	public Long addFavoriteBoard(Long boardId) {
@@ -75,7 +77,7 @@ public class BoardService {
 		return boardId;
 	}
 
-	public BoardDto getUniversityBoard(){
+	public BoardDto getUniversityBoard() {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -86,13 +88,13 @@ public class BoardService {
 		return boardFinder.findUserUniversityBoard(userUniversityId);
 	}
 
-	public Boolean requiresCategory(Long boardId){
+	public Boolean requiresCategory(Long boardId) {
 		BoardDto boardDto = boardFinder.findBoardDto(boardId);
 
 		return boardDto.isCategoryRequired();
 	}
 
-	public BoardDto getBoard(Long boardId){
+	public BoardDto getBoard(Long boardId) {
 		return boardFinder.findBoardDto(boardId);
 	}
 }
