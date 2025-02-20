@@ -67,9 +67,8 @@ public class UserService {
 	}
 
 	@Transactional
-	public Map<String, Object> sendMail(String email, Long universityId) throws IOException {
-		University university = univFinder.findUniversity(universityId);
-		return univEmailVerifier.sendMail(email, university.getUniversityName());
+	public Map<String, Object> sendMail(String email, String universityName) throws IOException {
+		return univEmailVerifier.sendMail(email, universityName);
 	}
 
 	@Transactional
