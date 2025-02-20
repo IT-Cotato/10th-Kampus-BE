@@ -10,6 +10,7 @@ import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.user.dto.UserDto;
+import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -40,6 +41,11 @@ public class BoardValidator {
 	}
 
 	public void validatePostCreationAccess(UserDto userDto, BoardDto boardDto) {
+		// 재학생 검증
+		if (!(userDto.userRole() == UserRole.VERIFIED || userDto.userRole() == UserRole.ADMIN)) {
+			throw new AppException(ErrorCode.USER_UNVERIFIED);
+		}
+
 		// 학교 게시판인 경우 자격 검증
 		if (boardDto.boardType() == BoardType.UNIVERSITY &&
 			!Objects.equals(boardDto.universityId(), userDto.universityId())) {

@@ -151,7 +151,7 @@ public class PostService {
 		Long userUnivId = userDto.universityId();
 
 		// Trending 게시글 조회 (타 대학 게시글 제외)
-		return  postFinder.findAllTrendingPosts(userUnivId, page);
+		return postFinder.findAllTrendingPosts(userUnivId, page);
 	}
 
 	public PostDetails findPostDetail(Long postId) {

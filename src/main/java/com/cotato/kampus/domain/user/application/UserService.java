@@ -91,7 +91,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public void uploadCert(Long universityId, MultipartFile certImage) throws ImageException {
+	public void uploadCert(String universityName, MultipartFile certImage) throws ImageException {
 		// 이미 재학생 인증 되었는지 검증
 		Long userId = userValidator.validateDuplicateStudentVerification();
 
@@ -99,6 +99,7 @@ public class UserService {
 		String imageUrl = s3Uploader.uploadFile(certImage, STUDENT_CERT_IMAGE_FOLDER);
 
 		// VerificationRecord 추가
+		Long universityId = univFinder.findUniversityId(universityName);
 		Long verificationRecordId = verificationRecordAppender.appendPhotoType(userId, universityId);
 
 		// 인증서 이미지 추가
