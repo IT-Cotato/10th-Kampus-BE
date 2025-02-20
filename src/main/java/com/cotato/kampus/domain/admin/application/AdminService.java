@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.admin.dto.AdminBoardDetail;
+import com.cotato.kampus.domain.admin.dto.AdminUserInfo;
 import com.cotato.kampus.domain.admin.dto.StudentVerification;
 import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsPreview;
 import com.cotato.kampus.domain.board.application.BoardAppender;
@@ -29,8 +30,10 @@ import com.cotato.kampus.domain.post.application.PostUpdater;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.domain.university.application.UnivFinder;
+import com.cotato.kampus.domain.user.application.UserFinder;
 import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
+import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.verification.application.VerificationRecordFinder;
 import com.cotato.kampus.domain.verification.application.VerificationRecordUpdater;
 import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
@@ -66,6 +69,7 @@ public class AdminService {
 	private final PostDeleter postDeleter;
 	private final PostUpdater postUpdater;
 	private final PostFinder postFinder;
+	private final UserFinder userFinder;
 
 	@Transactional
 	public Long createBoard(String boardName, String description, String universityName, Boolean isCategoryRequired) {
@@ -76,7 +80,7 @@ public class AdminService {
 		boardValidator.validateUniqueName(boardName);
 
 		// 학교 게시판인 경우
-		if(universityName != null) {
+		if (universityName != null) {
 			Long universityId = univFinder.findUniversityId(universityName);
 			boardValidator.validateUniversityBoardExists(universityId);
 
@@ -220,5 +224,12 @@ public class AdminService {
 		Slice<PostWithPhotos> posts = postFinder.findPosts(cardNewsBoardId, page, PostSortType.recent);
 
 		return posts.map(AdminCardNewsPreview::from);
+	}
+
+	// 관리자 정보 조회
+	public AdminUserInfo getAdminUserDetails() {
+		userValidator.validateAdminAccess();
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
+		return AdminUserInfo.from(userDto);
 	}
 }

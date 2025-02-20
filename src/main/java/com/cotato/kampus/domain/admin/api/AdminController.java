@@ -18,7 +18,7 @@ import com.cotato.kampus.domain.admin.dto.request.BoardCreateRequest;
 import com.cotato.kampus.domain.admin.dto.request.BoardUpdateRequest;
 import com.cotato.kampus.domain.admin.dto.request.CardNewsCreateRequest;
 import com.cotato.kampus.domain.admin.dto.response.AdminBoardListResponse;
-import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsPreview;
+import com.cotato.kampus.domain.admin.dto.response.AdminUserDetailsResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardCreateResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationListResponse;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
@@ -151,7 +151,7 @@ public class AdminController {
 	) throws ImageException {
 		adminService.createCardNews(
 			request.title(),
-		request.content(),
+			request.content(),
 			request.images()
 		);
 		return ResponseEntity.ok(DataResponse.ok());
@@ -165,6 +165,16 @@ public class AdminController {
 		return ResponseEntity.ok(DataResponse.from(
 			AdminCardNewsListResponse.from(
 				adminService.getAllCardNews(page)
+			)
+		));
+	}
+
+	@GetMapping("/users/details")
+	@Operation(summary = "관리자 정보 조회", description = "관리자의 이름")
+	public ResponseEntity<DataResponse<AdminUserDetailsResponse>> getAdminUserDetails() {
+		return ResponseEntity.ok(DataResponse.from(
+			AdminUserDetailsResponse.from(
+				adminService.getAdminUserDetails()
 			)
 		));
 	}
