@@ -351,7 +351,7 @@ public class PostController {
 	}
 
 	@GetMapping("/search/keywords")
-	@Operation(summary = "게시글 검색 키워드 조회", description = "게시글 검색 키워드를 조회합니다.(최대 5개, 최신순 정렬)")
+	@Operation(summary = "게시글 검색 키워드 조회", description = "게시글 검색 키워드를 조회합니다.(최대 10개, 최신순 정렬)")
 	public ResponseEntity<DataResponse<SearchKeywordListResponse>> searchAllPosts() {
 		return ResponseEntity.ok(DataResponse.from(
 			SearchKeywordListResponse.from(

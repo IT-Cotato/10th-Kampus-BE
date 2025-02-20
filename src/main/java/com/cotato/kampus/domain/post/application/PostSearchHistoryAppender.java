@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class PostSearchHistoryAppender {
 
 	private final PostSearchHistoryRepository searchHistoryRepository;
-	private static final int MAX_HISTORY_SIZE = 5;
+	private static final int MAX_HISTORY_SIZE = 10;
 
 	@Transactional
 	public void append(Long userId, String keyword) {
