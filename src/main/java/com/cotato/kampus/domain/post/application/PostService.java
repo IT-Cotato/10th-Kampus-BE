@@ -21,6 +21,7 @@ import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostSearchHistoryList;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.dto.SearchedPost;
+import com.cotato.kampus.domain.post.dto.TrendingPostPreview;
 import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.domain.user.dto.UserDto;
@@ -142,6 +143,15 @@ public class PostService {
 
 		// 카드뉴스 조회
 		return postFinder.findAllCardNews(userId, page);
+	}
+
+	public Slice<TrendingPostPreview> findTrendingPosts(int page) {
+		// 유저 정보 조회
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
+		Long userUnivId = userDto.universityId();
+
+		// Trending 게시글 조회 (타 대학 게시글 제외)
+		return  postFinder.findAllTrendingPosts(userUnivId, page);
 	}
 
 	public PostDetails findPostDetail(Long postId) {
