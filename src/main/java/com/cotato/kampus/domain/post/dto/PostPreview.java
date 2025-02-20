@@ -29,5 +29,4 @@ public record PostPreview(
 			postPhoto != null ? postPhoto.getPhotoUrl() : null
 		);
 	}
-
 }
