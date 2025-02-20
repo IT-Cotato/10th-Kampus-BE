@@ -4,16 +4,16 @@ import java.util.List;
 
 import org.springframework.data.domain.Slice;
 
-import com.cotato.kampus.domain.post.dto.PostWithPhotos;
+import com.cotato.kampus.domain.post.dto.PostPreview;
 
 public record MyCommentedPostsResponse(
-	List<PostWithPhotos> posts,
+	List<PostPreview> posts,
 	boolean hasNext
 ) {
-	public static MyCommentedPostsResponse from(Slice<PostWithPhotos> postWithPhotosSlice) {
+	public static MyCommentedPostsResponse from(Slice<PostPreview> postPreviews) {
 		return new MyCommentedPostsResponse(
-			postWithPhotosSlice.getContent(),
-			postWithPhotosSlice.hasNext()
+			postPreviews.getContent(),
+			postPreviews.hasNext()
 		);
 	}
 }
