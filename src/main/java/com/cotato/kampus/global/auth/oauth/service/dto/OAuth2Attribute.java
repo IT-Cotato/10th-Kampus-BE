@@ -70,7 +70,7 @@ public class OAuth2Attribute {
 			.providerId(providerId)
 			.username(username)
 			.nickname("nickname")
-			.nationality(Nationality.OTHER)
+			.nationality(Nationality.UNITED_STATES)
 			.preferredLanguage(PreferredLanguage.ENGLISH_AMERICAN)
 			.userRole(UserRole.UNVERIFIED)
 			.userStatus(UserStatus.PENDING_DETAILS)
