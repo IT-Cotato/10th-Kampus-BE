@@ -157,6 +157,14 @@ public class AdminService {
 		return boardDtoEnhancer.mapToAdminBoardDetail(boardDtos);
 	}
 
+	public BoardDto getBoard(Long boardId) {
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+
+		// 게시판 조회
+		return boardFinder.findBoardDto(boardId);
+	}
+
 	public Slice<StudentVerification> getVerifications(int page) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
