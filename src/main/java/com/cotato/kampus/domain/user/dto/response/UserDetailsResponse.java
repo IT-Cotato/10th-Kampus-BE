@@ -2,14 +2,13 @@ package com.cotato.kampus.domain.user.dto.response;
 
 import com.cotato.kampus.domain.user.dto.UserDetailsDto;
 import com.cotato.kampus.domain.user.enums.Nationality;
-import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.domain.user.enums.UserStatus;
 
 public record UserDetailsResponse(
 	Long id,
 	String nickname,
 	Nationality nationality,
-	PreferredLanguage preferredLanguage,
+	String preferredLanguage,
 	Long universityId,
 	String universityName,
 	boolean needSetup
@@ -19,7 +18,7 @@ public record UserDetailsResponse(
 			userDetails.id(),
 			userDetails.nickname(),
 			userDetails.nationality(),
-			userDetails.preferredLanguage(),
+			userDetails.preferredLanguage().getName(),
 			userDetails.universityId(),
 			userDetails.universityName(),
 			userDetails.userStatus().equals(UserStatus.PENDING_DETAILS)
