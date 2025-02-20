@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cotato.kampus.domain.comment.application.CommentService;
 import com.cotato.kampus.domain.comment.dto.request.CommentCreateRequest;
 import com.cotato.kampus.domain.comment.dto.response.CommentCreateResponse;
-import com.cotato.kampus.domain.comment.dto.response.CommentDeleteResponse;
-import com.cotato.kampus.domain.comment.dto.response.CommentLikeResponse;
 import com.cotato.kampus.domain.comment.dto.response.CommentListResponse;
 import com.cotato.kampus.domain.comment.dto.response.MyCommentedPostsResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
@@ -52,18 +50,11 @@ public class CommentController {
 
 	@DeleteMapping("/comments/{commentId}")
 	@Operation(summary = "댓글 삭제", description = "특정 댓글을 삭제합니다.")
-	public ResponseEntity<DataResponse<CommentDeleteResponse>> deleteComment(
+	public ResponseEntity<DataResponse<Void>> deleteComment(
 		@PathVariable Long commentId
 	) {
-
-		return ResponseEntity.ok(DataResponse.from(
-				CommentDeleteResponse.of(
-					commentService.deleteComment(
-						commentId
-					)
-				)
-			)
-		);
+		commentService.deleteComment(commentId);
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@PostMapping("/comments/{commentId}/like")

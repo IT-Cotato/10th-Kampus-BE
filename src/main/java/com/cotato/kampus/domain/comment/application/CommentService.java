@@ -12,6 +12,7 @@ import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.comment.dto.CommentDetail;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.application.PostFinder;
+import com.cotato.kampus.domain.post.application.PostUpdater;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.user.application.UserValidator;
 
@@ -30,13 +31,15 @@ public class CommentService {
 	private final CommentDeleter commentDeleter;
 	private final AnonymousNumberAllocator anonymousNumberAllocator;
 	private final CommentLikeAppender commentLikeAppender;
+	private final CommentLikeDeleter commentLikeDeleter;
 	private final CommentFinder commentFinder;
 	private final CommentMapper commentMapper;
 	private final ApiUserResolver apiUserResolver;
 	private final PostFinder postFinder;
+	private final PostUpdater postUpdater;
 
 	@Transactional
-	public Long createComment(Long postId, String content, Long parentId){
+	public Long createComment(Long postId, String content, Long parentId) {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -50,17 +53,37 @@ public class CommentService {
 		Long anonymousNumber = anonymousNumberAllocator.allocateAnonymousNumber(postId);
 
 		// 댓글 추가
-		return commentAppender.append(postId, content, anonymousNumber, parentId);
+		Long commentId = commentAppender.append(postId, content, anonymousNumber, parentId);
+
+		// 게시글의 댓글 수 + 1
+		postUpdater.increaseComments(postId);
+
+		return commentId;
 	}
 
 	@Transactional
-	public Long deleteComment(Long commentId){
+	public void deleteComment(Long commentId) {
+		// 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
 
-		return commentDeleter.delete(commentId);
+		// 댓글 조회
+		CommentDto commentDto = commentFinder.findCommentDto(commentId);
+
+		// 작성자 검증
+		commentValidator.validateCommentAuthor(userId, commentDto);
+
+		// 댓글 삭제
+		commentDeleter.delete(commentId);
+
+		// 게시글의 댓글 수 - 1
+		postUpdater.decreaseComments(commentDto.postId());
+
+		// 댓글 좋아요 데이터 삭제
+		commentLikeDeleter.delete(commentId);
 	}
 
 	@Transactional
-	public void likeComment(Long commentId){
+	public void likeComment(Long commentId) {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -78,7 +101,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public void unlikeComment(Long commentId){
+	public void unlikeComment(Long commentId) {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -90,7 +113,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public List<CommentDetail> findAllCommentsForPost(Long postId){
+	public List<CommentDetail> findAllCommentsForPost(Long postId) {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -104,7 +127,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public Slice<PostWithPhotos> getCommentedPosts(int page){
+	public Slice<PostWithPhotos> getCommentedPosts(int page) {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 

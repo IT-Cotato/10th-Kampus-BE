@@ -20,27 +20,17 @@ import lombok.RequiredArgsConstructor;
 public class CommentDeleter {
 
 	private final CommentRepository commentRepository;
-	private final ApiUserResolver apiUserResolver;
 	private final CommentFinder commentFinder;
 
-	public Long delete(Long commentId) {
-
-		User user = apiUserResolver.getCurrentUser();
-		Comment comment = commentFinder.findComment(commentId);
-
-		// 작성자 검증
-		if(comment.getUserId() != user.getId()){
-			throw new AppException(ErrorCode.COMMENT_NOT_AUTHOR);
-		}
-
+	@Transactional
+	public void delete(Long commentId) {
 		// 대댓글이 있으면 삭제된 상태로 업데이트
-		if(commentRepository.existsByParentId(commentId)){
+		if (commentRepository.existsByParentId(commentId)) {
+			Comment comment = commentFinder.findComment(commentId);
 			comment.setCommentStatus(CommentStatus.DELETED_BY_USER);
-			return commentRepository.save(comment).getId();
 		}
 
 		// 댓글 삭제
-		commentRepository.delete(comment);
-		return commentId;
+		commentRepository.deleteById(commentId);
 	}
 }
