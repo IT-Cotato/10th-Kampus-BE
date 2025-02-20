@@ -3,10 +3,14 @@ package com.cotato.kampus.domain.post.application;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.board.application.BoardFinder;
+import com.cotato.kampus.domain.board.dao.BoardRepository;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.dao.PostDraftRepository;
+import com.cotato.kampus.domain.post.dao.TrendingPostRepository;
 import com.cotato.kampus.domain.post.domain.PostDraft;
+import com.cotato.kampus.domain.post.domain.TrendingPost;
 import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 import com.cotato.kampus.domain.post.dao.PostRepository;
@@ -23,6 +27,10 @@ public class PostAppender {
 	private final ApiUserResolver apiUserResolver;
 	private final PostRepository postRepository;
 	private final PostDraftRepository postDraftRepository;
+	private final TrendingPostRepository trendingPostRepository;
+	private final BoardRepository boardRepository;
+	private final BoardFinder boardFinder;
+	private final PostFinder postFinder;
 
 	@Transactional
 	public Long append(
@@ -31,7 +39,7 @@ public class PostAppender {
 		String title,
 		String content,
 		PostCategory postCategory
-	){
+	) {
 		Post post = Post.builder()
 			.userId(userId)
 			.boardId(boardId)
@@ -55,7 +63,7 @@ public class PostAppender {
 		String title,
 		String content,
 		PostCategory postCategory
-	){
+	) {
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		PostDraft postDraft = PostDraft.builder()
@@ -75,7 +83,7 @@ public class PostAppender {
 		Long boardId,
 		String title,
 		String content
-	){
+	) {
 		Post post = Post.builder()
 			.userId(userId)
 			.boardId(boardId)
@@ -86,5 +94,19 @@ public class PostAppender {
 			.build();
 
 		return postRepository.save(post).getId();
+	}
+
+	@Transactional
+	public void appendTrendingPost(Long postId) {
+		Post post = postFinder.getPost(postId);
+
+		if (post.getLikes() >= 10) {
+			TrendingPost trendingPost = TrendingPost.builder()
+				.postId(postId)
+				.boardId(post.getBoardId())
+				.build();
+
+			trendingPostRepository.save(trendingPost);
+		}
 	}
 }

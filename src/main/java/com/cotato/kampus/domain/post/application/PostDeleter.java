@@ -7,8 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.post.dao.PostDraftRepository;
 import com.cotato.kampus.domain.post.dao.PostRepository;
+import com.cotato.kampus.domain.post.dao.TrendingPostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostDraft;
+import com.cotato.kampus.domain.post.domain.TrendingPost;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -22,13 +24,16 @@ public class PostDeleter {
 	private final PostRepository postRepository;
 	private final PostFinder postFinder;
 	private final PostDraftRepository postDraftRepository;
+	private final TrendingPostRepository trendingPostRepository;
 
-	public void delete(Long postId){
+	@Transactional
+	public void delete(Long postId) {
 		Post post = postFinder.getPost(postId);
 		postRepository.delete(post);
 	}
 
-	public void deleteDraftAll(List<Long> postDraftIds){
+	@Transactional
+	public void deleteDraftAll(List<Long> postDraftIds) {
 		// 임시 저장글 조회
 		List<PostDraft> drafts = postFinder.findPostDrafts(postDraftIds);
 
@@ -36,7 +41,17 @@ public class PostDeleter {
 		postDraftRepository.deleteAll(drafts);
 	}
 
-	public void deletePostsByBoardIds(List<Long> boardIds){
+	@Transactional
+	public void deletePostsByBoardIds(List<Long> boardIds) {
 		postRepository.deleteAllByBoardIdIn(boardIds);
+	}
+
+	@Transactional
+	public void deleteTrendingPost(Long postId) {
+		Post post = postFinder.getPost(postId);
+
+		if (post.getLikes() < 10) {
+			trendingPostRepository.deleteByPostId(postId);
+		}
 	}
 }

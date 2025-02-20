@@ -66,7 +66,6 @@ public class PostService {
 	private static final String POST_IMAGE_FOLDER = "post";
 	private final BoardValidator boardValidator;
 	private final BoardFinder boardFinder;
-	private final UserFinder userFinder;
 
 	@Transactional
 	public Long createPost(
@@ -319,6 +318,9 @@ public class PostService {
 
 		// 4. post의 likes + 1
 		postUpdater.increasePostLike(postId);
+
+		// 5. Trending 게시판 조건 만족 시 추가
+		postAppender.appendTrendingPost(postId);
 	}
 
 	@Transactional
@@ -331,6 +333,9 @@ public class PostService {
 
 		// 3. post의 likes - 1
 		postUpdater.decreasePostLike(postId);
+
+		// 4. 좋아요 10개 미만될 경우 Trending 게시판에서 제거
+		postDeleter.deleteTrendingPost(postId);
 	}
 
 	public Slice<MyPostWithPhoto> findUserPosts(int page) {
