@@ -44,7 +44,13 @@ public class UserUpdater {
 	@Transactional
 	public Long updateVerificationStatus(Long userId, Long universityId) {
 		User user = userFinder.findById(userId);
-		user.updateVerificationStatus(universityId);
+
+		// 관리자가 아닌 경우만 UserRole VERIFIED로 변경
+		if(!user.getUserRole().equals(UserRole.ADMIN)) {
+			user.updateRole(UserRole.VERIFIED);
+		}
+
+		user.setUniversityId(universityId);
 		return user.getId();
 	}
 

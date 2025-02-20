@@ -98,10 +98,8 @@ public class User {
 		return this;
 	}
 
-	public User updateVerificationStatus(Long universityId) {
-		this.userRole = UserRole.VERIFIED;
+	public void setUniversityId(Long universityId) {
 		this.universityId = universityId;
-		return this;
 	}
 
 	public User updateDeviceToken(String deviceToken) {

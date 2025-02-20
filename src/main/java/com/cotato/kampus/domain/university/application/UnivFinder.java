@@ -28,12 +28,6 @@ public class UnivFinder {
 		return university.getId();
 	}
 
-	public Long findUniversityId(Long verificationRecordId) {
-		return verificationRecordRepository.findById(verificationRecordId)
-			.orElseThrow(() -> new AppException(ErrorCode.UNIVERSITY_NOT_FOUND))
-			.getUniversityId();
-	}
-
 	public University findUniversity(Long universityId) {
 		return universityRepository.findById(universityId)
 			.orElseThrow(() -> new AppException(ErrorCode.UNIVERSITY_NOT_FOUND));
