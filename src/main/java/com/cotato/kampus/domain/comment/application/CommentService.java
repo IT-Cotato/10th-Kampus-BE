@@ -39,7 +39,7 @@ public class CommentService {
 	private final PostUpdater postUpdater;
 
 	@Transactional
-	public Long createComment(Long postId, String content, Long parentId){
+	public Long createComment(Long postId, String content, Long parentId) {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -62,7 +62,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public void deleteComment(Long commentId){
+	public void deleteComment(Long commentId) {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -83,7 +83,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public void likeComment(Long commentId){
+	public void likeComment(Long commentId) {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -101,7 +101,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public void unlikeComment(Long commentId){
+	public void unlikeComment(Long commentId) {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -113,7 +113,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public List<CommentDetail> findAllCommentsForPost(Long postId){
+	public List<CommentDetail> findAllCommentsForPost(Long postId) {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -127,7 +127,7 @@ public class CommentService {
 	}
 
 	@Transactional
-	public Slice<PostWithPhotos> getCommentedPosts(int page){
+	public Slice<PostWithPhotos> getCommentedPosts(int page) {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 

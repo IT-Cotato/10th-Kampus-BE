@@ -29,16 +29,16 @@ public class CommentFinder {
 	private final CommentRepository commentRepository;
 	private final CommentLikeRepository commentLikeRepository;
 
-	public Comment findComment(Long commentId){
+	public Comment findComment(Long commentId) {
 		return commentRepository.findById(commentId)
 			.orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
 	}
 
-	public CommentDto findCommentDto(Long commentId){
+	public CommentDto findCommentDto(Long commentId) {
 		return CommentDto.from(findComment(commentId));
 	}
 
-	public List<CommentDto> findComments(Long postId){
+	public List<CommentDto> findComments(Long postId) {
 		List<Comment> comments = commentRepository.findAllByPostIdOrderByCreatedTimeAsc(postId);
 		List<CommentDto> commentDtos = comments.stream()
 			.map(CommentDto::from)
@@ -48,13 +48,13 @@ public class CommentFinder {
 	}
 
 	// Comment 테이블에서 유저가 최근에 댓글 단 순서로 게시글 ID 가져오기
-	public List<Long> findRecentPostIdsByUserId(Long userId){
+	public List<Long> findRecentPostIdsByUserId(Long userId) {
 		return commentRepository.findRecentPostIdsByUserId(userId)
 			.stream()
 			.toList();
 	}
 
-	public CommentLike findCommentLike(Long userId, Long commentId){
+	public CommentLike findCommentLike(Long userId, Long commentId) {
 		return commentLikeRepository.findByUserIdAndCommentId(userId, commentId)
 			.orElseThrow(() -> new AppException(ErrorCode.COMMENT_UNLIKE_FORBIDDEN));
 	}

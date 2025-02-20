@@ -19,7 +19,7 @@ public class CommentLikeDeleter {
 	private final CommentLikeRepository commentLikeRepository;
 
 	@Transactional
-	public void delete(Long commentId){
+	public void delete(Long commentId) {
 		List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentId(commentId);
 
 		commentLikeRepository.deleteAll(commentLikes);

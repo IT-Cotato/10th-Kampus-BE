@@ -19,7 +19,7 @@ public class CommentValidator {
 
 	private final CommentFinder commentFinder;
 
-	public void validateParent(Long postId, Long parentId){
+	public void validateParent(Long postId, Long parentId) {
 
 		if (parentId != null) {
 			Comment parentComment = commentFinder.findComment(parentId);
@@ -30,18 +30,18 @@ public class CommentValidator {
 		}
 	}
 
-	public void checkParentBelongsToPost(Long postId, Comment parentComment){
+	public void checkParentBelongsToPost(Long postId, Comment parentComment) {
 
 		boolean isParentBelongsToPost = parentComment.getPostId().equals(postId);
-		if(!isParentBelongsToPost){
+		if (!isParentBelongsToPost) {
 			throw new AppException(ErrorCode.INVALID_PARENT_COMMENT);
 		}
 
 	}
 
-	public void checkParentDepth(Comment parentComment){
+	public void checkParentDepth(Comment parentComment) {
 
-		if(parentComment.getParentId() != null){
+		if (parentComment.getParentId() != null) {
 			throw new AppException(ErrorCode.INVALID_PARENT_COMMENT);
 		}
 
@@ -54,7 +54,7 @@ public class CommentValidator {
 		}
 	}
 
-	public void validateCommentStatus(Long commentId){
+	public void validateCommentStatus(Long commentId) {
 
 		Comment comment = commentFinder.findComment(commentId);
 		if (comment.getCommentStatus() != CommentStatus.NORMAL) {
@@ -62,8 +62,8 @@ public class CommentValidator {
 		}
 	}
 
-	public void validateCommentAuthor(Long userId, CommentDto commentDto){
-		if(!commentDto.userId().equals(userId)){
+	public void validateCommentAuthor(Long userId, CommentDto commentDto) {
+		if (!commentDto.userId().equals(userId)) {
 			throw new AppException(ErrorCode.COMMENT_NOT_AUTHOR);
 		}
 	}
