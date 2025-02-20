@@ -5,6 +5,7 @@ import com.cotato.kampus.domain.post.domain.PostPhoto;
 
 public record TrendingPostPreview(
 	Long postId,
+	Long boardId,
 	String boardName,
 	String title,
 	String content,
@@ -12,9 +13,10 @@ public record TrendingPostPreview(
 	Long comments,
 	String thumbnailUrl
 ) {
-	public static TrendingPostPreview from(Post post, String boardName, PostPhoto postPhoto) {
+	public static TrendingPostPreview from(Post post, Long boardId, String boardName, PostPhoto postPhoto) {
 		return new TrendingPostPreview(
 			post.getId(),
+			boardId,
 			boardName,
 			post.getTitle(),
 			post.getContent(),
