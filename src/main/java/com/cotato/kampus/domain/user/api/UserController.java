@@ -26,6 +26,7 @@ import com.cotato.kampus.domain.user.dto.response.SendMailResponse;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsResponse;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsUpdateResponse;
 import com.cotato.kampus.domain.user.dto.response.UserInfoUpdateResponse;
+import com.cotato.kampus.domain.user.dto.response.VerifyStatusResponse;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.global.common.dto.DataResponse;
@@ -151,5 +152,16 @@ public class UserController {
 
 		userService.uploadCert(universityName, certImage);
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@GetMapping("/verify/status")
+	@Operation(summary = "유저 재학생 인증 상태 조회", description = "유저의 재학생 인증 상태를 확인합니다. (인증 전, 인증 대기 중, 인증 완료)")
+	public ResponseEntity<DataResponse<VerifyStatusResponse>> findVerifyStatus() {
+		return ResponseEntity.ok(DataResponse.from(
+				VerifyStatusResponse.from(
+					userService.findVerifyStatus()
+				)
+			)
+		);
 	}
 }

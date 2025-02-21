@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.admin.dto.StudentVerification;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.university.domain.University;
+import com.cotato.kampus.domain.user.enums.VerificationStatus;
 import com.cotato.kampus.domain.verification.dao.VerificationRecordRepository;
 import com.cotato.kampus.domain.verification.domain.VerificationRecord;
 import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
@@ -30,11 +31,12 @@ public class VerificationRecordFinder {
 	private static final Integer PAGE_SIZE = 10;
 	private static final String SORT_PROPERTY = "createdTime";
 
-	public Slice<StudentVerification> findAll(int page){
+	public Slice<StudentVerification> findAll(int page) {
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
 
 		// VerificationRecord 조회
-		Slice<VerificationRecord> records = verificationRecordRepository.findAllByOrderByCreatedTimeDesc(customPageRequest.of(SORT_PROPERTY));
+		Slice<VerificationRecord> records = verificationRecordRepository.findAllByOrderByCreatedTimeDesc(
+			customPageRequest.of(SORT_PROPERTY));
 
 		// VerificationRecord를 StudentVerification DTO로 변환
 		return records.map(record -> {
@@ -48,9 +50,17 @@ public class VerificationRecordFinder {
 			.orElseThrow(() -> new AppException(ErrorCode.RECORD_NOT_FOUND));
 	}
 
-	public VerificationRecordDto findDto(Long verificationRecordId){
+	public VerificationRecordDto findDto(Long verificationRecordId) {
 		VerificationRecord record = find(verificationRecordId);
 		return VerificationRecordDto.from(record);
+	}
+
+	public VerificationRecordDto findByUserId(Long userId) {
+		return verificationRecordRepository.findByUserId(userId)
+			.map(VerificationRecordDto::from)
+			.orElseGet(() -> VerificationRecordDto.from(
+				new VerificationRecord(null, userId, null, VerificationStatus.NOT_REQUESTED)
+			));
 	}
 
 }
