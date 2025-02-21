@@ -326,11 +326,12 @@ public class PostService {
 		// 3. 좋아요 추가
 		postLikeUpdater.appendPostLike(postId, userId);
 
-		// 4. post의 likes + 1
+		// 4. 기존에 좋아요가 2개였다면 Trending 게시판에 추가
+		trendingPostAppender.appendTrendingPost(postId);
+
+		// 5. post의 likes + 1
 		postUpdater.increasePostLike(postId);
 
-		// 5. Trending 게시판 조건 만족 시 추가
-		trendingPostAppender.appendTrendingPost(postId);
 	}
 
 	@Transactional
@@ -341,11 +342,12 @@ public class PostService {
 		// 2. 좋아요 삭제
 		postLikeUpdater.deletePostLike(postId, userId);
 
+		// 4. 기존에 좋아요가 3개 였다면 Trending 게시판에서 제거
+		postDeleter.deleteTrendingPost(postId);
+
 		// 3. post의 likes - 1
 		postUpdater.decreasePostLike(postId);
 
-		// 4. 좋아요 10개 미만될 경우 Trending 게시판에서 제거
-		postDeleter.deleteTrendingPost(postId);
 	}
 
 	public Slice<MyPostWithPhoto> findUserPosts(int page) {
