@@ -48,6 +48,8 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private final UserService userService;
+	private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
 
 	@GetMapping("/details")
 	@Operation(summary = "유저 정보 조회 api", description = "닉네임, 국적, 선호 언어, 학교(인증한 유저), setup 필요여부 조회")
@@ -148,6 +150,9 @@ public class UserController {
 	) throws ImageException {
 		if (certImage.isEmpty()) {
 			throw new AppException(ErrorCode.EMPTY_FILE_EXCEPTION);
+		}
+		if(certImage.getSize() > MAX_FILE_SIZE){
+			throw new AppException(ErrorCode.FILE_EXTENSION_FAULT);
 		}
 
 		userService.uploadCert(universityName, certImage);
