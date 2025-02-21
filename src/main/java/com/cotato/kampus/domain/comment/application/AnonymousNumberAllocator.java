@@ -11,7 +11,9 @@ import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.application.PostUpdater;
+import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.user.application.UserFinder;
+import com.cotato.kampus.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -26,24 +28,26 @@ public class AnonymousNumberAllocator {
 	private final PostUpdater postUpdater;
 	private final UserFinder userFinder;
 
-	public Long allocateAnonymousNumber(Long postId){
-		// 해당 Post에 현재 User의 댓글 작성 여부 확인
-		Optional<Comment> comment = commentRepository.findFirstByPostIdAndUserId(
-			postId, apiUserResolver.getCurrentUserId()
-		);
-
-		return comment.map(Comment::getAnonymousNumber)
-			.orElseGet(() ->(postUpdater.increaseNextAnonymousNumber(postId)));
+	public Long allocateAnonymousNumber(PostDto postDto, UserDto userDto){
+		// 작성자가 아닌 경우에만 익명 번호 증가
+		if(!postDto.userId().equals(userDto.id())) {
+			// 해당 Post에 현재 User의 댓글 작성 여부 확인
+			Optional<Comment> comment = commentRepository.findFirstByPostIdAndUserId(
+				postDto.id(), userDto.id()
+			);
+			return comment.map(Comment::getAnonymousNumber)
+				.orElseGet(() -> (postUpdater.increaseNextAnonymousNumber(postDto.id())));
+		} else {
+			return null;
+		}
 	}
 
 	public String resolveAuthorName(CommentDto commentDto){
 
-		if(commentDto.anonymity() == Anonymity.ANONYMOUS){
+		if(commentDto.anonymousNumber() != null){
 			return "Anonymous" + commentDto.anonymousNumber();
 		}
 
-		String nickname = userFinder.findById(commentDto.userId()).getNickname();
-
-		return nickname;
+		return "Author";
 	}
 }

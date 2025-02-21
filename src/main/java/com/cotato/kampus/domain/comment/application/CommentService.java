@@ -11,8 +11,10 @@ import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.application.PostFinder;
 import com.cotato.kampus.domain.post.application.PostUpdater;
+import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostPreview;
 import com.cotato.kampus.domain.user.application.UserValidator;
+import com.cotato.kampus.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -38,17 +40,18 @@ public class CommentService {
 
 	@Transactional
 	public Long createComment(Long postId, String content, Long parentId) {
-		// 유저 조회
-		Long userId = apiUserResolver.getCurrentUserId();
+		// 유저, 게시글 조회
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
+		PostDto postDto = postFinder.findPost(postId);
 
 		// 학생 인증 확인
-		userValidator.validateStudentVerification(userId);
+		userValidator.validateStudentVerification(userDto);
 
 		// 부모 댓글 유효성 체크
 		commentValidator.validateParent(postId, parentId);
 
 		// 익명 번호 할당
-		Long anonymousNumber = anonymousNumberAllocator.allocateAnonymousNumber(postId);
+		Long anonymousNumber = anonymousNumberAllocator.allocateAnonymousNumber(postDto, userDto);
 
 		// 댓글 추가
 		Long commentId = commentAppender.append(postId, content, anonymousNumber, parentId);
@@ -83,16 +86,16 @@ public class CommentService {
 	@Transactional
 	public void likeComment(Long commentId) {
 		// 유저 조회
-		Long userId = apiUserResolver.getCurrentUserId();
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
 		// 학생 인증 확인
-		userValidator.validateStudentVerification(userId);
+		userValidator.validateStudentVerification(userDto);
 
 		// 댓글 유효성 체크
 		commentValidator.validateCommentStatus(commentId);
 
 		// 좋아요 추가
-		commentLikeAppender.append(userId, commentId);
+		commentLikeAppender.append(userDto.id(), commentId);
 
 		// 댓글 좋아요 수 증가
 		commentUpdater.increaseCommentLikes(commentId);

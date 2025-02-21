@@ -83,10 +83,10 @@ public class BoardService {
 
 	public BoardDto getUniversityBoard() {
 		// 유저 조회
-		Long userId = apiUserResolver.getCurrentUserId();
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
 		// 재학생 인증 확인
-		Long userUniversityId = userValidator.validateStudentVerification(userId);
+		Long userUniversityId = userValidator.validateStudentVerification(userDto);
 
 		// 대학교 게시판 조회
 		return boardFinder.findUserUniversityBoard(userUniversityId);
