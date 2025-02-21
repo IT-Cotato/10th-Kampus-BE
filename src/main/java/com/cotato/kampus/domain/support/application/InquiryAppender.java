@@ -24,7 +24,7 @@ public class InquiryAppender {
 			.userId(userId)
 			.title(title)
 			.content(content)
-			.inquiryStatus(InquiryStatus.PENDING)
+			.inquiryStatus(InquiryStatus.WAITING)
 			.build();
 
 		return inquiryRepository.save(inquiry).getId();
