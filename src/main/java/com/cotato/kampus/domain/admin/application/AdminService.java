@@ -28,7 +28,11 @@ import com.cotato.kampus.domain.post.application.PostAppender;
 import com.cotato.kampus.domain.post.application.PostDeleter;
 import com.cotato.kampus.domain.post.application.PostFinder;
 import com.cotato.kampus.domain.post.application.PostImageAppender;
+import com.cotato.kampus.domain.post.application.PostImageDeleter;
+import com.cotato.kampus.domain.post.application.PostImageFinder;
 import com.cotato.kampus.domain.post.application.PostUpdater;
+import com.cotato.kampus.domain.post.application.PostValidator;
+import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
 import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.domain.university.application.UnivFinder;
@@ -72,7 +76,9 @@ public class AdminService {
 	private final PostDeleter postDeleter;
 	private final PostUpdater postUpdater;
 	private final PostFinder postFinder;
-	private final UserFinder userFinder;
+	private final PostImageFinder postImageFinder;
+	private final PostImageDeleter postImageDeleter;
+	private final PostValidator postValidator;
 
 	@Transactional
 	public Long createBoard(String boardName, String description, String universityName, Boolean isCategoryRequired) {
@@ -230,6 +236,28 @@ public class AdminService {
 
 		// 카드뉴스 사진 추가
 		postImageAppender.appendAll(postId, imageUrls);
+	}
+
+	@Transactional
+	public void deleteCardNews(Long postId) {
+		// 관리자 검증
+		userValidator.validateAdminAccess();
+
+		// 카드뉴스 검증
+		postValidator.validateDeleteCardNews(postId);
+
+
+		// 이미지 조회
+		List<String> imageUrls = postImageFinder.findPostPhotos(postId);
+
+		// S3에서 이미지 삭제
+		s3Uploader.deleteFiles(imageUrls);
+
+		// PostPhoto 삭제
+		postImageDeleter.deletePostPhotos(postId);
+
+		// 게시글 삭제
+		postDeleter.delete(postId);
 	}
 
 	public Slice<AdminCardNewsPreview> getAllCardNews(int page) {
