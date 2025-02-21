@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cotato.kampus.domain.admin.dto.AdminBoardDetail;
 import com.cotato.kampus.domain.admin.dto.AdminUserInfo;
 import com.cotato.kampus.domain.admin.dto.StudentVerification;
+import com.cotato.kampus.domain.admin.dto.VerificationPhotoDto;
+import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
 import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsPreview;
 import com.cotato.kampus.domain.admin.dto.response.BoardInfo;
 import com.cotato.kampus.domain.board.application.BoardAppender;
@@ -62,6 +64,7 @@ public class AdminService {
 	private final BoardDtoEnhancer boardDtoEnhancer;
 	private final VerificationRecordFinder verificationRecordFinder;
 	private final VerificationRecordUpdater verificationRecordUpdater;
+	private final VerificationPhotoFinder verificationPhotoFinder;
 	private final UserUpdater userUpdater;
 	private final ImageValidator imageValidator;
 	private final S3Uploader s3Uploader;
@@ -171,7 +174,7 @@ public class AdminService {
 		BoardDto boardDto = boardFinder.findBoardDto(boardId);
 
 		// 대학 이름 조회
-		if(boardDto.boardType().equals(BoardType.UNIVERSITY)) {
+		if (boardDto.boardType().equals(BoardType.UNIVERSITY)) {
 			String universityName = univFinder.findUniversityName(boardDto.universityId());
 			return BoardInfo.from(boardDto, universityName);
 		}
@@ -184,6 +187,14 @@ public class AdminService {
 		userValidator.validateAdminAccess();
 
 		return verificationRecordFinder.findAll(page);
+	}
+
+	public VerificationWithPhoto getVerification(Long verificationRecordId) {
+		userValidator.validateAdminAccess();
+		VerificationRecordDto verificationRecordDto = verificationRecordFinder.findDto(verificationRecordId);
+		String universityName = univFinder.findUniversityName(verificationRecordDto.universityId());
+		VerificationPhotoDto verificationPhotoDto = verificationPhotoFinder.findByRecordId(verificationRecordId);
+		return VerificationWithPhoto.of(verificationRecordDto, universityName, verificationPhotoDto);
 	}
 
 	@Transactional
@@ -243,7 +254,6 @@ public class AdminService {
 
 		// 카드뉴스 검증
 		postValidator.validateDeleteCardNews(postId);
-
 
 		// 이미지 조회
 		List<String> imageUrls = postImageFinder.findPostPhotos(postId);
