@@ -11,7 +11,7 @@ public record HomeBoardAndPostPreview(
 		return new HomeBoardAndPostPreview(
 			boardDto.boardId(),
 			boardDto.boardName(),
-			postDto.title()
+			postDto != null ? postDto.title() : null
 		);
 	}
 }
