@@ -24,6 +24,7 @@ import com.cotato.kampus.domain.admin.dto.response.AdminUserDetailsResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardCreateResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardInfoResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationListResponse;
+import com.cotato.kampus.domain.admin.dto.response.StudentVerificationResponse;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.post.dto.response.AdminCardNewsListResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
@@ -138,6 +139,16 @@ public class AdminController {
 				)
 			)
 		);
+	}
+
+	@GetMapping("/student-verifications/{verificationRecordId}")
+	@Operation(summary = "재학생 인증 상세 조회", description = "재학생 인증 상세 정보를 조회합니다.")
+	public ResponseEntity<DataResponse<StudentVerificationResponse>> getStudentVerification(
+		@PathVariable Long verificationRecordId
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+			StudentVerificationResponse.from(adminService.getVerification(verificationRecordId))
+		));
 	}
 
 	@PostMapping("/student-verifications/{verificationRecordId}/approve")
