@@ -9,7 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
+import com.cotato.kampus.domain.support.dto.InquiryDto;
 import com.cotato.kampus.domain.support.dto.InquiryPreview;
+import com.cotato.kampus.domain.support.dto.UserInquiryDetail;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -26,6 +28,8 @@ public class SupportService {
 	private final S3Uploader s3Uploader;
 	private final InquiryPhotoAppender inquiryPhotoAppender;
 	private final InquiryFinder inquiryFinder;
+	private final InquiryMapper inquiryMapper;
+	private final InquiryValidator inquiryValidator;
 
 	private static final String INQUIRY_IMAGE_FOLDER = "inquiry";
 
@@ -55,11 +59,25 @@ public class SupportService {
 		}
 	}
 
-	@Transactional
 	public Slice<InquiryPreview> findUserInquiries(int page) {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		return inquiryFinder.findAllUserInquiry(userId, page);
 	}
+
+	public UserInquiryDetail findUserInquiryDetail(Long inquiryId){
+		// 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		// 문의 조회
+		InquiryDto inquiryDto = inquiryFinder.findInquiryDto(inquiryId);
+
+		// 작성자인지 확인
+		inquiryValidator.validateUserIsAuthor(userId, inquiryDto);
+
+		return inquiryMapper.mapToInquiryDetail(inquiryDto);
+	}
+
+
 }

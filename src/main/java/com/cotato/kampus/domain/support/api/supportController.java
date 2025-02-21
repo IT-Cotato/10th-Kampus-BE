@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.support.application.SupportService;
 import com.cotato.kampus.domain.support.dto.request.CreateInquiryRequest;
+import com.cotato.kampus.domain.support.dto.response.UserInquiryDetailResponse;
 import com.cotato.kampus.domain.support.dto.response.UserInquiryListResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -57,4 +59,18 @@ public class supportController {
 			)
 		);
 	}
+
+	@GetMapping("/inquiry/{inquiryId}")
+	@Operation(summary = "유저 1:1 문의 상세 조회", description = "사용자의 1:1 문의 목록을 상세 조회합니다.")
+	public ResponseEntity<DataResponse<UserInquiryDetailResponse>> findUserInquiryDetail(
+		@PathVariable Long inquiryId
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+				UserInquiryDetailResponse.from(
+					supportService.findUserInquiryDetail(inquiryId)
+				)
+			)
+		);
+	}
+
 }

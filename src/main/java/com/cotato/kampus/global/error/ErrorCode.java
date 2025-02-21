@@ -116,6 +116,11 @@ public enum ErrorCode {
 	// Nationality
 	INVALID_NATIONALITY_CODE(HttpStatus.BAD_REQUEST, "유효하지 않은 국가 코드입니다.", "NATIONALITY-001"),
 	INVALID_NATIONALITY_NAME(HttpStatus.BAD_REQUEST, "유효하지 않은 국가명입니다.", "NATIONALITY-002"),
+
+	// Inquiry
+	INQUIRY_NOT_FOUND(HttpStatus.NOT_FOUND, "문의글을 찾을 수 없습니다.", "INQUIRY-001"),
+	INQUIRY_NOT_AUTHOR(HttpStatus.FORBIDDEN, "문의글 작성자가 아닙니다.", "INQUIRY-002"),
+
 	;
 
 	private final HttpStatus httpStatus;

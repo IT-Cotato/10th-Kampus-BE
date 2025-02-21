@@ -26,6 +26,9 @@ public class InquiryReply extends BaseTimeEntity {
 	@Column(name = "inquiry_reply_id")
 	private Long id;
 
+	@Column(name = "inquiry_id")
+	private Long inquiryId;
+
 	@Column(name = "admin_id", nullable = false)
 	private Long adminId;
 
