@@ -18,11 +18,13 @@ public class TrendingPostAppender {
 	private final TrendingPostRepository trendingPostRepository;
 	private final PostFinder postFinder;
 
+	private static final int TRENDING_LIKE_THRESHOLD = 3;
+
 	@Transactional
 	public void appendTrendingPost(Long postId) {
 		Post post = postFinder.getPost(postId);
 
-		if (post.getLikes() >= 3) {
+		if (post.getLikes() == TRENDING_LIKE_THRESHOLD - 1) {
 			TrendingPost trendingPost = TrendingPost.builder()
 				.postId(postId)
 				.boardId(post.getBoardId())

@@ -25,6 +25,8 @@ public class PostDeleter {
 	private final PostFinder postFinder;
 	private final PostDraftRepository postDraftRepository;
 	private final TrendingPostRepository trendingPostRepository;
+	private static final int TRENDING_LIKE_THRESHOLD = 3;
+
 
 	@Transactional
 	public void delete(Long postId) {
@@ -50,7 +52,7 @@ public class PostDeleter {
 	public void deleteTrendingPost(Long postId) {
 		Post post = postFinder.getPost(postId);
 
-		if (post.getLikes() < 10) {
+		if (post.getLikes() == TRENDING_LIKE_THRESHOLD) {
 			trendingPostRepository.deleteByPostId(postId);
 		}
 	}
