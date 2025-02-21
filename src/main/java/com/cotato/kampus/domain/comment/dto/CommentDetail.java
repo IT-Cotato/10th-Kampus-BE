@@ -14,6 +14,8 @@ public record CommentDetail(
 
 	Long parentId,
 
+	Long targetId,
+
 	@Schema(example = "NORMAL")
 	CommentStatus commentStatus,
 
@@ -40,6 +42,7 @@ public record CommentDetail(
 		return new CommentDetail(
 			commentDto.commentId(),
 			commentDto.parentId(),
+			commentDto.targetId(),
 			commentDto.commentStatus(),
 			author,
 			commentDto.content(),

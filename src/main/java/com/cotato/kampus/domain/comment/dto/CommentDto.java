@@ -19,6 +19,7 @@ public record CommentDto (
 	Long reports,
 	Long anonymousNumber,
 	Long parentId,
+	Long targetId,
 	LocalDateTime createdTime
 ) {
 	public static CommentDto from(Comment comment) {
@@ -34,6 +35,7 @@ public record CommentDto (
 			comment.getReports(),
 			comment.getAnonymousNumber(),
 			comment.getParentId(),
+			comment.getTargetId(),
 			comment.getCreatedTime()
 		);
 	}

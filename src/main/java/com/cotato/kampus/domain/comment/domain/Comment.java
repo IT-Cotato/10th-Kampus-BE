@@ -56,6 +56,9 @@ public class Comment extends BaseTimeEntity {
 	@Column(name = "parent_id")
 	private Long parentId;
 
+	@Column(name = "target_id")
+	private Long targetId;
+
 	@Column(name = "likes", nullable = false)
 	private Long likes = 0L;
 
@@ -65,7 +68,7 @@ public class Comment extends BaseTimeEntity {
 	@Builder
 	public Comment(Long userId, Long postId, String content,
 		Long likes, ReportStatus reportStatus, CommentStatus commentStatus,
-		Anonymity anonymity, Long reports, Long anonymousNumber, Long parentId) {
+		Anonymity anonymity, Long reports, Long anonymousNumber, Long parentId, Long targetId) {
 		this.userId = userId;
 		this.postId = postId;
 		this.content = content;
@@ -76,6 +79,7 @@ public class Comment extends BaseTimeEntity {
 		this.reports = reports;
 		this.anonymousNumber = anonymousNumber;
 		this.parentId = parentId;
+		this.targetId = targetId;
 	}
 
 	public void setCommentStatus(CommentStatus commentStatus) {
