@@ -42,8 +42,12 @@ public class VerificationRecord extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private VerificationStatus verificationStatus;
 
+	@Column(name = "rejection_reason")
+	private String rejectionReason;
+
 	@Builder
-	public VerificationRecord(Long userId, Long universityId, VerificationType verificationType, VerificationStatus verificationStatus) {
+	public VerificationRecord(Long userId, Long universityId, VerificationType verificationType,
+		VerificationStatus verificationStatus) {
 		this.userId = userId;
 		this.universityId = universityId;
 		this.verificationType = verificationType;
@@ -52,6 +56,10 @@ public class VerificationRecord extends BaseTimeEntity {
 
 	public void setStatus(VerificationStatus verificationStatus) {
 		this.verificationStatus = verificationStatus;
+	}
+
+	public void setRejectionReason(String rejectionReason) {
+		this.rejectionReason = rejectionReason;
 	}
 
 }
