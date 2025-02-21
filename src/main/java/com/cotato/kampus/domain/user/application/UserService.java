@@ -11,13 +11,15 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.university.application.UnivEmailVerifier;
 import com.cotato.kampus.domain.university.application.UnivFinder;
-import com.cotato.kampus.domain.university.domain.University;
 import com.cotato.kampus.domain.user.dto.UserDetailsDto;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
+import com.cotato.kampus.domain.user.enums.VerificationStatus;
 import com.cotato.kampus.domain.verification.application.VerificationPhotoAppender;
 import com.cotato.kampus.domain.verification.application.VerificationRecordAppender;
+import com.cotato.kampus.domain.verification.application.VerificationRecordFinder;
+import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -40,6 +42,7 @@ public class UserService {
 	private final VerificationPhotoAppender verificationPhotoAppender;
 
 	private static final String STUDENT_CERT_IMAGE_FOLDER = "student_cert";
+	private final VerificationRecordFinder verificationRecordFinder;
 
 	public UserDetailsDto getUserDetails() {
 		UserDto user = apiUserResolver.getCurrentUserDto();
@@ -117,5 +120,15 @@ public class UserService {
 		userValidator.validateUserInfoUpdate(nickname);
 		// 2. 유저 닉네임, 선호언어 설정
 		return userUpdater.updateDetails(nickname, preferredLanguage);
+	}
+
+	public VerificationStatus findVerifyStatus() {
+		// 유저 조회
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
+
+		// 재학생 인증 기록 조회
+		VerificationRecordDto record = verificationRecordFinder.findByUserId(userDto.id());
+
+		return record.verificationStatus();
 	}
 }
