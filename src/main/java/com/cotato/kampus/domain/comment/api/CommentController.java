@@ -41,7 +41,8 @@ public class CommentController {
 					commentService.createComment(
 						postId,
 						request.content(),
-						request.parentId()
+						request.parentId(),
+						request.targetId()
 					)
 				)
 			)

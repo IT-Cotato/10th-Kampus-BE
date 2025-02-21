@@ -39,7 +39,7 @@ public class CommentService {
 	private final PostUpdater postUpdater;
 
 	@Transactional
-	public Long createComment(Long postId, String content, Long parentId) {
+	public Long createComment(Long postId, String content, Long parentId, Long targetId) {
 		// 유저, 게시글 조회
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 		PostDto postDto = postFinder.findPost(postId);
@@ -54,7 +54,7 @@ public class CommentService {
 		Long anonymousNumber = anonymousNumberAllocator.allocateAnonymousNumber(postDto, userDto);
 
 		// 댓글 추가
-		Long commentId = commentAppender.append(postId, content, anonymousNumber, parentId);
+		Long commentId = commentAppender.append(postId, content, anonymousNumber, parentId, targetId);
 
 		// 게시글의 댓글 수 + 1
 		postUpdater.increaseComments(postId);
