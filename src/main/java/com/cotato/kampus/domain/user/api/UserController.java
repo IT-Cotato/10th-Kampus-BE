@@ -155,7 +155,7 @@ public class UserController {
 	}
 
 	@GetMapping("/verify/status")
-	@Operation(summary = "유저 재학생 인증 상태 조회", description = "유저의 재학생 인증 상태를 확인합니다. (인증 전, 인증 대기 중, 인증 완료)")
+	@Operation(summary = "유저 재학생 인증 상태 조회", description = "유저의 재학생 인증 상태를 확인합니다. (인증 요청 전, 인증 대기 중, 인증 완료, 반려)")
 	public ResponseEntity<DataResponse<VerifyStatusResponse>> findVerifyStatus() {
 		return ResponseEntity.ok(DataResponse.from(
 				VerifyStatusResponse.from(
