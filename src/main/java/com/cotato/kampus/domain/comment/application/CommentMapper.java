@@ -23,16 +23,24 @@ public class CommentMapper {
 
 	private final AnonymousNumberAllocator anonymousNumberAllocator;
 	private final CommentLikeRepository commentLikeRepository;
+	private final CommentFinder commentFinder;
 
 	public List<CommentDetail> buildCommentHierarchy(List<CommentDto> commentDtos, Long userId){
 		Map<Long, CommentDetail> commentMap = new HashMap<>();
 		List<CommentDetail> rootComments = new ArrayList<>();
 
+
 		// 모든 댓글을 Map으로 변환
 		for (CommentDto commentDto : commentDtos) {
+			String targetAuthor = null;
+			if(commentDto.targetId() != null) {
+				CommentDto targetCommentDto = commentFinder.findCommentDto(commentDto.targetId());
+				targetAuthor = anonymousNumberAllocator.resolveAuthorName(targetCommentDto);
+			}
 			CommentDetail detail = CommentDetail.of(
 				commentDto,
 				anonymousNumberAllocator.resolveAuthorName(commentDto),
+				targetAuthor,
 				new ArrayList<>(),
 				commentLikeRepository.existsByUserIdAndCommentId(userId, commentDto.commentId())
 			);

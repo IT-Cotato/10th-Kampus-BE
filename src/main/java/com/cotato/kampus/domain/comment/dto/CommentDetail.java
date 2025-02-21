@@ -14,7 +14,7 @@ public record CommentDetail(
 
 	Long parentId,
 
-	Long targetId,
+	String targetAuthor,
 
 	@Schema(example = "NORMAL")
 	CommentStatus commentStatus,
@@ -38,11 +38,11 @@ public record CommentDetail(
 	@Schema(description = "댓글의 대댓글 리스트")
 	List<CommentDetail> replies
 ) {
-	public static CommentDetail of(CommentDto commentDto, String author, List<CommentDetail> replies, boolean isLiked) {
+	public static CommentDetail of(CommentDto commentDto, String author, String targetAuthor, List<CommentDetail> replies, boolean isLiked) {
 		return new CommentDetail(
 			commentDto.commentId(),
 			commentDto.parentId(),
-			commentDto.targetId(),
+			targetAuthor,
 			commentDto.commentStatus(),
 			author,
 			commentDto.content(),
