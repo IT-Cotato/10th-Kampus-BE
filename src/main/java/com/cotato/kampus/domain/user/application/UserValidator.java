@@ -22,13 +22,12 @@ public class UserValidator {
 	private final UserFinder userFinder;
 
 	// 재학생 인증 후 universityId 반환
-	public Long validateStudentVerification(Long userId) {
-		User user = userFinder.findById(userId);
+	public Long validateStudentVerification(UserDto userDto) {
 
-		if (user.getUserRole() == UserRole.UNVERIFIED)
+		if (userDto.userRole() == UserRole.UNVERIFIED)
 			throw new AppException(ErrorCode.USER_UNVERIFIED);
 
-		return user.getUniversityId();
+		return userDto.universityId();
 	}
 
 	// 재학생 인증 중복 요청 검증
