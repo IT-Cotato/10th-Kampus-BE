@@ -19,6 +19,7 @@ import com.cotato.kampus.domain.admin.dto.request.BoardCreateRequest;
 import com.cotato.kampus.domain.admin.dto.request.BoardUpdateRequest;
 import com.cotato.kampus.domain.admin.dto.request.CardNewsCreateRequest;
 import com.cotato.kampus.domain.admin.dto.request.ChangeUserRoleRequest;
+import com.cotato.kampus.domain.admin.dto.request.VerifyRejectRequest;
 import com.cotato.kampus.domain.admin.dto.response.AdminBoardListResponse;
 import com.cotato.kampus.domain.admin.dto.response.AdminUserDetailsResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardCreateResponse;
@@ -33,6 +34,7 @@ import com.cotato.kampus.global.error.exception.ImageException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -163,9 +165,10 @@ public class AdminController {
 	@PostMapping("/student-verifications/{verificationRecordId}/reject")
 	@Operation(summary = "재학생 인증 반려", description = "재학생 인증 요청을 반려합니다.")
 	public ResponseEntity<DataResponse<Void>> rejectStudentVerification(
-		@PathVariable Long verificationRecordId
+		@PathVariable Long verificationRecordId,
+		@Valid @RequestBody VerifyRejectRequest request
 	) {
-		adminService.rejectStudentVerification(verificationRecordId);
+		adminService.rejectStudentVerification(verificationRecordId, request.rejectionReason());
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 

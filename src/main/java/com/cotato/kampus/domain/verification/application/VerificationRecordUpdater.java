@@ -18,19 +18,17 @@ public class VerificationRecordUpdater {
 	private final VerificationRecordFinder verificationRecordFinder;
 	private final VerificationRecordRepository verificationRecordRepository;
 
-	public void approve(Long verificationRecordId){
+	@Transactional
+	public void approve(Long verificationRecordId) {
 		VerificationRecord verificationRecord = verificationRecordFinder.find(verificationRecordId);
 
 		verificationRecord.setStatus(VerificationStatus.APPROVED);
-
-		verificationRecordRepository.save(verificationRecord);
 	}
 
-	public void reject(Long verificationRecordId){
+	@Transactional
+	public void reject(Long verificationRecordId, String rejectionReason) {
 		VerificationRecord verificationRecord = verificationRecordFinder.find(verificationRecordId);
-
 		verificationRecord.setStatus(VerificationStatus.REJECTED);
-
-		verificationRecordRepository.save(verificationRecord);
+		verificationRecord.setRejectionReason(rejectionReason);
 	}
 }

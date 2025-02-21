@@ -215,11 +215,11 @@ public class AdminService {
 	}
 
 	@Transactional
-	public void rejectStudentVerification(Long verificationRecordId) {
+	public void rejectStudentVerification(Long verificationRecordId, String rejectionReason) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
-		verificationRecordUpdater.reject(verificationRecordId);
+		verificationRecordUpdater.reject(verificationRecordId, rejectionReason);
 	}
 
 	@Transactional
