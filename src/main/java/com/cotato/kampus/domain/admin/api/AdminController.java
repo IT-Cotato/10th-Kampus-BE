@@ -171,6 +171,15 @@ public class AdminController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
+	@DeleteMapping("/cardNews/{postId}")
+	@Operation(summary = "카드뉴스 삭제", description = "카드뉴스를 삭제합니다.")
+	public ResponseEntity<DataResponse<Void>> deleteCardNews(
+		@PathVariable Long postId
+	) {
+		adminService.deleteCardNews(postId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
 	@GetMapping(value = "/cardNews")
 	@Operation(summary = "카드뉴스 조회", description = "카드뉴스 목록을 조회합니다,")
 	public ResponseEntity<DataResponse<AdminCardNewsListResponse>> getAllCardNews(

@@ -29,6 +29,7 @@ public enum ErrorCode {
 	CATEGORY_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "이 게시판에서는 카테고리를 입력할 수 없습니다.", "POST-009"),
 	HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글 검색 기록이 존재하지 않습니다.", "POST-010"),
 	HISTORY_DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, "자신의 검색 기록만 삭제할 수 있습니다.", "POST-011"),
+	CARD_NEWS_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "해당 게시글은 카드뉴스 게시글이 아닙니다.", "POST-012"),
 
 	//Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
