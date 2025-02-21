@@ -2,12 +2,14 @@ package com.cotato.kampus.domain.support.application;
 
 import java.util.List;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
+import com.cotato.kampus.domain.support.dto.InquiryPreview;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -23,6 +25,7 @@ public class SupportService {
 	private final ImageValidator imageValidator;
 	private final S3Uploader s3Uploader;
 	private final InquiryPhotoAppender inquiryPhotoAppender;
+	private final InquiryFinder inquiryFinder;
 
 	private static final String INQUIRY_IMAGE_FOLDER = "inquiry";
 
@@ -50,5 +53,13 @@ public class SupportService {
 		if (!imageUrls.isEmpty()) {
 			inquiryPhotoAppender.appendAll(inquiryId, imageUrls);
 		}
+	}
+
+	@Transactional
+	public Slice<InquiryPreview> findUserInquiries(int page) {
+		// 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		return inquiryFinder.findAllUserInquiry(userId, page);
 	}
 }

@@ -4,13 +4,16 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.support.application.SupportService;
 import com.cotato.kampus.domain.support.dto.request.CreateInquiryRequest;
+import com.cotato.kampus.domain.support.dto.response.UserInquiryListResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
 
@@ -18,6 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "문의 및 신고 API", description = "1:1 문의 및 신고 관련 API")
@@ -39,5 +43,18 @@ public class supportController {
 			request.images() == null ? List.of() : request.images()
 		);
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@GetMapping("/inquiry")
+	@Operation(summary = "유저 1:1 문의 목록 조회", description = "사용자의 1:1 문의 목록을 조회합니다.")
+	public ResponseEntity<DataResponse<UserInquiryListResponse>> findUserInquiries(
+		@RequestParam(required = false, defaultValue = "1") int page
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+				UserInquiryListResponse.from(
+					supportService.findUserInquiries(page)
+				)
+			)
+		);
 	}
 }
