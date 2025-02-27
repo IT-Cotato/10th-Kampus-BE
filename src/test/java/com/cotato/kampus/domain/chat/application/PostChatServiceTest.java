@@ -30,6 +30,10 @@ class PostChatServiceTest {
 	private PostFinder postFinder;
 	@Mock
 	ApiUserResolver apiUserResolver;
+	@Mock
+	ChatRoomValidator chatRoomValidator;
+	@Mock
+	ChatroomMetadataAppender chatroomMetadataAppender;
 
 	@Test
 	//postId = 1, senderId = 1, receiverId = 2
@@ -52,7 +56,10 @@ class PostChatServiceTest {
 
 		when(postFinder.findPost(1L)).thenReturn(postDto);
 		when(apiUserResolver.getCurrentUserId()).thenReturn(1L);
+		doNothing().when(chatRoomValidator).validateNewChatRoom(1L, 1L, 2L);
 		when(chatRoomAppender.appendChatRoom(1L, 1L, 2L)).thenReturn(123L);
+		doNothing().when(chatroomMetadataAppender).appendChatroomMetadatas(123L, postDto.id(),
+			postDto.title(), 1L, 2L);
 
 		Long id = target.createChatRoom(postDto.id());
 		System.out.println("id = " + id);
