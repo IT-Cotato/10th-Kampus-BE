@@ -75,7 +75,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public Long verifyEmailCode(String email, String universityCode, int code) throws IOException {
+	public Map<String, Object> verifyEmailCode(String email, String universityCode, int code) throws IOException {
 		// 유저 조회
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
@@ -83,14 +83,19 @@ public class UserService {
 		userValidator.validateDuplicateStudentVerification(userDto);
 
 		// 코드 인증
-		univEmailVerifier.verifyCode(email, universityCode, code);
+		Map<String, Object> response = univEmailVerifier.verifyCode(email, universityCode, code);
 
-		// VerificationRecord 추가
-		Long universityId = univFinder.findIdByCode(universityCode);
-		verificationRecordAppender.appendEmailType(userDto.id(), universityId);
+		// 인증 성공 시 아래 로직 실행
+		if((boolean) response.get("success")) {
+			// VerificationRecord 추가
+			Long universityId = univFinder.findIdByCode(universityCode);
+			verificationRecordAppender.appendEmailType(userDto.id(), universityId);
 
-		// 유저 상태 변경, 학교 할당
-		return userUpdater.updateVerificationStatus(userDto.id(), universityId);
+			// 유저 상태 변경, 학교 할당
+			userUpdater.updateVerificationStatus(userDto.id(), universityId);
+		}
+
+		return response;
 	}
 
 	@Transactional

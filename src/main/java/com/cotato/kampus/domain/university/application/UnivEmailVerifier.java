@@ -31,13 +31,8 @@ public class UnivEmailVerifier {
 		return UnivCert.certify(apiKey, email, universityName, true);
 	}
 
-	public void verifyCode(String email, String universityCode, int code) throws IOException {
+	public Map<String, Object> verifyCode(String email, String universityCode, int code) throws IOException {
 		String universityName = univFinder.findNameByCode(universityCode);
-		Map<String, Object> response = UnivCert.certifyCode(apiKey, email, universityName,  code);
-
-		boolean success = (boolean) response.get("success");
-		if(!success){
-			throw new AppException(ErrorCode.INVALID_CODE);
-		}
+		return UnivCert.certifyCode(apiKey, email, universityName,  code);
 	}
 }

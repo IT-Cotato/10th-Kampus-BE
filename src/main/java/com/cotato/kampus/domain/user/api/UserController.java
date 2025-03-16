@@ -131,17 +131,21 @@ public class UserController {
 
 	@PostMapping("/verify/mail/confirm")
 	@Operation(summary = "이메일 인증 코드 확인", description = "이메일로 받은 인증 코드를 확인합니다. 일치하는 경우 재학생 자격으로 변경됩니다.")
-	public ResponseEntity<DataResponse<ConfirmMailResponse>> verifyEmailCode(
+	public ResponseEntity<DataResponse<UnivCertResponse>> verifyEmailCode(
 		@RequestBody ConfirmMailRequest request
 	) throws IOException {
-		return ResponseEntity.ok(DataResponse.from(
-				ConfirmMailResponse.from(
-					userService.verifyEmailCode(
-						request.email(), request.universityCode(), request.code()
-					)
-				)
-			)
-		);
+		UnivCertResponse response = UnivCertResponse.from(
+			userService.verifyEmailCode(
+				request.email(),
+				request.universityCode(),
+				request.code())
+			);
+
+		if (response.success()) {
+			return ResponseEntity.ok(DataResponse.from(response));
+		} else {
+			return ResponseEntity.badRequest().body(DataResponse.fail(response));
+		}
 	}
 
 	@PostMapping(value = "/verify/document", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
