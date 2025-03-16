@@ -86,7 +86,7 @@ public class UserService {
 		Map<String, Object> response = univEmailVerifier.verifyCode(email, universityCode, code);
 
 		// 인증 성공 시 아래 로직 실행
-		if((boolean) response.get("success")) {
+		if ((boolean)response.get("success")) {
 			// VerificationRecord 추가
 			Long universityId = univFinder.findIdByCode(universityCode);
 			verificationRecordAppender.appendEmailType(userDto.id(), universityId);
@@ -99,7 +99,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public void uploadCert(String universityName, MultipartFile certImage) throws ImageException {
+	public void uploadCert(String universityCode, MultipartFile certImage) throws ImageException {
 		// 유저 조회
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
@@ -109,7 +109,7 @@ public class UserService {
 		String imageUrl = s3Uploader.uploadFile(certImage, STUDENT_CERT_IMAGE_FOLDER);
 
 		// VerificationRecord 추가
-		Long universityId = univFinder.findUniversityId(universityName);
+		Long universityId = univFinder.findUniversityId(universityCode);
 		Long verificationRecordId = verificationRecordAppender.appendPhotoType(userDto.id(), universityId);
 
 		// 인증서 이미지 추가
