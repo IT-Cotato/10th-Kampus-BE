@@ -31,13 +31,9 @@ public class UserValidator {
 	}
 
 	// 재학생 인증 중복 요청 검증
-	public Long validateDuplicateStudentVerification() {
-		User user = apiUserResolver.getCurrentUser();
-
-		if (user.getUserRole() == UserRole.VERIFIED)
+	public void validateDuplicateStudentVerification(UserDto userDto) {
+		if (userDto.userRole() == UserRole.VERIFIED)
 			throw new AppException(ErrorCode.USER_ALREADY_VERIFIED);
-
-		return user.getId();
 	}
 
 	public void validateAdminAccess() {

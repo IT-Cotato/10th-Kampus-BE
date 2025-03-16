@@ -70,40 +70,42 @@ public class UserService {
 	}
 
 	@Transactional
-	public Map<String, Object> sendMail(String email, String universityName) throws IOException {
-		return univEmailVerifier.sendMail(email, universityName);
+	public Map<String, Object> sendMail(String email, String universityCode) throws IOException {
+		return univEmailVerifier.sendMail(email, universityCode);
 	}
 
 	@Transactional
-	public Long verifyEmailCode(String email, String universityName, int code) throws IOException {
+	public Long verifyEmailCode(String email, String universityCode, int code) throws IOException {
+		// 유저 조회
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
+
 		// 이미 재학생 인증 되었는지 확인
-		userValidator.validateDuplicateStudentVerification();
+		userValidator.validateDuplicateStudentVerification(userDto);
 
 		// 코드 인증
-		univEmailVerifier.verifyCode(email, universityName, code);
+		univEmailVerifier.verifyCode(email, universityCode, code);
 
 		// VerificationRecord 추가
-		Long universityId = univFinder.findUniversityId(universityName);
-		verificationRecordAppender.appendEmailType(universityId);
-
-		// 유저 조회
-		Long userId = apiUserResolver.getCurrentUserId();
+		Long universityId = univFinder.findIdByCode(universityCode);
+		verificationRecordAppender.appendEmailType(userDto.id(), universityId);
 
 		// 유저 상태 변경, 학교 할당
-		return userUpdater.updateVerificationStatus(userId, universityId);
+		return userUpdater.updateVerificationStatus(userDto.id(), universityId);
 	}
 
 	@Transactional
 	public void uploadCert(String universityName, MultipartFile certImage) throws ImageException {
-		// 이미 재학생 인증 되었는지 검증
-		Long userId = userValidator.validateDuplicateStudentVerification();
+		// 유저 조회
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
+		// 이미 재학생 인증 되었는지 확인
+		userValidator.validateDuplicateStudentVerification(userDto);
 		// s3에 이미지 업로드
 		String imageUrl = s3Uploader.uploadFile(certImage, STUDENT_CERT_IMAGE_FOLDER);
 
 		// VerificationRecord 추가
 		Long universityId = univFinder.findUniversityId(universityName);
-		Long verificationRecordId = verificationRecordAppender.appendPhotoType(userId, universityId);
+		Long verificationRecordId = verificationRecordAppender.appendPhotoType(userDto.id(), universityId);
 
 		// 인증서 이미지 추가
 		verificationPhotoAppender.append(verificationRecordId, imageUrl);
