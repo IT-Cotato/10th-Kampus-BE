@@ -19,16 +19,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class UnivEmailVerifier {
 
+	private final UnivFinder univFinder;
+
 	@Value("${univcert.api.key}")
 	private String apiKey;
 
-	public Map<String, Object> sendMail(String email, String univName) throws IOException {
+	public Map<String, Object> sendMail(String email, String universityCode) throws IOException {
+		String universityName = univFinder.findNameByCode(universityCode);
+
 		UnivCert.clear(apiKey, email);
-		return UnivCert.certify(apiKey, email, univName, true);
+		return UnivCert.certify(apiKey, email, universityName, true);
 	}
 
-	public void verifyCode(String email, String univName, int code) throws IOException {
-		Map<String, Object> response = UnivCert.certifyCode(apiKey, email, univName,  code);
+	public void verifyCode(String email, String universityCode, int code) throws IOException {
+		String universityName = univFinder.findNameByCode(universityCode);
+		Map<String, Object> response = UnivCert.certifyCode(apiKey, email, universityName,  code);
 
 		boolean success = (boolean) response.get("success");
 		if(!success){

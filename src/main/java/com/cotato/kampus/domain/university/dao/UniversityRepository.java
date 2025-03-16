@@ -9,4 +9,5 @@ import com.cotato.kampus.domain.university.domain.University;
 public interface UniversityRepository extends JpaRepository<University, Long> {
 
 	Optional<University> findByUniversityName(String name);
+	Optional<University> findByUniversityCode(String code);
 }
