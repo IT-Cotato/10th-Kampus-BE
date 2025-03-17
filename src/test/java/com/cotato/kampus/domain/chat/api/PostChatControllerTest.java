@@ -61,4 +61,18 @@ class PostChatControllerTest {
 			.andExpect(jsonPath("$.status").value("OK"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
 	}
+
+	@Test
+	@DisplayName("postId가 없으면 채팅방 생성에 실패한다.")
+	public void createChatroomWithoutPostId() throws Exception {
+		// given
+		ChatroomRequest request = new ChatroomRequest(null);
+
+		mockMvc.perform(post("/v1/api/chats/post")
+				.content(objectMapper.writeValueAsString(request))
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(print())
+			.andExpect(status().isBadRequest());
+	}
 }
