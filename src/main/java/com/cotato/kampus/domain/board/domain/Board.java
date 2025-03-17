@@ -38,8 +38,8 @@ public class Board extends BaseTimeEntity {
 	@Column(name = "university_id")
 	private Long universityId;
 
-	@Column(name = "is_category_required", nullable = false)
-	private Boolean isCategoryRequired;
+	@Column(name = "uses_Categories", nullable = false)
+	private Boolean usesCategories;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "board_status", nullable = false)
