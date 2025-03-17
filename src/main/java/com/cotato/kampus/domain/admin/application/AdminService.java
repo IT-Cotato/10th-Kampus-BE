@@ -21,6 +21,7 @@ import com.cotato.kampus.domain.board.application.BoardDtoEnhancer;
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardUpdater;
 import com.cotato.kampus.domain.board.application.BoardValidator;
+import com.cotato.kampus.domain.board.application.CategoryAppender;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
@@ -80,25 +81,29 @@ public class AdminService {
 	private final PostImageFinder postImageFinder;
 	private final PostImageDeleter postImageDeleter;
 	private final PostValidator postValidator;
+	private final CategoryAppender categoryAppender;
 
 	@Transactional
-	public Long createBoard(String boardName, String description, String universityCode, Boolean isCategoryRequired) {
+	public Long createBoard(String boardName, String description, String universityCode, List<String> categories) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
 		// 게시판 이름 중복 검사
 		boardValidator.validateUniqueName(boardName);
 
-		// 학교 게시판인 경우
+		Long universityId = null;
 		if (universityCode != null) {
-			Long universityId = univFinder.findIdByCode(universityCode);
+			universityId = univFinder.findIdByCode(universityCode);
 			boardValidator.validateUniversityBoardExists(universityId);
-
-			return boardAppender.appendUniversityBoard(boardName, description, universityId, isCategoryRequired);
 		}
 
-		// 일반 게시판인 경우
-		return boardAppender.appendBoard(boardName, description, isCategoryRequired);
+		boolean usesCategories = !categories.isEmpty();
+		Long boardId = boardAppender.appendBoard(boardName, description, universityId, usesCategories);
+
+		// 카테고리 추가 로직
+		categoryAppender.appendCategories(boardId, categories);
+
+		return boardId;
 	}
 
 	@Transactional

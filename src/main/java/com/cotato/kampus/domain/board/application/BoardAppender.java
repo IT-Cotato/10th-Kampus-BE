@@ -18,26 +18,13 @@ public class BoardAppender {
 	private final BoardRepository boardRepository;
 
 	@Transactional
-	public Long appendBoard(String boardName, String description, Boolean isCategoryRequired) {
+	public Long appendBoard(String boardName, String description, Long universityId, Boolean usesCategories) {
+		BoardType boardType = (universityId != null) ? BoardType.UNIVERSITY : BoardType.GENERAL;
 		Board board = Board.builder()
 			.boardName(boardName)
 			.description(description)
-			.boardType(BoardType.GENERAL)
-			.isCategoryRequired(isCategoryRequired)
-			.boardStatus(BoardStatus.ACTIVE)
-			.build();
-
-		return boardRepository.save(board).getId();
-	}
-
-	@Transactional
-	public Long appendUniversityBoard(String boardName, String description, Long universityId, Boolean isCategoryRequired) {
-		Board board = Board.builder()
-			.boardName(boardName)
-			.description(description)
-			.boardType(BoardType.UNIVERSITY)
-			.universityId(universityId)
-			.isCategoryRequired(isCategoryRequired)
+			.boardType(boardType)
+			.usesCategories(usesCategories)
 			.boardStatus(BoardStatus.ACTIVE)
 			.build();
 

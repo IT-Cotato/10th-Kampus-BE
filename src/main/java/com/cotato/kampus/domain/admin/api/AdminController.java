@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.admin.api;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,7 +58,7 @@ public class AdminController {
 						request.boardName(),
 						request.description(),
 						request.universityCode(),
-						request.isCategoryRequired()
+						request.categories() == null ? List.of() : request.categories()
 					)
 				)
 			)
