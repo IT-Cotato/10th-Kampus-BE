@@ -48,7 +48,7 @@ public class AdminController {
 	private final AdminService adminService;
 
 	@PostMapping(value = "/boards", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "게시판 생성", description = "게시판을 생성합니다. 학교 게시판이 아닌 경우 universityId를 null로 주세요")
+	@Operation(summary = "게시판 생성", description = "게시판을 생성합니다. 학교 게시판이 아닌 경우 universityCode를 null로 주세요")
 	public ResponseEntity<DataResponse<BoardCreateResponse>> createBoard(
 		@Valid @ModelAttribute BoardCreateRequest request
 	) {
