@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 import java.time.LocalDateTime;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,8 @@ import com.cotato.kampus.domain.post.application.PostFinder;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.enums.PostStatus;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 @ExtendWith(MockitoExtension.class)
 class PostChatServiceTest {
@@ -36,8 +39,9 @@ class PostChatServiceTest {
 	ChatroomMetadataAppender chatroomMetadataAppender;
 
 	@Test
-	//postId = 1, senderId = 1, receiverId = 2
-	public void 채팅방_생성() {
+	@DisplayName("postId로 채팅방을 생성한다.")
+	public void createChatRoom() {
+		//postId = 1, senderId = 1, receiverId = 2
 		PostDto postDto = new PostDto(
 			1L,
 			2L,
@@ -64,5 +68,14 @@ class PostChatServiceTest {
 		Long id = target.createChatRoom(postDto.id());
 		System.out.println("id = " + id);
 		Assertions.assertThat(id).isEqualTo(123L);
+	}
+
+	@Test
+	@DisplayName("postId에 해당하는 게시글이 없을 때 채팅방 생성에 실패한다.")
+	public void createChatRoomWithNotExistingPost() {
+		when(postFinder.findPost(1L)).thenThrow(new AppException(ErrorCode.POST_NOT_FOUND));
+		Assertions.assertThatThrownBy(() -> target.createChatRoom(1L))
+			.isInstanceOf(AppException.class)
+			.hasMessage(ErrorCode.POST_NOT_FOUND.getMessage());
 	}
 }
