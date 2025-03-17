@@ -82,7 +82,7 @@ public class AdminService {
 	private final PostValidator postValidator;
 
 	@Transactional
-	public Long createBoard(String boardName, String description, String universityName, Boolean isCategoryRequired) {
+	public Long createBoard(String boardName, String description, String universityCode, Boolean isCategoryRequired) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -90,8 +90,8 @@ public class AdminService {
 		boardValidator.validateUniqueName(boardName);
 
 		// 학교 게시판인 경우
-		if (universityName != null) {
-			Long universityId = univFinder.findUniversityId(universityName);
+		if (universityCode != null) {
+			Long universityId = univFinder.findIdByCode(universityCode);
 			boardValidator.validateUniversityBoardExists(universityId);
 
 			return boardAppender.appendUniversityBoard(boardName, description, universityId, isCategoryRequired);

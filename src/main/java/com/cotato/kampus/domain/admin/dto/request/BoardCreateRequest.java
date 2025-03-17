@@ -7,7 +7,7 @@ public record BoardCreateRequest(
 	@NotBlank
 	String boardName,
 	String description,
-	String universityName,
+	String universityCode,
 	@NotNull
 	Boolean isCategoryRequired
 ) {

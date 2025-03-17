@@ -34,7 +34,6 @@ import com.cotato.kampus.global.error.exception.ImageException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -56,7 +55,7 @@ public class AdminController {
 					adminService.createBoard(
 						request.boardName(),
 						request.description(),
-						request.universityName(),
+						request.universityCode(),
 						request.isCategoryRequired()
 					)
 				)
