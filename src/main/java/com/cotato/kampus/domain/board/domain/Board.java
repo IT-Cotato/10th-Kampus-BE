@@ -13,15 +13,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+// @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Board extends BaseTimeEntity {
@@ -55,7 +53,8 @@ public class Board extends BaseTimeEntity {
 	private LocalDateTime deletionScheduledAt;
 
 	@Builder
-	public Board(String boardName, String description, Long universityId, Boolean isCategoryRequired, BoardStatus boardStatus, BoardType boardType) {
+	public Board(String boardName, String description, Long universityId, Boolean isCategoryRequired,
+		BoardStatus boardStatus, BoardType boardType) {
 		this.boardName = boardName;
 		this.description = description;
 		this.universityId = universityId;
