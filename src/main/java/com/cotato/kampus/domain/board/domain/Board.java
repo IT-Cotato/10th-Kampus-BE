@@ -53,20 +53,20 @@ public class Board extends BaseTimeEntity {
 	private LocalDateTime deletionScheduledAt;
 
 	@Builder
-	public Board(String boardName, String description, Long universityId, Boolean isCategoryRequired,
+	public Board(String boardName, String description, Long universityId, Boolean usesCategories,
 		BoardStatus boardStatus, BoardType boardType) {
 		this.boardName = boardName;
 		this.description = description;
 		this.universityId = universityId;
-		this.isCategoryRequired = isCategoryRequired;
+		this.usesCategories = usesCategories;
 		this.boardStatus = boardStatus;
 		this.boardType = boardType;
 	}
 
-	public void update(String boardName, String description, Boolean isCategoryRequired) {
+	public void update(String boardName, String description, Boolean usesCategories) {
 		this.boardName = boardName;
 		this.description = description;
-		this.isCategoryRequired = isCategoryRequired;
+		this.usesCategories = usesCategories;
 	}
 
 	public void updateStatus(BoardStatus boardStatus) {

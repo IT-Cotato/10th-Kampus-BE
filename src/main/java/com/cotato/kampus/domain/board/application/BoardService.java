@@ -95,7 +95,7 @@ public class BoardService {
 	public Boolean requiresCategory(Long boardId) {
 		BoardDto boardDto = boardFinder.findBoardDto(boardId);
 
-		return boardDto.isCategoryRequired();
+		return boardDto.usesCategories();
 	}
 
 	public BoardWithFavoriteStatus getBoard(Long boardId) {

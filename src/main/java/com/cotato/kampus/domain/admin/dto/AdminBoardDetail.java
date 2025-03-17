@@ -8,7 +8,7 @@ public record AdminBoardDetail(
 	String boardName,
 	Long universityId,
 	String description,
-	Boolean isCategoryRequired,
+	Boolean usesCategories,
 	BoardStatus boardStatus,
 	Long postCount,
 	Long deletionCountdown
@@ -20,7 +20,7 @@ public record AdminBoardDetail(
 			boardDto.boardName(),
 			boardDto.universityId(),
 			boardDto.description(),
-			boardDto.isCategoryRequired(),
+			boardDto.usesCategories(),
 			boardDto.boardStatus(),
 			postCount,
 			deletionCountdown
