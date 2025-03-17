@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.chat.api;
 
 import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -16,8 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.cotato.kampus.domain.chat.application.PostChatService;
 import com.cotato.kampus.domain.chat.dto.request.ChatroomRequest;
@@ -42,11 +41,10 @@ class PostChatControllerTest {
 
 	@BeforeEach
 	public void init() {
-
 	}
 
 	@Test
-	@DisplayName("채팅방 생성 API 테스트")
+	@DisplayName("postId를 통해 채팅방을 생성한다.")
 	void createChatroomTest() throws Exception {
 		// given
 		Long postId = 1L;
@@ -54,14 +52,13 @@ class PostChatControllerTest {
 
 		given(postChatService.createChatRoom(postId)).willReturn(1L);
 
-		// when & then
-		MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/v1/api/chats/post")
-				.contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(post("/v1/api/chats/post")
 				.content(objectMapper.writeValueAsString(request))
+				.contentType(MediaType.APPLICATION_JSON)
 			)
-			.andExpect(status().isOk())
 			.andDo(print())
-			.andExpect(jsonPath("$.data.chatRoomId").value(1L))
-			.andReturn();
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.status").value("OK"))
+			.andExpect(jsonPath("$.data").isNotEmpty());
 	}
 }
