@@ -8,11 +8,9 @@ import lombok.Getter;
 public class UnivCertException extends RuntimeException {
 
 	private final ErrorCode errorCode;
-	private final String univCertMessage;
 
 	public UnivCertException(ErrorCode errorCode, String univCertMessage) {
 		super(univCertMessage);
 		this.errorCode = errorCode;
-		this.univCertMessage = univCertMessage;
 	}
 }

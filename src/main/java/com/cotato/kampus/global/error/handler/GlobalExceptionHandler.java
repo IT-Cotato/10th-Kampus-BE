@@ -78,9 +78,9 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(UnivCertException.class)
 	public ResponseEntity<ErrorResponse> handleUnivCertException(UnivCertException e, HttpServletRequest request) {
-		log.error("UnivCert Exception 발생: {}", e.getUnivCertMessage());
+		log.error("UnivCert Exception 발생: {}", e.getMessage());
 		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
-		ErrorResponse errorResponse = ErrorResponse.of(request, e.getErrorCode(), e.getUnivCertMessage());
+		ErrorResponse errorResponse = ErrorResponse.of(request, e.getErrorCode(), e.getMessage());
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
 			.body(errorResponse);
 	}
