@@ -22,7 +22,7 @@ import com.cotato.kampus.domain.user.dto.request.UserDetailsUpdateRequest;
 import com.cotato.kampus.domain.user.dto.request.UserInfoUpdateRequest;
 import com.cotato.kampus.domain.user.dto.response.ConfirmMailResponse;
 import com.cotato.kampus.domain.user.dto.response.NicknameCheckResponse;
-import com.cotato.kampus.domain.user.dto.response.SendMailResponse;
+import com.cotato.kampus.domain.user.dto.response.UnivCertResponse;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsResponse;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsUpdateResponse;
 import com.cotato.kampus.domain.user.dto.response.UserInfoUpdateResponse;
@@ -112,30 +112,30 @@ public class UserController {
 	}
 
 	@PostMapping("/verify/email/send")
-	@Operation(summary = "학교 메일 인증 코드 요청", description = "학교 이메일로 인증 코드를 요청합니다.")
-	public ResponseEntity<DataResponse<SendMailResponse>> sendVerificationCode(
+	@Operation(summary = "대학 이메일 인증 메일 발송", description = "대학 이메일로 인증 코드를 발송합니다.")
+	public ResponseEntity<DataResponse<Void>> sendVerificationCode(
 		@RequestBody SendMailRequest request
 	) throws IOException {
-		return ResponseEntity.ok(DataResponse.from(
-				SendMailResponse.from(
-					userService.sendMail(
-						request.email(), request.universityName()
-					)
-				)
-			)
+		UnivCertResponse response = UnivCertResponse.from(
+			userService.sendMail(
+				request.email(),
+				request.universityCode())
 		);
+
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@PostMapping("/verify/mail/confirm")
-	@Operation(summary = "인증 코드 확인", description = "이메일로 수신한 인증 코드(4자리)를 제출합니다. 일치하는 경우 재학생 자격으로 변경됩니다.")
-	public ResponseEntity<DataResponse<ConfirmMailResponse>> verifyEmailCode(
+	@Operation(summary = "이메일 인증 코드 확인", description = "이메일로 받은 인증 코드를 확인합니다. 일치하는 경우 재학생 자격으로 변경됩니다.")
+	public ResponseEntity<DataResponse<UnivCertResponse>> verifyEmailCode(
 		@RequestBody ConfirmMailRequest request
 	) throws IOException {
 		return ResponseEntity.ok(DataResponse.from(
-				ConfirmMailResponse.from(
+				UnivCertResponse.from(
 					userService.verifyEmailCode(
-						request.email(), request.universityName(), request.code()
-					)
+						request.email(),
+						request.universityCode(),
+						request.code())
 				)
 			)
 		);
@@ -144,7 +144,7 @@ public class UserController {
 	@PostMapping(value = "/verify/document", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "재학생 서류 사진 제출", description = "재학생 인증 서류 사진을 제출합니다.")
 	public ResponseEntity<DataResponse<Void>> uploadCert(
-		@RequestParam("universityName") @NotNull String universityName,
+		@RequestParam("universityCode") @NotNull String universityCode,
 		@RequestPart("certImage") MultipartFile certImage
 	) throws ImageException {
 		if (certImage.isEmpty()) {
@@ -154,7 +154,7 @@ public class UserController {
 			throw new AppException(ErrorCode.FILE_EXTENSION_FAULT);
 		}
 
-		userService.uploadCert(universityName, certImage);
+		userService.uploadCert(universityCode, certImage);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 

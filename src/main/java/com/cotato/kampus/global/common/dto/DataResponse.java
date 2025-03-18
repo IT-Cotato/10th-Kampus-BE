@@ -24,4 +24,5 @@ public class DataResponse<T> extends BaseResponse {
 	public static <T> DataResponse<Void> ok() {
 		return new DataResponse<>(HttpStatus.OK, null);
 	}
+
 }

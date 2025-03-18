@@ -37,4 +37,18 @@ public class UnivFinder {
 		return findUniversity(universityId).getUniversityName();
 	}
 
+	public String findNameByCode(String universityCode) {
+		University university = universityRepository.findByUniversityCode(universityCode)
+			.orElseThrow(() -> new AppException(ErrorCode.UNIVERSITY_NOT_FOUND));
+
+		return university.getUniversityName();
+	}
+
+	public Long findIdByCode(String universityCode) {
+		University university = universityRepository.findByUniversityCode(universityCode)
+			.orElseThrow(() -> new AppException(ErrorCode.UNIVERSITY_NOT_FOUND));
+
+		return university.getId();
+	}
+
 }

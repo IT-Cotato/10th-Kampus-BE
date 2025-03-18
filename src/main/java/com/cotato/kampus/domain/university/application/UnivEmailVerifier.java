@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
+import com.cotato.kampus.global.error.exception.UnivCertException;
 import com.univcert.api.UnivCert;
 
 import lombok.AccessLevel;
@@ -19,20 +19,35 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class UnivEmailVerifier {
 
+	private final UnivFinder univFinder;
+
 	@Value("${univcert.api.key}")
 	private String apiKey;
 
-	public Map<String, Object> sendMail(String email, String univName) throws IOException {
+	public Map<String, Object> sendMail(String email, String universityCode) throws IOException {
+		String universityName = univFinder.findNameByCode(universityCode);
+
 		UnivCert.clear(apiKey, email);
-		return UnivCert.certify(apiKey, email, univName, true);
+		Map<String, Object> response = UnivCert.certify(apiKey, email, universityName, true);
+
+		validateResponse(response);
+
+		return response;
 	}
 
-	public void verifyCode(String email, String univName, int code) throws IOException {
-		Map<String, Object> response = UnivCert.certifyCode(apiKey, email, univName,  code);
+	public Map<String, Object> verifyCode(String email, String universityCode, int code) throws IOException {
+		String universityName = univFinder.findNameByCode(universityCode);
+		Map<String, Object> response = UnivCert.certifyCode(apiKey, email, universityName, code);
 
-		boolean success = (boolean) response.get("success");
-		if(!success){
-			throw new AppException(ErrorCode.INVALID_CODE);
+		validateResponse(response);
+
+		return response;
+	}
+
+	private void validateResponse(Map<String, Object> response) {
+		if (!(boolean)response.get("success")) {
+			String errorMessage = response.get("message").toString();
+			throw new UnivCertException(ErrorCode.UNIVCERT_ERROR, errorMessage);
 		}
 	}
 }
