@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatus;
+import com.cotato.kampus.domain.board.dto.CategoryDto;
 import com.cotato.kampus.domain.board.dto.HomeBoardAndPostPreview;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.application.PostDtoMapper;
@@ -33,6 +34,7 @@ public class BoardService {
 	private final ApiUserResolver apiUserResolver;
 	private final PostFinder postFinder;
 	private final PostDtoMapper postDtoMapper;
+	private final CategoryFinder categoryFinder;
 
 	public List<BoardWithFavoriteStatus> getBoardList() {
 		// 유저 조회
@@ -116,5 +118,13 @@ public class BoardService {
 		List<PostDto> trendingPosts = postFinder.findTrendingPosts(userUnivId);
 
 		return postDtoMapper.mapToHomeBoardAndPostPreviews(trendingPosts);
+	}
+
+	public List<CategoryDto> findCategories(Long boardId) {
+		// 존재하는 게시판인지 확인
+		boardFinder.findBoard(boardId);
+
+		// 카테고리 조회
+		return categoryFinder.findCategories(boardId);
 	}
 }
