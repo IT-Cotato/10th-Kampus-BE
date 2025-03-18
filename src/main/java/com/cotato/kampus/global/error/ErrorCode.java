@@ -119,6 +119,9 @@ public enum ErrorCode {
 	INQUIRY_NOT_FOUND(HttpStatus.NOT_FOUND, "문의글을 찾을 수 없습니다.", "INQUIRY-001"),
 	INQUIRY_NOT_AUTHOR(HttpStatus.FORBIDDEN, "문의글 작성자가 아닙니다.", "INQUIRY-002"),
 
+	// UnivCert
+	UNIVCERT_ERROR(HttpStatus.BAD_REQUEST, "대학 이메일 인증 중 오류가 발생하였습니다.", "UNIVCERT-001"),
+
 	;
 
 	private final HttpStatus httpStatus;

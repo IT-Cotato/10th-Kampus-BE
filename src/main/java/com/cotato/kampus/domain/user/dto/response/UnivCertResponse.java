@@ -4,14 +4,14 @@ import java.util.Map;
 
 public record UnivCertResponse(
 	boolean success,
-	Integer status,
-	String message
+	String universityName,
+	String certifiedEmail
 ) {
 	public static UnivCertResponse from(Map<String, Object> response) {
-		boolean success = (boolean) response.get("success");
-		Integer status = response.containsKey("status") ? (Integer) response.get("status") : null;
-		String message = response.containsKey("message") ? (String) response.get("message") : null;
+		boolean success = (boolean)response.get("success");
+		String universityName = (String)response.get("univName");
+		String certifiedEmail = (String)response.get("certified_email");
 
-		return new UnivCertResponse(success, status, message);
+		return new UnivCertResponse(success, universityName, certifiedEmail);
 	}
 }

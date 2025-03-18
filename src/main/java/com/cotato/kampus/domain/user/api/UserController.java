@@ -113,7 +113,7 @@ public class UserController {
 
 	@PostMapping("/verify/email/send")
 	@Operation(summary = "대학 이메일 인증 메일 발송", description = "대학 이메일로 인증 코드를 발송합니다.")
-	public ResponseEntity<DataResponse<UnivCertResponse>> sendVerificationCode(
+	public ResponseEntity<DataResponse<Void>> sendVerificationCode(
 		@RequestBody SendMailRequest request
 	) throws IOException {
 		UnivCertResponse response = UnivCertResponse.from(
@@ -122,11 +122,7 @@ public class UserController {
 				request.universityCode())
 		);
 
-		if (response.success()) {
-			return ResponseEntity.ok(DataResponse.from(response));
-		} else {
-			return ResponseEntity.badRequest().body(DataResponse.fail(response));
-		}
+		return ResponseEntity.ok(DataResponse.ok());
 	}
 
 	@PostMapping("/verify/mail/confirm")
@@ -134,18 +130,15 @@ public class UserController {
 	public ResponseEntity<DataResponse<UnivCertResponse>> verifyEmailCode(
 		@RequestBody ConfirmMailRequest request
 	) throws IOException {
-		UnivCertResponse response = UnivCertResponse.from(
-			userService.verifyEmailCode(
-				request.email(),
-				request.universityCode(),
-				request.code())
-			);
-
-		if (response.success()) {
-			return ResponseEntity.ok(DataResponse.from(response));
-		} else {
-			return ResponseEntity.badRequest().body(DataResponse.fail(response));
-		}
+		return ResponseEntity.ok(DataResponse.from(
+				UnivCertResponse.from(
+					userService.verifyEmailCode(
+						request.email(),
+						request.universityCode(),
+						request.code())
+				)
+			)
+		);
 	}
 
 	@PostMapping(value = "/verify/document", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

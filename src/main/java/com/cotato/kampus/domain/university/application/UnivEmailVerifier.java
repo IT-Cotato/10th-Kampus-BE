@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
+import com.cotato.kampus.global.error.exception.UnivCertException;
 import com.univcert.api.UnivCert;
 
 import lombok.AccessLevel;
@@ -28,11 +28,26 @@ public class UnivEmailVerifier {
 		String universityName = univFinder.findNameByCode(universityCode);
 
 		UnivCert.clear(apiKey, email);
-		return UnivCert.certify(apiKey, email, universityName, true);
+		Map<String, Object> response = UnivCert.certify(apiKey, email, universityName, true);
+
+		validateResponse(response);
+
+		return response;
 	}
 
 	public Map<String, Object> verifyCode(String email, String universityCode, int code) throws IOException {
 		String universityName = univFinder.findNameByCode(universityCode);
-		return UnivCert.certifyCode(apiKey, email, universityName,  code);
+		Map<String, Object> response = UnivCert.certifyCode(apiKey, email, universityName, code);
+
+		validateResponse(response);
+
+		return response;
+	}
+
+	private void validateResponse(Map<String, Object> response) {
+		if (!(boolean)response.get("success")) {
+			String errorMessage = response.get("message").toString();
+			throw new UnivCertException(ErrorCode.UNIVCERT_ERROR, errorMessage);
+		}
 	}
 }

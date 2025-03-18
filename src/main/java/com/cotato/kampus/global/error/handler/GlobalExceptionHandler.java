@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.JwtException;
+import com.cotato.kampus.global.error.exception.UnivCertException;
 import com.cotato.kampus.global.error.response.ErrorResponse;
 import com.deepl.api.DeepLException;
 
@@ -75,6 +76,15 @@ public class GlobalExceptionHandler {
 			.body(errorResponse);
 	}
 
+	@ExceptionHandler(UnivCertException.class)
+	public ResponseEntity<ErrorResponse> handleUnivCertException(UnivCertException e, HttpServletRequest request) {
+		log.error("UnivCert Exception 발생: {}", e.getUnivCertMessage());
+		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
+		ErrorResponse errorResponse = ErrorResponse.of(request, e.getErrorCode(), e.getUnivCertMessage());
+		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+			.body(errorResponse);
+	}
+
 	// 요청 바디에 잘못된 문자가 포함되어 있는 경우 발생(ex: 한글 지웠을 때)
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ErrorResponse> handleMessageNotReadableException(HttpMessageNotReadableException e,
@@ -112,4 +122,5 @@ public class GlobalExceptionHandler {
 		ErrorResponse errorResponse = ErrorResponse.of(request, ErrorCode.INVALID_PARAMETER, errorMessage);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
+
 }

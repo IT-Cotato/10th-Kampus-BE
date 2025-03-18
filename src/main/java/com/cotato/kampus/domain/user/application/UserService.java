@@ -85,15 +85,12 @@ public class UserService {
 		// 코드 인증
 		Map<String, Object> response = univEmailVerifier.verifyCode(email, universityCode, code);
 
-		// 인증 성공 시 아래 로직 실행
-		if ((boolean)response.get("success")) {
-			// VerificationRecord 추가
-			Long universityId = univFinder.findIdByCode(universityCode);
-			verificationRecordAppender.appendEmailType(userDto.id(), universityId);
+		// VerificationRecord 추가
+		Long universityId = univFinder.findIdByCode(universityCode);
+		verificationRecordAppender.appendEmailType(userDto.id(), universityId);
 
-			// 유저 상태 변경, 학교 할당
-			userUpdater.updateVerificationStatus(userDto.id(), universityId);
-		}
+		// 유저 상태 변경, 학교 할당
+		userUpdater.updateVerificationStatus(userDto.id(), universityId);
 
 		return response;
 	}
