@@ -385,4 +385,11 @@ public class PostController {
 			)
 		));
 	}
+
+	@DeleteMapping("search/keywords")
+	@Operation(summary = "게시글 검색 키워드 단건 삭제", description = "게시글 검색 키워드 Id를 통해 삭제합니다.")
+	public ResponseEntity<DataResponse<Void>> deleteAllKeyword() {
+		postService.deleteAllSearchKeyword();
+		return ResponseEntity.ok(DataResponse.ok());
+	}
 }

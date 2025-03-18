@@ -418,4 +418,10 @@ public class PostService {
 		postSearchHistoryDeleter.deleteHistory(keywordId);
 		return keywordId;
 	}
+
+	@Transactional
+	public void deleteAllSearchKeyword() {
+		Long userId = apiUserResolver.getCurrentUserId();
+		postSearchHistoryDeleter.deleteAllHistory(userId);
+	}
 }
