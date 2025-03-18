@@ -61,7 +61,7 @@ public enum ErrorCode {
 	USER_NOT_ADMIN(HttpStatus.FORBIDDEN, "사용자가 관리자 권한을 갖고 있지 않습니다.", "USER-004"),
 	AGREEMENT_ALREADY_EXISTS(HttpStatus.CONFLICT, "해당 유저의 동의 내역이 이미 존재합니다.", "USER-005"),
 	USER_ALREADY_REGISTERED(HttpStatus.CONFLICT, "이미 세부정보를 등록한 유저입니다.", "USER-006"),
-	USER_ALREADY_VERIFIED(HttpStatus.NOT_FOUND, "이미 재학생 인증된 유저입니다.", "USER-007"),
+	USER_ALREADY_VERIFIED(HttpStatus.BAD_REQUEST, "이미 재학생 인증된 유저입니다.", "USER-007"),
 	USER_ROLE_ALREADY_ASSIGNED(HttpStatus.CONFLICT, "같은 권한으로 변경할 수 없습니다.", "USER-008"),
 
 	//Board
@@ -118,6 +118,9 @@ public enum ErrorCode {
 	// Inquiry
 	INQUIRY_NOT_FOUND(HttpStatus.NOT_FOUND, "문의글을 찾을 수 없습니다.", "INQUIRY-001"),
 	INQUIRY_NOT_AUTHOR(HttpStatus.FORBIDDEN, "문의글 작성자가 아닙니다.", "INQUIRY-002"),
+
+	// UnivCert
+	UNIVCERT_ERROR(HttpStatus.BAD_REQUEST, "대학 이메일 인증 중 오류가 발생하였습니다.", "UNIVCERT-001"),
 
 	;
 
