@@ -1,76 +1,83 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.4.1'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.cotato'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
-	maven{url 'https://jitpack.io'}
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	//s3
-	implementation 'software.amazon.awssdk:s3:2.29.44'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    //s3
+    implementation 'software.amazon.awssdk:s3:2.29.44'
 
-	//webp 변환 라이브러리
-	implementation 'com.sksamuel.scrimage:scrimage-core:4.3.0'
-	implementation 'com.sksamuel.scrimage:scrimage-webp:4.3.0'
+    //webp 변환 라이브러리
+    implementation 'com.sksamuel.scrimage:scrimage-core:4.3.0'
+    implementation 'com.sksamuel.scrimage:scrimage-webp:4.3.0'
 
-	// Spring Security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-	// JWT 라이브러리
-	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    // JWT 라이브러리
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
-	// Swagger
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.1'
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.1'
 
-	// WebSocket
-	implementation 'org.springframework.boot:spring-boot-starter-websocket:3.4.1'
-	implementation 'org.springframework.security:spring-security-messaging'
+    // WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket:3.4.1'
+    implementation 'org.springframework.security:spring-security-messaging'
 
-	// DeepL(Translation)
-	implementation 'com.deepl.api:deepl-java:1.7.0'
+    // DeepL(Translation)
+    implementation 'com.deepl.api:deepl-java:1.7.0'
 
-	// univcert
-	implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
+    // univcert
+    implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
 
-	// FCM
-	implementation 'com.google.firebase:firebase-admin:9.1.1'
-	implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    // FCM
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 
-	//Test
-	testImplementation 'com.h2database:h2'
+    // Mocikto
+    testImplementation 'org.mockito:mockito-core:5.15.2'
+
+    // JUnit
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.4'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.11.4'
+
+    // H2
+    testImplementation 'com.h2database:h2:2.2.224'
 
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

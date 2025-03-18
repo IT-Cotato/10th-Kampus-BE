@@ -29,6 +29,7 @@ import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +45,7 @@ public class PostChatController {
 	@PostMapping("/post")
 	@Operation(summary = "채팅방 생성", description = "채팅방 생성 요청입니다.")
 	@ResponseBody
-	public ResponseEntity<DataResponse<ChatroomResponse>> createChatroom(@RequestBody ChatroomRequest request) {
+	public ResponseEntity<DataResponse<ChatroomResponse>> createChatroom(@RequestBody @Valid ChatroomRequest request) {
 		return ResponseEntity.ok(DataResponse.from(
 				ChatroomResponse.of(
 					postChatService.createChatRoom(
