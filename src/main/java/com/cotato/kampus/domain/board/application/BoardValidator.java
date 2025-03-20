@@ -65,4 +65,10 @@ public class BoardValidator {
 			throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
 		}
 	}
+
+	public void isCategoryEnabled(BoardDto boardDto){
+		if(!boardDto.usesCategories()) {
+			throw new AppException(ErrorCode.CATEGORY_NOT_ALLOWED);
+		}
+	}
 }

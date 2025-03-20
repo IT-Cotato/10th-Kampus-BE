@@ -140,7 +140,7 @@ public class PostService {
 		return postId;
 	}
 
-	public Slice<PostWithPhotos> findPosts(Long boardId, int page, PostSortType sortType) {
+	public Slice<PostWithPhotos> findPosts(Long boardId, int page, PostSortType sortType, String categoryName) {
 		// 현재 사용자 정보 조회
 		UserDto user = apiUserResolver.getCurrentUserDto();
 		BoardDto board = boardFinder.findBoardDto(boardId);
@@ -149,8 +149,11 @@ public class PostService {
 		boardValidator.validateBoardIsActive(board);
 		boardValidator.validateUniversityAccess(user, board);
 
-		// 검증 통과 후 게시글 조회
-		return postFinder.findPosts(boardId, page, sortType);
+		if(categoryName != null) {
+			boardValidator.isCategoryEnabled(board);
+		}
+
+		return postFinder.findPostsByCategory(boardId, page, sortType, categoryName);
 	}
 
 	public Slice<CardNewsPreview> findAllCardNews(int page) {

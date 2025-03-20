@@ -2,6 +2,7 @@ package com.cotato.kampus.domain.post.application;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
@@ -9,8 +10,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.application.BoardFinder;
+import com.cotato.kampus.domain.board.application.CategoryFinder;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.post.dao.PostCategoryRepository;
 import com.cotato.kampus.domain.post.dao.PostDraftPhotoRepository;
 import com.cotato.kampus.domain.post.dao.PostDraftRepository;
 import com.cotato.kampus.domain.post.dao.PostPhotoRepository;
@@ -56,6 +59,8 @@ public class PostFinder {
 	private final PostDraftPhotoRepository postDraftPhotoRepository;
 	private final TrendingPostRepository trendingPostRepository;
 	private final PostDtoMapper postDtoMapper;
+	private final PostCategoryRepository postCategoryRepository;
+	private final CategoryFinder categoryFinder;
 
 	public Post getPost(Long postId) {
 		return postRepository.findById(postId)
@@ -77,6 +82,60 @@ public class PostFinder {
 		});
 	}
 
+	public Slice<PostWithPhotos> findPostsByCategory(Long boardId, int page, PostSortType sortType, String categoryName) {
+		if (categoryName == null) {
+			return findPosts(boardId, page, sortType);
+		}
+
+		// 카테고리 ID 조회
+		Long categoryId = categoryFinder.findDto(boardId, categoryName).categoryId();
+
+		// 페이지 요청 생성
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, sortType.getDirection());
+		Pageable pageable = customPageRequest.of(sortType.getProperty());
+
+		// 특정 카테고리의 Post 목록 조회
+		Slice<Long> postIdSlice = postCategoryRepository.findPostIdsByCategoryId(categoryId, pageable);
+
+		List<Long> postIds = postIdSlice.getContent();
+		if (postIds.isEmpty()) {
+			return new SliceImpl<>(List.of(), pageable, false);
+		}
+
+		// findPostsBySort 메소드를 호출하여 정렬 적용
+		Slice<Post> posts = findPostsByIdsAndSort(boardId, postIds, customPageRequest, sortType);
+
+		// Post -> PostWithPhotos 매핑
+		return posts.map(post -> {
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
+				.orElse(null);
+			return PostWithPhotos.from(post, postPhoto);
+		});
+	}
+
+	// 정렬 기준에 맞는 조회 로직 수행 (postIds로 정렬 적용)
+	private Slice<Post> findPostsByIdsAndSort(Long boardId, List<Long> postIds, CustomPageRequest pageRequest, PostSortType sortType) {
+		return switch (sortType) {
+			// 최신순
+			case recent -> postRepository.findAllByBoardIdAndIdInOrderByCreatedTimeDesc(
+				boardId,
+				postIds,
+				pageRequest.of(sortType.getProperty())
+			);
+			// 오래된순
+			case old -> postRepository.findAllByBoardIdAndIdInOrderByCreatedTimeAsc(
+				boardId,
+				postIds,
+				pageRequest.of(sortType.getProperty())
+			);
+			// 좋아요순(좋아요가 같을 경우 최신순)
+			case likes -> postRepository.findAllByBoardIdAndIdInOrderByLikesDescCreatedTimeDesc(
+				boardId,
+				postIds,
+				pageRequest.of(sortType.getProperty())
+			);
+		};
+	}
 	public Slice<CardNewsPreview> findAllCardNews(Long userId, int page) {
 		// 1. Post 리스트를 Slice로 조회
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
@@ -144,6 +203,7 @@ public class PostFinder {
 				pageRequest.of(sortType.getProperty())
 			);
 		};
+
 	}
 
 	// public Slice<PostWithPhotos> findUserCommentedPosts(List<Long> postIds, int page) {

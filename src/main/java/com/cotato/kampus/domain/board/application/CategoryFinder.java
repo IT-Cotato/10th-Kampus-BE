@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.board.dao.CategoryRepository;
 import com.cotato.kampus.domain.board.domain.BoardCategory;
 import com.cotato.kampus.domain.board.dto.CategoryDto;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 public class CategoryFinder {
 
 	private final CategoryRepository categoryRepository;
-	private final BoardFinder boardFinder;
 
 	public List<CategoryDto> findCategories(Long boardId) {
 
@@ -27,5 +28,12 @@ public class CategoryFinder {
 		return boardCategoryList.stream()
 			.map(CategoryDto::from)
 			.toList();
+	}
+
+	public CategoryDto findDto(Long boardId, String categoryName) {
+		Category category = categoryRepository.findByBoardIdAndCategoryName(boardId, categoryName)
+			.orElseThrow(() -> new AppException(ErrorCode.INVALID_CATEGORY));
+
+		return CategoryDto.from(category);
 	}
 }

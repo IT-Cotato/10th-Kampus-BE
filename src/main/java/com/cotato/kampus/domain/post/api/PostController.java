@@ -82,7 +82,7 @@ public class PostController {
 
 	@GetMapping("/boards/{boardId}")
 	@Operation(summary = "게시판의 게시글 리스트 조회",
-		description = "BoardId에 해당하는 게시글을 정렬 기준에 따라 조회합니다.(기본값: 최신순, 페이지당 게시글 수: 10)")
+		description = "게시글을 정렬 기준과 카테고리 기준에 따라 조회합니다.(정렬 기본값: 최신순, 카테고리 기본값: 전체, 페이지당 게시글 수: 10)")
 	public ResponseEntity<DataResponse<PostSliceFindResponse>> findPosts(
 		@PathVariable Long boardId,
 		@RequestParam(required = false, defaultValue = "1") int page,
@@ -92,12 +92,18 @@ public class PostController {
 			schema = @Schema(type = "string", defaultValue = "recent",
 				allowableValues = {"recent", "old", "likes"})
 		)
-		@RequestParam(required = false, defaultValue = "recent") PostSortType sort
+		@RequestParam(required = false, defaultValue = "recent") PostSortType sort,
+		@Parameter(
+			name = "category",
+			description = "카테고리명 (전체 조회: 파라미터 미입력, 특정 카테고리 조회: 해당 카테고리명)"
+		)
+		@RequestParam(required = false) String category
+
 	) {
 		return ResponseEntity.ok(
 			DataResponse.from(
 				PostSliceFindResponse.from(
-					postService.findPosts(boardId, page, sort)
+					postService.findPosts(boardId, page, sort, category)
 				)
 			)
 		);
