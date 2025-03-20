@@ -18,6 +18,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +32,8 @@ import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.comment.application.CommentDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
+import com.cotato.kampus.domain.post.dto.PostWithPhotos;
+import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -75,6 +80,8 @@ class PostServiceTest {
 	private CommentDeleter commentDeleter;
 	@Mock
 	private PostDeleter postDeleter;
+	@Mock
+	private PostFinder postFinder;
 	@InjectMocks
 	private PostService postService;
 
@@ -294,5 +301,110 @@ class PostServiceTest {
 		verify(postScrapUpdater, never()).deleteAllByPostId(anyLong());
 		verify(commentDeleter, never()).deleteAllByPostId(anyLong());
 		verify(postDeleter, never()).delete(anyLong());
+	}
+
+	@Test
+	@DisplayName("게시글 조회 성공 - 일반 게시판, 카테고리 미지정")
+	void findPosts_GeneralBoard_NoCategory_Success() {
+		// Given
+		Long boardId = 1L;
+		int page = 1;
+		PostSortType sortType = PostSortType.recent;
+		String categoryName = null;
+
+		Slice<PostWithPhotos> expectedSlice = new SliceImpl<>(List.of(), Pageable.unpaged(), false);
+
+		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto); // 재학생 인증되지 않은 사용자
+		when(boardFinder.findBoardDto(boardId)).thenReturn(generalBoardDto); // 일반 게시판
+		when(postFinder.findPostsByCategory(boardId, page, sortType, categoryName)).thenReturn(expectedSlice);
+
+		// When
+		Slice<PostWithPhotos> result = postService.findPosts(boardId, page, sortType, categoryName);
+
+		// Then
+		assertThat(result).isEqualTo(expectedSlice);
+		verify(boardValidator).validateBoardIsActive(generalBoardDto);
+		verify(boardValidator).validateUniversityAccess(unverifiedUserDto, generalBoardDto);
+		verify(boardValidator, never()).isCategoryEnabled(any());
+		verify(postFinder).findPostsByCategory(boardId, page, sortType, categoryName);
+	}
+
+	@Test
+	@DisplayName("게시글 조회 성공 - 카테고리 지정")
+	void findPosts_WithCategory_Success() {
+		// Given
+		Long boardId = 1L;
+		int page = 1;
+		PostSortType sortType = PostSortType.recent;
+		String categoryName = "카테고리1";
+
+		Slice<PostWithPhotos> expectedSlice = new SliceImpl<>(List.of(), Pageable.unpaged(), false);
+
+		when(apiUserResolver.getCurrentUserDto()).thenReturn(verifiedUserDto);
+		when(boardFinder.findBoardDto(boardId)).thenReturn(generalBoardDto);
+		when(postFinder.findPostsByCategory(boardId, page, sortType, categoryName)).thenReturn(expectedSlice);
+
+		// When
+		Slice<PostWithPhotos> result = postService.findPosts(boardId, page, sortType, categoryName);
+
+		// Then
+		assertThat(result).isEqualTo(expectedSlice);
+		verify(boardValidator).validateBoardIsActive(generalBoardDto);
+		verify(boardValidator).validateUniversityAccess(verifiedUserDto, generalBoardDto);
+		verify(boardValidator).isCategoryEnabled(generalBoardDto);
+		verify(postFinder).findPostsByCategory(boardId, page, sortType, categoryName);
+	}
+
+	@Test
+	@DisplayName("게시글 조회 실패 - 미인증 사용자, 대학 게시판 접근")
+	void findPosts_UnverifiedUser_UniversityBoard_ThrowsException() {
+		// Given
+		Long boardId = 2L;
+		int page = 1;
+		PostSortType sortType = PostSortType.recent;
+		String categoryName = null;
+
+		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto); // 미인증 사용자
+		when(boardFinder.findBoardDto(boardId)).thenReturn(universityBoardDto); // 대학 게시판
+
+		// 예외를 던지도록 설정
+		Mockito.doThrow(new AppException(ErrorCode.USER_UNVERIFIED))
+			.when(boardValidator).validateUniversityAccess(unverifiedUserDto, universityBoardDto);
+
+		// When & Then
+		assertThatThrownBy(() ->
+			postService.findPosts(boardId, page, sortType, categoryName)
+		).isInstanceOf(AppException.class)
+			.hasFieldOrPropertyWithValue("errorCode", ErrorCode.USER_UNVERIFIED);
+
+		verify(boardValidator).validateBoardIsActive(universityBoardDto);
+		verify(postFinder, never()).findPostsByCategory(anyLong(), anyInt(), any(), any());
+	}
+
+	@Test
+	@DisplayName("게시글 조회 실패 - 카테고리 지정, 카테고리 비활성화 게시판")
+	void findPosts_WithCategory_CategoryDisabled_ThrowsException() {
+		// Given
+		Long boardId = 1L;
+		int page = 1;
+		PostSortType sortType = PostSortType.recent;
+		String categoryName = "카테고리1";
+
+		when(apiUserResolver.getCurrentUserDto()).thenReturn(verifiedUserDto);
+		when(boardFinder.findBoardDto(boardId)).thenReturn(generalBoardDto);
+
+		// 카테고리 비활성화 예외 설정
+		Mockito.doThrow(new AppException(ErrorCode.CATEGORY_NOT_ALLOWED))
+			.when(boardValidator).isCategoryEnabled(generalBoardDto);
+
+		// When & Then
+		assertThatThrownBy(() ->
+			postService.findPosts(boardId, page, sortType, categoryName)
+		).isInstanceOf(AppException.class)
+			.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CATEGORY_NOT_ALLOWED);
+
+		verify(boardValidator).validateBoardIsActive(generalBoardDto);
+		verify(boardValidator).validateUniversityAccess(verifiedUserDto, generalBoardDto);
+		verify(postFinder, never()).findPostsByCategory(anyLong(), anyInt(), any(), any());
 	}
 }

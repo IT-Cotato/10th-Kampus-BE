@@ -136,6 +136,7 @@ public class PostFinder {
 			);
 		};
 	}
+
 	public Slice<CardNewsPreview> findAllCardNews(Long userId, int page) {
 		// 1. Post 리스트를 Slice로 조회
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
