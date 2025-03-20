@@ -4,9 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.comment.dao.CommentLikeRepository;
-import com.cotato.kampus.domain.comment.domain.Comment;
 import com.cotato.kampus.domain.comment.domain.CommentLike;
-import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -19,11 +17,10 @@ import lombok.RequiredArgsConstructor;
 public class CommentLikeAppender {
 
 	private final CommentLikeRepository commentLikeRepository;
-	private final CommentFinder commentFinder;
+	private final CommentLikeFinder commentLikeFinder;
 
 	@Transactional
 	public void append(Long userId, Long commentId){
-
 		boolean alreadyLiked = commentLikeRepository.existsByUserIdAndCommentId(userId, commentId);
 
 		// 이미 좋아요한 경우 예외처리
@@ -36,13 +33,12 @@ public class CommentLikeAppender {
 				.commentId(commentId)
 				.userId(userId)
 				.build();
-
 		commentLikeRepository.save(commentLike);
 	}
 
 	@Transactional
 	public void delete(Long userId, Long commentId){
-		CommentLike commentLike = commentFinder.findCommentLike(userId, commentId);
+		CommentLike commentLike = commentLikeFinder.find(userId, commentId);
 		commentLikeRepository.delete(commentLike);
 
 	}

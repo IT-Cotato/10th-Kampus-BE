@@ -119,7 +119,7 @@ public class CommentService {
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 이 게시글에 달린 모든 댓글과 대댓글 가져오기
-		List<CommentDto> commentDtos = commentFinder.findComments(postId);
+		List<CommentDto> commentDtos = commentFinder.findAllDtoByPostId(postId);
 
 		// 댓글 리스트 생성 + 유저 좋아요 여부 매핑
 		List<CommentDetail> comments = commentMapper.buildCommentHierarchy(commentDtos, userId);

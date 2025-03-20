@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.post.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +19,7 @@ public class PostLikeUpdater {
 	private final PostLikeRepository postLikeRepository;
 	private final PostLikeFinder postLikeFinder;
 
-	public void appendPostLike(Long postId, Long userId) {
+	public void append(Long postId, Long userId) {
 		postLikeRepository.save(
 			PostLike.builder()
 				.postId(postId)
@@ -26,8 +28,13 @@ public class PostLikeUpdater {
 		);
 	}
 
-	public void deletePostLike(Long postId, Long userId) {
+	public void delete(Long postId, Long userId) {
 		PostLike postLike = postLikeFinder.findPostLikeByUserAndPost(postId, userId);
 		postLikeRepository.delete(postLike);
+	}
+
+	public void deleteAllByPostId(Long postId) {
+		List<PostLike> postLikes = postLikeFinder.findAllByPostId(postId);
+		postLikeRepository.deleteAll(postLikes);
 	}
 }

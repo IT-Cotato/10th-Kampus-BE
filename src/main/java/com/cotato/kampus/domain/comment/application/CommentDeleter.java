@@ -1,15 +1,13 @@
 package com.cotato.kampus.domain.comment.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.comment.dao.CommentRepository;
 import com.cotato.kampus.domain.comment.domain.Comment;
 import com.cotato.kampus.domain.comment.enums.CommentStatus;
-import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.user.domain.User;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +19,7 @@ public class CommentDeleter {
 
 	private final CommentRepository commentRepository;
 	private final CommentFinder commentFinder;
+	private final CommentLikeDeleter commentLikeDeleter;
 
 	@Transactional
 	public void delete(Long commentId) {
@@ -32,5 +31,17 @@ public class CommentDeleter {
 
 		// 댓글 삭제
 		commentRepository.deleteById(commentId);
+	}
+
+	@Transactional
+	public void deleteAllByPostId(Long postId) {
+		List<Comment> comments = commentFinder.findAllByPostId(postId);
+
+		// CommentLike 삭제
+		comments.stream()
+			.map(Comment::getId)
+			.forEach(commentId -> commentLikeDeleter.deleteAllByCommentId(commentId));
+
+		commentRepository.deleteAll(comments);
 	}
 }

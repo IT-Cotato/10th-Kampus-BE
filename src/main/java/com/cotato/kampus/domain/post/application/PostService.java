@@ -10,6 +10,7 @@ import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardValidator;
 import com.cotato.kampus.domain.board.application.CategoryResolver;
 import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.comment.application.CommentDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.post.dto.CardNewsPreview;
@@ -70,6 +71,8 @@ public class PostService {
 	private final TrendingPostAppender trendingPostAppender;
 	private final CategoryResolver categoryResolver;
 	private final PostCategoryAppender postCategoryAppender;
+	private final PostCategoryDeleter postCategoryDeleter;
+	private final CommentDeleter commentDeleter;
 
 	@Transactional
 	public Long createPost(
@@ -120,6 +123,16 @@ public class PostService {
 
 		// PostPhoto 삭제
 		postPhotoDeleter.deletePostPhotos(postId);
+
+		// PostCategory 삭제
+		postCategoryDeleter.deleteAllByPostId(postId);
+
+		// PostLike, PostScrap 삭제
+		postLikeUpdater.deleteAllByPostId(postId);
+		postScrapUpdater.deleteAllByPostId(postId);
+
+		// Comment, CommentLike 삭제
+		commentDeleter.deleteAllByPostId(postId);
 
 		// 게시글 삭제
 		postDeleter.delete(postId);
@@ -327,7 +340,7 @@ public class PostService {
 		postLikeValidator.validateDuplicateLike(postId, userId);
 
 		// 3. 좋아요 추가
-		postLikeUpdater.appendPostLike(postId, userId);
+		postLikeUpdater.append(postId, userId);
 
 		// 4. 기존에 좋아요가 2개였다면 Trending 게시판에 추가
 		trendingPostAppender.appendTrendingPost(postId);
@@ -343,7 +356,7 @@ public class PostService {
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 2. 좋아요 삭제
-		postLikeUpdater.deletePostLike(postId, userId);
+		postLikeUpdater.delete(postId, userId);
 
 		// 4. 기존에 좋아요가 3개 였다면 Trending 게시판에서 제거
 		postDeleter.deleteTrendingPost(postId);

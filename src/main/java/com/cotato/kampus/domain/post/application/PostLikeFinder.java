@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.post.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,4 +28,8 @@ public class PostLikeFinder {
 		return postLikeRepository.findByUserIdAndPostId(userId, postId)
 			.orElseThrow(() -> new AppException(ErrorCode.POST_UNLIKE_FORBIDDEN));
 	}
-}
+
+	public List<PostLike> findAllByPostId(Long postId){
+		return postLikeRepository.findAllByPostId(postId);
+	}
+ }
