@@ -8,8 +8,7 @@ public record PostDraftDto(
 	Long userId,
 	Long boardId,
 	String title,
-	String content,
-	PostCategory postCategory
+	String content
 ) {
 	public static PostDraftDto from(PostDraft postDraft){
 		return new PostDraftDto(
@@ -17,8 +16,7 @@ public record PostDraftDto(
 			postDraft.getUserId(),
 			postDraft.getBoardId(),
 			postDraft.getTitle(),
-			postDraft.getContent(),
-			postDraft.getPostCategory()
+			postDraft.getContent()
 		);
 	}
 }

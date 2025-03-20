@@ -7,7 +7,6 @@ import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.dao.PostDraftRepository;
 import com.cotato.kampus.domain.post.domain.PostDraft;
-import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 
@@ -45,8 +44,7 @@ public class PostAppender {
 	public Long draft(
 		Long boardId,
 		String title,
-		String content,
-		PostCategory postCategory
+		String content
 	) {
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -55,7 +53,6 @@ public class PostAppender {
 			.boardId(boardId)
 			.title(title)
 			.content(content)
-			.postCategory(postCategory)
 			.build();
 
 		return postDraftRepository.save(postDraft).getId();
