@@ -22,10 +22,10 @@ public class PostUpdater {
 	private final PostFinder postFinder;
 
 	@Transactional
-	public void updatePost(Long postId, String title, String content, PostCategory postCategory) {
+	public void updatePost(Long postId, String title, String content) {
 		Post post = postFinder.getPost(postId);
 
-		post.update(title, content, postCategory);
+		post.update(title, content);
 	}
 
 	@Transactional

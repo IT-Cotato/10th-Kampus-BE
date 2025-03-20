@@ -149,7 +149,7 @@ public class PostService {
 		boardValidator.validateBoardIsActive(board);
 		boardValidator.validateUniversityAccess(user, board);
 
-		if(categoryName != null) {
+		if (categoryName != null) {
 			boardValidator.isCategoryEnabled(board);
 		}
 
@@ -193,14 +193,34 @@ public class PostService {
 	}
 
 	@Transactional
-	public void updatePost(Long postId, String title, String content, PostCategory postCategory,
-		List<MultipartFile> images) throws ImageException {
+	public void updatePost(
+		Long postId,
+		String title,
+		String content,
+		List<String> categories,
+		List<MultipartFile> images
+	) throws ImageException {
 		// 1. Post Author 검증
 		Long userId = apiUserResolver.getCurrentUserId();
 		postValidator.validatePostOwner(postId, userId);
 
+		// 2. PostCategory 업데이트
+		postCategoryDeleter.deleteAllByPostId(postId);
+		if(!categories.isEmpty()) {
+			// 게시판이 카테고리 쓰는지 확인
+			PostDto postDto = postFinder.findPost(postId);
+			BoardDto boardDto = boardFinder.findBoardDto(postDto.boardId());
+			boardValidator.isCategoryEnabled(boardDto);
+
+			// 카테고리 조회, 검증
+			List<Long> categoryIds = categoryResolver.resolveCategoryIds(categories, boardDto.boardId());
+
+			// PostCategory 추가
+			postCategoryAppender.appendAll(postId, categoryIds);
+		}
+
 		// 2. Post 업데이트
-		postUpdater.updatePost(postId, title, content, postCategory);
+		postUpdater.updatePost(postId, title, content);
 
 		// 3. Post Images 업데이트
 		postImageUpdater.updatePostImages(postId, images);
@@ -297,7 +317,7 @@ public class PostService {
 		Long postDraftId,
 		String title,
 		String content,
-		PostCategory postCategory,
+		List<String> categories,
 		List<String> deletedImageUrls,
 		List<MultipartFile> newImages) throws ImageException {
 
