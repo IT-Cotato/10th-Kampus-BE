@@ -23,10 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardValidator;
-import com.cotato.kampus.domain.board.application.CategoryFinder;
 import com.cotato.kampus.domain.board.application.CategoryResolver;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardType;
+import com.cotato.kampus.domain.comment.application.CommentDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
@@ -56,12 +56,25 @@ class PostServiceTest {
 	@Mock
 	private PostPhotoAppender postPhotoAppender;
 	@Mock
+	private PostPhotoFinder postPhotoFinder;
+	@Mock
 	private CategoryResolver categoryResolver;
 	@Mock
-	private CategoryFinder categoryFinder;
-	@Mock
 	private PostCategoryAppender postCategoryAppender;
-
+	@Mock
+	private PostValidator postValidator;
+	@Mock
+	private PostPhotoDeleter postPhotoDeleter;
+	@Mock
+	private PostCategoryDeleter postCategoryDeleter;
+	@Mock
+	private PostLikeUpdater postLikeUpdater;
+	@Mock
+	private PostScrapUpdater postScrapUpdater;
+	@Mock
+	private CommentDeleter commentDeleter;
+	@Mock
+	private PostDeleter postDeleter;
 	@InjectMocks
 	private PostService postService;
 
@@ -227,5 +240,59 @@ class PostServiceTest {
 
 		// 예외가 발생하므로 게시글 생성 메서드는 호출되지 않아야 함
 		verify(postAppender, never()).append(anyLong(), anyLong(), any(), any());
+	}
+
+	@Test
+	@DisplayName("게시글 삭제 성공 - 사용자가 작성자인 경우")
+	void deletePost_Success() {
+		// given
+		Long userId = 1L;
+		when(apiUserResolver.getCurrentUserId()).thenReturn(userId);
+
+		// 이미지 URL 목록
+		List<String> imageUrls = List.of("image-url-1", "image-url-2");
+		when(postPhotoFinder.findPostPhotos(postId)).thenReturn(imageUrls);
+
+		// When
+		Long result = postService.deletePost(postId);
+
+		// Then
+		assertThat(result).isEqualTo(postId);
+		verify(postValidator).validatePostOwner(postId, verifiedUserDto.id());
+		verify(s3Uploader).deleteFiles(imageUrls);
+		verify(postPhotoDeleter).deletePostPhotos(postId);
+		verify(postCategoryDeleter).deleteAllByPostId(postId);
+		verify(postLikeUpdater).deleteAllByPostId(postId);
+		verify(postScrapUpdater).deleteAllByPostId(postId);
+		verify(commentDeleter).deleteAllByPostId(postId);
+		verify(postDeleter).delete(postId);
+	}
+
+	@Test
+	@DisplayName("게시글 삭제 실패 - 사용자가 작성자가 아닌 경우")
+	void deletePost_NotOwner_ThrowsException() {
+		// given
+		Long userId = 1L;
+		Long postId = 1L;
+		when(apiUserResolver.getCurrentUserId()).thenReturn(userId);
+
+		// 작성자 검증 실패 예외 발생
+		Mockito.doThrow(new AppException(ErrorCode.POST_NOT_AUTHOR))
+			.when(postValidator).validatePostOwner(postId, userId);
+
+		// When & Then
+		assertThatThrownBy(() ->
+			postService.deletePost(postId)
+		).isInstanceOf(AppException.class)
+			.hasFieldOrPropertyWithValue("errorCode", ErrorCode.POST_NOT_AUTHOR);
+
+		// 예외가 발생하므로 다른 메서드들은 호출되지 않아야 함
+		verify(s3Uploader, never()).deleteFiles(any());
+		verify(postPhotoDeleter, never()).deletePostPhotos(anyLong());
+		verify(postCategoryDeleter, never()).deleteAllByPostId(anyLong());
+		verify(postLikeUpdater, never()).deleteAllByPostId(anyLong());
+		verify(postScrapUpdater, never()).deleteAllByPostId(anyLong());
+		verify(commentDeleter, never()).deleteAllByPostId(anyLong());
+		verify(postDeleter, never()).delete(anyLong());
 	}
 }
