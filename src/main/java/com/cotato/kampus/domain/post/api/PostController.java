@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cotato.kampus.domain.board.application.BoardService;
 import com.cotato.kampus.domain.post.application.PostService;
 import com.cotato.kampus.domain.post.dto.request.DraftDeleteRequest;
 import com.cotato.kampus.domain.post.dto.request.PostCreateRequest;
@@ -57,7 +56,6 @@ import lombok.RequiredArgsConstructor;
 public class PostController {
 
 	private final PostService postService;
-	private final BoardService boardService;
 
 	@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "게시글 생성", description = "게시글 생성 요청입니다. 사진, 카테고리가 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
@@ -190,7 +188,7 @@ public class PostController {
 					request.boardId(),
 					request.title(),
 					request.content(),
-					request.postCategory(),
+					request.categories() == null ? List.of() : request.categories(),
 					request.images() == null ? List.of() : request.images()
 				)
 			)
@@ -235,7 +233,7 @@ public class PostController {
 			postDraftId,
 			request.title(),
 			request.content(),
-			request.categories(),
+			request.categories() == null ? List.of() : request.categories(),
 			request.deletedImageUrls() == null ? List.of() : request.deletedImageUrls(),
 			request.newImages() == null ? List.of() : request.newImages());
 

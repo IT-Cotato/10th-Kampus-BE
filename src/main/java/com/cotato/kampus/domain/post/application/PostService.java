@@ -206,7 +206,7 @@ public class PostService {
 
 		// 2. PostCategory 업데이트
 		postCategoryDeleter.deleteAllByPostId(postId);
-		if(!categories.isEmpty()) {
+		if (!categories.isEmpty()) {
 			// 게시판이 카테고리 쓰는지 확인
 			PostDto postDto = postFinder.findPost(postId);
 			BoardDto boardDto = boardFinder.findBoardDto(postDto.boardId());
@@ -219,11 +219,23 @@ public class PostService {
 			postCategoryAppender.appendAll(postId, categoryIds);
 		}
 
-		// 2. Post 업데이트
+		// 3. 기존 PostPhoto 삭제
+		List<String> deletePhotos = postPhotoFinder.findPostPhotos(postId);
+		s3Uploader.deleteFiles(deletePhotos);
+		postPhotoDeleter.deletePostPhotos(postId);
+
+		// 4. 유효한 이미지 필터링 & S3 업로드
+		List<MultipartFile> validphotos = imageValidator.filterValidImages(images);
+		List<String> photoUrls = (validphotos.isEmpty()) ?
+			List.of() :
+			s3Uploader.uploadFiles(validphotos, POST_IMAGE_FOLDER);
+
+		// 5. PostPhoto 추가
+		postPhotoAppender.appendAll(postId, photoUrls);
+
+		// 4. Post 업데이트
 		postUpdater.updatePost(postId, title, content);
 
-		// 3. Post Images 업데이트
-		postImageUpdater.updatePostImages(postId, images);
 	}
 
 	@Transactional
@@ -231,46 +243,53 @@ public class PostService {
 		Long boardId,
 		String title,
 		String content,
-		PostCategory postCategory,
+		List<String> categories,
 		List<MultipartFile> images
 	) throws ImageException {
-		// 유효한 이미지만 필터링
-		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
+		// 게시판, 유저 조회
+		BoardDto boardDto = boardFinder.findBoardDto(boardId);
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
-		// s3에 이미지 업로드
+		// 게시판 검증
+		boardValidator.validateBoardIsActive(boardDto);
+		boardValidator.validatePostCreationAccess(userDto, boardDto);
+
+		// PostDraft 추가
+		Long postDraftId = postAppender.draft(boardId, title, content);
+
+		// 유효한 이미지 필터링 & S3 업로드
+		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
 		List<String> imageUrls = (validImages.isEmpty()) ?
 			List.of() :
 			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
 
-		// 임시 저장글 추가
-		Long postDraftId = postAppender.draft(boardId, title, content, postCategory);
+		// PostDraftPhoto 추가
+		postPhotoAppender.appendAllDraftImage(postDraftId, imageUrls);
 
-		// 임시 저장 이미지 추가
-		if (!imageUrls.isEmpty()) {
-			postPhotoAppender.appendAllDraftImage(postDraftId, imageUrls);
-		}
+		// 카테고리 검증, PostDraftCategory 추가
+		List<Long> categoryIds = categoryResolver.resolveCategoryIds(categories, boardId);
+		postCategoryAppender.appendAllDraftCategory(postDraftId, categoryIds);
 
 		return postDraftId;
 	}
 
 	@Transactional
 	public void deleteDraftPosts(List<Long> postDraftIds) {
-		// 유저 조회
+		// 유저 조회, 검증
 		Long userId = apiUserResolver.getCurrentUserId();
-
-		// 작성자 검증
 		postDraftIds.forEach(postDraftId -> postValidator.validateDraftPostDelete(postDraftId, userId));
 
-		// 이미지 조회
+		// 이미지 조회, 삭제
 		List<String> imageUrls = postPhotoFinder.findAllDraftPhotos(postDraftIds);
-
-		// S3에서 이미지 삭제
 		s3Uploader.deleteFiles(imageUrls);
 
 		// PostDraftPhoto 삭제
 		postPhotoDeleter.deletePostDraftPhotos(imageUrls);
 
-		// 삭제 처리
+		// PostDraftCategory 삭제
+		postCategoryDeleter.deleteAllByPostDraftIds(postDraftIds);
+
+		// PostDraft 삭제
 		postDeleter.deleteDraftAll(postDraftIds);
 
 	}
