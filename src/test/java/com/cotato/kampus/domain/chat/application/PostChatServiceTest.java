@@ -16,7 +16,6 @@ import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.application.PostFinder;
 import com.cotato.kampus.domain.post.dto.PostDto;
-import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -53,7 +52,6 @@ class PostChatServiceTest {
 			1L,
 			Anonymity.IDENTIFIED,
 			PostStatus.PUBLISHED,
-			PostCategory.HOSPITAL,
 			2L,
 			LocalDateTime.now()
 		);

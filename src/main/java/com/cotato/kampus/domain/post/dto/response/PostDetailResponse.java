@@ -4,15 +4,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.cotato.kampus.domain.post.dto.PostDetails;
-import com.cotato.kampus.domain.post.dto.PostDto;
-import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record PostDetailResponse(
 	Long postId,
 	String title,
 	String content,
-	PostCategory postCategory,
 	Long likes,
 	Long scraps,
 	Long comments,
@@ -28,7 +25,6 @@ public record PostDetailResponse(
 			postDetails.postId(),
 			postDetails.title(),
 			postDetails.content(),
-			postDetails.postCategory(),
 			postDetails.likes(),
 			postDetails.scraps(),
 			postDetails.comments(),
