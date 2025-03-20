@@ -49,9 +49,9 @@ class BoardServiceTest {
 
 		// 테스트용 카테고리 DTO 리스트 생성
 		List<CategoryDto> expectedCategories = List.of(
-			new CategoryDto("공지", boardId),
-			new CategoryDto("질문", boardId),
-			new CategoryDto("자유", boardId)
+			new CategoryDto(1L, "공지", boardId),
+			new CategoryDto(2L, "질문", boardId),
+			new CategoryDto(3L, "자유", boardId)
 		);
 
 		// BoardFinder가 해당 게시판을 찾을 수 있도록 설정
