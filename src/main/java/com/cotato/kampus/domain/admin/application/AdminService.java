@@ -32,7 +32,7 @@ import com.cotato.kampus.domain.post.application.PostDeleter;
 import com.cotato.kampus.domain.post.application.PostFinder;
 import com.cotato.kampus.domain.post.application.PostPhotoAppender;
 import com.cotato.kampus.domain.post.application.PostPhotoDeleter;
-import com.cotato.kampus.domain.post.application.PostImageFinder;
+import com.cotato.kampus.domain.post.application.PostPhotoFinder;
 import com.cotato.kampus.domain.post.application.PostUpdater;
 import com.cotato.kampus.domain.post.application.PostValidator;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
@@ -78,7 +78,7 @@ public class AdminService {
 	private final PostDeleter postDeleter;
 	private final PostUpdater postUpdater;
 	private final PostFinder postFinder;
-	private final PostImageFinder postImageFinder;
+	private final PostPhotoFinder postPhotoFinder;
 	private final PostPhotoDeleter postPhotoDeleter;
 	private final PostValidator postValidator;
 	private final CategoryAppender categoryAppender;
@@ -261,7 +261,7 @@ public class AdminService {
 		postValidator.validateDeleteCardNews(postId);
 
 		// 이미지 조회
-		List<String> imageUrls = postImageFinder.findPostPhotos(postId);
+		List<String> imageUrls = postPhotoFinder.findPostPhotos(postId);
 
 		// S3에서 이미지 삭제
 		s3Uploader.deleteFiles(imageUrls);

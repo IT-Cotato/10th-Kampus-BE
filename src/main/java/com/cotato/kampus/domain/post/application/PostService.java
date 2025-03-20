@@ -45,7 +45,7 @@ public class PostService {
 	private final PostUpdater postUpdater;
 
 	private final PostPhotoAppender postPhotoAppender;
-	private final PostImageFinder postImageFinder;
+	private final PostPhotoFinder postPhotoFinder;
 	private final PostImageUpdater postImageUpdater;
 	private final PostPhotoDeleter postPhotoDeleter;
 
@@ -118,7 +118,7 @@ public class PostService {
 		postValidator.validatePostOwner(postId, userId);
 
 		// 이미지 조회, 삭제
-		List<String> imageUrls = postImageFinder.findPostPhotos(postId);
+		List<String> imageUrls = postPhotoFinder.findPostPhotos(postId);
 		s3Uploader.deleteFiles(imageUrls);
 
 		// PostPhoto 삭제
@@ -175,7 +175,7 @@ public class PostService {
 		PostDto postDto = postFinder.findPost(postId);
 
 		// 2. Post의 이미지 조회
-		List<String> postPhotos = postImageFinder.findPostPhotos(postId);
+		List<String> postPhotos = postPhotoFinder.findPostPhotos(postId);
 
 		// 3. 유저 조회
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
@@ -239,7 +239,7 @@ public class PostService {
 		postDraftIds.forEach(postDraftId -> postValidator.validateDraftPostDelete(postDraftId, userId));
 
 		// 이미지 조회
-		List<String> imageUrls = postImageFinder.findAllDraftPhotos(postDraftIds);
+		List<String> imageUrls = postPhotoFinder.findAllDraftPhotos(postDraftIds);
 
 		// S3에서 이미지 삭제
 		s3Uploader.deleteFiles(imageUrls);
@@ -259,7 +259,7 @@ public class PostService {
 
 		// 임시 저장 게시글 조회
 		List<Long> draftPostIds = postFinder.getPostDraftIdsByBoardAndUser(boardId, userId);
-		List<String> imageUrls = postImageFinder.findAllDraftPhotos(draftPostIds);
+		List<String> imageUrls = postPhotoFinder.findAllDraftPhotos(draftPostIds);
 
 		// S3에서 이미지 삭제
 		s3Uploader.deleteFiles(imageUrls);
@@ -284,7 +284,7 @@ public class PostService {
 
 		PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
 
-		List<String> postDraftPhotos = postImageFinder.findAllDraftPhotos(postDraftId);
+		List<String> postDraftPhotos = postPhotoFinder.findAllDraftPhotos(postDraftId);
 
 		return PostDraftDetails.of(postDraftDto, postDraftPhotos);
 	}
@@ -305,7 +305,7 @@ public class PostService {
 		PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
 
 		// 3. 기존 임시 저장 이미지 URL 목록 조회
-		List<String> existingImageUrls = postImageFinder.findAllDraftPhotos(postDraftId);
+		List<String> existingImageUrls = postPhotoFinder.findAllDraftPhotos(postDraftId);
 
 		// 4. 게시글 생성 (임시 저장된 게시글에서 필요한 정보로 새로운 게시글을 생성)
 		Long postId = postAppender.append(userId, postDraftDto.boardId(), title, content);
