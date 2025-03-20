@@ -41,15 +41,16 @@ public class BoardValidator {
 	}
 
 	public void validatePostCreationAccess(UserDto userDto, BoardDto boardDto) {
-		// 재학생 검증
-		if (!(userDto.userRole() == UserRole.VERIFIED || userDto.userRole() == UserRole.ADMIN)) {
-			throw new AppException(ErrorCode.USER_UNVERIFIED);
-		}
+		// 대학 게시판인 경우 자격 검증
+		if (boardDto.boardType() == BoardType.UNIVERSITY) {
+			if(userDto.userRole() == UserRole.UNVERIFIED) {
+				throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
+			}
 
-		// 학교 게시판인 경우 자격 검증
-		if (boardDto.boardType() == BoardType.UNIVERSITY &&
-			!Objects.equals(boardDto.universityId(), userDto.universityId())) {
-			throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
+			// 자기학교 게시판만 접근 가능
+			if(!Objects.equals(boardDto.universityId(), userDto.universityId())) {
+				throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
+			}
 		}
 
 		// 카드뉴스 게시판 접근 불가
