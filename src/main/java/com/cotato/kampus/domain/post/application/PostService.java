@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardValidator;
+import com.cotato.kampus.domain.board.application.CategoryFinder;
+import com.cotato.kampus.domain.board.application.CategoryResolver;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
@@ -67,23 +69,17 @@ public class PostService {
 	private final BoardValidator boardValidator;
 	private final BoardFinder boardFinder;
 	private final TrendingPostAppender trendingPostAppender;
+	private final CategoryResolver categoryResolver;
+	private final PostCategoryAppender postCategoryAppender;
 
 	@Transactional
 	public Long createPost(
 		Long boardId,
 		String title,
 		String content,
-		PostCategory postCategory,
-		List<MultipartFile> images
+		List<MultipartFile> images,
+		List<String> categories
 	) throws ImageException {
-		// 유효한 이미지만 필터링
-		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
-
-		// s3에 이미지 업로드
-		List<String> imageUrls = (validImages.isEmpty()) ?
-			List.of() :
-			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
-
 		// 게시판, 유저 조회
 		BoardDto boardDto = boardFinder.findBoardDto(boardId);
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
@@ -93,12 +89,22 @@ public class PostService {
 		boardValidator.validatePostCreationAccess(userDto, boardDto);
 
 		// 게시글 추가
-		Long postId = postAppender.append(userDto.id(), boardDto.boardId(), title, content, postCategory);
+		Long postId = postAppender.append(userDto.id(), boardDto.boardId(), title, content);
 
-		// 게시글 이미지 추가
-		if (!imageUrls.isEmpty()) {
-			postImageAppender.appendAll(postId, imageUrls);
-		}
+		// 유효한 이미지 필터링 & S3 업로드
+		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
+		List<String> imageUrls = (validImages.isEmpty()) ?
+			List.of() :
+			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
+
+		// PostImage 추가
+		postImageAppender.appendAll(postId, imageUrls);
+
+		// 카테고리 조회, 검증
+		List<Long> categoryIds = categoryResolver.resolveCategoryIds(categories, boardId);
+
+		// PostCategory 추가
+		postCategoryAppender.appendAll(postId, categoryIds);
 
 		return postId;
 	}
@@ -292,7 +298,7 @@ public class PostService {
 		List<String> existingImageUrls = postImageFinder.findAllDraftPhotos(postDraftId);
 
 		// 4. 게시글 생성 (임시 저장된 게시글에서 필요한 정보로 새로운 게시글을 생성)
-		Long postId = postAppender.append(userId, postDraftDto.boardId(), title, content, postCategory);
+		Long postId = postAppender.append(userId, postDraftDto.boardId(), title, content);
 
 		// 5. 새로 추가된 이미지가 있다면 유효성 검증 후 S3에 업로드
 		List<MultipartFile> validImages = imageValidator.filterValidImages(newImages);

@@ -8,7 +8,6 @@ import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.dao.PostDraftRepository;
 import com.cotato.kampus.domain.post.domain.PostDraft;
 import com.cotato.kampus.domain.post.enums.PostCategory;
-import com.cotato.kampus.domain.post.enums.PostStatus;
 import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 
@@ -29,21 +28,14 @@ public class PostAppender {
 		Long userId,
 		Long boardId,
 		String title,
-		String content,
-		PostCategory postCategory
+		String content
 	) {
 		Post post = Post.builder()
 			.userId(userId)
 			.boardId(boardId)
 			.title(title)
 			.content(content)
-			.likes(0L)
-			.scraps(0L)
-			.comments(0L)
 			.anonymity(Anonymity.ANONYMOUS)
-			.postStatus(PostStatus.PUBLISHED)
-			.postCategory(postCategory)
-			.nextAnonymousNumber(1L)
 			.build();
 
 		return postRepository.save(post).getId();
@@ -82,7 +74,6 @@ public class PostAppender {
 			.title(title)
 			.content(content)
 			.anonymity(Anonymity.IDENTIFIED)
-			.postStatus(PostStatus.PUBLISHED)
 			.build();
 
 		return postRepository.save(post).getId();

@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "post")
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Post extends BaseTimeEntity {
@@ -45,15 +44,12 @@ public class Post extends BaseTimeEntity {
 	private String content;
 
 	@Column(name = "likes", nullable = false)
-	@Builder.Default
 	private Long likes = 0L;
 
 	@Column(name = "scraps", nullable = false)
-	@Builder.Default
 	private Long scraps = 0L;
 
 	@Column(name = "comments", nullable = false)
-	@Builder.Default
 	private Long comments = 0L;
 
 	@Enumerated(EnumType.STRING)
@@ -62,20 +58,28 @@ public class Post extends BaseTimeEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "post_status", nullable = false)
-	private PostStatus postStatus;
+	private PostStatus postStatus = PostStatus.PUBLISHED;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "post_category")
-	private PostCategory postCategory;
+	// @Enumerated(EnumType.STRING)
+	// @Column(name = "post_category")
+	// private PostCategory postCategory;
 
 	@Column(name = "next_ananymous_number", nullable = false)
-	@Builder.Default
 	private Long nextAnonymousNumber = 1L;
+
+	@Builder
+	public Post(Long userId, Long boardId, String title, String content, Anonymity anonymity){
+		this.userId = userId;
+		this.boardId = boardId;
+		this.title = title;
+		this.content = content;
+		this.anonymity = anonymity;
+	}
 
 	public void update(String title, String content, PostCategory postCategory) {
 		this.title = title;
 		this.content = content;
-		this.postCategory = postCategory;
+		// this.postCategory = postCategory;
 	}
 
 	public void increaseNextAnonymousNumber() {

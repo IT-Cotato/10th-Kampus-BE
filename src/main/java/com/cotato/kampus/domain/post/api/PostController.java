@@ -67,8 +67,8 @@ public class PostController {
 		@Valid @ModelAttribute PostCreateRequest request) throws ImageException {
 
 		// 게시판이 카테고리를 사용하는지 확인
-		boolean requiresCategory = boardService.requiresCategory(request.boardId());
-		postService.validateCategoryForBoard(requiresCategory, request.postCategory());
+		// boolean requiresCategory = boardService.requiresCategory(request.boardId());
+		// postService.validateCategoryForBoard(requiresCategory, request.postCategory());
 
 		return ResponseEntity.ok(DataResponse.from(
 				PostCreateResponse.of(
@@ -76,8 +76,8 @@ public class PostController {
 						request.boardId(),
 						request.title(),
 						request.content(),
-						request.postCategory(),
-						request.images() == null ? List.of() : request.images()
+						request.images() == null ? List.of() : request.images(),
+						request.categories() == null ? List.of() : request.categories()
 					)
 				)
 			)
