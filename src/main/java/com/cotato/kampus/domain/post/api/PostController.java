@@ -66,10 +66,6 @@ public class PostController {
 		@Parameter(description = "Post creation request")
 		@Valid @ModelAttribute PostCreateRequest request) throws ImageException {
 
-		// 게시판이 카테고리를 사용하는지 확인
-		// boolean requiresCategory = boardService.requiresCategory(request.boardId());
-		// postService.validateCategoryForBoard(requiresCategory, request.postCategory());
-
 		return ResponseEntity.ok(DataResponse.from(
 				PostCreateResponse.of(
 					postService.createPost(
@@ -79,21 +75,6 @@ public class PostController {
 						request.images() == null ? List.of() : request.images(),
 						request.categories() == null ? List.of() : request.categories()
 					)
-				)
-			)
-		);
-	}
-
-	@GetMapping("/boards/{boardId}/categories")
-	@Operation(summary = "게시판에 적용되는 카테고리 조회",
-		description = "boardId에 해당하는 게시판에 적용되는 카테고리를 조회합니다.")
-	public ResponseEntity<DataResponse<BoardCategoryFindResponse>> findCategories(
-		@PathVariable Long boardId
-	) {
-		return ResponseEntity.ok(
-			DataResponse.from(
-				BoardCategoryFindResponse.from(
-					boardService.findCategories(boardId)
 				)
 			)
 		);

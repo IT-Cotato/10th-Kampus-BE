@@ -14,6 +14,7 @@ import com.cotato.kampus.domain.board.dto.response.BoardWithDescriptionResponse;
 import com.cotato.kampus.domain.board.dto.response.FavoriteBoardResponse;
 import com.cotato.kampus.domain.board.dto.response.HomeBoardAndPostPreviewResponse;
 import com.cotato.kampus.domain.board.dto.response.UniversityBoardResponse;
+import com.cotato.kampus.domain.post.dto.response.BoardCategoryFindResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -104,5 +105,20 @@ public class BoardController {
 				boardService.removeFavoriteBoard(boardId)
 			)
 		));
+	}
+
+	@GetMapping("/boards/{boardId}/categories")
+	@Operation(summary = "게시판에 적용되는 카테고리 조회",
+		description = "boardId에 해당하는 게시판에 적용되는 카테고리를 조회합니다.")
+	public ResponseEntity<DataResponse<BoardCategoryFindResponse>> findCategories(
+		@PathVariable Long boardId
+	) {
+		return ResponseEntity.ok(
+			DataResponse.from(
+				BoardCategoryFindResponse.from(
+					boardService.findCategories(boardId)
+				)
+			)
+		);
 	}
 }
