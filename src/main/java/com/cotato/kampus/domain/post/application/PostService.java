@@ -8,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardValidator;
-import com.cotato.kampus.domain.board.application.CategoryFinder;
 import com.cotato.kampus.domain.board.application.CategoryResolver;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -44,10 +43,10 @@ public class PostService {
 	private final PostFinder postFinder;
 	private final PostUpdater postUpdater;
 
-	private final PostImageAppender postImageAppender;
+	private final PostPhotoAppender postPhotoAppender;
 	private final PostImageFinder postImageFinder;
 	private final PostImageUpdater postImageUpdater;
-	private final PostImageDeleter postImageDeleter;
+	private final PostPhotoDeleter postPhotoDeleter;
 
 	private final PostScrapUpdater postScrapUpdater;
 	private final PostScrapFinder postScrapFinder;
@@ -97,8 +96,8 @@ public class PostService {
 			List.of() :
 			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
 
-		// PostImage 추가
-		postImageAppender.appendAll(postId, imageUrls);
+		// PostPhoto 추가
+		postPhotoAppender.appendAll(postId, imageUrls);
 
 		// 카테고리 조회, 검증
 		List<Long> categoryIds = categoryResolver.resolveCategoryIds(categories, boardId);
@@ -115,14 +114,12 @@ public class PostService {
 		Long userId = apiUserResolver.getCurrentUserId();
 		postValidator.validatePostOwner(postId, userId);
 
-		// 이미지 조회
+		// 이미지 조회, 삭제
 		List<String> imageUrls = postImageFinder.findPostPhotos(postId);
-
-		// S3에서 이미지 삭제
 		s3Uploader.deleteFiles(imageUrls);
 
 		// PostPhoto 삭제
-		postImageDeleter.deletePostPhotos(postId);
+		postPhotoDeleter.deletePostPhotos(postId);
 
 		// 게시글 삭제
 		postDeleter.delete(postId);
@@ -214,7 +211,7 @@ public class PostService {
 
 		// 임시 저장 이미지 추가
 		if (!imageUrls.isEmpty()) {
-			postImageAppender.appendAllDraftImage(postDraftId, imageUrls);
+			postPhotoAppender.appendAllDraftImage(postDraftId, imageUrls);
 		}
 
 		return postDraftId;
@@ -235,7 +232,7 @@ public class PostService {
 		s3Uploader.deleteFiles(imageUrls);
 
 		// PostDraftPhoto 삭제
-		postImageDeleter.deletePostDraftPhotos(imageUrls);
+		postPhotoDeleter.deletePostDraftPhotos(imageUrls);
 
 		// 삭제 처리
 		postDeleter.deleteDraftAll(postDraftIds);
@@ -255,7 +252,7 @@ public class PostService {
 		s3Uploader.deleteFiles(imageUrls);
 
 		// PostDraftPhoto 삭제
-		postImageDeleter.deletePostDraftPhotos(imageUrls);
+		postPhotoDeleter.deletePostDraftPhotos(imageUrls);
 
 		// 임시저장 글 삭제
 		postDeleter.deleteDraftAll(draftPostIds);
@@ -315,7 +312,7 @@ public class PostService {
 
 		// 8. 최종 이미지가 있으면 게시글에 이미지 추가
 		if (!finalImages.isEmpty()) {
-			postImageAppender.appendAll(postId, finalImages);
+			postPhotoAppender.appendAll(postId, finalImages);
 		}
 
 		return postId;

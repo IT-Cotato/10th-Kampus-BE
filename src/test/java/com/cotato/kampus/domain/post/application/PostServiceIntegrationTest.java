@@ -54,7 +54,7 @@ class PostServiceTest {
 	@Mock
 	private S3Uploader s3Uploader;
 	@Mock
-	private PostImageAppender postImageAppender;
+	private PostPhotoAppender postPhotoAppender;
 	@Mock
 	private CategoryResolver categoryResolver;
 	@Mock
@@ -141,7 +141,7 @@ class PostServiceTest {
 		verify(postAppender).append(unverifiedUserDto.id(), boardId, title, content);
 		verify(imageValidator).filterValidImages(images);
 		verify(s3Uploader).uploadFiles(images, "post");
-		verify(postImageAppender).appendAll(postId, List.of("image-url"));
+		verify(postPhotoAppender).appendAll(postId, List.of("image-url"));
 		verify(categoryResolver).resolveCategoryIds(categories, boardId);
 		verify(postCategoryAppender).appendAll(postId, List.of(1L, 2L));
 	}
@@ -172,7 +172,7 @@ class PostServiceTest {
 		// S3 업로드는 호출되지 않아야 함
 		verify(s3Uploader, never()).uploadFiles(any(), any());
 		// 빈 이미지 리스트로 호출
-		verify(postImageAppender).appendAll(postId, List.of());
+		verify(postPhotoAppender).appendAll(postId, List.of());
 		verify(categoryResolver).resolveCategoryIds(emptyCategories, boardId);
 		// 빈 카테고리 ID 리스트로 호출
 		verify(postCategoryAppender).appendAll(postId, List.of());
@@ -203,7 +203,7 @@ class PostServiceTest {
 		verify(postAppender).append(unverifiedUserDto.id(), boardId, title, content);
 		verify(imageValidator).filterValidImages(images);
 		verify(s3Uploader).uploadFiles(images, "post");
-		verify(postImageAppender).appendAll(postId, List.of("image-url"));
+		verify(postPhotoAppender).appendAll(postId, List.of("image-url"));
 		// 카테고리 검증에서 예외가 발생하므로 카테고리 추가 메서드는 호출되지 않아야 함
 		verify(postCategoryAppender, never()).appendAll(anyLong(), any());
 	}

@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostImageAppender {
+public class PostPhotoAppender {
 
 	private final PostPhotoRepository postPhotoRepository;
 	private final PostDraftPhotoRepository postDraftPhotoRepository;

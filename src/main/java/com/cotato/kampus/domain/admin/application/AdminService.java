@@ -30,8 +30,8 @@ import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.post.application.PostAppender;
 import com.cotato.kampus.domain.post.application.PostDeleter;
 import com.cotato.kampus.domain.post.application.PostFinder;
-import com.cotato.kampus.domain.post.application.PostImageAppender;
-import com.cotato.kampus.domain.post.application.PostImageDeleter;
+import com.cotato.kampus.domain.post.application.PostPhotoAppender;
+import com.cotato.kampus.domain.post.application.PostPhotoDeleter;
 import com.cotato.kampus.domain.post.application.PostImageFinder;
 import com.cotato.kampus.domain.post.application.PostUpdater;
 import com.cotato.kampus.domain.post.application.PostValidator;
@@ -74,12 +74,12 @@ public class AdminService {
 	private static final String CARDNEWS_IMAGE_FOLDER = "cardNews";
 	private final ApiUserResolver apiUserResolver;
 	private final PostAppender postAppender;
-	private final PostImageAppender postImageAppender;
+	private final PostPhotoAppender postPhotoAppender;
 	private final PostDeleter postDeleter;
 	private final PostUpdater postUpdater;
 	private final PostFinder postFinder;
 	private final PostImageFinder postImageFinder;
-	private final PostImageDeleter postImageDeleter;
+	private final PostPhotoDeleter postPhotoDeleter;
 	private final PostValidator postValidator;
 	private final CategoryAppender categoryAppender;
 
@@ -249,7 +249,7 @@ public class AdminService {
 		Long postId = postAppender.appendCardNews(userId, boardId, title, content);
 
 		// 카드뉴스 사진 추가
-		postImageAppender.appendAll(postId, imageUrls);
+		postPhotoAppender.appendAll(postId, imageUrls);
 	}
 
 	@Transactional
@@ -267,7 +267,7 @@ public class AdminService {
 		s3Uploader.deleteFiles(imageUrls);
 
 		// PostPhoto 삭제
-		postImageDeleter.deletePostPhotos(postId);
+		postPhotoDeleter.deletePostPhotos(postId);
 
 		// 게시글 삭제
 		postDeleter.delete(postId);
