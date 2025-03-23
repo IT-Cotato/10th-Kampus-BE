@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.CategoryRepository;
-import com.cotato.kampus.domain.board.domain.Category;
+import com.cotato.kampus.domain.board.domain.BoardCategory;
 import com.cotato.kampus.domain.board.dto.CategoryDto;
 
 import lombok.AccessLevel;
@@ -22,9 +22,9 @@ public class CategoryFinder {
 
 	public List<CategoryDto> findCategories(Long boardId) {
 
-		List<Category> categoryList = categoryRepository.findAllByBoardId(boardId);
+		List<BoardCategory> boardCategoryList = categoryRepository.findAllByBoardId(boardId);
 
-		return categoryList.stream()
+		return boardCategoryList.stream()
 			.map(CategoryDto::from)
 			.toList();
 	}

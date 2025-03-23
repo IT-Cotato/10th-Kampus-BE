@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Category extends BaseTimeEntity {
+public class BoardCategory extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class Category extends BaseTimeEntity {
 	private Long boardId;
 
 	@Builder
-	public Category(String categoryName, Long boardId) {
+	public BoardCategory(String categoryName, Long boardId) {
 		this.categoryName = categoryName;
 		this.boardId = boardId;
 	}

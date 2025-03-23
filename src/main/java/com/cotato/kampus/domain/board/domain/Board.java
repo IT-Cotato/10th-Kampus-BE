@@ -38,7 +38,7 @@ public class Board extends BaseTimeEntity {
 	@Column(name = "university_id")
 	private Long universityId;
 
-	@Column(name = "uses_Categories", nullable = false)
+	@Column(name = "uses_categories", nullable = false)
 	private Boolean usesCategories;
 
 	@Enumerated(EnumType.STRING)

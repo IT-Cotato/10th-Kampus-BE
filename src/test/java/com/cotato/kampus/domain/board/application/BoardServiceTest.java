@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +32,8 @@ class BoardServiceTest {
 	private BoardService boardService;
 
 	@Test
-	void 존재하는_게시판의_카테고리_목록을_조회() {
+	@DisplayName("존재하는 게시판의 카테고리 목록을 조회")
+	void findCategories() {
 		// given
 		Long boardId = 1L;
 
@@ -74,7 +76,8 @@ class BoardServiceTest {
 
 
 	@Test
-	void 존재하지_않는_게시판의_ID로_조회_시_예외_발생() {
+	@DisplayName("존재하지 않는 게시판의 ID로 조회 시 예외 발생")
+	void findCategories_notFound() {
 		// given
 		Long nonExistentBoardId = 999L;
 
@@ -95,7 +98,8 @@ class BoardServiceTest {
 	}
 
 	@Test
-	void 카테고리가_없는_게시판의_카테고리_목록을_조회하면_빈_리스트를_반환() {
+	@DisplayName("카테고리가 없는 게시판의 카테고리 목록을 조회하면 빈 리스트를 반환")
+	void findCategoies_empty() {
 		// given
 		Long boardId = 2L;
 
