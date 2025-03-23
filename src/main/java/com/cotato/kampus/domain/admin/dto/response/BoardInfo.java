@@ -10,7 +10,7 @@ public record BoardInfo(
 	String description,
 	Boolean isUniversityBoard,
 	String universityName,
-	Boolean isCategoryRequired,
+	Boolean usesCategories,
 	BoardStatus boardStatus,
 	BoardType boardType
 ) {
@@ -21,7 +21,7 @@ public record BoardInfo(
 			board.description(),
 			board.universityId() != null,
 			universityName,
-			board.isCategoryRequired(),
+			board.usesCategories(),
 			board.boardStatus(),
 			board.boardType()
 		);

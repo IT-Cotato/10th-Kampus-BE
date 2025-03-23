@@ -11,7 +11,7 @@ public record BoardDto(
 	String boardName,
 	String description,
 	Long universityId,
-	Boolean isCategoryRequired,
+	Boolean usesCategories,
 	BoardStatus boardStatus,
 	BoardType boardType,
 	LocalDateTime deletionScheduledAt
@@ -22,7 +22,7 @@ public record BoardDto(
 			board.getBoardName(),
 			board.getDescription(),
 			board.getUniversityId(),
-			board.getIsCategoryRequired(),
+			board.getUsesCategories(),
 			board.getBoardStatus(),
 			board.getBoardType(),
 			board.getDeletionScheduledAt()
