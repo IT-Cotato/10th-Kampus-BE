@@ -195,15 +195,14 @@ public class PostController {
 		));
 	}
 
-	@GetMapping(value = "/boards/{boardId}/draft")
-	@Operation(summary = "임시 저장글 리스트 조회", description = "해당 게시판의 임시 저장글을 최신순으로 조회합니다.")
-	public ResponseEntity<DataResponse<PostDraftSliceFindResponse>> findDraftPostList(
-		@PathVariable Long boardId,
+	@GetMapping(value = "/draft")
+	@Operation(summary = "임시 저장글 목록 조회", description = "모든 임시 저장글을 최신순으로 조회합니다.")
+	public ResponseEntity<DataResponse<PostDraftSliceFindResponse>> findDraftList(
 		@RequestParam(required = false, defaultValue = "1") int page
 	) {
 		return ResponseEntity.ok(DataResponse.from(
 				PostDraftSliceFindResponse.from(
-					postService.findPostDrafts(boardId, page)
+					postService.findPostDrafts(page)
 				)
 			)
 		);

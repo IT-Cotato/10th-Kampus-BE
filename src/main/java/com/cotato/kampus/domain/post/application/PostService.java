@@ -18,6 +18,7 @@ import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
 import com.cotato.kampus.domain.post.dto.PostDraftDetails;
 import com.cotato.kampus.domain.post.dto.PostDraftDto;
+import com.cotato.kampus.domain.post.dto.PostDraftSliceFindDto;
 import com.cotato.kampus.domain.post.dto.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.domain.post.dto.PostSearchHistoryList;
@@ -314,11 +315,15 @@ public class PostService {
 	}
 
 	@Transactional
-	public Slice<PostDraftWithPhoto> findPostDrafts(Long boardId, int page) {
-
+	public PostDraftSliceFindDto findPostDrafts(int page) {
+		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
-		return postFinder.findPostDrafts(boardId, userId, page);
+		// 입시 저장 글 조회
+		Slice<PostDraftWithPhoto> postDrafts = postFinder.findPostDrafts(userId, page);
+		int count = postFinder.findDraftsCount(userId);
+
+		return PostDraftSliceFindDto.from(postDrafts, count);
 	}
 
 	@Transactional

@@ -273,11 +273,10 @@ public class PostFinder {
 		});
 	}
 
-	public Slice<PostDraftWithPhoto> findPostDrafts(Long boardId, Long userId, int page) {
+	public Slice<PostDraftWithPhoto> findPostDrafts(Long userId, int page) {
 
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-		Slice<PostDraft> postDrafts = postDraftRepository.findAllByBoardIdAndUserIdOrderByCreatedTimeDesc(
-			boardId,
+		Slice<PostDraft> postDrafts = postDraftRepository.findAllByUserIdOrderByCreatedTimeDesc(
 			userId,
 			customPageRequest.of(SORT_PROPERTY)
 		);
@@ -309,6 +308,10 @@ public class PostFinder {
 		}
 
 		return drafts;
+	}
+
+	public int findDraftsCount(Long userId){
+		return postDraftRepository.countByUserId(userId);
 	}
 
 	public List<Long> getPostDraftIdsByBoardAndUser(Long boardId, Long userId) {
