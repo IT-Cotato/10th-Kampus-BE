@@ -319,7 +319,7 @@ public class PostService {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
-		// 입시 저장 글 조회
+		// 임시 저장 글 조회
 		Slice<PostDraftWithPhoto> postDrafts = postFinder.findPostDrafts(userId, page);
 		int count = postFinder.findDraftsCount(userId);
 
