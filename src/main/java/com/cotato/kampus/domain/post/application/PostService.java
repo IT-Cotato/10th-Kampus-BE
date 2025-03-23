@@ -275,7 +275,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public void deleteDraftPosts(List<Long> postDraftIds) {
+	public void deleteSelectedDraftPosts(List<Long> postDraftIds) {
 		// 유저 조회, 검증
 		Long userId = apiUserResolver.getCurrentUserId();
 		postDraftIds.forEach(postDraftId -> postValidator.validateDraftPostDelete(postDraftId, userId));

@@ -237,7 +237,7 @@ public class PostController {
 			request.newImages() == null ? List.of() : request.newImages());
 
 		// 임시 저장글 삭제
-		postService.deleteDraftPosts(List.of(postDraftId));
+		postService.deleteSelectedDraftPosts(List.of(postDraftId));
 
 		return ResponseEntity.ok(DataResponse.from(
 				PostCreateResponse.of(postId)
@@ -250,7 +250,7 @@ public class PostController {
 	public ResponseEntity<DataResponse<Void>> deleteDraftPost(
 		@RequestBody DraftDeleteRequest request
 	) {
-		postService.deleteDraftPosts(request.draftPostIds());
+		postService.deleteSelectedDraftPosts(request.draftPostIds());
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
