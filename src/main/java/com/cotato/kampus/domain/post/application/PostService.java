@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardValidator;
-import com.cotato.kampus.domain.board.application.CategoryResolver;
+import com.cotato.kampus.domain.board.application.BoardCategoryResolver;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.comment.application.CommentDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -70,7 +70,7 @@ public class PostService {
 	private final BoardValidator boardValidator;
 	private final BoardFinder boardFinder;
 	private final TrendingPostAppender trendingPostAppender;
-	private final CategoryResolver categoryResolver;
+	private final BoardCategoryResolver boardCategoryResolver;
 	private final PostCategoryAppender postCategoryAppender;
 	private final PostCategoryDeleter postCategoryDeleter;
 	private final CommentDeleter commentDeleter;
@@ -104,7 +104,7 @@ public class PostService {
 		postPhotoAppender.appendAll(postId, imageUrls);
 
 		// 카테고리 조회, 검증
-		List<Long> categoryIds = categoryResolver.resolveCategoryIds(categories, boardId);
+		List<Long> categoryIds = boardCategoryResolver.resolveCategoryIds(categories, boardId);
 
 		// PostCategory 추가
 		postCategoryAppender.appendAll(postId, categoryIds);
@@ -214,7 +214,7 @@ public class PostService {
 			boardValidator.isCategoryEnabled(boardDto);
 
 			// 카테고리 조회, 검증
-			List<Long> categoryIds = categoryResolver.resolveCategoryIds(categories, boardDto.boardId());
+			List<Long> categoryIds = boardCategoryResolver.resolveCategoryIds(categories, boardDto.boardId());
 
 			// PostCategory 추가
 			postCategoryAppender.appendAll(postId, categoryIds);
@@ -268,7 +268,7 @@ public class PostService {
 		postPhotoAppender.appendAllDraftImage(postDraftId, imageUrls);
 
 		// 카테고리 검증, PostDraftCategory 추가
-		List<Long> categoryIds = categoryResolver.resolveCategoryIds(categories, boardId);
+		List<Long> categoryIds = boardCategoryResolver.resolveCategoryIds(categories, boardId);
 		postCategoryAppender.appendAllDraftCategory(postDraftId, categoryIds);
 
 		return postDraftId;

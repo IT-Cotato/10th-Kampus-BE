@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.application.BoardFinder;
-import com.cotato.kampus.domain.board.application.CategoryFinder;
+import com.cotato.kampus.domain.board.application.BoardCategoryFinder;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.dao.PostCategoryRepository;
@@ -60,7 +60,7 @@ public class PostFinder {
 	private final TrendingPostRepository trendingPostRepository;
 	private final PostDtoMapper postDtoMapper;
 	private final PostCategoryRepository postCategoryRepository;
-	private final CategoryFinder categoryFinder;
+	private final BoardCategoryFinder boardCategoryFinder;
 
 	public Post getPost(Long postId) {
 		return postRepository.findById(postId)
@@ -88,7 +88,7 @@ public class PostFinder {
 		}
 
 		// 카테고리 ID 조회
-		Long categoryId = categoryFinder.findDto(boardId, categoryName).categoryId();
+		Long categoryId = boardCategoryFinder.findDto(boardId, categoryName).categoryId();
 
 		// 페이지 요청 생성
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, sortType.getDirection());

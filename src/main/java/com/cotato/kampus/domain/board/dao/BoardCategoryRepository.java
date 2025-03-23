@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.cotato.kampus.domain.board.domain.BoardCategory;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<BoardCategory, Long> {
+public interface BoardCategoryRepository extends JpaRepository<BoardCategory, Long> {
 
 	List<BoardCategory> findAllByBoardId(Long boardId);
 

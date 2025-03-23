@@ -2,13 +2,13 @@ package com.cotato.kampus.domain.board.dto;
 
 import com.cotato.kampus.domain.board.domain.BoardCategory;
 
-public record CategoryDto(
+public record BoardCategoryDto(
 	Long categoryId,
 	String categoryName,
 	Long boardId
 ) {
-	public static CategoryDto from(BoardCategory boardCategory) {
-		return new CategoryDto(
+	public static BoardCategoryDto from(BoardCategory boardCategory) {
+		return new BoardCategoryDto(
 			boardCategory.getId(),
 			boardCategory.getCategoryName(),
 			boardCategory.getBoardId()
