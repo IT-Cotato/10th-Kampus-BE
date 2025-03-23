@@ -255,11 +255,9 @@ public class PostController {
 	}
 
 	@DeleteMapping(value = "/draft/all")
-	@Operation(summary = "임시 저장 게시글 전체 삭제", description = "특정 게시판의 모든 임시 저장글을 삭제합니다.")
-	public ResponseEntity<DataResponse<Void>> deleteAllDraftPost(
-		@PathVariable Long boardId
-	) {
-		postService.deleteAllDraftPost(boardId);
+	@Operation(summary = "임시 저장 게시글 전체 삭제", description = "모든 임시 저장글을 삭제합니다.")
+	public ResponseEntity<DataResponse<Void>> deleteAllDraftPost() {
+		postService.deleteAllDraftPost();
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 

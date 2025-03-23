@@ -12,7 +12,7 @@ public interface PostDraftRepository extends JpaRepository<PostDraft, Long> {
 
 	Slice<PostDraft> findAllByUserIdOrderByCreatedTimeDesc(Long userId, Pageable pageable);
 
-	List<PostDraft> findAllByBoardIdAndUserId(Long boardId, Long userId);
+	List<PostDraft> findAllByUserId(Long userId);
 
 	int countByUserId(Long userId);
 }

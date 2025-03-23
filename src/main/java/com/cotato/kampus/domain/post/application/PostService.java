@@ -296,12 +296,12 @@ public class PostService {
 	}
 
 	@Transactional
-	public void deleteAllDraftPost(Long boardId) {
+	public void deleteAllDraftPost() {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 임시 저장 게시글 조회
-		List<Long> draftPostIds = postFinder.getPostDraftIdsByBoardAndUser(boardId, userId);
+		List<Long> draftPostIds = postFinder.getPostDraftIdsByBoardAndUser(userId);
 		List<String> imageUrls = postPhotoFinder.findAllDraftPhotos(draftPostIds);
 
 		// S3에서 이미지 삭제
