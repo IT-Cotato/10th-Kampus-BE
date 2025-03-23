@@ -245,7 +245,7 @@ public class PostController {
 		);
 	}
 
-	@DeleteMapping(value = "/draft")
+	@DeleteMapping(value = "/draft/select")
 	@Operation(summary = "임시 저장 게시글 선택 삭제", description = "선택된 임시 저장글들을 삭제합니다.")
 	public ResponseEntity<DataResponse<Void>> deleteDraftPost(
 		@RequestBody DraftDeleteRequest request
@@ -254,7 +254,7 @@ public class PostController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-	@DeleteMapping(value = "boards/{boardId}/draft")
+	@DeleteMapping(value = "/draft/all")
 	@Operation(summary = "임시 저장 게시글 전체 삭제", description = "특정 게시판의 모든 임시 저장글을 삭제합니다.")
 	public ResponseEntity<DataResponse<Void>> deleteAllDraftPost(
 		@PathVariable Long boardId
