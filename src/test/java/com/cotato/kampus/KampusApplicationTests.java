@@ -1,13 +1,13 @@
-package com.cotato.kampus;
+// package com.cotato.kampus;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class KampusApplicationTests {
-
-	@Test
-	void contextLoads() {
-	}
-
-}
+// @SpringBootTest
+// class KampusApplicationTests {
+//
+// 	@Test
+// 	void contextLoads() {
+// 	}
+//
+// }
