@@ -10,7 +10,7 @@ public record BoardInfoResponse(
 	String description,
 	Boolean isUniversityBoard,
 	String universityName,
-	Boolean isCategoryRequired,
+	Boolean usesCategories,
 	BoardStatus boardStatus,
 	BoardType boardType
 ) {
@@ -21,7 +21,7 @@ public record BoardInfoResponse(
 			boardInfo.description(),
 			boardInfo.isUniversityBoard(),
 			boardInfo.universityName(),
-			boardInfo.isCategoryRequired(),
+			boardInfo.usesCategories(),
 			boardInfo.boardStatus(),
 			boardInfo.boardType()
 		);

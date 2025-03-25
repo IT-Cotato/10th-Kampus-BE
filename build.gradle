@@ -75,6 +75,7 @@ dependencies {
 
     // H2
     testImplementation 'com.h2database:h2:2.2.224'
+
 }
 
 tasks.named('test') {

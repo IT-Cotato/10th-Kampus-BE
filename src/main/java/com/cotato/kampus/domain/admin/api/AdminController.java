@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.admin.api;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,7 +36,6 @@ import com.cotato.kampus.global.error.exception.ImageException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -47,7 +48,7 @@ public class AdminController {
 	private final AdminService adminService;
 
 	@PostMapping(value = "/boards", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "게시판 생성", description = "게시판을 생성합니다. 학교 게시판이 아닌 경우 universityId를 null로 주세요")
+	@Operation(summary = "게시판 생성", description = "게시판을 생성합니다. 학교 게시판이 아닌 경우 universityCode를 null로 주세요")
 	public ResponseEntity<DataResponse<BoardCreateResponse>> createBoard(
 		@Valid @ModelAttribute BoardCreateRequest request
 	) {
@@ -56,8 +57,8 @@ public class AdminController {
 					adminService.createBoard(
 						request.boardName(),
 						request.description(),
-						request.universityName(),
-						request.isCategoryRequired()
+						request.universityCode(),
+						request.categories() == null ? List.of() : request.categories()
 					)
 				)
 			)
