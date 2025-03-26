@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardValidator;
-import com.cotato.kampus.domain.board.application.CategoryResolver;
+import com.cotato.kampus.domain.board.application.BoardCategoryResolver;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.comment.application.CommentDeleter;
@@ -63,7 +63,7 @@ class PostServiceTest {
 	@Mock
 	private PostPhotoFinder postPhotoFinder;
 	@Mock
-	private CategoryResolver categoryResolver;
+	private BoardCategoryResolver boardCategoryResolver;
 	@Mock
 	private PostCategoryAppender postCategoryAppender;
 	@Mock
@@ -149,7 +149,7 @@ class PostServiceTest {
 		when(postAppender.append(unverifiedUserDto.id(), boardId, title, content)).thenReturn(postId);
 		when(imageValidator.filterValidImages(images)).thenReturn(images);
 		when(s3Uploader.uploadFiles(images, "post")).thenReturn(List.of("image-url"));
-		when(categoryResolver.resolveCategoryIds(categories, boardId)).thenReturn(List.of(1L, 2L));
+		when(boardCategoryResolver.resolveCategoryIds(categories, boardId)).thenReturn(List.of(1L, 2L));
 
 		// When
 		Long result = postService.createPost(boardId, title, content, images, categories);
@@ -162,7 +162,7 @@ class PostServiceTest {
 		verify(imageValidator).filterValidImages(images);
 		verify(s3Uploader).uploadFiles(images, "post");
 		verify(postPhotoAppender).appendAll(postId, List.of("image-url"));
-		verify(categoryResolver).resolveCategoryIds(categories, boardId);
+		verify(boardCategoryResolver).resolveCategoryIds(categories, boardId);
 		verify(postCategoryAppender).appendAll(postId, List.of(1L, 2L));
 	}
 
@@ -178,7 +178,7 @@ class PostServiceTest {
 
 		when(postAppender.append(unverifiedUserDto.id(), boardId, title, content)).thenReturn(postId);
 		when(imageValidator.filterValidImages(emptyImages)).thenReturn(emptyImages);
-		when(categoryResolver.resolveCategoryIds(categories, boardId)).thenReturn(List.of());
+		when(boardCategoryResolver.resolveCategoryIds(categories, boardId)).thenReturn(List.of());
 
 		// When
 		Long result = postService.createPost(boardId, title, content, emptyImages, emptyCategories);
@@ -193,7 +193,7 @@ class PostServiceTest {
 		verify(s3Uploader, never()).uploadFiles(any(), any());
 		// 빈 이미지 리스트로 호출
 		verify(postPhotoAppender).appendAll(postId, List.of());
-		verify(categoryResolver).resolveCategoryIds(emptyCategories, boardId);
+		verify(boardCategoryResolver).resolveCategoryIds(emptyCategories, boardId);
 		// 빈 카테고리 ID 리스트로 호출
 		verify(postCategoryAppender).appendAll(postId, List.of());
 	}
@@ -210,7 +210,7 @@ class PostServiceTest {
 		when(s3Uploader.uploadFiles(images, "post")).thenReturn(List.of("image-url"));
 
 		// 유효하지 않은 카테고리 요청 시 예외 발생
-		when(categoryResolver.resolveCategoryIds(categories, boardId))
+		when(boardCategoryResolver.resolveCategoryIds(categories, boardId))
 			.thenThrow(new AppException(ErrorCode.INVALID_CATEGORY));
 
 		// When & Then
