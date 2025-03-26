@@ -14,11 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.cotato.kampus.domain.board.application.BoardAppender;
 import com.cotato.kampus.domain.board.application.BoardValidator;
-import com.cotato.kampus.domain.board.application.CategoryAppender;
+import com.cotato.kampus.domain.board.application.BoardCategoryAppender;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -36,7 +34,7 @@ class AdminServiceTest {
 	private BoardAppender boardAppender;
 
 	@Mock
-	private CategoryAppender categoryAppender;
+	private BoardCategoryAppender boardCategoryAppender;
 
 	@InjectMocks
 	private AdminService adminService;
@@ -62,7 +60,7 @@ class AdminServiceTest {
 		verify(userValidator).validateAdminAccess();
 		verify(boardValidator).validateUniqueName(boardName);
 		verify(boardAppender).appendBoard(boardName, description, null, true);
-		verify(categoryAppender).appendCategories(expectedBoardId, categories);
+		verify(boardCategoryAppender).appendCategories(expectedBoardId, categories);
 	}
 
 	@Test
@@ -91,6 +89,6 @@ class AdminServiceTest {
 		verify(univFinder).findIdByCode(universityCode);
 		verify(boardValidator).validateUniversityBoardExists(universityId);
 		verify(boardAppender).appendBoard(boardName, description, universityId, false);
-		verify(categoryAppender).appendCategories(expectedBoardId, categories);
+		verify(boardCategoryAppender).appendCategories(expectedBoardId, categories);
 	}
 }

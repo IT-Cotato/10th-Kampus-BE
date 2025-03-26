@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class CategoryAppender {
+public class BoardCategoryAppender {
 
 	private final BoardCategoryRepository boardCategoryRepository;
 
