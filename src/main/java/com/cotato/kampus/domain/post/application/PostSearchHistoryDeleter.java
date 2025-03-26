@@ -19,4 +19,9 @@ public class PostSearchHistoryDeleter {
 	public void deleteHistory(Long id) {
 		postSearchHistoryRepository.deleteById(id);
 	}
+
+	@Transactional
+	public void deleteAllHistory(Long userId) {
+		postSearchHistoryRepository.deleteAllByUserId(userId);
+	}
 }
