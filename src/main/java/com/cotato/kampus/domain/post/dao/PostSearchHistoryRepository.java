@@ -16,4 +16,6 @@ public interface PostSearchHistoryRepository extends JpaRepository<PostSearchHis
 	Optional<PostSearchHistory> findByUserIdAndKeyword(Long userId, String keyword);
 
 	List<PostSearchHistory> findByUserIdOrderByCreatedTimeDesc(Long userId);
+
+	void deleteAllByUserId(Long userId);
 }
