@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 public class CommentLikeAppender {
 
 	private final CommentLikeRepository commentLikeRepository;
-	private final CommentLikeFinder commentLikeFinder;
 
 	@Transactional
 	public void append(Long userId, Long commentId){
@@ -36,10 +35,4 @@ public class CommentLikeAppender {
 		commentLikeRepository.save(commentLike);
 	}
 
-	@Transactional
-	public void delete(Long userId, Long commentId){
-		CommentLike commentLike = commentLikeFinder.find(userId, commentId);
-		commentLikeRepository.delete(commentLike);
-
-	}
 }

@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.comment.dao.CommentLikeRepository;
 import com.cotato.kampus.domain.comment.domain.CommentLike;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,14 +21,15 @@ public class CommentLikeDeleter {
 	private final CommentLikeRepository commentLikeRepository;
 
 	@Transactional
-	public void delete(Long commentId) {
+	public void deleteAllByCommentId(Long commentId) {
 		List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentId(commentId);
 		commentLikeRepository.deleteAll(commentLikes);
 	}
 
 	@Transactional
-	public void deleteAllByCommentId(Long commentId) {
-		List<CommentLike> commentLikes = commentLikeRepository.findAllByCommentId(commentId);
-		commentLikeRepository.deleteAll(commentLikes);
+	public void delete(Long userId, Long commentId) {
+		CommentLike commentLike = commentLikeRepository.findByUserIdAndCommentId(userId, commentId)
+			.orElseThrow(() -> new AppException(ErrorCode.COMMENT_UNLIKE_FORBIDDEN));
+		commentLikeRepository.delete(commentLike);
 	}
 }
