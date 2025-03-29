@@ -21,7 +21,7 @@ import com.cotato.kampus.domain.board.application.BoardDtoEnhancer;
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardUpdater;
 import com.cotato.kampus.domain.board.application.BoardValidator;
-import com.cotato.kampus.domain.board.application.CategoryAppender;
+import com.cotato.kampus.domain.board.application.BoardCategoryAppender;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
@@ -30,9 +30,9 @@ import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.post.application.PostAppender;
 import com.cotato.kampus.domain.post.application.PostDeleter;
 import com.cotato.kampus.domain.post.application.PostFinder;
-import com.cotato.kampus.domain.post.application.PostImageAppender;
-import com.cotato.kampus.domain.post.application.PostImageDeleter;
-import com.cotato.kampus.domain.post.application.PostImageFinder;
+import com.cotato.kampus.domain.post.application.PostPhotoAppender;
+import com.cotato.kampus.domain.post.application.PostPhotoDeleter;
+import com.cotato.kampus.domain.post.application.PostPhotoFinder;
 import com.cotato.kampus.domain.post.application.PostUpdater;
 import com.cotato.kampus.domain.post.application.PostValidator;
 import com.cotato.kampus.domain.post.dto.PostWithPhotos;
@@ -74,14 +74,14 @@ public class AdminService {
 	private static final String CARDNEWS_IMAGE_FOLDER = "cardNews";
 	private final ApiUserResolver apiUserResolver;
 	private final PostAppender postAppender;
-	private final PostImageAppender postImageAppender;
+	private final PostPhotoAppender postPhotoAppender;
 	private final PostDeleter postDeleter;
 	private final PostUpdater postUpdater;
 	private final PostFinder postFinder;
-	private final PostImageFinder postImageFinder;
-	private final PostImageDeleter postImageDeleter;
+	private final PostPhotoFinder postPhotoFinder;
+	private final PostPhotoDeleter postPhotoDeleter;
 	private final PostValidator postValidator;
-	private final CategoryAppender categoryAppender;
+	private final BoardCategoryAppender boardCategoryAppender;
 
 	@Transactional
 	public Long createBoard(String boardName, String description, String universityCode, List<String> categories) {
@@ -101,7 +101,7 @@ public class AdminService {
 		Long boardId = boardAppender.appendBoard(boardName, description, universityId, usesCategories);
 
 		// 카테고리 추가 로직
-		categoryAppender.appendCategories(boardId, categories);
+		boardCategoryAppender.appendCategories(boardId, categories);
 
 		return boardId;
 	}
@@ -249,7 +249,7 @@ public class AdminService {
 		Long postId = postAppender.appendCardNews(userId, boardId, title, content);
 
 		// 카드뉴스 사진 추가
-		postImageAppender.appendAll(postId, imageUrls);
+		postPhotoAppender.appendAll(postId, imageUrls);
 	}
 
 	@Transactional
@@ -261,13 +261,13 @@ public class AdminService {
 		postValidator.validateDeleteCardNews(postId);
 
 		// 이미지 조회
-		List<String> imageUrls = postImageFinder.findPostPhotos(postId);
+		List<String> imageUrls = postPhotoFinder.findPostPhotos(postId);
 
 		// S3에서 이미지 삭제
 		s3Uploader.deleteFiles(imageUrls);
 
 		// PostPhoto 삭제
-		postImageDeleter.deletePostPhotos(postId);
+		postPhotoDeleter.deletePostPhotos(postId);
 
 		// 게시글 삭제
 		postDeleter.delete(postId);

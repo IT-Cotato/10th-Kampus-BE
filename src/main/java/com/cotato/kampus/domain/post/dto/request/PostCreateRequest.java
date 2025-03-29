@@ -22,7 +22,8 @@ public record PostCreateRequest(
 	@Size(max = 1000, message = "내용은 최대 1000자까지 입력할 수 있습니다.")
 	String content,
 
-	PostCategory postCategory,
-	List<MultipartFile> images
+	List<MultipartFile> images,
+
+	List<String> categories
 ) {
 }

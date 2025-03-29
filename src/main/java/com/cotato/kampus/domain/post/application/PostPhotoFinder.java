@@ -14,34 +14,30 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostImageAppender {
+@Transactional(readOnly = true)
+public class PostPhotoFinder {
 
 	private final PostPhotoRepository postPhotoRepository;
 	private final PostDraftPhotoRepository postDraftPhotoRepository;
 
-	@Transactional
-	public void appendAll(Long postId, List<String> imageUrls){
-			imageUrls.forEach(imageUrl -> {
-				PostPhoto postPhoto = PostPhoto.builder()
-					.postId(postId)
-					.photoUrl(imageUrl)
-					.build();
-
-				postPhotoRepository.save(postPhoto);
-			});
+	public List<String> findPostPhotos(Long postId) {
+		return postPhotoRepository.findALlByPostId(postId).stream()
+			.map(PostPhoto::getPhotoUrl)
+			.toList();
 	}
 
-	@Transactional
-	public void appendAllDraftImage(Long postDraftId, List<String> imageUrls){
-		imageUrls.forEach(imageUrl -> {
-			PostDraftPhoto postDraftPhoto = PostDraftPhoto.builder()
-				.postDraftId(postDraftId)
-				.photoUrl(imageUrl)
-				.build();
+	public List<String> findAllDraftPhotos(List<Long> postDraftIds){
+		return postDraftPhotoRepository.findAllByPostDraftIdIn(postDraftIds)
+			.stream()
+			.map(PostDraftPhoto::getPhotoUrl)
+			.toList();
+	}
 
-			postDraftPhotoRepository.save(postDraftPhoto);
-		});
+	public List<String> findAllDraftPhotos(Long postDraftId){
+		return postDraftPhotoRepository.findAllByPostDraftId(postDraftId)
+			.stream()
+			.map(PostDraftPhoto::getPhotoUrl)
+			.toList();
 	}
 }

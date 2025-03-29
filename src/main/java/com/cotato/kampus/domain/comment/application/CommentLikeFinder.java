@@ -14,25 +14,13 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommentLikeAppender {
+public class CommentLikeFinder {
 
 	private final CommentLikeRepository commentLikeRepository;
 
-	@Transactional
-	public void append(Long userId, Long commentId){
-		boolean alreadyLiked = commentLikeRepository.existsByUserIdAndCommentId(userId, commentId);
-
-		// 이미 좋아요한 경우 예외처리
-		if(alreadyLiked){
-			throw new AppException(ErrorCode.ALREADY_LIKED);
-		}
-
-		// 좋아요 추가
-		CommentLike commentLike = CommentLike.builder()
-				.commentId(commentId)
-				.userId(userId)
-				.build();
-		commentLikeRepository.save(commentLike);
+	public CommentLike find(Long userId, Long commentId) {
+		return commentLikeRepository.findByUserIdAndCommentId(userId, commentId)
+			.orElseThrow(() -> new AppException(ErrorCode.COMMENT_UNLIKE_FORBIDDEN));
 	}
 
 }

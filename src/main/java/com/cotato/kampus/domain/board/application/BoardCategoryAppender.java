@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.dao.CategoryRepository;
+import com.cotato.kampus.domain.board.dao.BoardCategoryRepository;
 import com.cotato.kampus.domain.board.domain.BoardCategory;
 
 import lombok.AccessLevel;
@@ -14,9 +14,9 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class CategoryAppender {
+public class BoardCategoryAppender {
 
-	private final CategoryRepository categoryRepository;
+	private final BoardCategoryRepository boardCategoryRepository;
 
 	@Transactional
 	public void appendCategories(Long boardId, List<String> categories) {
@@ -27,6 +27,6 @@ public class CategoryAppender {
 				.build())
 			.toList();
 
-		categoryRepository.saveAll(boardCategoryList);
+		boardCategoryRepository.saveAll(boardCategoryList);
 	}
 }

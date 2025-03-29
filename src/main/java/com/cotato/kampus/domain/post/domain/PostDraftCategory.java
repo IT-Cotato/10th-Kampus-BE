@@ -15,22 +15,22 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostCategory extends BaseTimeEntity {
+public class PostDraftCategory extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "post_category_id")
+	@Column(name = "post_draft_category_id")
 	private Long id;
 
-	@Column(name = "post_id", nullable = false)
-	private Long postId;
+	@Column(name = "post_draft_id", nullable = false)
+	private Long postDraftId;
 
 	@Column(name = "category_id", nullable = false)
 	private Long categoryId;
 
 	@Builder
-	public PostCategory(Long postId, Long categoryId) {
-		this.postId = postId;
+	public PostDraftCategory(Long postDraftId, Long categoryId) {
+		this.postDraftId = postDraftId;
 		this.categoryId = categoryId;
 	}
 }

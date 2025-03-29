@@ -21,9 +21,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	Slice<Post> findAllByBoardIdOrderByCreatedTimeDesc(Long boardId, Pageable pageable);
 
+	Slice<Post> findAllByBoardIdAndIdInOrderByCreatedTimeDesc(Long boardId, List<Long> postIds, Pageable pageable);
+
 	Slice<Post> findAllByBoardIdOrderByCreatedTimeAsc(Long boardId, Pageable pageable);
 
+	Slice<Post> findAllByBoardIdAndIdInOrderByCreatedTimeAsc(Long boardId, List<Long> postIds, Pageable pageable);
+
 	Slice<Post> findAllByBoardIdOrderByLikesDescCreatedTimeDesc(Long boardId, Pageable pageable);
+
+	Slice<Post> findAllByBoardIdAndIdInOrderByLikesDescCreatedTimeDesc(Long boardId, List<Long> postIds,Pageable pageable);
 
 	@Query("SELECT p FROM Post p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword% ORDER BY p.createdTime DESC")
 	Slice<Post> searchAll(@Param("keyword") String keyword, Pageable pageable);

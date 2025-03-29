@@ -17,13 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cotato.kampus.domain.board.application.BoardService;
 import com.cotato.kampus.domain.post.application.PostService;
 import com.cotato.kampus.domain.post.dto.request.DraftDeleteRequest;
 import com.cotato.kampus.domain.post.dto.request.PostCreateRequest;
 import com.cotato.kampus.domain.post.dto.request.PostDraftRequest;
 import com.cotato.kampus.domain.post.dto.request.PostUpdateRequest;
-import com.cotato.kampus.domain.post.dto.response.BoardCategoryFindResponse;
 import com.cotato.kampus.domain.post.dto.response.CardNewsListResponse;
 import com.cotato.kampus.domain.post.dto.response.MyPostResponse;
 import com.cotato.kampus.domain.post.dto.response.PostCreateResponse;
@@ -58,17 +56,12 @@ import lombok.RequiredArgsConstructor;
 public class PostController {
 
 	private final PostService postService;
-	private final BoardService boardService;
 
 	@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "게시글 생성", description = "게시글 생성 요청입니다. 사진이 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
+	@Operation(summary = "게시글 생성", description = "게시글 생성 요청입니다. 사진, 카테고리가 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
 	public ResponseEntity<DataResponse<PostCreateResponse>> createPost(
 		@Parameter(description = "Post creation request")
 		@Valid @ModelAttribute PostCreateRequest request) throws ImageException {
-
-		// 게시판이 카테고리를 사용하는지 확인
-		boolean requiresCategory = boardService.requiresCategory(request.boardId());
-		postService.validateCategoryForBoard(requiresCategory, request.postCategory());
 
 		return ResponseEntity.ok(DataResponse.from(
 				PostCreateResponse.of(
@@ -76,24 +69,9 @@ public class PostController {
 						request.boardId(),
 						request.title(),
 						request.content(),
-						request.postCategory(),
-						request.images() == null ? List.of() : request.images()
+						request.images() == null ? List.of() : request.images(),
+						request.categories() == null ? List.of() : request.categories()
 					)
-				)
-			)
-		);
-	}
-
-	@GetMapping("/boards/{boardId}/categories")
-	@Operation(summary = "게시판에 적용되는 카테고리 조회",
-		description = "boardId에 해당하는 게시판에 적용되는 카테고리를 조회합니다.")
-	public ResponseEntity<DataResponse<BoardCategoryFindResponse>> findCategories(
-		@PathVariable Long boardId
-	) {
-		return ResponseEntity.ok(
-			DataResponse.from(
-				BoardCategoryFindResponse.from(
-					boardService.findCategories(boardId)
 				)
 			)
 		);
@@ -101,7 +79,7 @@ public class PostController {
 
 	@GetMapping("/boards/{boardId}")
 	@Operation(summary = "게시판의 게시글 리스트 조회",
-		description = "BoardId에 해당하는 게시글을 정렬 기준에 따라 조회합니다.(기본값: 최신순, 페이지당 게시글 수: 10)")
+		description = "게시글을 정렬 기준과 카테고리 기준에 따라 조회합니다.(정렬 기본값: 최신순, 카테고리 기본값: 전체, 페이지당 게시글 수: 10)")
 	public ResponseEntity<DataResponse<PostSliceFindResponse>> findPosts(
 		@PathVariable Long boardId,
 		@RequestParam(required = false, defaultValue = "1") int page,
@@ -111,12 +89,18 @@ public class PostController {
 			schema = @Schema(type = "string", defaultValue = "recent",
 				allowableValues = {"recent", "old", "likes"})
 		)
-		@RequestParam(required = false, defaultValue = "recent") PostSortType sort
+		@RequestParam(required = false, defaultValue = "recent") PostSortType sort,
+		@Parameter(
+			name = "category",
+			description = "카테고리명 (전체 조회: 파라미터 미입력, 특정 카테고리 조회: 해당 카테고리명)"
+		)
+		@RequestParam(required = false) String category
+
 	) {
 		return ResponseEntity.ok(
 			DataResponse.from(
 				PostSliceFindResponse.from(
-					postService.findPosts(boardId, page, sort)
+					postService.findPosts(boardId, page, sort, category)
 				)
 			)
 		);
@@ -164,7 +148,7 @@ public class PostController {
 	}
 
 	@DeleteMapping("/{postId}")
-	@Operation(summary = "게시글 삭제", description = "(현재 유저가 작성한 게시글일 경우) 게시글을 삭제합니다.")
+	@Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
 	public ResponseEntity<DataResponse<PostDeleteResponse>> deletePost(
 		@PathVariable Long postId
 	) {
@@ -178,22 +162,16 @@ public class PostController {
 	}
 
 	@PutMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "게시글 수정", description = "게시글의 내용 수정")
+	@Operation(summary = "게시글 수정", description = "게시글을 수정합니다. 사진, 카테고리가 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
 	public ResponseEntity<DataResponse<Void>> updatePost(
 		@PathVariable Long postId,
 		@Valid @ModelAttribute PostUpdateRequest request
 	) throws ImageException {
-
-		// 게시판이 카테고리를 사용하는지 확인
-		Long boardId = postService.findPostDetail(postId).boardId();
-		boolean requiresCategory = boardService.requiresCategory(boardId);
-		postService.validateCategoryForBoard(requiresCategory, request.postCategory());
-
 		postService.updatePost(
 			postId,
 			request.title(),
 			request.content(),
-			request.postCategory(),
+			request.categories() == null ? List.of() : request.categories(),
 			request.newImages() == null ? List.of() : request.newImages()); // 이미지 없는 경우 빈 리스트로 요청
 
 		return ResponseEntity.ok(DataResponse.ok());
@@ -210,22 +188,21 @@ public class PostController {
 					request.boardId(),
 					request.title(),
 					request.content(),
-					request.postCategory(),
+					request.categories() == null ? List.of() : request.categories(),
 					request.images() == null ? List.of() : request.images()
 				)
 			)
 		));
 	}
 
-	@GetMapping(value = "/boards/{boardId}/draft")
-	@Operation(summary = "임시 저장글 리스트 조회", description = "해당 게시판의 임시 저장글을 최신순으로 조회합니다.")
-	public ResponseEntity<DataResponse<PostDraftSliceFindResponse>> findDraftPostList(
-		@PathVariable Long boardId,
+	@GetMapping(value = "/draft")
+	@Operation(summary = "임시 저장글 목록 조회", description = "모든 임시 저장글을 최신순으로 조회합니다.")
+	public ResponseEntity<DataResponse<PostDraftSliceFindResponse>> findDraftList(
 		@RequestParam(required = false, defaultValue = "1") int page
 	) {
 		return ResponseEntity.ok(DataResponse.from(
 				PostDraftSliceFindResponse.from(
-					postService.findPostDrafts(boardId, page)
+					postService.findPostDrafts(page)
 				)
 			)
 		);
@@ -250,18 +227,12 @@ public class PostController {
 		@PathVariable Long postDraftId,
 		@Valid @ModelAttribute PostUpdateRequest request
 	) throws ImageException {
-
-		// 게시판이 카테고리를 사용하는지 확인
-		Long boardId = postService.findDraftDetail(postDraftId).boardId();
-		boolean requiresCategory = boardService.requiresCategory(boardId);
-		postService.validateCategoryForBoard(requiresCategory, request.postCategory());
-
 		// 게시글 생성
 		Long postId = postService.publishDraftPost(
 			postDraftId,
 			request.title(),
 			request.content(),
-			request.postCategory(),
+			request.categories() == null ? List.of() : request.categories(),
 			request.deletedImageUrls() == null ? List.of() : request.deletedImageUrls(),
 			request.newImages() == null ? List.of() : request.newImages());
 

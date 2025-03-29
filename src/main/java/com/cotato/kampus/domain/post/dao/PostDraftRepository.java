@@ -10,7 +10,9 @@ import com.cotato.kampus.domain.post.domain.PostDraft;
 
 public interface PostDraftRepository extends JpaRepository<PostDraft, Long> {
 
-	Slice<PostDraft> findAllByBoardIdAndUserIdOrderByCreatedTimeDesc(Long postId, Long userId, Pageable pageable);
+	Slice<PostDraft> findAllByUserIdOrderByCreatedTimeDesc(Long userId, Pageable pageable);
 
 	List<PostDraft> findAllByBoardIdAndUserId(Long boardId, Long userId);
+
+	int countByUserId(Long userId);
 }

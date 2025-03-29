@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.domain.Post;
-import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 
 public record PostDto(
@@ -18,7 +17,6 @@ public record PostDto(
 	Long comments,
 	Anonymity anonymity,
 	PostStatus postStatus,
-	PostCategory postCategory,
 	Long nextAnonymousNumber,
 	LocalDateTime createdTime
 ) {
@@ -34,7 +32,6 @@ public record PostDto(
 			post.getComments(),
 			post.getAnonymity(),
 			post.getPostStatus(),
-			post.getPostCategory(),
 			post.getNextAnonymousNumber(),
 			post.getCreatedTime()
 		);

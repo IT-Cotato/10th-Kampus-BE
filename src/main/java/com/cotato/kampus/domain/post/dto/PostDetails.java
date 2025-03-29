@@ -3,14 +3,11 @@ package com.cotato.kampus.domain.post.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.cotato.kampus.domain.post.enums.PostCategory;
-
 public record PostDetails(
 	Long postId,
 	Long boardId,
 	String title,
 	String content,
-	PostCategory postCategory,
 	Long likes,
 	Long scraps,
 	Long comments,
@@ -32,7 +29,6 @@ public record PostDetails(
 			postDto.boardId(),
 			postDto.title(),
 			postDto.content(),
-			postDto.postCategory(),
 			postDto.likes(),
 			postDto.scraps(),
 			postDto.comments(),

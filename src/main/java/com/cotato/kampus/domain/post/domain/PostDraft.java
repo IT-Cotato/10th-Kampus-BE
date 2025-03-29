@@ -39,16 +39,11 @@ public class PostDraft extends BaseTimeEntity {
 	@Column(name = "content", columnDefinition = "text")
 	private String content;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "post_category")
-	private PostCategory postCategory;
-
 	@Builder
-	public PostDraft(Long userId, Long boardId, String title, String content, PostCategory postCategory) {
+	public PostDraft(Long userId, Long boardId, String title, String content) {
 		this.userId = userId;
 		this.boardId = boardId;
 		this.title = title;
 		this.content = content;
-		this.postCategory = postCategory;
 	}
 }

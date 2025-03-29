@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.dto.CategoryDto;
+import com.cotato.kampus.domain.board.dto.BoardCategoryDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -26,7 +26,7 @@ class BoardServiceTest {
 	private BoardFinder boardFinder;
 
 	@Mock
-	private CategoryFinder categoryFinder;
+	private BoardCategoryFinder boardCategoryFinder;
 
 	@InjectMocks
 	private BoardService boardService;
@@ -48,20 +48,20 @@ class BoardServiceTest {
 			.build();
 
 		// 테스트용 카테고리 DTO 리스트 생성
-		List<CategoryDto> expectedCategories = List.of(
-			new CategoryDto("공지", boardId),
-			new CategoryDto("질문", boardId),
-			new CategoryDto("자유", boardId)
+		List<BoardCategoryDto> expectedCategories = List.of(
+			new BoardCategoryDto(1L, "공지", boardId),
+			new BoardCategoryDto(2L, "질문", boardId),
+			new BoardCategoryDto(3L, "자유", boardId)
 		);
 
 		// BoardFinder가 해당 게시판을 찾을 수 있도록 설정
 		when(boardFinder.findBoard(boardId)).thenReturn(board);
 
 		// CategoryFinder가 카테고리 목록을 반환하도록 설정
-		when(categoryFinder.findCategories(boardId)).thenReturn(expectedCategories);
+		when(boardCategoryFinder.findAllDtoByBoardId(boardId)).thenReturn(expectedCategories);
 
 		// when
-		List<CategoryDto> result = boardService.findCategories(boardId);
+		List<BoardCategoryDto> result = boardService.findCategories(boardId);
 
 		// then
 		assertEquals(3, result.size());
@@ -71,7 +71,7 @@ class BoardServiceTest {
 
 		// 메서드 호출 검증
 		verify(boardFinder, times(1)).findBoard(boardId);
-		verify(categoryFinder, times(1)).findCategories(boardId);
+		verify(boardCategoryFinder, times(1)).findAllDtoByBoardId(boardId);
 	}
 
 
@@ -94,7 +94,7 @@ class BoardServiceTest {
 		assertEquals(ErrorCode.BOARD_NOT_FOUND, exception.getErrorCode());
 
 		// 예외가 발생하므로 categoryFinder는 호출되지 않아야 함
-		verify(categoryFinder, never()).findCategories(anyLong());
+		verify(boardCategoryFinder, never()).findAllDtoByBoardId(anyLong());
 	}
 
 	@Test
@@ -117,16 +117,16 @@ class BoardServiceTest {
 		when(boardFinder.findBoard(boardId)).thenReturn(boardWithoutCategories);
 
 		// CategoryFinder가 빈 목록을 반환하도록 설정
-		when(categoryFinder.findCategories(boardId)).thenReturn(List.of());
+		when(boardCategoryFinder.findAllDtoByBoardId(boardId)).thenReturn(List.of());
 
 		// when
-		List<CategoryDto> result = boardService.findCategories(boardId);
+		List<BoardCategoryDto> result = boardService.findCategories(boardId);
 
 		// then
 		assertTrue(result.isEmpty());
 
 		// 메서드 호출 검증
 		verify(boardFinder, times(1)).findBoard(boardId);
-		verify(categoryFinder, times(1)).findCategories(boardId);
+		verify(boardCategoryFinder, times(1)).findAllDtoByBoardId(boardId);
 	}
 }

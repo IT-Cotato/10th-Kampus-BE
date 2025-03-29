@@ -4,14 +4,12 @@ import java.time.LocalDateTime;
 
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
-import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record SearchedPost(
 	Long id,
 	Long boardId,
 	String boardName,
-	PostCategory postCategory,
 	String title,
 	String content,
 	Long likes,
@@ -25,7 +23,6 @@ public record SearchedPost(
 			post.getId(),
 			post.getBoardId(),
 			boardName,
-			post.getPostCategory(),
 			post.getTitle(),
 			post.getContent(),
 			post.getLikes(),

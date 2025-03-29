@@ -37,6 +37,7 @@ public class CommentService {
 	private final ApiUserResolver apiUserResolver;
 	private final PostFinder postFinder;
 	private final PostUpdater postUpdater;
+	private final CommentLikeFinder commentLikeFinder;
 
 	@Transactional
 	public Long createComment(Long postId, String content, Long parentId, Long targetId) {
@@ -80,7 +81,7 @@ public class CommentService {
 		postUpdater.decreaseComments(commentDto.postId());
 
 		// 댓글 좋아요 데이터 삭제
-		commentLikeDeleter.delete(commentId);
+		commentLikeDeleter.deleteAllByCommentId(commentId);
 	}
 
 	@Transactional
@@ -107,7 +108,7 @@ public class CommentService {
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 좋아요 삭제
-		commentLikeAppender.delete(userId, commentId);
+		commentLikeDeleter.delete(userId, commentId);
 
 		// 댓글 좋아요 수 감소
 		commentUpdater.decreaseCommentLikes(commentId);
@@ -119,7 +120,7 @@ public class CommentService {
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 이 게시글에 달린 모든 댓글과 대댓글 가져오기
-		List<CommentDto> commentDtos = commentFinder.findComments(postId);
+		List<CommentDto> commentDtos = commentFinder.findAllDtoByPostId(postId);
 
 		// 댓글 리스트 생성 + 유저 좋아요 여부 매핑
 		List<CommentDetail> comments = commentMapper.buildCommentHierarchy(commentDtos, userId);
