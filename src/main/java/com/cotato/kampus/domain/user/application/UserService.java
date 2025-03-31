@@ -50,7 +50,7 @@ public class UserService {
 			.map(id -> UserDetailsDto.of(
 				user,
 				id,
-				univFinder.findUniversity(id).getUniversityName()
+				univFinder.findUniversity(id).getUniversityCode()
 			))
 			.orElse(UserDetailsDto.of(user, -1L, ""));
 	}

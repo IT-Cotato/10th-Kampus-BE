@@ -9,7 +9,7 @@ public record UserDetailsResponse(
 	String nationality,
 	String preferredLanguage,
 	Long universityId,
-	String universityName,
+	String universityCode,
 	boolean needSetup
 ) {
 	public static UserDetailsResponse from(UserDetailsDto userDetails) {
@@ -19,7 +19,7 @@ public record UserDetailsResponse(
 			userDetails.nationality().getName(),
 			userDetails.preferredLanguage().getName(),
 			userDetails.universityId(),
-			userDetails.universityName(),
+			userDetails.universityCode(),
 			userDetails.userStatus().equals(UserStatus.PENDING_DETAILS)
 		);
 	}
