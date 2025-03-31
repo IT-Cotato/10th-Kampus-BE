@@ -12,10 +12,10 @@ public record UserDetailsDto(
 	PreferredLanguage preferredLanguage,
 	UserStatus userStatus,
 	Long universityId,
-	String universityName
+	String universityCode
 ) {
 
-	public static UserDetailsDto of(UserDto user, Long universityId, String universityName) {
+	public static UserDetailsDto of(UserDto user, Long universityId, String universityCode) {
 		return new UserDetailsDto(
 			user.id(),
 			user.nickname(),
@@ -23,7 +23,7 @@ public record UserDetailsDto(
 			user.preferredLanguage(),
 			user.userStatus(),
 			universityId,
-			universityName
+			universityCode
 		);
 	}
 }
