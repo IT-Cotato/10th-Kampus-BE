@@ -1,6 +1,5 @@
 package com.cotato.kampus.domain.user.dto;
 
-import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.domain.user.enums.UserStatus;
