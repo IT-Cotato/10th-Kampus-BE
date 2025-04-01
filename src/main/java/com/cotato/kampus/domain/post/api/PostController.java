@@ -223,33 +223,16 @@ public class PostController {
 		);
 	}
 
-	// @PostMapping("/draft/{postDraftId}")
-	// @Operation(summary = "임시 저장글 발행", description = "임시 저장글을 발행합니다.")
-	// public ResponseEntity<DataResponse<PostCreateResponse>> publishDraftPost(
-	// 	@PathVariable Long postDraftId
-	// ) {
-	// 	// 게시글 생성
-	// 	postService.publishDraftPost()
-	// }
-
-	@PostMapping(value = "/draft/{postDraftId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "임시 저장글 수정")
-	public ResponseEntity<DataResponse<PostCreateResponse>> updateDraftPost__(
-		@PathVariable Long postDraftId,
-		@Valid @ModelAttribute PostUpdateRequest request
-	) throws ImageException {
-		// 게시글 생성
-		Long postId = postService.publishDraftPost(
-			postDraftId,
-			request.title(),
-			request.content(),
-			request.categories() == null ? List.of() : request.categories(),
-			request.deletedImageUrls() == null ? List.of() : request.deletedImageUrls(),
-			request.newImages() == null ? List.of() : request.newImages());
+	@PostMapping("/draft/{postDraftId}")
+	@Operation(summary = "임시 저장글 발행", description = "임시 저장글을 발행합니다.")
+	public ResponseEntity<DataResponse<PostCreateResponse>> publishDraftPost(
+		@PathVariable Long postDraftId
+	) {
+		// 게시글 발행
+		Long postId = postService.publishDraftPost(postDraftId);
 
 		// 임시 저장글 삭제
 		postService.deleteSelectedDraftPosts(List.of(postDraftId));
-
 		return ResponseEntity.ok(DataResponse.from(
 				PostCreateResponse.of(postId)
 			)
@@ -257,7 +240,7 @@ public class PostController {
 	}
 
 	@PatchMapping(value = "/draft/{postDraftId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "임시 저장글 수정")
+	@Operation(summary = "임시 저장글 수정", description = "기존 임시 저장글에 덮어씁니다.")
 	public ResponseEntity<DataResponse<PostDraftCreateResponse>> updateDraftPost(
 		@PathVariable Long postDraftId,
 		@Valid @ModelAttribute PostDraftUpdateRequest request

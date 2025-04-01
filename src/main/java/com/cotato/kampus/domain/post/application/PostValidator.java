@@ -56,4 +56,9 @@ public class PostValidator {
 			throw new AppException(ErrorCode.CARD_NEWS_NOT_ALLOWED);
 		}
 	}
+
+	public void validatePublishable(PostDraftDto postDraftDto) {
+		if(postDraftDto.title().isEmpty() || postDraftDto.content().isEmpty())
+			throw new AppException(ErrorCode.POST_REQUIRED_FIELD_MISSING);
+	}
 }

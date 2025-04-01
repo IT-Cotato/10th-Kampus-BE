@@ -75,6 +75,7 @@ public class PostService {
 	private final PostCategoryAppender postCategoryAppender;
 	private final PostCategoryDeleter postCategoryDeleter;
 	private final CommentDeleter commentDeleter;
+	private final PostCategoryFinder postCategoryFinder;
 
 	@Transactional
 	public Long createPost(
@@ -341,43 +342,35 @@ public class PostService {
 	}
 
 	@Transactional
-	public Long publishDraftPost(
-		Long postDraftId,
-		String title,
-		String content,
-		List<String> categories,
-		List<String> deletedImageUrls,
-		List<MultipartFile> newImages) throws ImageException {
-
+	public Long publishDraftPost(Long postDraftId) {
 		// 1. 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 2. 임시 저장 게시글 정보 조회
 		PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
 
-		// 3. 기존 임시 저장 이미지 URL 목록 조회
-		List<String> existingImageUrls = postPhotoFinder.findAllDraftPhotos(postDraftId);
+		// 게시글 필수값 유효성 검증
+		postValidator.validatePublishable(postDraftDto);
 
-		// 4. 게시글 생성 (임시 저장된 게시글에서 필요한 정보로 새로운 게시글을 생성)
-		Long postId = postAppender.append(userId, postDraftDto.boardId(), title, content);
+		// 3. 게시글 생성 (임시 저장된 게시글에서 필요한 정보로 새로운 게시글을 생성)
+		Long postId = postAppender.append(userId, postDraftDto.boardId(), postDraftDto.title(), postDraftDto.content());
 
-		// 5. 새로 추가된 이미지가 있다면 유효성 검증 후 S3에 업로드
-		List<MultipartFile> validImages = imageValidator.filterValidImages(newImages);
-		List<String> newImageUrls = (validImages.isEmpty()) ?
-			List.of() :
-			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
+		// 기존 이미지로 PostPhoto 생성
+		List<String> imageUrls = postPhotoFinder.findAllDraftPhotos(postDraftId);
+		postPhotoAppender.appendAll(postId, imageUrls);
+		//
+		// // PostDraftPhoto 삭제
+		// postPhotoDeleter.deletePostDraftPhotos(imageUrls);
 
-		// 6. 삭제할 이미지가 유효한지 검증
-		imageValidator.validateDeletableImages(existingImageUrls, deletedImageUrls);
-
-		// 7. 기존 이미지에서 삭제할 이미지 제외하고, 새로 추가된 이미지 합쳐서 최종 이미지 리스트 생성
-		List<String> finalImages = postImageUpdater.getUpdateImageUrls(existingImageUrls, deletedImageUrls,
-			newImageUrls);
-
-		// 8. 최종 이미지가 있으면 게시글에 이미지 추가
-		if (!finalImages.isEmpty()) {
-			postPhotoAppender.appendAll(postId, finalImages);
-		}
+		// 기존 카테고리로 PostCategory 생성
+		List<Long> categoryIds = postCategoryFinder.findAllCategoryId(postDraftId);
+		postCategoryAppender.appendAll(postId, categoryIds);
+		//
+		// // PostDraftCategory 삭제
+		// postCategoryDeleter.deleteAllByPostDraftId(postDraftId);
+		//
+		// // 임시저장글 삭제
+		// postDeleter.deleteDraftPost(postDraftId);
 
 		return postId;
 	}
