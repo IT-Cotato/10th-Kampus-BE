@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.post.dao.PostDraftRepository;
 import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
+import com.cotato.kampus.domain.post.domain.PostDraft;
 import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 
@@ -20,6 +22,7 @@ public class PostUpdater {
 
 	private final PostRepository postRepository;
 	private final PostFinder postFinder;
+	private final PostDraftRepository postDraftRepository;
 
 	@Transactional
 	public void updatePost(Long postId, String title, String content) {
@@ -92,5 +95,12 @@ public class PostUpdater {
 		List<Post> posts = postRepository.findAllByBoardId(boardId);
 
 		posts.forEach(post -> post.updateStatus(PostStatus.PUBLISHED));
+	}
+
+	@Transactional
+	public void updateDraftPost(Long postDraftId, String title, String content) {
+		PostDraft postDraft = postFinder.findPostDraft(postDraftId);
+		postDraft.update(title, content);
+
 	}
 }

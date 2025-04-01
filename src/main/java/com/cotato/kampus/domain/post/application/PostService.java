@@ -13,6 +13,7 @@ import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.comment.application.CommentDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
+import com.cotato.kampus.domain.post.domain.PostDraft;
 import com.cotato.kampus.domain.post.dto.CardNewsPreview;
 import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;
@@ -278,7 +279,10 @@ public class PostService {
 	public void deleteSelectedDraftPosts(List<Long> postDraftIds) {
 		// 유저 조회, 검증
 		Long userId = apiUserResolver.getCurrentUserId();
-		postDraftIds.forEach(postDraftId -> postValidator.validateDraftPostDelete(postDraftId, userId));
+		postDraftIds.forEach(postDraftId -> {
+			PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
+			postValidator.validatePostDraftOwner(postDraftDto, userId);
+		});
 
 		// 이미지 조회, 삭제
 		List<String> imageUrls = postPhotoFinder.findAllDraftPhotos(postDraftIds);
@@ -376,6 +380,49 @@ public class PostService {
 		}
 
 		return postId;
+	}
+
+	@Transactional
+	public Long updateDraftPost(
+		Long postDraftId,
+		String title,
+		String content,
+		List<String> categories,
+		List<MultipartFile> images
+	) throws ImageException {
+		// PostDraft, 유저 조회
+		PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		// 작성자 검증
+		postValidator.validatePostDraftOwner(postDraftDto, userId);
+
+		// 이미지 조회, 삭제
+		List<String> deletePhotos = postPhotoFinder.findAllDraftPhotos(postDraftId);
+		s3Uploader.deleteFiles(deletePhotos);
+
+		// PostDraftPhoto 삭제
+		postPhotoDeleter.deletePostDraftPhotos(deletePhotos);
+
+		// PostDraftCategory 삭제
+		postCategoryDeleter.deleteAllByPostDraftId(postDraftId);
+
+		// 유효한 이미지 필터링 & S3 업로드
+		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
+		List<String> imageUrls = (validImages.isEmpty()) ?
+			List.of() :
+			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
+
+		// PostDraftPhoto 추가
+		postPhotoAppender.appendAllDraftImage(postDraftId, imageUrls);
+
+		// 카테고리 검증, PostDraftCategory 추가
+		List<Long> categoryIds = boardCategoryResolver.resolveCategoryIds(categories, postDraftDto.boardId());
+		postCategoryAppender.appendAllDraftCategory(postDraftId, categoryIds);
+
+		postUpdater.updateDraftPost(postDraftId, title, content);
+
+		return postDraftId;
 	}
 
 	@Transactional

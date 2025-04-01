@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +22,7 @@ import com.cotato.kampus.domain.post.application.PostService;
 import com.cotato.kampus.domain.post.dto.request.DraftDeleteRequest;
 import com.cotato.kampus.domain.post.dto.request.PostCreateRequest;
 import com.cotato.kampus.domain.post.dto.request.PostDraftRequest;
+import com.cotato.kampus.domain.post.dto.request.PostDraftUpdateRequest;
 import com.cotato.kampus.domain.post.dto.request.PostUpdateRequest;
 import com.cotato.kampus.domain.post.dto.response.CardNewsListResponse;
 import com.cotato.kampus.domain.post.dto.response.MyPostResponse;
@@ -221,9 +223,18 @@ public class PostController {
 		);
 	}
 
+	// @PostMapping("/draft/{postDraftId}")
+	// @Operation(summary = "임시 저장글 발행", description = "임시 저장글을 발행합니다.")
+	// public ResponseEntity<DataResponse<PostCreateResponse>> publishDraftPost(
+	// 	@PathVariable Long postDraftId
+	// ) {
+	// 	// 게시글 생성
+	// 	postService.publishDraftPost()
+	// }
+
 	@PostMapping(value = "/draft/{postDraftId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "임시 저장글 수정 발행")
-	public ResponseEntity<DataResponse<PostCreateResponse>> publishDraftPost(
+	@Operation(summary = "임시 저장글 수정")
+	public ResponseEntity<DataResponse<PostCreateResponse>> updateDraftPost__(
 		@PathVariable Long postDraftId,
 		@Valid @ModelAttribute PostUpdateRequest request
 	) throws ImageException {
@@ -243,6 +254,25 @@ public class PostController {
 				PostCreateResponse.of(postId)
 			)
 		);
+	}
+
+	@PatchMapping(value = "/draft/{postDraftId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@Operation(summary = "임시 저장글 수정")
+	public ResponseEntity<DataResponse<PostDraftCreateResponse>> updateDraftPost(
+		@PathVariable Long postDraftId,
+		@Valid @ModelAttribute PostDraftUpdateRequest request
+	) throws ImageException {
+		return ResponseEntity.ok(DataResponse.from(
+			PostDraftCreateResponse.of(
+				postService.updateDraftPost(
+					postDraftId,
+					request.title(),
+					request.content(),
+					request.categories() == null ? List.of() : request.categories(),
+					request.images() == null ? List.of() : request.images()
+				)
+			)
+		));
 	}
 
 	@DeleteMapping(value = "/draft/select")

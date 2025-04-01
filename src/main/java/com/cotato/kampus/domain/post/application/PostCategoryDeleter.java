@@ -32,4 +32,10 @@ public class PostCategoryDeleter {
 
 		postDraftCategoryRepository.deleteAll(postDraftCategories);
 	}
+
+	public void deleteAllByPostDraftId(Long postDraftId){
+		List<PostDraftCategory> postDraftCategories = postDraftCategoryRepository.findByPostDraftId(postDraftId);
+
+		postDraftCategoryRepository.deleteAll(postDraftCategories);
+	}
 }
