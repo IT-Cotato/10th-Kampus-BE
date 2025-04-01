@@ -21,7 +21,7 @@ import com.cotato.kampus.domain.board.application.BoardDtoEnhancer;
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.application.BoardUpdater;
 import com.cotato.kampus.domain.board.application.BoardValidator;
-import com.cotato.kampus.domain.board.application.CategoryAppender;
+import com.cotato.kampus.domain.board.application.BoardCategoryAppender;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
@@ -81,7 +81,7 @@ public class AdminService {
 	private final PostPhotoFinder postPhotoFinder;
 	private final PostPhotoDeleter postPhotoDeleter;
 	private final PostValidator postValidator;
-	private final CategoryAppender categoryAppender;
+	private final BoardCategoryAppender boardCategoryAppender;
 
 	@Transactional
 	public Long createBoard(String boardName, String description, String universityCode, List<String> categories) {
@@ -101,7 +101,7 @@ public class AdminService {
 		Long boardId = boardAppender.appendBoard(boardName, description, universityId, usesCategories);
 
 		// 카테고리 추가 로직
-		categoryAppender.appendCategories(boardId, categories);
+		boardCategoryAppender.appendCategories(boardId, categories);
 
 		return boardId;
 	}

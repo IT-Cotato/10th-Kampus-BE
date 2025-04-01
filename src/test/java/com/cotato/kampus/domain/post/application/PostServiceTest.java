@@ -40,6 +40,7 @@ import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
+
 import org.mockito.quality.Strictness;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,6 +97,7 @@ class PostServiceTest {
 	private List<MultipartFile> images;
 	private List<String> categories;
 	private Long postId;
+	private Long postDraftId;
 
 	@BeforeEach
 	void setUp() {
@@ -103,6 +105,7 @@ class PostServiceTest {
 		title = "테스트 제목";
 		content = "테스트 내용";
 		postId = 1L;
+		postDraftId = 1L;
 
 		// 재학생 인증된 사용자
 		UserDto verifiedUserDto = Mockito.mock(UserDto.class);
@@ -406,5 +409,112 @@ class PostServiceTest {
 		verify(boardValidator).validateBoardIsActive(generalBoardDto);
 		verify(boardValidator).validateUniversityAccess(verifiedUserDto, generalBoardDto);
 		verify(postFinder, never()).findPostsByCategory(anyLong(), anyInt(), any(), any());
+	}
+
+	@Test
+	@DisplayName("게시글 임시 저장 성공 - 일반 게시판, 이미지와 카테고리 모두 유효")
+	void draftPost_Success() throws ImageException {
+		// given
+		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto);
+		when(boardFinder.findBoardDto(anyLong())).thenReturn(generalBoardDto);
+		when(postAppender.draft(boardId, title, content)).thenReturn(postDraftId);
+		when(imageValidator.filterValidImages(images)).thenReturn(images);
+		when(s3Uploader.uploadFiles(images, "post")).thenReturn(List.of("image-url"));
+		when(boardCategoryResolver.resolveCategoryIds(categories, boardId)).thenReturn(List.of(1L, 2L));
+
+		// When
+		Long result = postService.draftPost(boardId, title, content, categories, images);
+
+		// Then
+		assertThat(result).isEqualTo(postDraftId);
+		verify(boardValidator).validateBoardIsActive(generalBoardDto);
+		verify(boardValidator).validatePostCreationAccess(unverifiedUserDto, generalBoardDto);
+		verify(postAppender).draft(boardId, title, content);
+		verify(imageValidator).filterValidImages(images);
+		verify(s3Uploader).uploadFiles(images, "post");
+		verify(postPhotoAppender).appendAllDraftImage(postDraftId, List.of("image-url"));
+		verify(boardCategoryResolver).resolveCategoryIds(categories, boardId);
+		verify(postCategoryAppender).appendAllDraftCategory(postDraftId, List.of(1L, 2L));
+	}
+
+	@Test
+	@DisplayName("게시글 임시 저장 성공 - 이미지와 카테고리 모두 없음")
+	void draftPost_EmptyCategory_EmptyImage_Success() throws ImageException {
+		// Given
+		List<MultipartFile> emptyImages = List.of();
+		List<String> emptyCategories = List.of();
+
+		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto);
+		when(boardFinder.findBoardDto(anyLong())).thenReturn(generalBoardDto);
+		when(postAppender.draft(boardId, title, content)).thenReturn(postDraftId);
+		when(imageValidator.filterValidImages(emptyImages)).thenReturn(emptyImages);
+		when(boardCategoryResolver.resolveCategoryIds(emptyCategories, boardId)).thenReturn(List.of());
+
+		// When
+		Long result = postService.draftPost(boardId, title, content, emptyCategories, emptyImages);
+
+		// Then
+		assertThat(result).isEqualTo(postDraftId);
+		verify(boardValidator).validateBoardIsActive(generalBoardDto);
+		verify(boardValidator).validatePostCreationAccess(unverifiedUserDto, generalBoardDto);
+		verify(postAppender).draft(boardId, title, content);
+		verify(imageValidator).filterValidImages(emptyImages);
+		// S3 업로드는 호출되지 않아야 함
+		verify(s3Uploader, never()).uploadFiles(any(), any());
+		// 빈 이미지 리스트로 호출
+		verify(postPhotoAppender).appendAllDraftImage(postDraftId, List.of());
+		verify(boardCategoryResolver).resolveCategoryIds(emptyCategories, boardId);
+		// 빈 카테고리 ID 리스트로 호출
+		verify(postCategoryAppender).appendAllDraftCategory(postDraftId, List.of());
+	}
+
+	@Test
+	@DisplayName("게시글 임시 저장 실패 - 유효하지 않은 카테고리")
+	void draftPost_InvalidCategory_Fail() throws ImageException {
+		// Given
+		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto);
+		when(boardFinder.findBoardDto(anyLong())).thenReturn(generalBoardDto);
+		when(postAppender.draft(boardId, title, content)).thenReturn(postDraftId);
+		when(imageValidator.filterValidImages(images)).thenReturn(images);
+		when(s3Uploader.uploadFiles(images, "post")).thenReturn(List.of("image-url"));
+
+		// 유효하지 않은 카테고리 요청 시 예외 발생
+		when(boardCategoryResolver.resolveCategoryIds(categories, boardId))
+			.thenThrow(new AppException(ErrorCode.INVALID_CATEGORY));
+
+		// When & Then
+		assertThatThrownBy(() ->
+			postService.draftPost(boardId, title, content, categories, images)
+		).isInstanceOf(AppException.class)
+			.hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_CATEGORY);
+
+		// 게시글과 이미지는 저장됐지만 카테고리는 저장되지 않았는지 확인
+		verify(postAppender).draft(boardId, title, content);
+		verify(imageValidator).filterValidImages(images);
+		verify(s3Uploader).uploadFiles(images, "post");
+		verify(postPhotoAppender).appendAllDraftImage(postId, List.of("image-url"));
+		// 카테고리 검증에서 예외가 발생하므로 카테고리 추가 메서드는 호출되지 않아야 함
+		verify(postCategoryAppender, never()).appendAllDraftCategory(anyLong(), any());
+	}
+
+	@Test
+	@DisplayName("게시글 임시 저장 실패 - 미인증 사용자, 대학 게시판")
+	void draftPost_UnverifiedUser_UniversityBoard_Fail() {
+		// Given
+		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto);
+		when(boardFinder.findBoardDto(anyLong())).thenReturn(universityBoardDto);
+
+		// 예외를 던지도록 설정
+		Mockito.doThrow(new AppException(ErrorCode.BOARD_ACCESS_DENIED))
+			.when(boardValidator).validatePostCreationAccess(unverifiedUserDto, universityBoardDto);
+
+		// When & Then
+		assertThatThrownBy(() ->
+			postService.draftPost(2L, title, content, categories, images)
+		).isInstanceOf(AppException.class)
+			.hasFieldOrPropertyWithValue("errorCode", ErrorCode.BOARD_ACCESS_DENIED);
+
+		// 예외가 발생하므로 게시글 생성 메서드는 호출되지 않아야 함
+		verify(postAppender, never()).draft(anyLong(), any(), any());
 	}
 }

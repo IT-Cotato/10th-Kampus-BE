@@ -86,11 +86,11 @@ class UserServiceTest {
 		// University 객체 생성
 		University university = University.builder()
 			.universityName("TestUniversity")
-			.universityCode("TestUniversity")
+			.universityCode("TestUniversityCode")
 			.build();
 
 		// UserDetailsDto 생성 (예상 결과)
-		UserDetailsDto expectedUserDetailsDto = UserDetailsDto.of(userDto, 1L, "TestUniversity");
+		UserDetailsDto expectedUserDetailsDto = UserDetailsDto.of(userDto, 1L, "TestUniversityCode");
 
 		// Mock 설정
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(userDto);
