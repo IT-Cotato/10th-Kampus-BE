@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.chat.dao.entity;
 
+import com.cotato.kampus.domain.chat.domain.MessageReadStatus;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -33,13 +34,30 @@ public class MessageReadStatusEntity extends BaseTimeEntity {
 	private Long lastReadMessageId;
 
 	@Builder
-	public MessageReadStatusEntity(Long chatroomId, Long userId, Long lastReadMessageId) {
+	public MessageReadStatusEntity(Long id, Long chatroomId, Long userId, Long lastReadMessageId) {
+		this.id = id;
 		this.chatroomId = chatroomId;
 		this.userId = userId;
 		this.lastReadMessageId = lastReadMessageId;
 	}
 
-	public void updateLastReadMessage(Long messageId) {
-		this.lastReadMessageId = messageId;
+	public static MessageReadStatus toDomain(MessageReadStatusEntity entity) {
+		return MessageReadStatus.builder()
+			.id(entity.getId())
+			.chatroomId(entity.getChatroomId())
+			.userId(entity.getUserId())
+			.lastReadMessageId(entity.getLastReadMessageId())
+			.createdTime(entity.getCreatedTime())
+			.lastModifiedTime(entity.getLastModifiedTime())
+			.build();
+	}
+
+	public static MessageReadStatusEntity fromDomain(MessageReadStatus messageReadStatus) {
+		return MessageReadStatusEntity.builder()
+			.id(messageReadStatus.getId())
+			.chatroomId(messageReadStatus.getChatroomId())
+			.userId(messageReadStatus.getUserId())
+			.lastReadMessageId(messageReadStatus.getLastReadMessageId())
+			.build();
 	}
 }

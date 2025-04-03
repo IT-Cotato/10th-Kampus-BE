@@ -3,7 +3,7 @@ package com.cotato.kampus.domain.chat.implement.read;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.repository.MessageReadStatusJpaRepository;
+import com.cotato.kampus.domain.chat.implement.read.port.MessageReadStatusRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +12,10 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class MessageReadStatusDeleter {
-	private final MessageReadStatusJpaRepository messageReadStatusJpaRepository;
+	private final MessageReadStatusRepository messageReadStatusRepository;
 
 	@Transactional
 	public void deleteByChatroomId(Long chatroomId) {
-		messageReadStatusJpaRepository.deleteAllByChatroomId(chatroomId);
+		messageReadStatusRepository.deleteAllByChatroomId(chatroomId);
 	}
 }

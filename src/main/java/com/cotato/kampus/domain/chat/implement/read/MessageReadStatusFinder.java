@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.repository.MessageReadStatusJpaRepository;
-import com.cotato.kampus.domain.chat.domain.MessageReadStatusDto;
+import com.cotato.kampus.domain.chat.domain.MessageReadStatus;
+import com.cotato.kampus.domain.chat.implement.read.port.MessageReadStatusRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +16,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class MessageReadStatusFinder {
 
-	private final MessageReadStatusJpaRepository messageReadStatusJpaRepository;
+	private final MessageReadStatusRepository messageReadStatusRepository;
 
-	public Optional<MessageReadStatusDto> findByChatroomIdAndUserId(Long chatroomId, Long userId) {
-		return messageReadStatusJpaRepository.findByChatroomIdAndUserId(chatroomId, userId)
-			.map(MessageReadStatusDto::from);
+	public Optional<MessageReadStatus> findByChatroomIdAndUserId(Long chatroomId, Long userId) {
+		return messageReadStatusRepository.findByChatroomIdAndUserId(chatroomId, userId);
 	}
 }
