@@ -7,16 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.cotato.kampus.domain.chat.dao.repository.ChatRoomRepository;
+import com.cotato.kampus.domain.chat.dao.repository.ChatRoomJpaRepository;
 import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
 import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
 
 @DataJpaTest
 @ActiveProfiles("test")
-class ChatRoomRepositoryTest {
+class ChatRoomJpaRepositoryTest {
 
 	@Autowired
-	private ChatRoomRepository chatRoomRepository;
+	private ChatRoomJpaRepository chatRoomJpaRepository;
 
 	@Test
 	public void 채팅방_생성() {
@@ -28,7 +28,7 @@ class ChatRoomRepositoryTest {
 			.initiatedFrom(InitiatedFrom.POST)
 			.build();
 
-		ChatRoomEntity savedChatRoomEntity = chatRoomRepository.save(chatRoomEntity);
+		ChatRoomEntity savedChatRoomEntity = chatRoomJpaRepository.save(chatRoomEntity);
 
 		assertThat(savedChatRoomEntity).isNotNull();
 		assertThat(savedChatRoomEntity.getId()).isGreaterThan(0L);
@@ -44,9 +44,9 @@ class ChatRoomRepositoryTest {
 			.initiatedFrom(InitiatedFrom.POST)
 			.build();
 
-		chatRoomRepository.save(chatRoomEntity);
+		chatRoomJpaRepository.save(chatRoomEntity);
 
-		boolean exists = chatRoomRepository.existsByPostIdAndInitialSenderId(1L, 1L);
+		boolean exists = chatRoomJpaRepository.existsByPostIdAndInitialSenderId(1L, 1L);
 
 		assertThat(exists).isTrue();
 	}
@@ -61,9 +61,9 @@ class ChatRoomRepositoryTest {
 			.initiatedFrom(InitiatedFrom.POST)
 			.build();
 
-		ChatRoomEntity savedChatRoomEntity = chatRoomRepository.save(chatRoomEntity);
+		ChatRoomEntity savedChatRoomEntity = chatRoomJpaRepository.save(chatRoomEntity);
 
-		ChatRoomEntity findChatRoomEntity = chatRoomRepository.findById(savedChatRoomEntity.getId())
+		ChatRoomEntity findChatRoomEntity = chatRoomJpaRepository.findById(savedChatRoomEntity.getId())
 			.orElse(null);
 
 		assertThat(findChatRoomEntity).isNotNull();

@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 
-import com.cotato.kampus.domain.chat.dao.repository.ChatMessageRepository;
+import com.cotato.kampus.domain.chat.dao.repository.ChatMessageJpaRepository;
 import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
 import com.cotato.kampus.domain.chat.implement.message.ChatMessageFinder;
@@ -25,7 +25,7 @@ class ChatMessageEntityFinderTest {
 	private ChatMessageFinder target;
 
 	@Mock
-	private ChatMessageRepository chatMessageRepository;
+	private ChatMessageJpaRepository chatMessageJpaRepository;
 
 	private static final int PAGE_SIZE = 20;
 	private static final String SORT_PROPERTY = "createdTime";
@@ -37,7 +37,7 @@ class ChatMessageEntityFinderTest {
 
 		CustomPageRequest customPageRequest = new CustomPageRequest(1, PAGE_SIZE, Sort.Direction.DESC);
 		Slice<ChatMessageEntity> slice = mock(Slice.class);
-		given(chatMessageRepository.findAllByChatroomIdOrderByCreatedTimeDesc(
+		given(chatMessageJpaRepository.findAllByChatroomIdOrderByCreatedTimeDesc(
 			1L,
 			customPageRequest.of(SORT_PROPERTY)))
 			.willReturn(slice);

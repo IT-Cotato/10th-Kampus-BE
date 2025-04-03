@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 
-public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, Long> {
+public interface ChatMessageJpaRepository extends JpaRepository<ChatMessageEntity, Long> {
 
 	Slice<ChatMessageEntity> findAllByChatroomIdOrderByCreatedTimeDesc(Long chatRoomId, PageRequest pageRequest);
 

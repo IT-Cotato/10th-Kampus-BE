@@ -3,8 +3,8 @@ package com.cotato.kampus.domain.chat.implement.read;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.repository.MessageReadStatusRepository;
-import com.cotato.kampus.domain.chat.dao.entity.MessageReadStatus;
+import com.cotato.kampus.domain.chat.dao.repository.MessageReadStatusJpaRepository;
+import com.cotato.kampus.domain.chat.dao.entity.MessageReadStatusEntity;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,20 +13,20 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class MessageReadStatusUpdater {
-	private final MessageReadStatusRepository messageReadStatusRepository;
+	private final MessageReadStatusJpaRepository messageReadStatusJpaRepository;
 
 	@Transactional
 	public void updateStatus(Long chatroomId, Long userId, Long latestMessageId) {
 		// 읽음 상태가 없으면 새로 생성, 있으면 업데이트
-		MessageReadStatus messageReadStatus = messageReadStatusRepository
+		MessageReadStatusEntity messageReadStatus = messageReadStatusJpaRepository
 			.findByChatroomIdAndUserId(chatroomId, userId)
-			.orElse(MessageReadStatus.builder()
+			.orElse(MessageReadStatusEntity.builder()
 				.chatroomId(chatroomId)
 				.userId(userId)
 				.lastReadMessageId(latestMessageId)
 				.build());
 
 		messageReadStatus.updateLastReadMessage(latestMessageId);
-		messageReadStatusRepository.save(messageReadStatus);
+		messageReadStatusJpaRepository.save(messageReadStatus);
 	}
 }

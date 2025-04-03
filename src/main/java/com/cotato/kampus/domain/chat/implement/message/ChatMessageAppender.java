@@ -3,7 +3,7 @@ package com.cotato.kampus.domain.chat.implement.message;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.repository.ChatMessageRepository;
+import com.cotato.kampus.domain.chat.dao.repository.ChatMessageJpaRepository;
 import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 
 import lombok.AccessLevel;
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatMessageAppender {
 
-	private final ChatMessageRepository chatMessageRepository;
+	private final ChatMessageJpaRepository chatMessageJpaRepository;
 
 	@Transactional
 	public ChatMessageEntity appendChatMessage(Long senderId, Long chatRoomId, String content) {
@@ -23,6 +23,6 @@ public class ChatMessageAppender {
 			.senderId(senderId)
 			.content(content)
 			.build();
-		return chatMessageRepository.save(chatMessageEntity);
+		return chatMessageJpaRepository.save(chatMessageEntity);
 	}
 }

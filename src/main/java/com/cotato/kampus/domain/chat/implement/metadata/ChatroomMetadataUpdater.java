@@ -3,9 +3,9 @@ package com.cotato.kampus.domain.chat.implement.metadata;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.repository.ChatroomMetadataRepository;
+import com.cotato.kampus.domain.chat.dao.repository.ChatroomMetadataJpaRepository;
 import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
-import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadata;
+import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadataEntity;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -17,11 +17,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatroomMetadataUpdater {
 
-	private final ChatroomMetadataRepository chatroomMetadataRepository;
+	private final ChatroomMetadataJpaRepository chatroomMetadataJpaRepository;
 
 	@Transactional
 	public void updateSenderMetadata(Long chatroomId, ChatMessageEntity message, Long senderId) {
-		ChatroomMetadata senderMetadata = chatroomMetadataRepository
+		ChatroomMetadataEntity senderMetadata = chatroomMetadataJpaRepository
 			.findByChatroomIdAndUserId(chatroomId, senderId)
 			.orElseThrow(() -> new AppException(ErrorCode.CHATROOM_METADATA_NOT_FOUND));
 
@@ -31,12 +31,12 @@ public class ChatroomMetadataUpdater {
 			message.getCreatedTime()
 		);
 
-		chatroomMetadataRepository.save(senderMetadata);
+		chatroomMetadataJpaRepository.save(senderMetadata);
 	}
 
 	@Transactional
-	public ChatroomMetadata updateReceiverMetadata(Long chatroomId, ChatMessageEntity message, Long receiverId) {
-		ChatroomMetadata receiverMetadata = chatroomMetadataRepository
+	public ChatroomMetadataEntity updateReceiverMetadata(Long chatroomId, ChatMessageEntity message, Long receiverId) {
+		ChatroomMetadataEntity receiverMetadata = chatroomMetadataJpaRepository
 			.findByChatroomIdAndUserId(chatroomId, receiverId)
 			.orElseThrow(() -> new AppException(ErrorCode.CHATROOM_METADATA_NOT_FOUND));
 
@@ -47,16 +47,16 @@ public class ChatroomMetadataUpdater {
 		);
 		receiverMetadata.incrementUnreadCount();
 
-		return chatroomMetadataRepository.save(receiverMetadata);
+		return chatroomMetadataJpaRepository.save(receiverMetadata);
 	}
 
 	@Transactional
 	public void resetReadCount(Long chatroomId, Long userId) {
-		ChatroomMetadata metadata = chatroomMetadataRepository
+		ChatroomMetadataEntity metadata = chatroomMetadataJpaRepository
 			.findByChatroomIdAndUserId(chatroomId, userId)
 			.orElseThrow(() -> new AppException(ErrorCode.CHATROOM_METADATA_NOT_FOUND));
 
 		metadata.resetUnreadCount();
-		chatroomMetadataRepository.save(metadata);
+		chatroomMetadataJpaRepository.save(metadata);
 	}
 }

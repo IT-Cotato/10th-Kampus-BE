@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.repository.ChatroomMetadataRepository;
-import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadata;
+import com.cotato.kampus.domain.chat.dao.repository.ChatroomMetadataJpaRepository;
+import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadataEntity;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +17,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatroomMetadataAppender {
 
-	private final ChatroomMetadataRepository chatroomMetadataRepository;
+	private final ChatroomMetadataJpaRepository chatroomMetadataJpaRepository;
 
 	@Transactional
 	public void appendChatroomMetadatas(Long chatroomId, Long postId, String postTitle,
 		Long senderId, Long receiverId) {
 		// 발신자 메타데이터
-		ChatroomMetadata senderMetadata = ChatroomMetadata.builder()
+		ChatroomMetadataEntity senderMetadata = ChatroomMetadataEntity.builder()
 			.chatroomId(chatroomId)
 			.userId(senderId)
 			.postId(postId)
@@ -35,7 +35,7 @@ public class ChatroomMetadataAppender {
 			.build();
 
 		// 수신자 메타데이터
-		ChatroomMetadata receiverMetadata = ChatroomMetadata.builder()
+		ChatroomMetadataEntity receiverMetadata = ChatroomMetadataEntity.builder()
 			.chatroomId(chatroomId)
 			.userId(receiverId)
 			.postId(postId)
@@ -46,6 +46,6 @@ public class ChatroomMetadataAppender {
 			.unreadCount(0L)
 			.build();
 
-		chatroomMetadataRepository.saveAll(List.of(senderMetadata, receiverMetadata));
+		chatroomMetadataJpaRepository.saveAll(List.of(senderMetadata, receiverMetadata));
 	}
 }

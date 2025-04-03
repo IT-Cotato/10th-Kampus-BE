@@ -14,29 +14,32 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "product_chatroom")
+@Table(name = "message_read_status")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductChatroom extends BaseTimeEntity {
-
+public class MessageReadStatusEntity extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "product_chatroom_id")
+	@Column(name = "message_read_status_id")
 	private Long id;
 
 	@Column(name = "chatroom_id", nullable = false)
 	private Long chatroomId;
 
-	@Column(name = "product_id", nullable = false)
-	private Long productId;
+	@Column(name = "user_id", nullable = false)
+	private Long userId;
 
-	@Column(name = "buyer_id", nullable = false)
-	private Long buyerId;
+	@Column(name = "last_read_message_id", nullable = false)
+	private Long lastReadMessageId;
 
 	@Builder
-	public ProductChatroom(Long chatroomId, Long productId, Long buyerId) {
+	public MessageReadStatusEntity(Long chatroomId, Long userId, Long lastReadMessageId) {
 		this.chatroomId = chatroomId;
-		this.productId = productId;
-		this.buyerId = buyerId;
+		this.userId = userId;
+		this.lastReadMessageId = lastReadMessageId;
+	}
+
+	public void updateLastReadMessage(Long messageId) {
+		this.lastReadMessageId = messageId;
 	}
 }

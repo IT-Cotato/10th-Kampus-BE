@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "chatroom_metadata")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChatroomMetadata extends BaseTimeEntity {
+public class ChatroomMetadataEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +51,7 @@ public class ChatroomMetadata extends BaseTimeEntity {
 	private Long unreadCount;
 
 	@Builder
-	public ChatroomMetadata(Long chatroomId, Long userId, Long postId, String postTitle,
+	public ChatroomMetadataEntity(Long chatroomId, Long userId, Long postId, String postTitle,
 		Long lastMessageId, String lastMessageContent, LocalDateTime lastChatTime, Long unreadCount) {
 		this.chatroomId = chatroomId;
 		this.userId = userId;

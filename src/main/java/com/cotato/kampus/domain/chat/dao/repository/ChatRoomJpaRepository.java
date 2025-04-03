@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
 
-public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> {
+public interface ChatRoomJpaRepository extends JpaRepository<ChatRoomEntity, Long> {
 
 	boolean existsByPostIdAndInitialSenderId(Long postId, Long senderId);
 

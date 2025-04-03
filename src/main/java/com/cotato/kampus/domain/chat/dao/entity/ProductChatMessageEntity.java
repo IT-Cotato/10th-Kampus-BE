@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "product_chat_message")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductChatMessage extends BaseTimeEntity {
+public class ProductChatMessageEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,7 @@ public class ProductChatMessage extends BaseTimeEntity {
 	private Long userId;
 
 	@Builder
-	public ProductChatMessage(Long messageId, Long chatroomId, Long productId, Long userId) {
+	public ProductChatMessageEntity(Long messageId, Long chatroomId, Long productId, Long userId) {
 		this.messageId = messageId;
 		this.chatroomId = chatroomId;
 		this.productId = productId;

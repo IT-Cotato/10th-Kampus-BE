@@ -10,7 +10,7 @@ import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
-import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadata;
+import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadataEntity;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSliceSnapshot;
 import com.cotato.kampus.domain.chat.domain.ChatNotification;
@@ -106,7 +106,7 @@ public class PostChatService {
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 2. 해당 유저의 채팅방 메타데이터를 lastChatTime 내림차순으로 조회
-		Slice<ChatroomMetadata> chatRoomMetadatas = chatroomMetadataFinder.findChatRoomMetadatas(userId, page);
+		Slice<ChatroomMetadataEntity> chatRoomMetadatas = chatroomMetadataFinder.findChatRoomMetadatas(userId, page);
 
 		// 3. ChatRoomPreview로 변환
 		List<ChatRoomPreview> previewList = chatRoomMetadatas.getContent()
@@ -148,7 +148,7 @@ public class PostChatService {
 
 		// 5. 채팅방 메타데이터 업데이트
 		chatroomMetadataUpdater.updateSenderMetadata(chatroomId, chatMessageEntity, senderId);
-		ChatroomMetadata receiverMetadata = chatroomMetadataUpdater.updateReceiverMetadata(chatroomId,
+		ChatroomMetadataEntity receiverMetadata = chatroomMetadataUpdater.updateReceiverMetadata(chatroomId,
 			chatMessageEntity,
 			receiverId);
 

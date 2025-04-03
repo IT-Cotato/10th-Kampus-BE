@@ -5,8 +5,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.repository.ChatroomMetadataRepository;
-import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadata;
+import com.cotato.kampus.domain.chat.dao.repository.ChatroomMetadataJpaRepository;
+import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadataEntity;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 
 import lombok.AccessLevel;
@@ -20,11 +20,11 @@ public class ChatroomMetadataFinder {
 	private static final int PAGE_SIZE = 20;
 	private static final String SORT_PROPERTY = "lastChatTime";
 
-	private final ChatroomMetadataRepository chatroomMetadataRepository;
+	private final ChatroomMetadataJpaRepository chatroomMetadataJpaRepository;
 
-	public Slice<ChatroomMetadata> findChatRoomMetadatas(Long userId, int page) {
+	public Slice<ChatroomMetadataEntity> findChatRoomMetadatas(Long userId, int page) {
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-		return chatroomMetadataRepository.findAllByUserIdOrderByLastChatTimeDesc(
+		return chatroomMetadataJpaRepository.findAllByUserIdOrderByLastChatTimeDesc(
 			userId,
 			customPageRequest.of(SORT_PROPERTY)
 		);

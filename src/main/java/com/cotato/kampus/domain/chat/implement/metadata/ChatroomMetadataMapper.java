@@ -2,7 +2,7 @@ package com.cotato.kampus.domain.chat.implement.metadata;
 
 import org.springframework.stereotype.Component;
 
-import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadata;
+import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadataEntity;
 import com.cotato.kampus.domain.chat.domain.ChatRoomPreview;
 
 import lombok.AccessLevel;
@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatroomMetadataMapper {
 
-	public ChatRoomPreview toChatRoomPreview(ChatroomMetadata metadata) {
+	public ChatRoomPreview toChatRoomPreview(ChatroomMetadataEntity metadata) {
 		return ChatRoomPreview.of(
 			metadata.getChatroomId(),
 			metadata.getPostTitle(),

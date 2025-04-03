@@ -11,7 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.cotato.kampus.domain.chat.dao.repository.ChatRoomRepository;
+import com.cotato.kampus.domain.chat.dao.repository.ChatRoomJpaRepository;
 import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
 import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
 import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomAppender;
@@ -23,7 +23,7 @@ class ChatRoomAppenderTest {
 	private ChatRoomAppender target;
 
 	@Mock
-	private ChatRoomRepository chatRoomRepository;
+	private ChatRoomJpaRepository chatRoomJpaRepository;
 
 	@Test
 	public void 채팅방_생성() {
@@ -39,7 +39,7 @@ class ChatRoomAppenderTest {
 		// private 변수에 접근할 수 있음
 		ReflectionTestUtils.setField(chatRoomEntity, "id", 123L);
 		// when
-		when(chatRoomRepository.save(Mockito.any(ChatRoomEntity.class)))
+		when(chatRoomJpaRepository.save(Mockito.any(ChatRoomEntity.class)))
 			.thenReturn(chatRoomEntity);
 
 		Long id = target.appendChatRoom(1L, 1L, 2L);

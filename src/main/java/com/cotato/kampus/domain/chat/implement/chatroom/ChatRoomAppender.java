@@ -3,7 +3,7 @@ package com.cotato.kampus.domain.chat.implement.chatroom;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.repository.ChatRoomRepository;
+import com.cotato.kampus.domain.chat.dao.repository.ChatRoomJpaRepository;
 import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
 import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
 
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatRoomAppender {
 
-	private final ChatRoomRepository chatRoomRepository;
+	private final ChatRoomJpaRepository chatRoomJpaRepository;
 
 	@Transactional
 	public Long appendChatRoom(Long postId, Long senderId, Long receiverId) {
@@ -26,6 +26,6 @@ public class ChatRoomAppender {
 			.isBlocked(false)
 			.initiatedFrom(InitiatedFrom.POST)
 			.build();
-		return chatRoomRepository.save(chatRoomEntity).getId();
+		return chatRoomJpaRepository.save(chatRoomEntity).getId();
 	}
 }
