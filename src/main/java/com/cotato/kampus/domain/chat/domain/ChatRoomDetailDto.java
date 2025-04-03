@@ -1,7 +1,6 @@
 package com.cotato.kampus.domain.chat.domain;
 
 import com.cotato.kampus.domain.board.dto.BoardDto;
-import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
 import com.cotato.kampus.domain.post.dto.PostReferenceDto;
 
 public record ChatRoomDetailDto(
@@ -13,27 +12,27 @@ public record ChatRoomDetailDto(
 	Long initialSenderId,
 	Long initialReceiverId
 ) {
-	public static ChatRoomDetailDto of(ChatRoomEntity chatRoomEntity, PostReferenceDto post, BoardDto board) {
+	public static ChatRoomDetailDto of(ChatRoom chatRoom, PostReferenceDto post, BoardDto board) {
 		return new ChatRoomDetailDto(
-			chatRoomEntity.getId(),
+			chatRoom.getId(),
 			post.postId(),
 			post.title(),
 			board.boardId(),
 			board.boardName(),
-			chatRoomEntity.getInitialSenderId(),
-			chatRoomEntity.getInitialReceiverId()
+			chatRoom.getInitialSenderId(),
+			chatRoom.getInitialReceiverId()
 		);
 	}
 
-	public static ChatRoomDetailDto ofDeleted(ChatRoomEntity chatRoomEntity, PostReferenceDto post) {
+	public static ChatRoomDetailDto ofDeleted(ChatRoom chatRoom, PostReferenceDto post) {
 		return new ChatRoomDetailDto(
-			chatRoomEntity.getId(),
+			chatRoom.getId(),
 			post.postId(),
 			post.title(),
 			-1L,
 			"",
-			chatRoomEntity.getInitialSenderId(),
-			chatRoomEntity.getInitialReceiverId()
+			chatRoom.getInitialSenderId(),
+			chatRoom.getInitialReceiverId()
 		);
 	}
 }
