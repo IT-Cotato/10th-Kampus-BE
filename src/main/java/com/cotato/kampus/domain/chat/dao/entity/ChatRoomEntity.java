@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.chat.dao.entity;
 
+import com.cotato.kampus.domain.chat.domain.ChatRoom;
 import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
@@ -51,5 +52,18 @@ public class ChatRoomEntity extends BaseTimeEntity {
 		this.initialReceiverId = initialReceiverId;
 		this.isBlocked = isBlocked;
 		this.initiatedFrom = initiatedFrom;
+	}
+
+	public static ChatRoom toDomain(ChatRoomEntity chatRoomEntity) {
+		return ChatRoom.builder()
+			.id(chatRoomEntity.getId())
+			.postId(chatRoomEntity.getPostId())
+			.initialSenderId(chatRoomEntity.getInitialSenderId())
+			.initialReceiverId(chatRoomEntity.getInitialReceiverId())
+			.isBlocked(chatRoomEntity.getIsBlocked())
+			.initiatedFrom(chatRoomEntity.getInitiatedFrom())
+			.createdTime(chatRoomEntity.getCreatedTime())
+			.lastModifiedTime(chatRoomEntity.getLastModifiedTime())
+			.build();
 	}
 }
