@@ -22,6 +22,11 @@ public class ChatMessageRepositoryImpl implements ChatMessageRepository {
 	private final ChatMessageJpaRepository chatMessageJpaRepository;
 
 	@Override
+	public ChatMessage save(ChatMessage chatMessage) {
+		return chatMessageJpaRepository.save(ChatMessageEntity.fromDomain(chatMessage)).toDomain();
+	}
+
+	@Override
 	public Slice<ChatMessage> findAllByChatroomIdOrderByCreatedTimeDesc(Long chatRoomId, PageRequest pageRequest) {
 		Slice<ChatMessageEntity> entitySlice = chatMessageJpaRepository.findAllByChatroomIdOrderByCreatedTimeDesc(
 			chatRoomId, pageRequest);

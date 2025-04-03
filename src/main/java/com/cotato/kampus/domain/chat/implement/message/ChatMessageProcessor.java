@@ -3,14 +3,13 @@ package com.cotato.kampus.domain.chat.implement.message;
 import java.util.List;
 import java.util.Optional;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
+import com.cotato.kampus.domain.chat.domain.ChatMessage;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSliceSnapshot;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSnapshot;
-import com.cotato.kampus.domain.chat.domain.MessageReadStatusDto;
+import com.cotato.kampus.domain.chat.domain.MessageReadStatus;
 import com.cotato.kampus.domain.chat.implement.read.MessageReadStatusFinder;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ public class ChatMessageProcessor {
 		Long userId
 	) {
 		// 읽음 상태 가져옴
-		Optional<MessageReadStatusDto> readStatus = messageReadStatusFinder.findByChatroomIdAndUserId(
+		Optional<MessageReadStatus> readStatus = messageReadStatusFinder.findByChatroomIdAndUserId(
 			chatroomId, userId);
 
 		// 읽음 상태 이후의 메시지들에 대해 읽음 상태를 false로 설정
@@ -45,7 +44,7 @@ public class ChatMessageProcessor {
 		return new ChatMessageSliceSnapshot(processedMessages, chatMessageSlice.chatMessages().hasNext());
 	}
 
-	private boolean determineReadStatus(ChatMessageEntity message, @NotNull MessageReadStatusDto readStatus) {
-		return message.getId() <= readStatus.lastReadMessageId();
+	private boolean determineReadStatus(ChatMessage message, MessageReadStatus readStatus) {
+		return message.getId() <= readStatus.getLastReadMessageId();
 	}
 }

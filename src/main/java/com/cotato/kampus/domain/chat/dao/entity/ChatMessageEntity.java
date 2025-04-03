@@ -41,6 +41,14 @@ public class ChatMessageEntity extends BaseTimeEntity {
 		this.content = content;
 	}
 
+	public static ChatMessageEntity fromDomain(ChatMessage chatMessage) {
+		return ChatMessageEntity.builder()
+			.chatroomId(chatMessage.getChatroomId())
+			.senderId(chatMessage.getSenderId())
+			.content(chatMessage.getContent())
+			.build();
+	}
+
 	public ChatMessage toDomain() {
 		return ChatMessage.builder()
 			.id(id)

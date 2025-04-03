@@ -13,7 +13,7 @@ public record ChatNotification(
 	Long messageId,
 	Long unreadCount
 ) {
-	public static ChatNotification from(ChatMessageEntity message, Long unreadCount) {
+	public static ChatNotification from(ChatMessage message, Long unreadCount) {
 		return new ChatNotification(
 			message.getChatroomId(),
 			message.getContent(),

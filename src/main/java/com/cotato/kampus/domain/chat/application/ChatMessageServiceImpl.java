@@ -4,12 +4,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.chat.api.port.ChatMessageService;
-import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
-import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadataEntity;
+import com.cotato.kampus.domain.chat.domain.ChatMessage;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSliceSnapshot;
 import com.cotato.kampus.domain.chat.domain.ChatNotification;
 import com.cotato.kampus.domain.chat.domain.ChatNotificationResult;
+import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
 import com.cotato.kampus.domain.chat.implement.ChatMemberFinder;
 import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomValidator;
 import com.cotato.kampus.domain.chat.implement.message.ChatMessageAppender;
@@ -47,25 +47,25 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 		Long senderId = apiUserResolver.getCurrentUserId();
 
 		// 2. 메시지 저장
-		ChatMessageEntity chatMessageEntity = chatMessageAppender.appendChatMessage(senderId, chatroomId, message);
+		ChatMessage chatMessage = chatMessageAppender.appendChatMessage(senderId, chatroomId, message);
 
 		// 3. 메시지 수신자 id 조회
 		Long receiverId = chatMemberFinder.findReceiverId(chatroomId, senderId);
 
 		// 4. 발신자의 읽음 상태 업데이트 (메시지를 보낸 사람은 자동으로 읽음 처리)
-		messageReadStatusUpdater.updateStatus(chatroomId, senderId, chatMessageEntity.getId());
+		messageReadStatusUpdater.updateStatus(chatroomId, senderId, chatMessage.getId());
 
 		// 5. 채팅방 메타데이터 업데이트
-		chatroomMetadataUpdater.updateSenderMetadata(chatroomId, chatMessageEntity, senderId);
-		ChatroomMetadataEntity receiverMetadata = chatroomMetadataUpdater.updateReceiverMetadata(chatroomId,
-			chatMessageEntity,
+		chatroomMetadataUpdater.updateSenderMetadata(chatroomId, chatMessage, senderId);
+		ChatroomMetadata receiverMetadata = chatroomMetadataUpdater.updateReceiverMetadata(chatroomId,
+			chatMessage,
 			receiverId);
 
 		// 6. 수신자가 읽지 않은 메시지의 개수를 계산
 		Long unreadCount = receiverMetadata.getUnreadCount();
 
 		// 7. 알림 결과를 저장하여 리턴
-		return ChatNotificationResult.of(chatMessageEntity, ChatNotification.from(chatMessageEntity, unreadCount),
+		return ChatNotificationResult.of(chatMessage, ChatNotification.from(chatMessage, unreadCount),
 			receiverId);
 	}
 
@@ -84,7 +84,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	public void markMessagesAsRead(Long chatroomId) {
 		Long userId = apiUserResolver.getCurrentUserId();
 		// 1. 채팅방의 가장 최근 메시지 ID 조회
-		ChatMessageEntity latestMessage = chatMessageFinder.findLatestMessage(chatroomId);
+		ChatMessage latestMessage = chatMessageFinder.findLatestMessage(chatroomId);
 		// 2. 해당 사용자의 메시지 읽음 상태 조회 또는 생성
 		messageReadStatusUpdater.updateStatus(chatroomId, userId, latestMessage.getId());
 		chatroomMetadataUpdater.resetReadCount(chatroomId, userId);

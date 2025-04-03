@@ -10,6 +10,8 @@ import com.cotato.kampus.domain.chat.domain.ChatMessage;
 
 public interface ChatMessageRepository {
 
+	ChatMessage save(ChatMessage chatMessage);
+
 	Slice<ChatMessage> findAllByChatroomIdOrderByCreatedTimeDesc(Long chatRoomId, PageRequest pageRequest);
 
 	Optional<ChatMessage> findFirstByChatroomIdOrderByCreatedTimeDesc(Long chatroomId);
