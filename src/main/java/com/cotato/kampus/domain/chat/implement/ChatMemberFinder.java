@@ -3,7 +3,7 @@ package com.cotato.kampus.domain.chat.implement;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
+import com.cotato.kampus.domain.chat.domain.ChatRoom;
 import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomFinder;
 
 import lombok.AccessLevel;
@@ -18,11 +18,11 @@ public class ChatMemberFinder {
 
 	// 채팅방의 채팅상대의 id를 찾음
 	public Long findReceiverId(Long chatroomId, Long senderId) {
-		ChatRoomEntity chatRoomEntity = chatRoomFinder.findChatroom(chatroomId);
+		ChatRoom chatRoom = chatRoomFinder.findByChatRoomId(chatroomId);
 
 		// 발신자가 초기 발신자면 초기 수신자가 상대방, 아니면 초기 발신자가 상대방
-		return chatRoomEntity.getInitialSenderId().equals(senderId)
-			? chatRoomEntity.getInitialReceiverId()
-			: chatRoomEntity.getInitialSenderId();
+		return chatRoom.getInitialSenderId().equals(senderId)
+			? chatRoom.getInitialReceiverId()
+			: chatRoom.getInitialSenderId();
 	}
 }
