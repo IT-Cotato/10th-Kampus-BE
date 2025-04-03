@@ -52,8 +52,9 @@ public class ChatroomMetadataEntity extends BaseTimeEntity {
 	private Long unreadCount;
 
 	@Builder
-	public ChatroomMetadataEntity(Long chatroomId, Long userId, Long postId, String postTitle,
+	public ChatroomMetadataEntity(Long id, Long chatroomId, Long userId, Long postId, String postTitle,
 		Long lastMessageId, String lastMessageContent, LocalDateTime lastChatTime, Long unreadCount) {
+		this.id = id;
 		this.chatroomId = chatroomId;
 		this.userId = userId;
 		this.postId = postId;
@@ -62,20 +63,6 @@ public class ChatroomMetadataEntity extends BaseTimeEntity {
 		this.lastMessageContent = lastMessageContent;
 		this.lastChatTime = lastChatTime;
 		this.unreadCount = unreadCount;
-	}
-
-	public void updateLastMessage(Long messageId, String content, LocalDateTime chatTime) {
-		this.lastMessageId = messageId;
-		this.lastMessageContent = content;
-		this.lastChatTime = chatTime;
-	}
-
-	public void incrementUnreadCount() {
-		this.unreadCount++;
-	}
-
-	public void resetUnreadCount() {
-		this.unreadCount = 0L;
 	}
 
 	public static ChatroomMetadata toDomain(ChatroomMetadataEntity chatroomMetadataEntity) {
@@ -94,6 +81,7 @@ public class ChatroomMetadataEntity extends BaseTimeEntity {
 
 	public static ChatroomMetadataEntity fromDomain(ChatroomMetadata chatroomMetadata) {
 		return ChatroomMetadataEntity.builder()
+			.id(chatroomMetadata.getId())
 			.chatroomId(chatroomMetadata.getChatroomId())
 			.userId(chatroomMetadata.getUserId())
 			.postId(chatroomMetadata.getPostId())
