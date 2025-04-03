@@ -9,6 +9,7 @@ import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.post.dao.PostScrapRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostDraft;
+import com.cotato.kampus.domain.post.dto.PostDraftDto;
 import com.cotato.kampus.domain.post.dto.PostDto;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -41,16 +42,8 @@ public class PostValidator {
 		}
 	}
 
-	public void validateDraftPostDelete(Long draftPostId, Long userId) {
-		// 임시저장 게시글 조회
-		PostDraft postDraft = postFinder.findPostDraft(draftPostId);
-
-		// 작성자인지 검증
-		validatePostDraftOwner(postDraft, userId);
-	}
-
-	public void validatePostDraftOwner(PostDraft postDraft, Long userId) {
-		if (!postDraft.getUserId().equals(userId)) {
+	public void validatePostDraftOwner(PostDraftDto postDraftDto, Long userId) {
+		if (!postDraftDto.userId().equals(userId)) {
 			throw new AppException(ErrorCode.POST_NOT_AUTHOR);
 		}
 	}
@@ -62,5 +55,10 @@ public class PostValidator {
 		if (boardDto.boardType() != BoardType.CARDNEWS) {
 			throw new AppException(ErrorCode.CARD_NEWS_NOT_ALLOWED);
 		}
+	}
+
+	public void validatePublishable(PostDraftDto postDraftDto) {
+		if(postDraftDto.title().isEmpty() || postDraftDto.content().isEmpty())
+			throw new AppException(ErrorCode.POST_REQUIRED_FIELD_MISSING);
 	}
 }

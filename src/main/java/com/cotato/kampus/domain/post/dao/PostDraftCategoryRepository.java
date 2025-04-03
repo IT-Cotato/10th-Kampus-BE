@@ -11,4 +11,6 @@ import com.cotato.kampus.domain.post.domain.PostDraftCategory;
 public interface PostDraftCategoryRepository extends JpaRepository<PostDraftCategory, Long> {
 
 	List<PostDraftCategory> findByPostDraftIdIn(List<Long> postDraftIds);
+
+	List<PostDraftCategory> findByPostDraftId(Long postDraftId);
 }

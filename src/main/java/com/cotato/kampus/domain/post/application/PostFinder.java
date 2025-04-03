@@ -314,8 +314,8 @@ public class PostFinder {
 		return postDraftRepository.countByUserId(userId);
 	}
 
-	public List<Long> getPostDraftIdsByBoardAndUser(Long boardId, Long userId) {
-		List<PostDraft> postDrafts = postDraftRepository.findAllByBoardIdAndUserId(boardId, userId);
+	public List<Long> getPostDraftIdsByBoardAndUser(Long userId) {
+		List<PostDraft> postDrafts = postDraftRepository.findAllByUserId(userId);
 
 		return postDrafts.stream()
 			.map(PostDraft::getId)
