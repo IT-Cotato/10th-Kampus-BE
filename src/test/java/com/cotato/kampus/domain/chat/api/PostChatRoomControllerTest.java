@@ -18,14 +18,14 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.cotato.kampus.domain.chat.application.PostChatService;
+import com.cotato.kampus.domain.chat.api.port.ChatRoomService;
 import com.cotato.kampus.domain.chat.api.request.ChatroomRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(controllers = ChatMessageController.class)
+@WebMvcTest(controllers = PostChatRoomController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
-class ChatMessageControllerTest {
+class PostChatRoomControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -34,7 +34,7 @@ class ChatMessageControllerTest {
 	private ObjectMapper objectMapper;
 
 	@MockitoBean
-	private PostChatService postChatService;
+	private ChatRoomService chatRoomService;
 
 	@MockitoBean
 	private SimpMessagingTemplate messagingTemplate;
@@ -50,7 +50,7 @@ class ChatMessageControllerTest {
 		Long postId = 1L;
 		ChatroomRequest request = new ChatroomRequest(postId);
 
-		given(postChatService.createChatRoom(postId)).willReturn(1L);
+		given(chatRoomService.createChatRoom(postId)).willReturn(1L);
 
 		mockMvc.perform(post("/v1/api/chats/post")
 				.content(objectMapper.writeValueAsString(request))

@@ -24,10 +24,10 @@ import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
 @ExtendWith(MockitoExtension.class)
-class PostChatServiceTest {
+class ChatRoomServiceTest {
 
 	@InjectMocks
-	private PostChatService target;
+	private ChatRoomServiceImpl target;
 
 	@Mock
 	private ChatRoomAppender chatRoomAppender;
