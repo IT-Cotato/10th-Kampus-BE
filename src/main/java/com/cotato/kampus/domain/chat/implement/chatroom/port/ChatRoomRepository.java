@@ -9,6 +9,8 @@ import com.cotato.kampus.domain.chat.domain.ChatRoom;
 
 public interface ChatRoomRepository {
 
+	Long save(ChatRoom chatRoom);
+
 	boolean existsByPostIdAndInitialSenderId(Long postId, Long senderId);
 
 	Slice<ChatRoom> findAllByUserIdOrderByCreatedTimeDesc(Long userId, Pageable pageable);

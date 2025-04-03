@@ -20,6 +20,11 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepository {
 	private final ChatRoomJpaRepository chatRoomJpaRepository;
 
 	@Override
+	public Long save(ChatRoom chatRoom) {
+		return chatRoomJpaRepository.save(ChatRoomEntity.fromDomain(chatRoom)).getId();
+	}
+
+	@Override
 	public Optional<ChatRoom> findById(Long chatroomId) {
 		return chatRoomJpaRepository.findById(chatroomId).map(ChatRoomEntity::toDomain);
 	}
