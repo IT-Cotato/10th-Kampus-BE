@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.chat.dao.repository.ChatRoomRepository;
-import com.cotato.kampus.domain.chat.dao.entity.Chatroom;
+import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
 import com.cotato.kampus.domain.chat.domain.ChatRoomDto;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -29,12 +29,12 @@ public class ChatRoomFinder {
 	}
 
 	public ChatRoomDto findByChatRoomId(Long chatroomId) {
-		Chatroom chatroom = chatRoomRepository.findById(chatroomId)
+		ChatRoomEntity chatRoomEntity = chatRoomRepository.findById(chatroomId)
 			.orElseThrow(() -> new AppException(ErrorCode.CHATROOM_NOT_FOUND));
-		return ChatRoomDto.from(chatroom);
+		return ChatRoomDto.from(chatRoomEntity);
 	}
 
-	public Slice<Chatroom> findChatRooms(Long userId, int page) {
+	public Slice<ChatRoomEntity> findChatRooms(Long userId, int page) {
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
 		return chatRoomRepository.findAllByUserIdOrderByCreatedTimeDesc(
 			userId,
@@ -42,7 +42,7 @@ public class ChatRoomFinder {
 		);
 	}
 
-	public Chatroom findChatroom(Long chatroomId) {
+	public ChatRoomEntity findChatroom(Long chatroomId) {
 		return chatRoomRepository.findById(chatroomId)
 			.orElseThrow(() -> new AppException(ErrorCode.CHATROOM_NOT_FOUND));
 	}

@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
-import com.cotato.kampus.domain.chat.dao.entity.Chatroom;
+import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
 import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadata;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSliceSnapshot;
@@ -119,17 +119,17 @@ public class PostChatService {
 
 	public ChatRoomDetailDto getChatRoomDetail(Long chatroomId) {
 		// 1. Find chatroom
-		Chatroom chatroom = chatRoomFinder.findChatroom(chatroomId);
+		ChatRoomEntity chatRoomEntity = chatRoomFinder.findChatroom(chatroomId);
 		// 2. 게시글 정보 가져옴
-		PostReferenceDto postReference = postFinder.findPostReference(chatroom.getPostId());
+		PostReferenceDto postReference = postFinder.findPostReference(chatRoomEntity.getPostId());
 
 		// 3. 게시글이 삭제된 경우
 		if (postReference.isDeleted()) {
-			return ChatRoomDetailDto.ofDeleted(chatroom, postReference);
+			return ChatRoomDetailDto.ofDeleted(chatRoomEntity, postReference);
 		}
 		// 4. 게시글이 존재하는 경우
 		BoardDto board = boardFinder.findBoardDto(postReference.boardId());
-		return ChatRoomDetailDto.of(chatroom, postReference, board);
+		return ChatRoomDetailDto.of(chatRoomEntity, postReference, board);
 	}
 
 	@Transactional

@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.chat.domain;
 
-import com.cotato.kampus.domain.chat.dao.entity.Chatroom;
+import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
 
 public record ChatRoomDto(
 	Long chatRoomId,
@@ -8,12 +8,12 @@ public record ChatRoomDto(
 	Long senderId,
 	Long receiverId
 ) {
-	public static ChatRoomDto from(Chatroom chatroom) {
+	public static ChatRoomDto from(ChatRoomEntity chatRoomEntity) {
 		return new ChatRoomDto(
-			chatroom.getId(),
-			chatroom.getPostId(),
-			chatroom.getInitialSenderId(),
-			chatroom.getInitialReceiverId()
+			chatRoomEntity.getId(),
+			chatRoomEntity.getPostId(),
+			chatRoomEntity.getInitialSenderId(),
+			chatRoomEntity.getInitialReceiverId()
 		);
 	}
 }

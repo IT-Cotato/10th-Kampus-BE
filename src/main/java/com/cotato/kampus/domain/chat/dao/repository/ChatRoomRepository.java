@@ -6,14 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.cotato.kampus.domain.chat.dao.entity.Chatroom;
+import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
 
-public interface ChatRoomRepository extends JpaRepository<Chatroom, Long> {
+public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> {
 
 	boolean existsByPostIdAndInitialSenderId(Long postId, Long senderId);
 
-	@Query("SELECT c FROM Chatroom c " +
+	@Query("SELECT c FROM ChatRoomEntity c " +
 		"WHERE c.initialSenderId = :userId OR c.initialReceiverId = :userId " +
 		"ORDER BY c.createdTime DESC")
-	Slice<Chatroom> findAllByUserIdOrderByCreatedTimeDesc(@Param("userId") Long userId, Pageable pageable);
+	Slice<ChatRoomEntity> findAllByUserIdOrderByCreatedTimeDesc(@Param("userId") Long userId, Pageable pageable);
 }

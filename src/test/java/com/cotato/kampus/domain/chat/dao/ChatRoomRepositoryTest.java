@@ -8,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.cotato.kampus.domain.chat.dao.repository.ChatRoomRepository;
-import com.cotato.kampus.domain.chat.dao.entity.Chatroom;
+import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
 import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
 
 @DataJpaTest
@@ -20,7 +20,7 @@ class ChatRoomRepositoryTest {
 
 	@Test
 	public void 채팅방_생성() {
-		Chatroom chatroom = Chatroom.builder()
+		ChatRoomEntity chatRoomEntity = ChatRoomEntity.builder()
 			.postId(1L)
 			.initialSenderId(1L)
 			.initialReceiverId(2L)
@@ -28,15 +28,15 @@ class ChatRoomRepositoryTest {
 			.initiatedFrom(InitiatedFrom.POST)
 			.build();
 
-		Chatroom savedChatroom = chatRoomRepository.save(chatroom);
+		ChatRoomEntity savedChatRoomEntity = chatRoomRepository.save(chatRoomEntity);
 
-		assertThat(savedChatroom).isNotNull();
-		assertThat(savedChatroom.getId()).isGreaterThan(0L);
+		assertThat(savedChatRoomEntity).isNotNull();
+		assertThat(savedChatRoomEntity.getId()).isGreaterThan(0L);
 	}
 
 	@Test
 	public void PostId와_InitialSenderId로_채팅방_존재_여부_확인() {
-		Chatroom chatroom = Chatroom.builder()
+		ChatRoomEntity chatRoomEntity = ChatRoomEntity.builder()
 			.postId(1L)
 			.initialSenderId(1L)
 			.initialReceiverId(2L)
@@ -44,7 +44,7 @@ class ChatRoomRepositoryTest {
 			.initiatedFrom(InitiatedFrom.POST)
 			.build();
 
-		chatRoomRepository.save(chatroom);
+		chatRoomRepository.save(chatRoomEntity);
 
 		boolean exists = chatRoomRepository.existsByPostIdAndInitialSenderId(1L, 1L);
 
@@ -53,7 +53,7 @@ class ChatRoomRepositoryTest {
 
 	@Test
 	public void chatroomId로_채팅방_조회() {
-		Chatroom chatroom = Chatroom.builder()
+		ChatRoomEntity chatRoomEntity = ChatRoomEntity.builder()
 			.postId(1L)
 			.initialSenderId(1L)
 			.initialReceiverId(2L)
@@ -61,12 +61,12 @@ class ChatRoomRepositoryTest {
 			.initiatedFrom(InitiatedFrom.POST)
 			.build();
 
-		Chatroom savedChatroom = chatRoomRepository.save(chatroom);
+		ChatRoomEntity savedChatRoomEntity = chatRoomRepository.save(chatRoomEntity);
 
-		Chatroom findChatroom = chatRoomRepository.findById(savedChatroom.getId())
+		ChatRoomEntity findChatRoomEntity = chatRoomRepository.findById(savedChatRoomEntity.getId())
 			.orElse(null);
 
-		assertThat(findChatroom).isNotNull();
-		assertThat(findChatroom.getId()).isEqualTo(savedChatroom.getId());
+		assertThat(findChatRoomEntity).isNotNull();
+		assertThat(findChatRoomEntity.getId()).isEqualTo(savedChatRoomEntity.getId());
 	}
 }
