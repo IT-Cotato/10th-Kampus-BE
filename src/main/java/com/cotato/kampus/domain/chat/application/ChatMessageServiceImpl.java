@@ -3,6 +3,7 @@ package com.cotato.kampus.domain.chat.application;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.chat.api.port.ChatMessageService;
 import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadataEntity;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
@@ -26,8 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-public class PostChatService {
-
+public class ChatMessageServiceImpl implements ChatMessageService {
 	private final ChatRoomValidator chatRoomValidator;
 
 	private final ApiUserResolver apiUserResolver;
@@ -40,6 +40,7 @@ public class PostChatService {
 
 	private final ChatroomMetadataUpdater chatroomMetadataUpdater;
 
+	@Override
 	@Transactional
 	public ChatNotificationResult processNewMessage(Long chatroomId, String message) {
 		// 1. 메시지 보내는 유저의 id 조회
@@ -68,6 +69,7 @@ public class PostChatService {
 			receiverId);
 	}
 
+	@Override
 	public ChatMessageSliceSnapshot getMessages(int page, Long chatroomId) {
 		Long userId = apiUserResolver.getCurrentUserId();
 		chatRoomValidator.validateUser(userId, chatroomId);
@@ -77,6 +79,7 @@ public class PostChatService {
 		return chatMessageProcessor.attachReadStatus(chatMessageSlice, chatroomId, userId);
 	}
 
+	@Override
 	@Transactional
 	public void markMessagesAsRead(Long chatroomId) {
 		Long userId = apiUserResolver.getCurrentUserId();

@@ -58,6 +58,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	private final ChatroomMetadataDeleter chatroomMetadataDeleter;
 
 	@Override
+	@Transactional
 	public Long createChatRoom(Long postId) {
 		// 1. 게시글 정보 조회
 		PostDto post = postFinder.findPost(postId);

@@ -9,4 +9,5 @@ public interface ChatMessageService {
 
 	public ChatMessageSliceSnapshot getMessages(int page, Long chatroomId);
 
+	public void markMessagesAsRead(Long chatroomId);
 }

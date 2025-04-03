@@ -22,10 +22,10 @@ import com.cotato.kampus.domain.chat.application.PostChatService;
 import com.cotato.kampus.domain.chat.api.request.ChatroomRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(controllers = PostChatController.class)
+@WebMvcTest(controllers = ChatMessageController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
-class PostChatControllerTest {
+class ChatMessageControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
