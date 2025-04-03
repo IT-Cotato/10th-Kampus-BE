@@ -2,6 +2,7 @@ package com.cotato.kampus.domain.chat.dao.entity;
 
 import java.time.LocalDateTime;
 
+import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -75,5 +76,32 @@ public class ChatroomMetadataEntity extends BaseTimeEntity {
 
 	public void resetUnreadCount() {
 		this.unreadCount = 0L;
+	}
+
+	public static ChatroomMetadata toDomain(ChatroomMetadataEntity chatroomMetadataEntity) {
+		return ChatroomMetadata.builder()
+			.id(chatroomMetadataEntity.getId())
+			.chatroomId(chatroomMetadataEntity.getChatroomId())
+			.userId(chatroomMetadataEntity.getUserId())
+			.postId(chatroomMetadataEntity.getPostId())
+			.postTitle(chatroomMetadataEntity.getPostTitle())
+			.lastMessageId(chatroomMetadataEntity.getLastMessageId())
+			.lastMessageContent(chatroomMetadataEntity.getLastMessageContent())
+			.lastChatTime(chatroomMetadataEntity.getLastChatTime())
+			.unreadCount(chatroomMetadataEntity.getUnreadCount())
+			.build();
+	}
+
+	public static ChatroomMetadataEntity fromDomain(ChatroomMetadata chatroomMetadata) {
+		return ChatroomMetadataEntity.builder()
+			.chatroomId(chatroomMetadata.getChatroomId())
+			.userId(chatroomMetadata.getUserId())
+			.postId(chatroomMetadata.getPostId())
+			.postTitle(chatroomMetadata.getPostTitle())
+			.lastMessageId(chatroomMetadata.getLastMessageId())
+			.lastMessageContent(chatroomMetadata.getLastMessageContent())
+			.lastChatTime(chatroomMetadata.getLastChatTime())
+			.unreadCount(chatroomMetadata.getUnreadCount())
+			.build();
 	}
 }
