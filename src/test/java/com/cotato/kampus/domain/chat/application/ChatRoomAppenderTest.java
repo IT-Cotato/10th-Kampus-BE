@@ -14,6 +14,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.cotato.kampus.domain.chat.dao.repository.ChatRoomRepository;
 import com.cotato.kampus.domain.chat.dao.entity.Chatroom;
 import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
+import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomAppender;
 
 @ExtendWith(MockitoExtension.class)
 class ChatRoomAppenderTest {

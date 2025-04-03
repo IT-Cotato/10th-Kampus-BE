@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.chat.application;
+package com.cotato.kampus.domain.chat.implement.message;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +11,7 @@ import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSliceSnapshot;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSnapshot;
 import com.cotato.kampus.domain.chat.domain.MessageReadStatusDto;
+import com.cotato.kampus.domain.chat.implement.read.MessageReadStatusFinder;
 
 import lombok.RequiredArgsConstructor;
 

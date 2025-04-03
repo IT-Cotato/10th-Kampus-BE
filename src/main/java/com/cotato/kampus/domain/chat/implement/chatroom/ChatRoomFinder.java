@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.chat.application;
+package com.cotato.kampus.domain.chat.implement.chatroom;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;

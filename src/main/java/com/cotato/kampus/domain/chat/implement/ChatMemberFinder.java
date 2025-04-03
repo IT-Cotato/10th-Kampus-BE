@@ -1,9 +1,10 @@
-package com.cotato.kampus.domain.chat.application;
+package com.cotato.kampus.domain.chat.implement;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.chat.dao.entity.Chatroom;
+import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomFinder;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

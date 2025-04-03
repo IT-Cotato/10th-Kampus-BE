@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import com.cotato.kampus.domain.chat.dao.repository.ChatMessageRepository;
 import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
+import com.cotato.kampus.domain.chat.implement.message.ChatMessageFinder;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 
 @ExtendWith(MockitoExtension.class)

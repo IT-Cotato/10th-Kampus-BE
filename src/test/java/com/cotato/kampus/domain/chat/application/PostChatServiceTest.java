@@ -12,6 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomAppender;
+import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomValidator;
+import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataAppender;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.application.PostFinder;

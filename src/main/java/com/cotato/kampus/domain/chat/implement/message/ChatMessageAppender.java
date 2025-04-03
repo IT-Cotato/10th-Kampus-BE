@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.chat.application;
+package com.cotato.kampus.domain.chat.implement.message;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

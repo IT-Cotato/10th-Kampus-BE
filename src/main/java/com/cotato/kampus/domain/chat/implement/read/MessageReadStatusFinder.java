@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.chat.application;
+package com.cotato.kampus.domain.chat.implement.read;
 
 import java.util.Optional;
 
