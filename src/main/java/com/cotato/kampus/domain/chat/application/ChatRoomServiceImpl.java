@@ -9,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.chat.api.port.ChatRoomService;
-import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
-import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadataEntity;
+import com.cotato.kampus.domain.chat.domain.ChatRoom;
 import com.cotato.kampus.domain.chat.domain.ChatRoomDetailDto;
 import com.cotato.kampus.domain.chat.domain.ChatRoomPreview;
 import com.cotato.kampus.domain.chat.domain.ChatRoomPreviewList;
+import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
 import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomAppender;
 import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomDeleter;
 import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomFinder;
@@ -92,7 +92,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 2. 해당 유저의 채팅방 메타데이터를 lastChatTime 내림차순으로 조회
-		Slice<ChatroomMetadataEntity> chatRoomMetadatas = chatroomMetadataFinder.findChatRoomMetadatas(userId, page);
+		Slice<ChatroomMetadata> chatRoomMetadatas = chatroomMetadataFinder.findChatRoomMetadatas(userId, page);
 
 		// 3. ChatRoomPreview로 변환
 		List<ChatRoomPreview> previewList = chatRoomMetadatas.getContent()
@@ -106,17 +106,17 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	@Override
 	public ChatRoomDetailDto getChatRoomDetail(Long chatroomId) {
 		// 1. Find chatroom
-		ChatRoomEntity chatRoomEntity = chatRoomFinder.findChatroom(chatroomId);
+		ChatRoom chatRoom = chatRoomFinder.findByChatRoomId(chatroomId);
 		// 2. 게시글 정보 가져옴
-		PostReferenceDto postReference = postFinder.findPostReference(chatRoomEntity.getPostId());
+		PostReferenceDto postReference = postFinder.findPostReference(chatRoom.getPostId());
 
 		// 3. 게시글이 삭제된 경우
 		if (postReference.isDeleted()) {
-			return ChatRoomDetailDto.ofDeleted(chatRoomEntity, postReference);
+			return ChatRoomDetailDto.ofDeleted(chatRoom, postReference);
 		}
 		// 4. 게시글이 존재하는 경우
 		BoardDto board = boardFinder.findBoardDto(postReference.boardId());
-		return ChatRoomDetailDto.of(chatRoomEntity, postReference, board);
+		return ChatRoomDetailDto.of(chatRoom, postReference, board);
 	}
 
 	@Override
