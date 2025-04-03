@@ -66,4 +66,14 @@ public class ChatRoomEntity extends BaseTimeEntity {
 			.lastModifiedTime(chatRoomEntity.getLastModifiedTime())
 			.build();
 	}
+
+	public static ChatRoomEntity fromDomain(ChatRoom chatRoom) {
+		return ChatRoomEntity.builder()
+			.postId(chatRoom.getPostId())
+			.initialSenderId(chatRoom.getInitialSenderId())
+			.initialReceiverId(chatRoom.getInitialReceiverId())
+			.isBlocked(chatRoom.getIsBlocked())
+			.initiatedFrom(chatRoom.getInitiatedFrom())
+			.build();
+	}
 }
