@@ -3,7 +3,7 @@ package com.cotato.kampus.domain.chat.implement.metadata;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.repository.ChatroomMetadataJpaRepository;
+import com.cotato.kampus.domain.chat.implement.metadata.port.ChatroomMetadataRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +12,10 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatroomMetadataDeleter {
-	private final ChatroomMetadataJpaRepository chatroomMetadataJpaRepository;
+	private final ChatroomMetadataRepository chatroomMetadataRepository;
 
 	@Transactional
 	public void deleteByChatroomId(Long chatroomId) {
-		chatroomMetadataJpaRepository.deleteAllByChatroomId(chatroomId);
+		chatroomMetadataRepository.deleteAllByChatroomId(chatroomId);
 	}
 }

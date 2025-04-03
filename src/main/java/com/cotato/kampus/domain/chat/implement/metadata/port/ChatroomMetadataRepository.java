@@ -10,6 +10,8 @@ import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
 
 public interface ChatroomMetadataRepository {
 
+	void save(ChatroomMetadata senderMetadata);
+
 	void saveAll(List<ChatroomMetadata> chatroomMetadata);
 
 	Slice<ChatroomMetadata> findAllByUserIdOrderByLastChatTimeDesc(Long userId, Pageable pageable);

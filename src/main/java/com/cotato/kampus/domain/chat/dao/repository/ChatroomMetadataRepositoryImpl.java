@@ -21,6 +21,12 @@ public class ChatroomMetadataRepositoryImpl implements ChatroomMetadataRepositor
 	private final ChatroomMetadataJpaRepository chatroomMetadataJpaRepository;
 
 	@Override
+	public void save(ChatroomMetadata senderMetadata) {
+		chatroomMetadataJpaRepository.save(
+			ChatroomMetadataEntity.fromDomain(senderMetadata));
+	}
+
+	@Override
 	public void saveAll(List<ChatroomMetadata> chatroomMetadata) {
 		chatroomMetadataJpaRepository.saveAll(
 			chatroomMetadata.stream().map(ChatroomMetadataEntity::fromDomain).toList());
