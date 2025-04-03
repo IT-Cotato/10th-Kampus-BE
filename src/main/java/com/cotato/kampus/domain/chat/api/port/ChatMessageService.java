@@ -5,9 +5,9 @@ import com.cotato.kampus.domain.chat.domain.ChatNotificationResult;
 
 public interface ChatMessageService {
 
-	public ChatNotificationResult processNewMessage(Long chatroomId, String message);
+	ChatNotificationResult processNewMessage(Long chatroomId, String message);
 
-	public ChatMessageSliceSnapshot getMessages(int page, Long chatroomId);
+	ChatMessageSliceSnapshot getMessages(int page, Long chatroomId);
 
-	public void markMessagesAsRead(Long chatroomId);
+	void markMessagesAsRead(Long chatroomId);
 }

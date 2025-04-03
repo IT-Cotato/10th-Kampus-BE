@@ -5,11 +5,11 @@ import com.cotato.kampus.domain.chat.domain.ChatRoomPreviewList;
 
 public interface ChatRoomService {
 
-	public Long createChatRoom(Long postId);
+	Long createChatRoom(Long postId);
 
-	public ChatRoomPreviewList findChatRooms(int page);
+	ChatRoomPreviewList findChatRooms(int page);
 
-	public ChatRoomDetailDto getChatRoomDetail(Long chatroomId);
+	ChatRoomDetailDto getChatRoomDetail(Long chatroomId);
 
-	public void deleteChatroom(Long chatRoomId);
+	void deleteChatroom(Long chatRoomId);
 }
