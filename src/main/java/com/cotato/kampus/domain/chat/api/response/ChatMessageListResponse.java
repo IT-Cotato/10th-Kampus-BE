@@ -1,8 +1,8 @@
-package com.cotato.kampus.domain.chat.dto.response;
+package com.cotato.kampus.domain.chat.api.response;
 
 import java.util.List;
 
-import com.cotato.kampus.domain.chat.dto.ChatMessageSliceSnapshot;
+import com.cotato.kampus.domain.chat.domain.ChatMessageSliceSnapshot;
 
 public record ChatMessageListResponse(
 	List<ChatMessageResponse> messages,

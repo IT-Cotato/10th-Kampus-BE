@@ -3,7 +3,7 @@ package com.cotato.kampus.domain.chat.application;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.ChatMessageRepository;
+import com.cotato.kampus.domain.chat.dao.repository.ChatMessageRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

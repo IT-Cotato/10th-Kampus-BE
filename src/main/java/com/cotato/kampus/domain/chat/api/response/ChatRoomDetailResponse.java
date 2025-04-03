@@ -1,6 +1,6 @@
-package com.cotato.kampus.domain.chat.dto.response;
+package com.cotato.kampus.domain.chat.api.response;
 
-import com.cotato.kampus.domain.chat.dto.ChatRoomDetailDto;
+import com.cotato.kampus.domain.chat.domain.ChatRoomDetailDto;
 
 public record ChatRoomDetailResponse(
 	Long chatroomId,

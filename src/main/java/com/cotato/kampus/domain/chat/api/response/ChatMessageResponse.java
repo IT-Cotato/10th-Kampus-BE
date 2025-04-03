@@ -1,6 +1,6 @@
-package com.cotato.kampus.domain.chat.dto.response;
+package com.cotato.kampus.domain.chat.api.response;
 
-import com.cotato.kampus.domain.chat.dto.ChatMessageSnapshot;
+import com.cotato.kampus.domain.chat.domain.ChatMessageSnapshot;
 
 public record ChatMessageResponse(
 	Long id,

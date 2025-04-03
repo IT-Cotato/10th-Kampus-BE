@@ -1,11 +1,11 @@
-package com.cotato.kampus.domain.chat.dao;
+package com.cotato.kampus.domain.chat.dao.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.cotato.kampus.domain.chat.domain.MessageReadStatus;
+import com.cotato.kampus.domain.chat.dao.entity.MessageReadStatus;
 
 @Repository
 public interface MessageReadStatusRepository extends JpaRepository<MessageReadStatus, Long> {

@@ -1,6 +1,6 @@
-package com.cotato.kampus.domain.chat.dto;
+package com.cotato.kampus.domain.chat.domain;
 
-import com.cotato.kampus.domain.chat.domain.Chatroom;
+import com.cotato.kampus.domain.chat.dao.entity.Chatroom;
 
 public record ChatRoomDto(
 	Long chatRoomId,

@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.chat.domain;
+package com.cotato.kampus.domain.chat.dao.entity;
 
 import java.time.LocalDateTime;
 

@@ -16,15 +16,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cotato.kampus.domain.chat.application.PostChatService;
-import com.cotato.kampus.domain.chat.dto.ChatMessageSliceSnapshot;
-import com.cotato.kampus.domain.chat.dto.ChatNotificationResult;
-import com.cotato.kampus.domain.chat.dto.ChatRoomPreviewList;
-import com.cotato.kampus.domain.chat.dto.request.ChatMessageRequest;
-import com.cotato.kampus.domain.chat.dto.request.ChatroomRequest;
-import com.cotato.kampus.domain.chat.dto.response.ChatMessageListResponse;
-import com.cotato.kampus.domain.chat.dto.response.ChatRoomDetailResponse;
-import com.cotato.kampus.domain.chat.dto.response.ChatRoomListResponse;
-import com.cotato.kampus.domain.chat.dto.response.ChatroomResponse;
+import com.cotato.kampus.domain.chat.domain.ChatMessageSliceSnapshot;
+import com.cotato.kampus.domain.chat.domain.ChatNotificationResult;
+import com.cotato.kampus.domain.chat.domain.ChatRoomPreviewList;
+import com.cotato.kampus.domain.chat.api.request.ChatMessageRequest;
+import com.cotato.kampus.domain.chat.api.request.ChatroomRequest;
+import com.cotato.kampus.domain.chat.api.response.ChatMessageListResponse;
+import com.cotato.kampus.domain.chat.api.response.ChatRoomDetailResponse;
+import com.cotato.kampus.domain.chat.api.response.ChatRoomListResponse;
+import com.cotato.kampus.domain.chat.api.response.ChatroomResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;

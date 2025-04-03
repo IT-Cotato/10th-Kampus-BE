@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.chat.dto.request;
+package com.cotato.kampus.domain.chat.api.request;
 
 import jakarta.validation.constraints.NotNull;
 

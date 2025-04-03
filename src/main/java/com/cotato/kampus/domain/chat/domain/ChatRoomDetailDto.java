@@ -1,7 +1,7 @@
-package com.cotato.kampus.domain.chat.dto;
+package com.cotato.kampus.domain.chat.domain;
 
 import com.cotato.kampus.domain.board.dto.BoardDto;
-import com.cotato.kampus.domain.chat.domain.Chatroom;
+import com.cotato.kampus.domain.chat.dao.entity.Chatroom;
 import com.cotato.kampus.domain.post.dto.PostReferenceDto;
 
 public record ChatRoomDetailDto(

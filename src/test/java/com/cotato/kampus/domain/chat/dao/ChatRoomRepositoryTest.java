@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.cotato.kampus.domain.chat.domain.Chatroom;
+import com.cotato.kampus.domain.chat.dao.repository.ChatRoomRepository;
+import com.cotato.kampus.domain.chat.dao.entity.Chatroom;
 import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
 
 @DataJpaTest

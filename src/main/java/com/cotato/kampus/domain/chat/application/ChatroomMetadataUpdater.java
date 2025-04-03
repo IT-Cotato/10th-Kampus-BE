@@ -3,9 +3,9 @@ package com.cotato.kampus.domain.chat.application;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.ChatroomMetadataRepository;
-import com.cotato.kampus.domain.chat.domain.ChatMessage;
-import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
+import com.cotato.kampus.domain.chat.dao.repository.ChatroomMetadataRepository;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadata;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 

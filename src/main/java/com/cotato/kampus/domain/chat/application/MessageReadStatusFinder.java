@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.MessageReadStatusRepository;
-import com.cotato.kampus.domain.chat.dto.MessageReadStatusDto;
+import com.cotato.kampus.domain.chat.dao.repository.MessageReadStatusRepository;
+import com.cotato.kampus.domain.chat.domain.MessageReadStatusDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

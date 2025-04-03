@@ -1,6 +1,6 @@
-package com.cotato.kampus.domain.chat.dto;
+package com.cotato.kampus.domain.chat.domain;
 
-import com.cotato.kampus.domain.chat.domain.MessageReadStatus;
+import com.cotato.kampus.domain.chat.dao.entity.MessageReadStatus;
 
 public record MessageReadStatusDto(
 	Long chatroomId,

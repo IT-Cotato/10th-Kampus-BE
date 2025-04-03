@@ -19,7 +19,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.cotato.kampus.domain.chat.application.PostChatService;
-import com.cotato.kampus.domain.chat.dto.request.ChatroomRequest;
+import com.cotato.kampus.domain.chat.api.request.ChatroomRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = PostChatController.class)

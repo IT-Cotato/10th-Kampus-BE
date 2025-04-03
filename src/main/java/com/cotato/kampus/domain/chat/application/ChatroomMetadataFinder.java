@@ -5,8 +5,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.ChatroomMetadataRepository;
-import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
+import com.cotato.kampus.domain.chat.dao.repository.ChatroomMetadataRepository;
+import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadata;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 
 import lombok.AccessLevel;

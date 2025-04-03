@@ -1,9 +1,9 @@
-package com.cotato.kampus.domain.chat.dto.response;
+package com.cotato.kampus.domain.chat.api.response;
 
 import java.util.List;
 
-import com.cotato.kampus.domain.chat.dto.ChatRoomPreview;
-import com.cotato.kampus.domain.chat.dto.ChatRoomPreviewList;
+import com.cotato.kampus.domain.chat.domain.ChatRoomPreview;
+import com.cotato.kampus.domain.chat.domain.ChatRoomPreviewList;
 
 public record ChatRoomListResponse(
 	List<ChatRoomPreview> chatRoomPreviewList,

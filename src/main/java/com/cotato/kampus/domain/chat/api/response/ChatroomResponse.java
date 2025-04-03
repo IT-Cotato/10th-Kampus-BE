@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.chat.dto.response;
+package com.cotato.kampus.domain.chat.api.response;
 
 public record ChatroomResponse(
 	Long chatRoomId

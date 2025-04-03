@@ -1,6 +1,6 @@
-package com.cotato.kampus.domain.chat.dto;
+package com.cotato.kampus.domain.chat.domain;
 
-import com.cotato.kampus.domain.chat.domain.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
 
 public record ChatNotificationResult(
 	ChatMessage chatMessage,

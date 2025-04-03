@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.chat.domain;
+package com.cotato.kampus.domain.chat.dao.entity;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
@@ -14,29 +14,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "product_chatroom")
+@Table(name = "chat_message")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductChatroom extends BaseTimeEntity {
+public class ChatMessage extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "product_chatroom_id")
+	@Column(name = "message_id")
 	private Long id;
 
 	@Column(name = "chatroom_id", nullable = false)
 	private Long chatroomId;
 
-	@Column(name = "product_id", nullable = false)
-	private Long productId;
+	@Column(name = "sender_id", nullable = false)
+	private Long senderId;
 
-	@Column(name = "buyer_id", nullable = false)
-	private Long buyerId;
+	@Column(name = "content", nullable = false, length = 500)
+	private String content;
 
 	@Builder
-	public ProductChatroom(Long chatroomId, Long productId, Long buyerId) {
+	public ChatMessage(Long chatroomId, Long senderId, String content) {
 		this.chatroomId = chatroomId;
-		this.productId = productId;
-		this.buyerId = buyerId;
+		this.senderId = senderId;
+		this.content = content;
 	}
 }

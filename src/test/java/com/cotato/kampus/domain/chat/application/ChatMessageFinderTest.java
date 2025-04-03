@@ -12,9 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 
-import com.cotato.kampus.domain.chat.dao.ChatMessageRepository;
-import com.cotato.kampus.domain.chat.domain.ChatMessage;
-import com.cotato.kampus.domain.chat.dto.ChatMessageSlice;
+import com.cotato.kampus.domain.chat.dao.repository.ChatMessageRepository;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 
 @ExtendWith(MockitoExtension.class)

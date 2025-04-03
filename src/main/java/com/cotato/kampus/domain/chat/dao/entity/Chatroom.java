@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.chat.domain;
+package com.cotato.kampus.domain.chat.dao.entity;
 
 import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;

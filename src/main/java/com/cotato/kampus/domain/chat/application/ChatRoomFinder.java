@@ -5,9 +5,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.ChatRoomRepository;
-import com.cotato.kampus.domain.chat.domain.Chatroom;
-import com.cotato.kampus.domain.chat.dto.ChatRoomDto;
+import com.cotato.kampus.domain.chat.dao.repository.ChatRoomRepository;
+import com.cotato.kampus.domain.chat.dao.entity.Chatroom;
+import com.cotato.kampus.domain.chat.domain.ChatRoomDto;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;

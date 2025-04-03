@@ -1,8 +1,8 @@
-package com.cotato.kampus.domain.chat.dto;
+package com.cotato.kampus.domain.chat.domain;
 
 import java.time.LocalDateTime;
 
-import com.cotato.kampus.domain.chat.domain.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record ChatNotification(

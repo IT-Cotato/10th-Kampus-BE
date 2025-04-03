@@ -6,11 +6,11 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import com.cotato.kampus.domain.chat.domain.ChatMessage;
-import com.cotato.kampus.domain.chat.dto.ChatMessageSlice;
-import com.cotato.kampus.domain.chat.dto.ChatMessageSliceSnapshot;
-import com.cotato.kampus.domain.chat.dto.ChatMessageSnapshot;
-import com.cotato.kampus.domain.chat.dto.MessageReadStatusDto;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
+import com.cotato.kampus.domain.chat.domain.ChatMessageSliceSnapshot;
+import com.cotato.kampus.domain.chat.domain.ChatMessageSnapshot;
+import com.cotato.kampus.domain.chat.domain.MessageReadStatusDto;
 
 import lombok.RequiredArgsConstructor;
 

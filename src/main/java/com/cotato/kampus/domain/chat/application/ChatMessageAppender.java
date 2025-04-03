@@ -3,8 +3,8 @@ package com.cotato.kampus.domain.chat.application;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.ChatMessageRepository;
-import com.cotato.kampus.domain.chat.domain.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.repository.ChatMessageRepository;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

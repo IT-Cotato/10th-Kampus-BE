@@ -12,7 +12,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.cotato.kampus.domain.chat.domain.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.repository.ChatMessageRepository;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.config.JpaAuditingConfig;
 

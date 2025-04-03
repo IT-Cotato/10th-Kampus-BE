@@ -2,8 +2,8 @@ package com.cotato.kampus.domain.chat.application;
 
 import org.springframework.stereotype.Component;
 
-import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
-import com.cotato.kampus.domain.chat.dto.ChatRoomPreview;
+import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadata;
+import com.cotato.kampus.domain.chat.domain.ChatRoomPreview;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

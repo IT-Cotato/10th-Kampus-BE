@@ -5,9 +5,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.chat.dao.ChatMessageRepository;
-import com.cotato.kampus.domain.chat.domain.ChatMessage;
-import com.cotato.kampus.domain.chat.dto.ChatMessageSlice;
+import com.cotato.kampus.domain.chat.dao.repository.ChatMessageRepository;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 
 import lombok.AccessLevel;

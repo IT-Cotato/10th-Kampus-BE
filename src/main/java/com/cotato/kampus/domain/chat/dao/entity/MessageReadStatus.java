@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.chat.domain;
+package com.cotato.kampus.domain.chat.dao.entity;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
@@ -14,29 +14,32 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "chat_message")
+@Table(name = "message_read_status")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChatMessage extends BaseTimeEntity {
-
+public class MessageReadStatus extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "message_id")
+	@Column(name = "message_read_status_id")
 	private Long id;
 
 	@Column(name = "chatroom_id", nullable = false)
 	private Long chatroomId;
 
-	@Column(name = "sender_id", nullable = false)
-	private Long senderId;
+	@Column(name = "user_id", nullable = false)
+	private Long userId;
 
-	@Column(name = "content", nullable = false, length = 500)
-	private String content;
+	@Column(name = "last_read_message_id", nullable = false)
+	private Long lastReadMessageId;
 
 	@Builder
-	public ChatMessage(Long chatroomId, Long senderId, String content) {
+	public MessageReadStatus(Long chatroomId, Long userId, Long lastReadMessageId) {
 		this.chatroomId = chatroomId;
-		this.senderId = senderId;
-		this.content = content;
+		this.userId = userId;
+		this.lastReadMessageId = lastReadMessageId;
+	}
+
+	public void updateLastReadMessage(Long messageId) {
+		this.lastReadMessageId = messageId;
 	}
 }

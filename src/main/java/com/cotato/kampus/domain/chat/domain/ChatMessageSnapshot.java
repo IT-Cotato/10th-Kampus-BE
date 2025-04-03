@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.chat.dto;
+package com.cotato.kampus.domain.chat.domain;
 
 public record ChatMessageSnapshot(
 	Long id,
