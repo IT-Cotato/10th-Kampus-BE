@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.chat.dao.repository.ChatroomMetadataRepository;
-import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadata;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -20,7 +20,7 @@ public class ChatroomMetadataUpdater {
 	private final ChatroomMetadataRepository chatroomMetadataRepository;
 
 	@Transactional
-	public void updateSenderMetadata(Long chatroomId, ChatMessage message, Long senderId) {
+	public void updateSenderMetadata(Long chatroomId, ChatMessageEntity message, Long senderId) {
 		ChatroomMetadata senderMetadata = chatroomMetadataRepository
 			.findByChatroomIdAndUserId(chatroomId, senderId)
 			.orElseThrow(() -> new AppException(ErrorCode.CHATROOM_METADATA_NOT_FOUND));
@@ -35,7 +35,7 @@ public class ChatroomMetadataUpdater {
 	}
 
 	@Transactional
-	public ChatroomMetadata updateReceiverMetadata(Long chatroomId, ChatMessage message, Long receiverId) {
+	public ChatroomMetadata updateReceiverMetadata(Long chatroomId, ChatMessageEntity message, Long receiverId) {
 		ChatroomMetadata receiverMetadata = chatroomMetadataRepository
 			.findByChatroomIdAndUserId(chatroomId, receiverId)
 			.orElseThrow(() -> new AppException(ErrorCode.CHATROOM_METADATA_NOT_FOUND));

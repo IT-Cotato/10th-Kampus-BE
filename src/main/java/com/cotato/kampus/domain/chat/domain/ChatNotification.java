@@ -2,7 +2,7 @@ package com.cotato.kampus.domain.chat.domain;
 
 import java.time.LocalDateTime;
 
-import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record ChatNotification(
@@ -13,7 +13,7 @@ public record ChatNotification(
 	Long messageId,
 	Long unreadCount
 ) {
-	public static ChatNotification from(ChatMessage message, Long unreadCount) {
+	public static ChatNotification from(ChatMessageEntity message, Long unreadCount) {
 		return new ChatNotification(
 			message.getChatroomId(),
 			message.getContent(),

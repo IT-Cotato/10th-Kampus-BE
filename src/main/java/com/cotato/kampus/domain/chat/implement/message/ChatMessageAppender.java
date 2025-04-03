@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.chat.dao.repository.ChatMessageRepository;
-import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +17,12 @@ public class ChatMessageAppender {
 	private final ChatMessageRepository chatMessageRepository;
 
 	@Transactional
-	public ChatMessage appendChatMessage(Long senderId, Long chatRoomId, String content) {
-		ChatMessage chatMessage = ChatMessage.builder()
+	public ChatMessageEntity appendChatMessage(Long senderId, Long chatRoomId, String content) {
+		ChatMessageEntity chatMessageEntity = ChatMessageEntity.builder()
 			.chatroomId(chatRoomId)
 			.senderId(senderId)
 			.content(content)
 			.build();
-		return chatMessageRepository.save(chatMessage);
+		return chatMessageRepository.save(chatMessageEntity);
 	}
 }

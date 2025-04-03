@@ -13,13 +13,13 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 
 import com.cotato.kampus.domain.chat.dao.repository.ChatMessageRepository;
-import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
 import com.cotato.kampus.domain.chat.implement.message.ChatMessageFinder;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 
 @ExtendWith(MockitoExtension.class)
-class ChatMessageFinderTest {
+class ChatMessageEntityFinderTest {
 
 	@InjectMocks
 	private ChatMessageFinder target;
@@ -36,7 +36,7 @@ class ChatMessageFinderTest {
 		// given
 
 		CustomPageRequest customPageRequest = new CustomPageRequest(1, PAGE_SIZE, Sort.Direction.DESC);
-		Slice<ChatMessage> slice = mock(Slice.class);
+		Slice<ChatMessageEntity> slice = mock(Slice.class);
 		given(chatMessageRepository.findAllByChatroomIdOrderByCreatedTimeDesc(
 			1L,
 			customPageRequest.of(SORT_PROPERTY)))

@@ -1,15 +1,15 @@
 package com.cotato.kampus.domain.chat.domain;
 
-import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 
 public record ChatNotificationResult(
-	ChatMessage chatMessage,
+	ChatMessageEntity chatMessageEntity,
 	ChatNotification notification,
 	Long receiverId
 ) {
-	public static ChatNotificationResult of(ChatMessage chatMessage, ChatNotification notification, Long receiverId) {
+	public static ChatNotificationResult of(ChatMessageEntity chatMessageEntity, ChatNotification notification, Long receiverId) {
 		return new ChatNotificationResult(
-			chatMessage,
+			chatMessageEntity,
 			notification,
 			receiverId
 		);

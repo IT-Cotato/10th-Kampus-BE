@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSliceSnapshot;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSnapshot;
@@ -45,7 +45,7 @@ public class ChatMessageProcessor {
 		return new ChatMessageSliceSnapshot(processedMessages, chatMessageSlice.chatMessages().hasNext());
 	}
 
-	private boolean determineReadStatus(ChatMessage message, @NotNull MessageReadStatusDto readStatus) {
+	private boolean determineReadStatus(ChatMessageEntity message, @NotNull MessageReadStatusDto readStatus) {
 		return message.getId() <= readStatus.lastReadMessageId();
 	}
 }

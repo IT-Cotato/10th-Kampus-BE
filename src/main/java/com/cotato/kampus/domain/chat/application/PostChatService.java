@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.application.BoardFinder;
 import com.cotato.kampus.domain.board.dto.BoardDto;
-import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 import com.cotato.kampus.domain.chat.dao.entity.Chatroom;
 import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadata;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
@@ -138,24 +138,25 @@ public class PostChatService {
 		Long senderId = apiUserResolver.getCurrentUserId();
 
 		// 2. 메시지 저장
-		ChatMessage chatMessage = chatMessageAppender.appendChatMessage(senderId, chatroomId, message);
+		ChatMessageEntity chatMessageEntity = chatMessageAppender.appendChatMessage(senderId, chatroomId, message);
 
 		// 3. 메시지 수신자 id 조회
 		Long receiverId = chatMemberFinder.findReceiverId(chatroomId, senderId);
 
 		// 4. 발신자의 읽음 상태 업데이트 (메시지를 보낸 사람은 자동으로 읽음 처리)
-		messageReadStatusUpdater.updateStatus(chatroomId, senderId, chatMessage.getId());
+		messageReadStatusUpdater.updateStatus(chatroomId, senderId, chatMessageEntity.getId());
 
 		// 5. 채팅방 메타데이터 업데이트
-		chatroomMetadataUpdater.updateSenderMetadata(chatroomId, chatMessage, senderId);
-		ChatroomMetadata receiverMetadata = chatroomMetadataUpdater.updateReceiverMetadata(chatroomId, chatMessage,
+		chatroomMetadataUpdater.updateSenderMetadata(chatroomId, chatMessageEntity, senderId);
+		ChatroomMetadata receiverMetadata = chatroomMetadataUpdater.updateReceiverMetadata(chatroomId,
+			chatMessageEntity,
 			receiverId);
 
 		// 6. 수신자가 읽지 않은 메시지의 개수를 계산
 		Long unreadCount = receiverMetadata.getUnreadCount();
 
 		// 7. 알림 결과를 저장하여 리턴
-		return ChatNotificationResult.of(chatMessage, ChatNotification.from(chatMessage, unreadCount), receiverId);
+		return ChatNotificationResult.of(chatMessageEntity, ChatNotification.from(chatMessageEntity, unreadCount), receiverId);
 	}
 
 	public ChatMessageSliceSnapshot getMessages(int page, Long chatroomId) {
@@ -171,7 +172,7 @@ public class PostChatService {
 	public void markMessagesAsRead(Long chatroomId) {
 		Long userId = apiUserResolver.getCurrentUserId();
 		// 1. 채팅방의 가장 최근 메시지 ID 조회
-		ChatMessage latestMessage = chatMessageFinder.findLatestMessage(chatroomId);
+		ChatMessageEntity latestMessage = chatMessageFinder.findLatestMessage(chatroomId);
 		// 2. 해당 사용자의 메시지 읽음 상태 조회 또는 생성
 		messageReadStatusUpdater.updateStatus(chatroomId, userId, latestMessage.getId());
 		chatroomMetadataUpdater.resetReadCount(chatroomId, userId);

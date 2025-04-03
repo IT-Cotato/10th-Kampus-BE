@@ -8,15 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 
-public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
+public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, Long> {
 
-	Slice<ChatMessage> findAllByChatroomIdOrderByCreatedTimeDesc(Long chatRoomId, PageRequest pageRequest);
+	Slice<ChatMessageEntity> findAllByChatroomIdOrderByCreatedTimeDesc(Long chatRoomId, PageRequest pageRequest);
 
-	Optional<ChatMessage> findFirstByChatroomIdOrderByCreatedTimeDesc(Long chatroomId);
+	Optional<ChatMessageEntity> findFirstByChatroomIdOrderByCreatedTimeDesc(Long chatroomId);
 
-	@Query("SELECT COUNT(m) FROM ChatMessage m WHERE m.chatroomId = :chatroomId AND m.id > :messageId")
+	@Query("SELECT COUNT(m) FROM ChatMessageEntity m WHERE m.chatroomId = :chatroomId AND m.id > :messageId")
 	Long countByChatroomIdAndIdGreaterThan(
 		@Param("chatroomId") Long chatroomId,
 		@Param("messageId") Long messageId

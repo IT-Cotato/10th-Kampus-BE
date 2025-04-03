@@ -75,7 +75,7 @@ public class PostChatController {
 		// 채팅방 채널로 메시지 전송
 		messagingTemplate.convertAndSend(
 			"/chatrooms/" + chatroomId,
-			result.chatMessage()
+			result.chatMessageEntity()
 		);
 
 		// 수신자의 알림 채널로 알림 전송

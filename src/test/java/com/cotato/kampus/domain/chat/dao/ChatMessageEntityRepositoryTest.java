@@ -13,14 +13,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.cotato.kampus.domain.chat.dao.repository.ChatMessageRepository;
-import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.config.JpaAuditingConfig;
 
 @DataJpaTest
 @ActiveProfiles("test")
 @Import(JpaAuditingConfig.class)
-class ChatMessageRepositoryTest {
+class ChatMessageEntityRepositoryTest {
 
 	@Autowired
 	ChatMessageRepository chatMessageRepository;
@@ -32,35 +32,35 @@ class ChatMessageRepositoryTest {
 	@DisplayName("채팅 메시지 최신순 조회 성공")
 	public void findChatMessages() throws InterruptedException {
 		// given
-		ChatMessage chatMessage1 = ChatMessage.builder()
+		ChatMessageEntity chatMessageEntity1 = ChatMessageEntity.builder()
 			.chatroomId(1L)
 			.senderId(1L)
 			.content("첫 번째 메시지")
 			.build();
-		chatMessageRepository.save(chatMessage1);
+		chatMessageRepository.save(chatMessageEntity1);
 
-		ChatMessage chatMessage2 = ChatMessage.builder()
+		ChatMessageEntity chatMessageEntity2 = ChatMessageEntity.builder()
 			.chatroomId(1L)
 			.senderId(1L)
 			.content("두 번째 메시지")
 			.build();
-		chatMessageRepository.save(chatMessage2);
+		chatMessageRepository.save(chatMessageEntity2);
 
-		ChatMessage chatMessage3 = ChatMessage.builder()
+		ChatMessageEntity chatMessageEntity3 = ChatMessageEntity.builder()
 			.chatroomId(1L)
 			.senderId(1L)
 			.content("세 번째 메시지")
 			.build();
-		chatMessageRepository.save(chatMessage3);
+		chatMessageRepository.save(chatMessageEntity3);
 
 		CustomPageRequest customPageRequest = new CustomPageRequest(1, PAGE_SIZE, Sort.Direction.DESC);
 
 		// when
-		Slice<ChatMessage> slice = chatMessageRepository.findAllByChatroomIdOrderByCreatedTimeDesc(
+		Slice<ChatMessageEntity> slice = chatMessageRepository.findAllByChatroomIdOrderByCreatedTimeDesc(
 			1L, customPageRequest.of(SORT_PROPERTY));
 
 		// then
-		List<ChatMessage> messages = slice.getContent();
+		List<ChatMessageEntity> messages = slice.getContent();
 		Assertions.assertThat(messages.size()).isEqualTo(3);
 		Assertions.assertThat(messages.get(0).getContent()).isEqualTo("세 번째 메시지");
 		Assertions.assertThat(messages.get(1).getContent()).isEqualTo("두 번째 메시지");

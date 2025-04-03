@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.chat.dao.repository.ChatMessageRepository;
-import com.cotato.kampus.domain.chat.dao.entity.ChatMessage;
+import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSlice;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 
@@ -24,14 +24,14 @@ public class ChatMessageFinder {
 
 	public ChatMessageSlice findAllByChatRoomId(int page, Long chatRoomId) {
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-		Slice<ChatMessage> chatMessages = chatMessageRepository.findAllByChatroomIdOrderByCreatedTimeDesc(
+		Slice<ChatMessageEntity> chatMessages = chatMessageRepository.findAllByChatroomIdOrderByCreatedTimeDesc(
 			chatRoomId,
 			customPageRequest.of(SORT_PROPERTY)
 		);
 		return ChatMessageSlice.from(chatMessages);
 	}
 
-	public ChatMessage findLatestMessage(Long chatroomId) {
+	public ChatMessageEntity findLatestMessage(Long chatroomId) {
 		return chatMessageRepository.findFirstByChatroomIdOrderByCreatedTimeDesc(chatroomId)
 			.orElse(null);
 	}
