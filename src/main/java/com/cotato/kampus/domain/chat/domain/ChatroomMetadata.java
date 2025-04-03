@@ -18,4 +18,18 @@ public class ChatroomMetadata {
 	private String lastMessageContent;
 	private LocalDateTime lastChatTime;
 	private Long unreadCount;
+
+	public void updateLastMessage(Long messageId, String content, LocalDateTime chatTime) {
+		this.lastMessageId = messageId;
+		this.lastMessageContent = content;
+		this.lastChatTime = chatTime;
+	}
+
+	public void incrementUnreadCount() {
+		this.unreadCount++;
+	}
+
+	public void resetUnreadCount() {
+		this.unreadCount = 0L;
+	}
 }
