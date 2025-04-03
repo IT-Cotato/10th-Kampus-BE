@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.chat.dao.entity;
 
+import com.cotato.kampus.domain.chat.domain.ChatMessage;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -38,5 +39,16 @@ public class ChatMessageEntity extends BaseTimeEntity {
 		this.chatroomId = chatroomId;
 		this.senderId = senderId;
 		this.content = content;
+	}
+
+	public ChatMessage toDomain() {
+		return ChatMessage.builder()
+			.id(id)
+			.chatroomId(chatroomId)
+			.senderId(senderId)
+			.content(content)
+			.createdTime(getCreatedTime())
+			.lastModifiedTime(getLastModifiedTime())
+			.build();
 	}
 }
