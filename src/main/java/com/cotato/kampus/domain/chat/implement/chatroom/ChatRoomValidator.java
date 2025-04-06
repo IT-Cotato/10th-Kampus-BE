@@ -39,6 +39,6 @@ public class ChatRoomValidator {
 	// 채팅방에 들어가있지 않은 유저가 조회하는 경우
 	public void validateUser(Long userId, Long chatroomId) {
 		ChatRoom chatRoom = chatRoomFinder.findByChatRoomId(chatroomId);
-		chatRoom.validateUser(userId, chatroomId);
+		chatRoom.validateUser(userId);
 	}
 }
