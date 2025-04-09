@@ -13,6 +13,4 @@ public interface BoardCategoryJpaRepository extends JpaRepository<BoardCategoryE
 
 	Optional<BoardCategoryEntity> findByBoardIdAndCategoryName(Long boardId, String categoryName);
 
-	List<BoardCategoryEntity> saveAll(List<BoardCategoryEntity> boardCategoryEntities);
-
 }

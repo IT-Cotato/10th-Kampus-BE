@@ -3,6 +3,7 @@ package com.cotato.kampus.domain.board.implement;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.board.domain.BoardFavorite;
 import com.cotato.kampus.domain.board.implement.port.BoardFavoriteRepository;
 import com.cotato.kampus.domain.board.dao.entity.BoardFavoriteEntity;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -28,11 +29,11 @@ public class BoardFavoriteAppender {
 		}
 
 		// 즐겨찾기 추가
-		BoardFavoriteEntity boardFavoriteEntity = BoardFavoriteEntity.builder()
+		BoardFavorite boardFavorite = BoardFavorite.builder()
 			.boardId(boardId)
 			.userId(apiUserResolver.getCurrentUserId())
 			.build();
 
-		return boardFavoriteRepository.save(boardFavoriteEntity).getBoardId();
+		return boardFavoriteRepository.save(boardFavorite).getBoardId();
 	}
 }

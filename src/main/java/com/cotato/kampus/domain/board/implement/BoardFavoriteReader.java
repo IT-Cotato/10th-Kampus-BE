@@ -1,13 +1,12 @@
 package com.cotato.kampus.domain.board.implement;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.board.domain.BoardFavorite;
 import com.cotato.kampus.domain.board.implement.port.BoardFavoriteRepository;
-import com.cotato.kampus.domain.board.dao.entity.BoardFavoriteEntity;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,7 @@ public class BoardFavoriteReader {
 	public List<Long> findFavoriteBoardIds(Long userId) {
 		return boardFavoriteRepository.findAllByUserId(userId)
 			.stream()
-			.map(BoardFavoriteEntity::getBoardId)
-			.collect(Collectors.toList());
+			.map(BoardFavorite::getBoardId)
+			.toList();
 	}
 }

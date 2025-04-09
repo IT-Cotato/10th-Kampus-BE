@@ -3,17 +3,20 @@ package com.cotato.kampus.domain.board.implement.port;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.cotato.kampus.domain.board.dao.entity.BoardFavoriteEntity;
+import com.cotato.kampus.domain.board.domain.BoardFavorite;
 
 @Repository
-public interface BoardFavoriteRepository{
+public interface BoardFavoriteRepository {
 
-	List<BoardFavoriteEntity> findAllByUserId(Long userId);
+	BoardFavorite save(BoardFavorite boardFavorite);
+
+	List<BoardFavorite> findAllByUserId(Long userId);
 
 	boolean existsByUserIdAndBoardId(Long userId, Long boardId);
 
-	Optional<BoardFavoriteEntity> findByUserIdAndBoardId(Long userId, Long boardId);
+	Optional<BoardFavorite> findByUserIdAndBoardId(Long userId, Long boardId);
+
+	void delete(BoardFavorite boardFavorite);
 }
