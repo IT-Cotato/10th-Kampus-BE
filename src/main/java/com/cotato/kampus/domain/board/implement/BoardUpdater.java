@@ -27,11 +27,11 @@ public class BoardUpdater {
 	public Long update(Long boardId, String boardName, String description, Boolean isCategoryRequired) {
 		Board board =  boardFinder.findBoard(boardId);
 
-		board.update(boardName, description, isCategoryRequired);
+		Board updatedBoard = board.withUpdateInfo(boardName, description, isCategoryRequired);
 
-		boardRepository.save(board);
+		boardRepository.save(updatedBoard);
 
-		return board.getId();
+		return updatedBoard.getId();
 	}
 
 	@Transactional
@@ -41,8 +41,8 @@ public class BoardUpdater {
 		if(board.getBoardStatus() == BoardStatus.INACTIVE)
 			throw new AppException(ErrorCode.BOARD_ALREADY_INACTIVE);
 
-		board.updateStatus(BoardStatus.INACTIVE);
-		boardRepository.save(board);
+		Board updatedBoard = board.withBoardStatus(BoardStatus.INACTIVE);
+		boardRepository.save(updatedBoard);
 	}
 
 	@Transactional
@@ -52,8 +52,8 @@ public class BoardUpdater {
 		if(board.getBoardStatus() == BoardStatus.ACTIVE)
 			throw new AppException(ErrorCode.BOARD_ALREADY_ACTIVE);
 
-		board.updateStatus(BoardStatus.ACTIVE);
-		boardRepository.save(board);
+		Board updatedBoard = board.withBoardStatus(BoardStatus.ACTIVE);
+		boardRepository.save(updatedBoard);
 	}
 
 	@Transactional
@@ -64,8 +64,8 @@ public class BoardUpdater {
 			throw new AppException(ErrorCode.BOARD_ALREADY_PENDING);
 		}
 
-		board.updateStatus(BoardStatus.PENDING_DELETION);
-		board.setDeletionScheduledAt(LocalDateTime.now().plusDays(30));
+		Board updatedBoard = board.withPendingInfo(BoardStatus.PENDING_DELETION, LocalDateTime.now().plusDays(30));
+		boardRepository.save(updatedBoard);
 	}
 
 	@Transactional

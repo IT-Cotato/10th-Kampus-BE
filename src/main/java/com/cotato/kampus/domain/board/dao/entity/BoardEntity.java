@@ -49,20 +49,6 @@ public class BoardEntity extends BaseTimeEntity {
 	@Column(name = "deletion_scheduled_at")
 	private LocalDateTime deletionScheduledAt;
 
-	public void update(String boardName, String description, Boolean usesCategories) {
-		this.boardName = boardName;
-		this.description = description;
-		this.usesCategories = usesCategories;
-	}
-
-	public void updateStatus(BoardStatus boardStatus) {
-		this.boardStatus = boardStatus;
-	}
-
-	public void setDeletionScheduledAt(LocalDateTime deletionScheduledAt) {
-		this.deletionScheduledAt = deletionScheduledAt;
-	}
-
 	public static BoardEntity fromDomain(Board board) {
 		BoardEntity result = new BoardEntity();
 		result.id = board.getId();
