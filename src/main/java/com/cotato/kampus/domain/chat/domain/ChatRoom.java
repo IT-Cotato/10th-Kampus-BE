@@ -7,15 +7,12 @@ import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ChatRoom {
 	private final Long id;
 	private final Long postId;
@@ -26,9 +23,25 @@ public class ChatRoom {
 	private final LocalDateTime createdTime;
 	private final LocalDateTime lastModifiedTime;
 
-	public static ChatRoom create(Long postId, Long initialSenderId, Long initialReceiverId) {
+	@Builder
+	// private 생성자
+	private ChatRoom(Long id, Long postId, Long initialSenderId, Long initialReceiverId,
+		Boolean isBlocked, InitiatedFrom initiatedFrom,
+		LocalDateTime createdTime, LocalDateTime lastModifiedTime) {
 		validateSender(initialSenderId, initialReceiverId);
+		this.id = id;
+		this.postId = postId;
+		this.initialSenderId = initialSenderId;
+		this.initialReceiverId = initialReceiverId;
+		this.isBlocked = isBlocked != null ? isBlocked : false;
+		this.initiatedFrom = initiatedFrom;
+		this.createdTime = createdTime;
+		this.lastModifiedTime = lastModifiedTime;
+	}
+
+	public static ChatRoom create(Long postId, Long initialSenderId, Long initialReceiverId) {
 		return ChatRoom.builder()
+			.id(null)
 			.postId(postId)
 			.initialSenderId(initialSenderId)
 			.initialReceiverId(initialReceiverId)
