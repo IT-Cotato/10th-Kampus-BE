@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.admin.dto.AdminBoardDetail;
-import com.cotato.kampus.domain.board.dao.repository.BoardFavoriteRepository;
+import com.cotato.kampus.domain.board.implement.port.BoardFavoriteRepository;
 import com.cotato.kampus.domain.board.domain.BoardDto;
 import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
 import com.cotato.kampus.domain.board.enums.BoardStatus;

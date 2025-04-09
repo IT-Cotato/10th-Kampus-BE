@@ -3,7 +3,7 @@ package com.cotato.kampus.domain.board.implement;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.dao.repository.BoardFavoriteRepository;
+import com.cotato.kampus.domain.board.implement.port.BoardFavoriteRepository;
 import com.cotato.kampus.domain.board.dao.entity.BoardFavoriteEntity;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.global.error.ErrorCode;

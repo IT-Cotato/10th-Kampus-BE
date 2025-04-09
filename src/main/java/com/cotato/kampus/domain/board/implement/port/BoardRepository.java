@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.dao.repository;
+package com.cotato.kampus.domain.board.implement.port;
 
 import java.time.LocalDateTime;
 import java.util.List;

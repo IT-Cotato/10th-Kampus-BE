@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.dao.repository.BoardCategoryRepository;
+import com.cotato.kampus.domain.board.implement.port.BoardCategoryRepository;
 import com.cotato.kampus.domain.board.dao.entity.BoardCategoryEntity;
 import com.cotato.kampus.domain.board.domain.BoardCategoryDto;
 import com.cotato.kampus.global.error.ErrorCode;
