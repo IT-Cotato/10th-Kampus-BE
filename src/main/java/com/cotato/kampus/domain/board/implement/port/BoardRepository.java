@@ -4,22 +4,31 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 
 public interface BoardRepository{
-	List<BoardEntity> findAllByUniversityIdIsNullAndBoardStatus(BoardStatus status);
 
-	Optional<BoardEntity> findByUniversityId(Long universityId);
+	Board save(Board board);
+
+	List<Board> findAll();
+
+	Optional<Board> findById(Long id);
+
+	void deleteAll(List<Board> boards);
+
+	List<Board> findAllByUniversityIdIsNullAndBoardStatus(BoardStatus status);
+
+	Optional<Board> findByUniversityId(Long universityId);
 
 	boolean existsByUniversityId(Long universityId);
 
 	boolean existsByBoardName(String boardName);
 
-	Optional<BoardEntity> findByBoardType(BoardType boardType);
+	Optional<Board> findByBoardType(BoardType boardType);
 
-	List<BoardEntity> findByDeletionScheduledAtBefore(LocalDateTime now);
+	List<Board> findByDeletionScheduledAtBefore(LocalDateTime now);
 
-	List<BoardEntity> findAllByBoardStatus(BoardStatus boardStatus);
+	List<Board> findAllByBoardStatus(BoardStatus boardStatus);
 }

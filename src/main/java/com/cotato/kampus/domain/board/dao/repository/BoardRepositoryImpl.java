@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.board.implement.port.BoardRepository;
@@ -20,13 +21,44 @@ public class BoardRepositoryImpl implements BoardRepository {
 	private final BoardJpaRepository boardJpaRepository;
 
 	@Override
-	public List<BoardEntity> findAllByUniversityIdIsNullAndBoardStatus(BoardStatus status){
-		return boardJpaRepository.findAllByUniversityIdIsNullAndBoardStatus(status);
+	public Board save(Board board) {
+		return boardJpaRepository.save(BoardEntity.fromDomain(board)).toDomain();
 	}
 
 	@Override
-	public Optional<BoardEntity> findByUniversityId(Long universityId){
-		return boardJpaRepository.findByUniversityId(universityId);
+	public List<Board> findAll() {
+		return boardJpaRepository.findAll()
+			.stream()
+			.map(BoardEntity::toDomain)
+			.toList();
+	}
+
+	@Override
+	public Optional<Board> findById(Long id){
+		return boardJpaRepository.findById(id)
+			.map(BoardEntity::toDomain);
+	}
+
+	@Override
+	public void deleteAll(List<Board> boards) {
+		List<BoardEntity> boardEntities = boards.stream()
+			.map(BoardEntity::fromDomain)
+			.toList();
+		boardJpaRepository.deleteAll(boardEntities);
+	}
+
+	@Override
+	public List<Board> findAllByUniversityIdIsNullAndBoardStatus(BoardStatus status){
+		return boardJpaRepository.findAllByUniversityIdIsNullAndBoardStatus(status)
+			.stream()
+			.map(BoardEntity::toDomain)
+			.toList();
+	}
+
+	@Override
+	public Optional<Board> findByUniversityId(Long universityId){
+		return boardJpaRepository.findByUniversityId(universityId)
+			.map(BoardEntity::toDomain);
 	}
 
 	@Override
@@ -40,17 +72,24 @@ public class BoardRepositoryImpl implements BoardRepository {
 	}
 
 	@Override
-	public Optional<BoardEntity> findByBoardType(BoardType boardType){
-		return boardJpaRepository.findByBoardType(boardType);
+	public Optional<Board> findByBoardType(BoardType boardType){
+		return boardJpaRepository.findByBoardType(boardType)
+			.map(BoardEntity::toDomain);
 	}
 
 	@Override
-	public List<BoardEntity> findByDeletionScheduledAtBefore(LocalDateTime now){
-		return boardJpaRepository.findByDeletionScheduledAtBefore(now);
+	public List<Board> findByDeletionScheduledAtBefore(LocalDateTime now){
+		return boardJpaRepository.findByDeletionScheduledAtBefore(now)
+			.stream()
+			.map(BoardEntity::toDomain)
+			.toList();
 	}
 
 	@Override
-	public List<BoardEntity> findAllByBoardStatus(BoardStatus boardStatus){
-		return boardJpaRepository.findAllByBoardStatus(boardStatus);
+	public List<Board> findAllByBoardStatus(BoardStatus boardStatus){
+		return boardJpaRepository.findAllByBoardStatus(boardStatus)
+			.stream()
+			.map(BoardEntity::toDomain)
+			.toList();
 	}
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.port.BoardRepository;
 import com.cotato.kampus.domain.board.domain.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
@@ -55,37 +55,37 @@ public class BoardFinder {
 			.toList();
 	}
 
-	public BoardEntity findBoard(Long boardId) {
-		BoardEntity boardEntity = boardRepository.findById(boardId)
+	public Board findBoard(Long boardId) {
+		Board board = boardRepository.findById(boardId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 
-		return boardEntity;
+		return board;
 	}
 
 	public BoardDto findBoardDto(Long boardId) {
-		BoardEntity boardEntity = boardRepository.findById(boardId)
+		Board board = boardRepository.findById(boardId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 
-		return BoardDto.from(boardEntity);
+		return BoardDto.from(board);
 	}
 
 	public BoardDto findUserUniversityBoard(Long userUniversityId) {
-		BoardEntity boardEntity = boardRepository.findByUniversityId(userUniversityId)
+		Board board = boardRepository.findByUniversityId(userUniversityId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
-		return BoardDto.from(boardEntity);
+		return BoardDto.from(board);
 	}
 
 	public Long findCardNewsBoardId() {
-		BoardEntity boardEntity = boardRepository.findByBoardType(BoardType.CARDNEWS)
+		Board board = boardRepository.findByBoardType(BoardType.CARDNEWS)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 
-		return boardEntity.getId();
+		return board.getId();
 	}
 
 	public List<Long> findExpiredBoardIds(LocalDateTime now) {
-		List<BoardEntity> expiredBoardEntities = boardRepository.findByDeletionScheduledAtBefore(now);
+		List<Board> expiredBoards = boardRepository.findByDeletionScheduledAtBefore(now);
 
-		return expiredBoardEntities.stream().map(BoardEntity::getId).toList();
+		return expiredBoards.stream().map(Board::getId).toList();
 	}
 
 }
