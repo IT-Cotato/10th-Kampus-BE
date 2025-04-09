@@ -11,8 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
-import com.cotato.kampus.domain.board.domain.BoardCategoryDto;
+import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardCategory;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.board.implement.BoardCategoryFinder;
@@ -40,7 +40,7 @@ class BoardEntityServiceTest {
 		Long boardId = 1L;
 
 		// 테스트용 게시판 생성
-		BoardEntity boardEntity = BoardEntity.builder()
+		Board board = Board.builder()
 			.boardName("테스트 게시판")
 			.description("테스트 목적의 게시판입니다.")
 			.universityId(null)
@@ -50,30 +50,30 @@ class BoardEntityServiceTest {
 			.build();
 
 		// 테스트용 카테고리 DTO 리스트 생성
-		List<BoardCategoryDto> expectedCategories = List.of(
-			new BoardCategoryDto(1L, "공지", boardId),
-			new BoardCategoryDto(2L, "질문", boardId),
-			new BoardCategoryDto(3L, "자유", boardId)
+		List<BoardCategory> expectedCategories = List.of(
+			new BoardCategory(1L, "공지", boardId),
+			new BoardCategory(2L, "질문", boardId),
+			new BoardCategory(3L, "자유", boardId)
 		);
 
 		// BoardFinder가 해당 게시판을 찾을 수 있도록 설정
-		when(boardFinder.findBoard(boardId)).thenReturn(boardEntity);
+		when(boardFinder.findBoard(boardId)).thenReturn(board);
 
 		// CategoryFinder가 카테고리 목록을 반환하도록 설정
-		when(boardCategoryFinder.findAllDtoByBoardId(boardId)).thenReturn(expectedCategories);
+		when(boardCategoryFinder.findAllByBoardId(boardId)).thenReturn(expectedCategories);
 
 		// when
-		List<BoardCategoryDto> result = boardService.findCategories(boardId);
+		List<BoardCategory> result = boardService.findCategories(boardId);
 
 		// then
 		assertEquals(3, result.size());
-		assertTrue(result.stream().anyMatch(cat -> "공지".equals(cat.categoryName())));
-		assertTrue(result.stream().anyMatch(cat -> "질문".equals(cat.categoryName())));
-		assertTrue(result.stream().anyMatch(cat -> "자유".equals(cat.categoryName())));
+		assertTrue(result.stream().anyMatch(cat -> "공지".equals(cat.getCategoryName())));
+		assertTrue(result.stream().anyMatch(cat -> "질문".equals(cat.getCategoryName())));
+		assertTrue(result.stream().anyMatch(cat -> "자유".equals(cat.getCategoryName())));
 
 		// 메서드 호출 검증
 		verify(boardFinder, times(1)).findBoard(boardId);
-		verify(boardCategoryFinder, times(1)).findAllDtoByBoardId(boardId);
+		verify(boardCategoryFinder, times(1)).findAllByBoardId(boardId);
 	}
 
 
@@ -96,7 +96,7 @@ class BoardEntityServiceTest {
 		assertEquals(ErrorCode.BOARD_NOT_FOUND, exception.getErrorCode());
 
 		// 예외가 발생하므로 categoryFinder는 호출되지 않아야 함
-		verify(boardCategoryFinder, never()).findAllDtoByBoardId(anyLong());
+		verify(boardCategoryFinder, never()).findAllByBoardId(anyLong());
 	}
 
 	@Test
@@ -106,7 +106,7 @@ class BoardEntityServiceTest {
 		Long boardId = 2L;
 
 		// 카테고리가 없는 게시판 생성
-		BoardEntity boardEntityWithoutCategories = BoardEntity.builder()
+		Board boardWithoutCategories = Board.builder()
 			.boardName("카테고리 없는 게시판")
 			.description("카테고리가 없는 테스트 게시판입니다.")
 			.universityId(null)
@@ -116,19 +116,19 @@ class BoardEntityServiceTest {
 			.build();
 
 		// BoardFinder가 해당 게시판을 찾을 수 있도록 설정
-		when(boardFinder.findBoard(boardId)).thenReturn(boardEntityWithoutCategories);
+		when(boardFinder.findBoard(boardId)).thenReturn(boardWithoutCategories);
 
 		// CategoryFinder가 빈 목록을 반환하도록 설정
-		when(boardCategoryFinder.findAllDtoByBoardId(boardId)).thenReturn(List.of());
+		when(boardCategoryFinder.findAllByBoardId(boardId)).thenReturn(List.of());
 
 		// when
-		List<BoardCategoryDto> result = boardService.findCategories(boardId);
+		List<BoardCategory> result = boardService.findCategories(boardId);
 
 		// then
 		assertTrue(result.isEmpty());
 
 		// 메서드 호출 검증
 		verify(boardFinder, times(1)).findBoard(boardId);
-		verify(boardCategoryFinder, times(1)).findAllDtoByBoardId(boardId);
+		verify(boardCategoryFinder, times(1)).findAllByBoardId(boardId);
 	}
 }

@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.board.domain.BoardCategory;
 import com.cotato.kampus.domain.board.implement.port.BoardCategoryRepository;
-import com.cotato.kampus.domain.board.dao.entity.BoardCategoryEntity;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +20,13 @@ public class BoardCategoryAppender {
 
 	@Transactional
 	public void appendCategories(Long boardId, List<String> categories) {
-		List<BoardCategoryEntity> boardCategoryEntityList = categories.stream()
-			.map(categoryName -> BoardCategoryEntity.builder()
+		List<BoardCategory> boardCategoryList = categories.stream()
+			.map(categoryName -> BoardCategory.builder()
 				.categoryName(categoryName)
 				.boardId(boardId)
 				.build())
 			.toList();
 
-		boardCategoryRepository.saveAll(boardCategoryEntityList);
+		boardCategoryRepository.saveAll(boardCategoryList);
 	}
 }

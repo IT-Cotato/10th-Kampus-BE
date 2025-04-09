@@ -88,7 +88,7 @@ public class PostFinder {
 		}
 
 		// 카테고리 ID 조회
-		Long categoryId = boardCategoryFinder.findDto(boardId, categoryName).categoryId();
+		Long categoryId = boardCategoryFinder.find(boardId, categoryName).getId();
 
 		// 페이지 요청 생성
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, sortType.getDirection());

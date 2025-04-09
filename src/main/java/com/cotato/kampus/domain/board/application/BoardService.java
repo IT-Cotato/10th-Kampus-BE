@@ -7,8 +7,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardCategory;
 import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
-import com.cotato.kampus.domain.board.domain.BoardCategoryDto;
 import com.cotato.kampus.domain.board.domain.HomeBoardAndPostPreview;
 import com.cotato.kampus.domain.board.implement.BoardCategoryFinder;
 import com.cotato.kampus.domain.board.implement.BoardDtoEnhancer;
@@ -126,11 +126,11 @@ public class BoardService {
 		return postDtoMapper.mapToHomeBoardAndPostPreviews(trendingPosts);
 	}
 
-	public List<BoardCategoryDto> findCategories(Long boardId) {
+	public List<BoardCategory> findCategories(Long boardId) {
 		// 존재하는 게시판인지 확인
 		boardFinder.findBoard(boardId);
 
 		// 카테고리 조회
-		return boardCategoryFinder.findAllDtoByBoardId(boardId);
+		return boardCategoryFinder.findAllByBoardId(boardId);
 	}
 }

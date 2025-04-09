@@ -5,9 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.board.domain.BoardCategory;
 import com.cotato.kampus.domain.board.implement.port.BoardCategoryRepository;
-import com.cotato.kampus.domain.board.dao.entity.BoardCategoryEntity;
-import com.cotato.kampus.domain.board.domain.BoardCategoryDto;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -21,19 +20,17 @@ public class BoardCategoryFinder {
 
 	private final BoardCategoryRepository boardCategoryRepository;
 
-	public List<BoardCategoryDto> findAllDtoByBoardId(Long boardId) {
+	public List<BoardCategory> findAllByBoardId(Long boardId) {
 
-		List<BoardCategoryEntity> categoryList = boardCategoryRepository.findAllByBoardId(boardId);
+		List<BoardCategory> categoryList = boardCategoryRepository.findAllByBoardId(boardId);
 
-		return categoryList.stream()
-			.map(BoardCategoryDto::from)
-			.toList();
+		return categoryList;
 	}
 
-	public BoardCategoryDto findDto(Long boardId, String categoryName) {
-		BoardCategoryEntity category = boardCategoryRepository.findByBoardIdAndCategoryName(boardId, categoryName)
+	public BoardCategory find(Long boardId, String categoryName) {
+		BoardCategory category = boardCategoryRepository.findByBoardIdAndCategoryName(boardId, categoryName)
 			.orElseThrow(() -> new AppException(ErrorCode.INVALID_CATEGORY));
 
-		return BoardCategoryDto.from(category);
+		return category;
 	}
 }

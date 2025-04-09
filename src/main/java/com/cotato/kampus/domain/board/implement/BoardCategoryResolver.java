@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.domain.BoardCategoryDto;
+import com.cotato.kampus.domain.board.domain.BoardCategory;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -22,12 +22,12 @@ public class BoardCategoryResolver {
 	private final BoardCategoryFinder boardCategoryFinder;
 
 	public List<Long> resolveCategoryIds(List<String> categoryNames, Long boardId) {
-		List<BoardCategoryDto> usableCategories = boardCategoryFinder.findAllDtoByBoardId(boardId);
+		List<BoardCategory> usableCategories = boardCategoryFinder.findAllByBoardId(boardId);
 
 		Map<String, Long> usableCategoryIds = usableCategories.stream()
 			.collect(Collectors.toMap(
-				BoardCategoryDto::categoryName,
-				BoardCategoryDto::categoryId
+				BoardCategory::getCategoryName,
+				BoardCategory::getId
 			));
 
 		// 유효하지 않은 카테고리 필터링
