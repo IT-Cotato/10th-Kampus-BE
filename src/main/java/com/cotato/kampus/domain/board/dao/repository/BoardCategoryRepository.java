@@ -6,12 +6,12 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.cotato.kampus.domain.board.dao.entity.BoardCategory;
+import com.cotato.kampus.domain.board.dao.entity.BoardCategoryEntity;
 
 @Repository
-public interface BoardCategoryRepository extends JpaRepository<BoardCategory, Long> {
+public interface BoardCategoryRepository extends JpaRepository<BoardCategoryEntity, Long> {
 
-	List<BoardCategory> findAllByBoardId(Long boardId);
+	List<BoardCategoryEntity> findAllByBoardId(Long boardId);
 
-	Optional<BoardCategory> findByBoardIdAndCategoryName(Long boardId, String categoryName);
+	Optional<BoardCategoryEntity> findByBoardIdAndCategoryName(Long boardId, String categoryName);
 }

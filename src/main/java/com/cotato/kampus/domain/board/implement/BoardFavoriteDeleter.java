@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.repository.BoardFavoriteRepository;
-import com.cotato.kampus.domain.board.dao.entity.BoardFavorite;
+import com.cotato.kampus.domain.board.dao.entity.BoardFavoriteEntity;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -22,9 +22,9 @@ public class BoardFavoriteDeleter {
 	@Transactional
 	public void deleteFavoriteBoard(Long boardId) {
 		// 즐겨찾기 여부 체크
-		BoardFavorite boardFavorite = boardFavoriteRepository.findByUserIdAndBoardId(apiUserResolver.getCurrentUserId(), boardId)
+		BoardFavoriteEntity boardFavoriteEntity = boardFavoriteRepository.findByUserIdAndBoardId(apiUserResolver.getCurrentUserId(), boardId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_FAVORITE_NOT_FOUND));
 
-		boardFavoriteRepository.delete(boardFavorite);
+		boardFavoriteRepository.delete(boardFavoriteEntity);
 	}
 }

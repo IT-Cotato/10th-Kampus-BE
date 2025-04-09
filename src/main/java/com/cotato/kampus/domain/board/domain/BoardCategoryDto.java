@@ -1,17 +1,17 @@
 package com.cotato.kampus.domain.board.domain;
 
-import com.cotato.kampus.domain.board.dao.entity.BoardCategory;
+import com.cotato.kampus.domain.board.dao.entity.BoardCategoryEntity;
 
 public record BoardCategoryDto(
 	Long categoryId,
 	String categoryName,
 	Long boardId
 ) {
-	public static BoardCategoryDto from(BoardCategory boardCategory) {
+	public static BoardCategoryDto from(BoardCategoryEntity boardCategoryEntity) {
 		return new BoardCategoryDto(
-			boardCategory.getId(),
-			boardCategory.getCategoryName(),
-			boardCategory.getBoardId()
+			boardCategoryEntity.getId(),
+			boardCategoryEntity.getCategoryName(),
+			boardCategoryEntity.getBoardId()
 		);
 	}
 }

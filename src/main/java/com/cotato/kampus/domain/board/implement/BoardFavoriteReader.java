@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.repository.BoardFavoriteRepository;
-import com.cotato.kampus.domain.board.dao.entity.BoardFavorite;
+import com.cotato.kampus.domain.board.dao.entity.BoardFavoriteEntity;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class BoardFavoriteReader {
 	public List<Long> findFavoriteBoardIds(Long userId) {
 		return boardFavoriteRepository.findAllByUserId(userId)
 			.stream()
-			.map(BoardFavorite::getBoardId)
+			.map(BoardFavoriteEntity::getBoardId)
 			.collect(Collectors.toList());
 	}
 }

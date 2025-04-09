@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.repository.BoardCategoryRepository;
-import com.cotato.kampus.domain.board.dao.entity.BoardCategory;
+import com.cotato.kampus.domain.board.dao.entity.BoardCategoryEntity;
 import com.cotato.kampus.domain.board.domain.BoardCategoryDto;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -23,7 +23,7 @@ public class BoardCategoryFinder {
 
 	public List<BoardCategoryDto> findAllDtoByBoardId(Long boardId) {
 
-		List<BoardCategory> categoryList = boardCategoryRepository.findAllByBoardId(boardId);
+		List<BoardCategoryEntity> categoryList = boardCategoryRepository.findAllByBoardId(boardId);
 
 		return categoryList.stream()
 			.map(BoardCategoryDto::from)
@@ -31,7 +31,7 @@ public class BoardCategoryFinder {
 	}
 
 	public BoardCategoryDto findDto(Long boardId, String categoryName) {
-		BoardCategory category = boardCategoryRepository.findByBoardIdAndCategoryName(boardId, categoryName)
+		BoardCategoryEntity category = boardCategoryRepository.findByBoardIdAndCategoryName(boardId, categoryName)
 			.orElseThrow(() -> new AppException(ErrorCode.INVALID_CATEGORY));
 
 		return BoardCategoryDto.from(category);

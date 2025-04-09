@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.repository.BoardFavoriteRepository;
-import com.cotato.kampus.domain.board.dao.entity.BoardFavorite;
+import com.cotato.kampus.domain.board.dao.entity.BoardFavoriteEntity;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -28,11 +28,11 @@ public class BoardFavoriteAppender {
 		}
 
 		// 즐겨찾기 추가
-		BoardFavorite boardFavorite = BoardFavorite.builder()
+		BoardFavoriteEntity boardFavoriteEntity = BoardFavoriteEntity.builder()
 			.boardId(boardId)
 			.userId(apiUserResolver.getCurrentUserId())
 			.build();
 
-		return boardFavoriteRepository.save(boardFavorite).getBoardId();
+		return boardFavoriteRepository.save(boardFavoriteEntity).getBoardId();
 	}
 }
