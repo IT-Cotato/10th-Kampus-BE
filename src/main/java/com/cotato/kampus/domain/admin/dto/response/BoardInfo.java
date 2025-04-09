@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.admin.dto.response;
 
-import com.cotato.kampus.domain.board.domain.BoardDto;
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 
@@ -14,16 +14,16 @@ public record BoardInfo(
 	BoardStatus boardStatus,
 	BoardType boardType
 ) {
-	public static BoardInfo from(BoardDto board, String universityName){
+	public static BoardInfo from(Board board, String universityName){
 		return new BoardInfo(
-			board.boardId(),
-			board.boardName(),
-			board.description(),
-			board.universityId() != null,
+			board.getId(),
+			board.getBoardName(),
+			board.getDescription(),
+			board.getUniversityId() != null,
 			universityName,
-			board.usesCategories(),
-			board.boardStatus(),
-			board.boardType()
+			board.getUsesCategories(),
+			board.getBoardStatus(),
+			board.getBoardType()
 		);
 	}
 }

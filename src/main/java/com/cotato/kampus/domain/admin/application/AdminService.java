@@ -16,13 +16,13 @@ import com.cotato.kampus.domain.admin.dto.VerificationPhotoDto;
 import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
 import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsPreview;
 import com.cotato.kampus.domain.admin.dto.response.BoardInfo;
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.BoardAppender;
 import com.cotato.kampus.domain.board.implement.BoardDtoEnhancer;
 import com.cotato.kampus.domain.board.implement.BoardFinder;
 import com.cotato.kampus.domain.board.implement.BoardUpdater;
 import com.cotato.kampus.domain.board.implement.BoardValidator;
 import com.cotato.kampus.domain.board.implement.BoardCategoryAppender;
-import com.cotato.kampus.domain.board.domain.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -165,10 +165,10 @@ public class AdminService {
 		userValidator.validateAdminAccess();
 
 		// 각 게시판의 게시글 수 매핑하여 반환
-		List<BoardDto> boardDtos = boardFinder.findAllBoards(boardStatus);
+		List<Board> boards = boardFinder.findAllBoards(boardStatus);
 
 		// 게시판 게시글 수, 삭제까지 남은 날짜 수 매핑
-		return boardDtoEnhancer.mapToAdminBoardDetail(boardDtos);
+		return boardDtoEnhancer.mapToAdminBoardDetail(boards);
 	}
 
 	public BoardInfo getBoard(Long boardId) {
@@ -176,15 +176,15 @@ public class AdminService {
 		userValidator.validateAdminAccess();
 
 		// 게시판 조회
-		BoardDto boardDto = boardFinder.findBoardDto(boardId);
+		Board board = boardFinder.findBoard(boardId);
 
 		// 대학 이름 조회
-		if (boardDto.boardType().equals(BoardType.UNIVERSITY)) {
-			String universityName = univFinder.findUniversityName(boardDto.universityId());
-			return BoardInfo.from(boardDto, universityName);
+		if (board.getBoardType().equals(BoardType.UNIVERSITY)) {
+			String universityName = univFinder.findUniversityName(board.getUniversityId());
+			return BoardInfo.from(board, universityName);
 		}
 
-		return BoardInfo.from(boardDto, null);
+		return BoardInfo.from(board, null);
 	}
 
 	public Slice<StudentVerification> getVerifications(int page) {

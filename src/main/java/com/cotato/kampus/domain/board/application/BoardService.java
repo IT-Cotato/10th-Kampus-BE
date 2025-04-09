@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.cotato.kampus.domain.board.domain.BoardDto;
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
 import com.cotato.kampus.domain.board.domain.BoardCategoryDto;
 import com.cotato.kampus.domain.board.domain.HomeBoardAndPostPreview;
@@ -50,7 +50,7 @@ public class BoardService {
 		List<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
 
 		// 공용 게시판 조회
-		List<BoardDto> boards = boardFinder.findPublicBoards();
+		List<Board> boards = boardFinder.findPublicBoards();
 
 		// 즐겨찾기 여부 매핑
 		List<BoardWithFavoriteStatus> boardWithFavorites = new ArrayList<>(
@@ -68,20 +68,20 @@ public class BoardService {
 
 		// 즐겨찾는 게시판 조회
 		List<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
-		List<BoardDto> boardDtos = boardFinder.findBoardDtos(favoriteBoardIds);
+		List<Board> boards = boardFinder.findBoardsWithIds(favoriteBoardIds);
 
-		return postDtoMapper.mapToHomeBoardAndPostPreviewsByBoardDtos(boardDtos);
+		return postDtoMapper.mapToHomeBoardAndPostPreviewsByBoardDtos(boards);
 	}
 
 	public Long addFavoriteBoard(Long boardId) {
 		// 게시판 조회
-		BoardDto boardDto = boardFinder.findBoardDto(boardId);
+		Board board = boardFinder.findBoard(boardId);
 
 		// 게시판 검증
-		boardValidator.validateBoardIsActive(boardDto);
+		boardValidator.validateBoardIsActive(board);
 
 		// 즐겨찾기 추가
-		return boardFavoriteAppender.appendFavoriteBoard(boardDto.boardId());
+		return boardFavoriteAppender.appendFavoriteBoard(board.getId());
 	}
 
 	public Long removeFavoriteBoard(Long boardId) {
@@ -89,7 +89,7 @@ public class BoardService {
 		return boardId;
 	}
 
-	public BoardDto getUniversityBoard() {
+	public Board getUniversityBoard() {
 		// 유저 조회
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
@@ -101,18 +101,18 @@ public class BoardService {
 	}
 
 	public Boolean requiresCategory(Long boardId) {
-		BoardDto boardDto = boardFinder.findBoardDto(boardId);
+		Board board = boardFinder.findBoard(boardId);
 
-		return boardDto.usesCategories();
+		return board.getUsesCategories();
 	}
 
 	public BoardWithFavoriteStatus getBoard(Long boardId) {
 		// 유저 조회
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
-		BoardDto boardDto = boardFinder.findBoardDto(boardId);
+		Board board = boardFinder.findBoard(boardId);
 
-		return boardDtoEnhancer.mapToBoardWithFavoriteStatus(boardDto, userDto);
+		return boardDtoEnhancer.mapToBoardWithFavoriteStatus(board, userDto);
 	}
 
 	public List<HomeBoardAndPostPreview> getTrendingPreview() {

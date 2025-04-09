@@ -6,11 +6,11 @@ public record BoardWithFavoriteStatus(
 	String description,
 	Boolean isFavorite
 ) {
-	public static BoardWithFavoriteStatus from(BoardDto boardDto, Boolean isFavorite) {
+	public static BoardWithFavoriteStatus from(Board board, Boolean isFavorite) {
 		return new BoardWithFavoriteStatus(
-			boardDto.boardId(),
-			boardDto.boardName(),
-			boardDto.description(),
+			board.getId(),
+			board.getBoardName(),
+			board.getDescription(),
 			isFavorite
 		);
 	}

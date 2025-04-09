@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.admin.dto;
 
-import com.cotato.kampus.domain.board.domain.BoardDto;
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 
 public record AdminBoardDetail(
@@ -14,14 +14,14 @@ public record AdminBoardDetail(
 	Long deletionCountdown
 
 ) {
-	public static AdminBoardDetail of(BoardDto boardDto, Long postCount, Long deletionCountdown){
+	public static AdminBoardDetail of(Board board, Long postCount, Long deletionCountdown){
 		return new AdminBoardDetail(
-			boardDto.boardId(),
-			boardDto.boardName(),
-			boardDto.universityId(),
-			boardDto.description(),
-			boardDto.usesCategories(),
-			boardDto.boardStatus(),
+			board.getId(),
+			board.getBoardName(),
+			board.getUniversityId(),
+			board.getDescription(),
+			board.getUsesCategories(),
+			board.getBoardStatus(),
 			postCount,
 			deletionCountdown
 		);

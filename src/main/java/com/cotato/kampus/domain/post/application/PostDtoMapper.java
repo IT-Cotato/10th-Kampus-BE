@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.BoardFinder;
-import com.cotato.kampus.domain.board.domain.BoardDto;
 import com.cotato.kampus.domain.board.domain.HomeBoardAndPostPreview;
 import com.cotato.kampus.domain.post.dao.PostPhotoRepository;
 import com.cotato.kampus.domain.post.dao.PostRepository;
@@ -30,42 +30,42 @@ public class PostDtoMapper {
 	private final PostRepository postRepository;
 
 	public List<HomeBoardAndPostPreview> mapToHomeBoardAndPostPreviews(List<PostDto> trendingPosts) {
-		// boardId -> BoardDto 매핑
-		Map<Long, BoardDto> boardDtoMap = trendingPosts.stream()
+		// boardId -> Board 매핑
+		Map<Long, Board> boardMap = trendingPosts.stream()
 			.map(PostDto::boardId)
 			.distinct()
 			.collect(Collectors.toMap(
 				boardId -> boardId,
-				boardFinder::findBoardDto
+				boardFinder::findBoard
 			));
 
-		// PostDto와 BoardDto를 HomeBoardAndPostPreview로 매핑
+		// PostDto와 Board를 HomeBoardAndPostPreview로 매핑
 		return trendingPosts.stream()
 			.map(postDto -> HomeBoardAndPostPreview.from(
-				boardDtoMap.get(postDto.boardId()), postDto)
+				boardMap.get(postDto.boardId()), postDto)
 			).toList();
 	}
 
-	public List<HomeBoardAndPostPreview> mapToHomeBoardAndPostPreviewsByBoardDtos(List<BoardDto> boardDtos) {
+	public List<HomeBoardAndPostPreview> mapToHomeBoardAndPostPreviewsByBoardDtos(List<Board> boards) {
 		// 각 boardId에 대해 가장 최근의 PostDto 조회
-		return boardDtos.stream()
-			.map(boardDto -> {
-				PostDto latestPost = postRepository.findTopByBoardIdOrderByCreatedTimeDesc(boardDto.boardId())
+		return boards.stream()
+			.map(board -> {
+				PostDto latestPost = postRepository.findTopByBoardIdOrderByCreatedTimeDesc(board.getId())
 					.map(PostDto::from)
 					.orElse(null);
-				return HomeBoardAndPostPreview.from(boardDto, latestPost);
+				return HomeBoardAndPostPreview.from(board, latestPost);
 			})
 			.toList();
 	}
 
 	public List<TrendingPostPreview> toTrendingPostPreviews(List<Post> posts) {
-		// 게시판 ID -> BoardDto 매핑
+		// 게시판 ID -> Board 매핑
 		Map<Long, String> boardNameMap = posts.stream()
 			.map(Post::getBoardId)
 			.distinct()
 			.collect(Collectors.toMap(
 				boardId -> boardId,
-				boardId -> boardFinder.findBoardDto(boardId).boardName()
+				boardId -> boardFinder.findBoard(boardId).getBoardName()
 			));
 
 		// Post -> TrendingPostPreview 변환

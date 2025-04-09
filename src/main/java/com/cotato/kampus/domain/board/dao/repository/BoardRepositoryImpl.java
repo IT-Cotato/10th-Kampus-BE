@@ -40,6 +40,13 @@ public class BoardRepositoryImpl implements BoardRepository {
 	}
 
 	@Override
+	public List<Board> findAllByIdIn(List<Long> ids){
+		return boardJpaRepository.findAllByIdIn(ids).stream()
+			.map(BoardEntity::toDomain)
+			.toList();
+	}
+
+	@Override
 	public void deleteAll(List<Board> boards) {
 		List<BoardEntity> boardEntities = boards.stream()
 			.map(BoardEntity::fromDomain)

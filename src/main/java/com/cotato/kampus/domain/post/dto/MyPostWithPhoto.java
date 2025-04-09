@@ -2,7 +2,7 @@ package com.cotato.kampus.domain.post.dto;
 
 import java.time.LocalDateTime;
 
-import com.cotato.kampus.domain.board.domain.BoardDto;
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -19,11 +19,11 @@ public record MyPostWithPhoto(
 	LocalDateTime createdTime,
 	String thumbnailUrl) {
 
-	public static MyPostWithPhoto from(Post post, BoardDto boardDto, PostPhoto postPhoto) {
+	public static MyPostWithPhoto from(Post post, Board board, PostPhoto postPhoto) {
 		return new MyPostWithPhoto(
 			post.getId(),
-			boardDto.boardId(),
-			boardDto.boardName(),
+			board.getId(),
+			board.getBoardName(),
 			post.getTitle(),
 			post.getContent(),
 			post.getLikes(),

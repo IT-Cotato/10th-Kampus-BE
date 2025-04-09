@@ -8,10 +8,10 @@ public record HomeBoardAndPostPreview(
 	Long id,
 	String postTitle
 ) {
-	public static HomeBoardAndPostPreview from(BoardDto boardDto, PostDto postDto) {
+	public static HomeBoardAndPostPreview from(Board board, PostDto postDto) {
 		return new HomeBoardAndPostPreview(
-			boardDto.boardId(),
-			boardDto.boardName(),
+			board.getId(),
+			board.getBoardName(),
 			postDto != null ? postDto.id() : null,
 			postDto != null ? postDto.title() : null
 		);

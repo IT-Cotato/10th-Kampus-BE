@@ -3,8 +3,8 @@ package com.cotato.kampus.domain.post.application;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.BoardFinder;
-import com.cotato.kampus.domain.board.domain.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.post.dao.PostScrapRepository;
 import com.cotato.kampus.domain.post.domain.Post;
@@ -49,9 +49,9 @@ public class PostValidator {
 
 	public void validateDeleteCardNews(Long postId) {
 		PostDto postDto = postFinder.findPost(postId);
-		BoardDto boardDto = boardFinder.findBoardDto(postDto.boardId());
+		Board board = boardFinder.findBoard(postDto.boardId());
 
-		if (boardDto.boardType() != BoardType.CARDNEWS) {
+		if (board.getBoardType() != BoardType.CARDNEWS) {
 			throw new AppException(ErrorCode.CARD_NEWS_NOT_ALLOWED);
 		}
 	}

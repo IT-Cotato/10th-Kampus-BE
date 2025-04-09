@@ -9,9 +9,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.BoardFinder;
 import com.cotato.kampus.domain.board.implement.BoardCategoryFinder;
-import com.cotato.kampus.domain.board.domain.BoardDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.dao.PostCategoryRepository;
 import com.cotato.kampus.domain.post.dao.PostDraftPhotoRepository;
@@ -244,12 +244,12 @@ public class PostFinder {
 		Slice<Post> posts = postRepository.findAllByUserId(userId, customPageRequest.of(SORT_PROPERTY));
 
 		return posts.map(post -> {
-			BoardDto boardDto = boardFinder.findBoardDto(post.getBoardId());
+			Board board = boardFinder.findBoard(post.getBoardId());
 
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())
 				.orElse(null);
 
-			return MyPostWithPhoto.from(post, boardDto, postPhoto);
+			return MyPostWithPhoto.from(post, board, postPhoto);
 		});
 	}
 
@@ -264,12 +264,12 @@ public class PostFinder {
 		// 스크랩된 포스트에 해당하는 Post를 찾아서 반환
 		return postScraps.map(postScrap -> {
 			Post post = getPost(postScrap.getPostId());
-			BoardDto boardDto = boardFinder.findBoardDto(post.getBoardId());
+			Board board = boardFinder.findBoard(post.getBoardId());
 
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())
 				.orElse(null);
 
-			return MyPostWithPhoto.from(post, boardDto, postPhoto);
+			return MyPostWithPhoto.from(post, board, postPhoto);
 		});
 	}
 
@@ -353,7 +353,7 @@ public class PostFinder {
 		return posts.map(post -> {
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
 				.orElse(null);
-			BoardDto board = boardFinder.findBoardDto(post.getBoardId());
+			Board board = boardFinder.findBoard(post.getBoardId());
 			return PostPreview.from(post, board, postPhoto);
 		});
 	}

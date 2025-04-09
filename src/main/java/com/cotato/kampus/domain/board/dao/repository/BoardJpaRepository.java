@@ -16,6 +16,8 @@ public interface BoardJpaRepository extends JpaRepository<BoardEntity, Long> {
 
 	Optional<BoardEntity> findByUniversityId(Long universityId);
 
+	List<BoardEntity> findAllByIdIn(List<Long> ids);
+
 	boolean existsByUniversityId(Long universityId);
 
 	boolean existsByBoardName(String boardName);

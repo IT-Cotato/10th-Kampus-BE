@@ -6,10 +6,10 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.BoardFinder;
 import com.cotato.kampus.domain.board.implement.BoardValidator;
 import com.cotato.kampus.domain.board.implement.BoardCategoryResolver;
-import com.cotato.kampus.domain.board.domain.BoardDto;
 import com.cotato.kampus.domain.comment.application.CommentDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
@@ -85,15 +85,15 @@ public class PostService {
 		List<String> categories
 	) throws ImageException {
 		// 게시판, 유저 조회
-		BoardDto boardDto = boardFinder.findBoardDto(boardId);
+		Board board = boardFinder.findBoard(boardId);
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
 		// 게시판 검증
-		boardValidator.validateBoardIsActive(boardDto);
-		boardValidator.validatePostCreationAccess(userDto, boardDto);
+		boardValidator.validateBoardIsActive(board);
+		boardValidator.validatePostCreationAccess(userDto, board);
 
 		// 게시글 추가
-		Long postId = postAppender.append(userDto.id(), boardDto.boardId(), title, content);
+		Long postId = postAppender.append(userDto.id(), board.getId(), title, content);
 
 		// 유효한 이미지 필터링 & S3 업로드
 		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
@@ -145,7 +145,7 @@ public class PostService {
 	public Slice<PostWithPhotos> findPosts(Long boardId, int page, PostSortType sortType, String categoryName) {
 		// 현재 사용자 정보 조회
 		UserDto user = apiUserResolver.getCurrentUserDto();
-		BoardDto board = boardFinder.findBoardDto(boardId);
+		Board board = boardFinder.findBoard(boardId);
 
 		// 게시판 접근 권한 검증
 		boardValidator.validateBoardIsActive(board);
@@ -211,11 +211,11 @@ public class PostService {
 		if (!categories.isEmpty()) {
 			// 게시판이 카테고리 쓰는지 확인
 			PostDto postDto = postFinder.findPost(postId);
-			BoardDto boardDto = boardFinder.findBoardDto(postDto.boardId());
-			boardValidator.isCategoryEnabled(boardDto);
+			Board board = boardFinder.findBoard(postDto.boardId());
+			boardValidator.isCategoryEnabled(board);
 
 			// 카테고리 조회, 검증
-			List<Long> categoryIds = boardCategoryResolver.resolveCategoryIds(categories, boardDto.boardId());
+			List<Long> categoryIds = boardCategoryResolver.resolveCategoryIds(categories, board.getId());
 
 			// PostCategory 추가
 			postCategoryAppender.appendAll(postId, categoryIds);
@@ -249,12 +249,12 @@ public class PostService {
 		List<MultipartFile> images
 	) throws ImageException {
 		// 게시판, 유저 조회
-		BoardDto boardDto = boardFinder.findBoardDto(boardId);
+		Board board = boardFinder.findBoard(boardId);
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
 		// 게시판 검증
-		boardValidator.validateBoardIsActive(boardDto);
-		boardValidator.validatePostCreationAccess(userDto, boardDto);
+		boardValidator.validateBoardIsActive(board);
+		boardValidator.validatePostCreationAccess(userDto, board);
 
 		// PostDraft 추가
 		Long postDraftId = postAppender.draft(boardId, title, content);

@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.port.BoardRepository;
-import com.cotato.kampus.domain.board.domain.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -24,35 +23,29 @@ public class BoardFinder {
 
 	private final BoardRepository boardRepository;
 
-	public List<BoardDto> findAllBoards(BoardStatus boardStatus) {
-		List<BoardDto> boards;
+	public List<Board> findAllBoards(BoardStatus boardStatus) {
+		List<Board> boards;
 
 		// 전체 게시판 조회 (카드뉴스 제외)
 		if (boardStatus == null) {
 			boards = boardRepository.findAll().stream()
 				.filter(board -> !board.getBoardType().equals(BoardType.CARDNEWS))
-				.map(BoardDto::from)
 				.toList();
 		} else {
 			boards = boardRepository.findAllByBoardStatus(boardStatus).stream()
 				.filter(board -> !board.getBoardType().equals(BoardType.CARDNEWS))
-				.map(BoardDto::from)
 				.toList();
 		}
 
 		return boards;
 	}
 
-	public List<BoardDto> findBoardDtos(List<Long> boardIds) {
-		return boardIds.stream()
-			.map(this::findBoardDto)
-			.toList();
+	public List<Board> findBoardsWithIds(List<Long> boardIds) {
+		return boardRepository.findAllByIdIn(boardIds);
 	}
 
-	public List<BoardDto> findPublicBoards() {
-		return boardRepository.findAllByUniversityIdIsNullAndBoardStatus(BoardStatus.ACTIVE).stream()
-			.map(BoardDto::from)
-			.toList();
+	public List<Board> findPublicBoards() {
+		return boardRepository.findAllByUniversityIdIsNullAndBoardStatus(BoardStatus.ACTIVE);
 	}
 
 	public Board findBoard(Long boardId) {
@@ -62,17 +55,10 @@ public class BoardFinder {
 		return board;
 	}
 
-	public BoardDto findBoardDto(Long boardId) {
-		Board board = boardRepository.findById(boardId)
-			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
-
-		return BoardDto.from(board);
-	}
-
-	public BoardDto findUserUniversityBoard(Long userUniversityId) {
+	public Board findUserUniversityBoard(Long userUniversityId) {
 		Board board = boardRepository.findByUniversityId(userUniversityId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
-		return BoardDto.from(board);
+		return board;
 	}
 
 	public Long findCardNewsBoardId() {

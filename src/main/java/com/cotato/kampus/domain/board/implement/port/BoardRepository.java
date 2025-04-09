@@ -16,6 +16,8 @@ public interface BoardRepository{
 
 	Optional<Board> findById(Long id);
 
+	List<Board> findAllByIdIn(List<Long> boardIds);
+
 	void deleteAll(List<Board> boards);
 
 	List<Board> findAllByUniversityIdIsNullAndBoardStatus(BoardStatus status);
