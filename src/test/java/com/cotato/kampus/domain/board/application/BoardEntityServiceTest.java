@@ -11,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.cotato.kampus.domain.board.dao.entity.Board;
+import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
 import com.cotato.kampus.domain.board.domain.BoardCategoryDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
@@ -22,7 +22,7 @@ import com.cotato.kampus.global.error.exception.AppException;
 
 
 @ExtendWith(MockitoExtension.class)
-class BoardServiceTest {
+class BoardEntityServiceTest {
 
 	@Mock
 	private BoardFinder boardFinder;
@@ -40,7 +40,7 @@ class BoardServiceTest {
 		Long boardId = 1L;
 
 		// 테스트용 게시판 생성
-		Board board = Board.builder()
+		BoardEntity boardEntity = BoardEntity.builder()
 			.boardName("테스트 게시판")
 			.description("테스트 목적의 게시판입니다.")
 			.universityId(null)
@@ -57,7 +57,7 @@ class BoardServiceTest {
 		);
 
 		// BoardFinder가 해당 게시판을 찾을 수 있도록 설정
-		when(boardFinder.findBoard(boardId)).thenReturn(board);
+		when(boardFinder.findBoard(boardId)).thenReturn(boardEntity);
 
 		// CategoryFinder가 카테고리 목록을 반환하도록 설정
 		when(boardCategoryFinder.findAllDtoByBoardId(boardId)).thenReturn(expectedCategories);
@@ -106,7 +106,7 @@ class BoardServiceTest {
 		Long boardId = 2L;
 
 		// 카테고리가 없는 게시판 생성
-		Board boardWithoutCategories = Board.builder()
+		BoardEntity boardEntityWithoutCategories = BoardEntity.builder()
 			.boardName("카테고리 없는 게시판")
 			.description("카테고리가 없는 테스트 게시판입니다.")
 			.universityId(null)
@@ -116,7 +116,7 @@ class BoardServiceTest {
 			.build();
 
 		// BoardFinder가 해당 게시판을 찾을 수 있도록 설정
-		when(boardFinder.findBoard(boardId)).thenReturn(boardWithoutCategories);
+		when(boardFinder.findBoard(boardId)).thenReturn(boardEntityWithoutCategories);
 
 		// CategoryFinder가 빈 목록을 반환하도록 설정
 		when(boardCategoryFinder.findAllDtoByBoardId(boardId)).thenReturn(List.of());

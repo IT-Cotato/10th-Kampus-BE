@@ -19,10 +19,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-// @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Board extends BaseTimeEntity {
+public class BoardEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,7 +52,7 @@ public class Board extends BaseTimeEntity {
 	private LocalDateTime deletionScheduledAt;
 
 	@Builder
-	public Board(String boardName, String description, Long universityId, Boolean usesCategories,
+	public BoardEntity(String boardName, String description, Long universityId, Boolean usesCategories,
 		BoardStatus boardStatus, BoardType boardType) {
 		this.boardName = boardName;
 		this.description = description;

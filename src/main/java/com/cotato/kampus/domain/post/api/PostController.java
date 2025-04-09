@@ -50,7 +50,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "게시글(Post) API", description = "게시글 관련 API(게시판 API는 Board)")
+@Tag(name = "게시글(Post) API", description = "게시글 관련 API(게시판 API는 BoardEntity)")
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Validated

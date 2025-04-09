@@ -7,23 +7,23 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.cotato.kampus.domain.board.dao.entity.Board;
+import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 
 @Repository
-public interface BoardRepository extends JpaRepository<Board, Long> {
-	List<Board> findAllByUniversityIdIsNullAndBoardStatus(BoardStatus status);
+public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
+	List<BoardEntity> findAllByUniversityIdIsNullAndBoardStatus(BoardStatus status);
 
-	Optional<Board> findByUniversityId(Long universityId);
+	Optional<BoardEntity> findByUniversityId(Long universityId);
 
 	boolean existsByUniversityId(Long universityId);
 
 	boolean existsByBoardName(String boardName);
 
-	Optional<Board> findByBoardType(BoardType boardType);
+	Optional<BoardEntity> findByBoardType(BoardType boardType);
 
-	List<Board> findByDeletionScheduledAtBefore(LocalDateTime now);
+	List<BoardEntity> findByDeletionScheduledAtBefore(LocalDateTime now);
 
-	List<Board> findAllByBoardStatus(BoardStatus boardStatus);
+	List<BoardEntity> findAllByBoardStatus(BoardStatus boardStatus);
 }

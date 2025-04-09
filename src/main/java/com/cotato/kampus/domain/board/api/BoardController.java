@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "게시판(Board) API", description = "게시판 관련 API(게시글 API는 Post)")
+@Tag(name = "게시판(BoardEntity) API", description = "게시판 관련 API(게시글 API는 Post)")
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @RequestMapping("/v1/api/boards")

@@ -2,7 +2,7 @@ package com.cotato.kampus.domain.board.domain;
 
 import java.time.LocalDateTime;
 
-import com.cotato.kampus.domain.board.dao.entity.Board;
+import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 
@@ -16,16 +16,16 @@ public record BoardDto(
 	BoardType boardType,
 	LocalDateTime deletionScheduledAt
 ) {
-	public static BoardDto from(Board board) {
+	public static BoardDto from(BoardEntity boardEntity) {
 		return new BoardDto(
-			board.getId(),
-			board.getBoardName(),
-			board.getDescription(),
-			board.getUniversityId(),
-			board.getUsesCategories(),
-			board.getBoardStatus(),
-			board.getBoardType(),
-			board.getDeletionScheduledAt()
+			boardEntity.getId(),
+			boardEntity.getBoardName(),
+			boardEntity.getDescription(),
+			boardEntity.getUniversityId(),
+			boardEntity.getUsesCategories(),
+			boardEntity.getBoardStatus(),
+			boardEntity.getBoardType(),
+			boardEntity.getDeletionScheduledAt()
 		);
 	}
 }

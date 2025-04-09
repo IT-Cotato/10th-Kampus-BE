@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.dao.repository.BoardRepository;
-import com.cotato.kampus.domain.board.dao.entity.Board;
+import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -25,54 +25,54 @@ public class BoardUpdater {
 
 	@Transactional
 	public Long update(Long boardId, String boardName, String description, Boolean isCategoryRequired) {
-		Board board =  boardFinder.findBoard(boardId);
+		BoardEntity boardEntity =  boardFinder.findBoard(boardId);
 
-		board.update(boardName, description, isCategoryRequired);
+		boardEntity.update(boardName, description, isCategoryRequired);
 
-		boardRepository.save(board);
+		boardRepository.save(boardEntity);
 
-		return board.getId();
+		return boardEntity.getId();
 	}
 
 	@Transactional
 	public void inactiveBoard(Long boardId) {
-		Board board =  boardFinder.findBoard(boardId);
+		BoardEntity boardEntity =  boardFinder.findBoard(boardId);
 
-		if(board.getBoardStatus() == BoardStatus.INACTIVE)
+		if(boardEntity.getBoardStatus() == BoardStatus.INACTIVE)
 			throw new AppException(ErrorCode.BOARD_ALREADY_INACTIVE);
 
-		board.updateStatus(BoardStatus.INACTIVE);
-		boardRepository.save(board);
+		boardEntity.updateStatus(BoardStatus.INACTIVE);
+		boardRepository.save(boardEntity);
 	}
 
 	@Transactional
 	public void activeBoard(Long boardId) {
-		Board board =  boardFinder.findBoard(boardId);
+		BoardEntity boardEntity =  boardFinder.findBoard(boardId);
 
-		if(board.getBoardStatus() == BoardStatus.ACTIVE)
+		if(boardEntity.getBoardStatus() == BoardStatus.ACTIVE)
 			throw new AppException(ErrorCode.BOARD_ALREADY_ACTIVE);
 
-		board.updateStatus(BoardStatus.ACTIVE);
-		boardRepository.save(board);
+		boardEntity.updateStatus(BoardStatus.ACTIVE);
+		boardRepository.save(boardEntity);
 	}
 
 	@Transactional
 	public void pendingBoard(Long boardId){
-		Board board =  boardFinder.findBoard(boardId);
+		BoardEntity boardEntity =  boardFinder.findBoard(boardId);
 
-		if(board.getBoardStatus() == BoardStatus.PENDING_DELETION){
+		if(boardEntity.getBoardStatus() == BoardStatus.PENDING_DELETION){
 			throw new AppException(ErrorCode.BOARD_ALREADY_PENDING);
 		}
 
-		board.updateStatus(BoardStatus.PENDING_DELETION);
-		board.setDeletionScheduledAt(LocalDateTime.now().plusDays(30));
+		boardEntity.updateStatus(BoardStatus.PENDING_DELETION);
+		boardEntity.setDeletionScheduledAt(LocalDateTime.now().plusDays(30));
 	}
 
 	@Transactional
 	public void deleteExpiredBoards(){
 		LocalDateTime now = LocalDateTime.now();
-		List<Board> expiredBoards = boardRepository.findByDeletionScheduledAtBefore(now);
+		List<BoardEntity> expiredBoardEntities = boardRepository.findByDeletionScheduledAtBefore(now);
 
-		boardRepository.deleteAll(expiredBoards);
+		boardRepository.deleteAll(expiredBoardEntities);
 	}
 }
