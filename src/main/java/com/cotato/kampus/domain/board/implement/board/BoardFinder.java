@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.implement;
+package com.cotato.kampus.domain.board.implement.board;
 
 import java.time.LocalDateTime;
 import java.util.List;

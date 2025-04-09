@@ -12,9 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.cotato.kampus.domain.board.implement.BoardAppender;
-import com.cotato.kampus.domain.board.implement.BoardValidator;
-import com.cotato.kampus.domain.board.implement.BoardCategoryAppender;
+import com.cotato.kampus.domain.board.implement.board.BoardAppender;
+import com.cotato.kampus.domain.board.implement.board.BoardValidator;
+import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryAppender;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
 

@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.domain.BoardCategory;
-import com.cotato.kampus.domain.board.implement.BoardCategoryFinder;
-import com.cotato.kampus.domain.board.implement.BoardFinder;
+import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryFinder;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 
 import lombok.RequiredArgsConstructor;
 

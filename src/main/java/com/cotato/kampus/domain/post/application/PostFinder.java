@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.implement.BoardFinder;
-import com.cotato.kampus.domain.board.implement.BoardCategoryFinder;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
+import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.dao.PostCategoryRepository;
 import com.cotato.kampus.domain.post.dao.PostDraftPhotoRepository;

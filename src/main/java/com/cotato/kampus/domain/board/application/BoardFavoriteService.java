@@ -3,10 +3,10 @@ package com.cotato.kampus.domain.board.application;
 import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.implement.BoardFavoriteAppender;
-import com.cotato.kampus.domain.board.implement.BoardFavoriteDeleter;
-import com.cotato.kampus.domain.board.implement.BoardFinder;
-import com.cotato.kampus.domain.board.implement.BoardValidator;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteAppender;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteDeleter;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
+import com.cotato.kampus.domain.board.implement.board.BoardValidator;
 
 import lombok.RequiredArgsConstructor;
 

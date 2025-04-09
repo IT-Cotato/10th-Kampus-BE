@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.implement;
+package com.cotato.kampus.domain.board.implement.boardFavorite;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.implement;
+package com.cotato.kampus.domain.board.implement.board;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

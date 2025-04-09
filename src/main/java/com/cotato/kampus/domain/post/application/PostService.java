@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.implement.BoardFinder;
-import com.cotato.kampus.domain.board.implement.BoardValidator;
-import com.cotato.kampus.domain.board.implement.BoardCategoryResolver;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
+import com.cotato.kampus.domain.board.implement.board.BoardValidator;
+import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryResolver;
 import com.cotato.kampus.domain.comment.application.CommentDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;

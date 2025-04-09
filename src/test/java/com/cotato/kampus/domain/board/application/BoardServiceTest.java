@@ -15,8 +15,8 @@ import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.domain.BoardCategory;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
-import com.cotato.kampus.domain.board.implement.BoardCategoryFinder;
-import com.cotato.kampus.domain.board.implement.BoardFinder;
+import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryFinder;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 

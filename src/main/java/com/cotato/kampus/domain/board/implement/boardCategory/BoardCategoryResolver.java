@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.implement;
+package com.cotato.kampus.domain.board.implement.boardCategory;
 
 import java.util.List;
 import java.util.Map;

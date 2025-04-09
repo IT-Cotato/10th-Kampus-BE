@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.implement.BoardFinder;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.post.dao.PostScrapRepository;
 import com.cotato.kampus.domain.post.domain.Post;

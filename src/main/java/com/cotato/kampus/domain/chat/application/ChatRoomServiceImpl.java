@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.implement.BoardFinder;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.chat.api.port.ChatRoomService;
 import com.cotato.kampus.domain.chat.domain.ChatRoom;
 import com.cotato.kampus.domain.chat.domain.ChatRoomDetailDto;
