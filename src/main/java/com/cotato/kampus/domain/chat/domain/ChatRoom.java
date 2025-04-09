@@ -21,7 +21,7 @@ public class ChatRoom {
 	private final LocalDateTime createdTime;
 	private final LocalDateTime lastModifiedTime;
 
-	public void validateUser(Long userId, Long chatRoomId) {
+	public void validateUser(Long userId) {
 		if (!this.initialReceiverId.equals(userId) && !this.initialSenderId.equals(userId)) {
 			throw new AppException(ErrorCode.CHATROOM_NOT_ENTERED);
 		}
