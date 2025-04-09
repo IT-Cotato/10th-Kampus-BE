@@ -2,6 +2,7 @@ package com.cotato.kampus.domain.board.dao.entity;
 
 import java.time.LocalDateTime;
 
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
@@ -14,12 +15,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardEntity extends BaseTimeEntity {
 
@@ -51,17 +49,6 @@ public class BoardEntity extends BaseTimeEntity {
 	@Column(name = "deletion_scheduled_at")
 	private LocalDateTime deletionScheduledAt;
 
-	@Builder
-	public BoardEntity(String boardName, String description, Long universityId, Boolean usesCategories,
-		BoardStatus boardStatus, BoardType boardType) {
-		this.boardName = boardName;
-		this.description = description;
-		this.universityId = universityId;
-		this.usesCategories = usesCategories;
-		this.boardStatus = boardStatus;
-		this.boardType = boardType;
-	}
-
 	public void update(String boardName, String description, Boolean usesCategories) {
 		this.boardName = boardName;
 		this.description = description;
@@ -75,4 +62,31 @@ public class BoardEntity extends BaseTimeEntity {
 	public void setDeletionScheduledAt(LocalDateTime deletionScheduledAt) {
 		this.deletionScheduledAt = deletionScheduledAt;
 	}
+
+	public static BoardEntity fromDomain(Board board) {
+		BoardEntity result = new BoardEntity();
+		result.id = board.getId();
+		result.boardName = board.getBoardName();
+		result.description = board.getDescription();
+		result.universityId = board.getUniversityId();
+		result.usesCategories = board.getUsesCategories();
+		result.boardStatus = board.getBoardStatus();
+		result.boardType = board.getBoardType();
+		result.deletionScheduledAt = board.getDeletionScheduledAt();
+		return result;
+	}
+
+	public Board toDomain() {
+		return Board.builder()
+			.id(this.id)
+			.boardName(this.boardName)
+			.description(this.description)
+			.universityId(this.universityId)
+			.usesCategories(this.usesCategories)
+			.boardStatus(this.boardStatus)
+			.boardType(this.boardType)
+			.deletionScheduledAt(this.deletionScheduledAt)
+			.build();
+	}
+
 }

@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.board.dao.entity;
 
+import com.cotato.kampus.domain.board.domain.BoardFavorite;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -10,12 +11,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "board_favorite")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardFavoriteEntity extends BaseTimeEntity {
 
@@ -30,9 +31,19 @@ public class BoardFavoriteEntity extends BaseTimeEntity {
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
-	@Builder
-	public BoardFavoriteEntity(Long boardId, Long userId) {
-		this.boardId = boardId;
-		this.userId = userId;
+	public static BoardFavoriteEntity fromDomain(BoardFavorite boardFavorite) {
+		BoardFavoriteEntity result = new BoardFavoriteEntity();
+		result.id = boardFavorite.getId();
+		result.boardId = boardFavorite.getBoardId();
+		result.userId = boardFavorite.getUserId();
+		return result;
+	}
+
+	public BoardFavorite toDomain() {
+		return BoardFavorite.builder()
+			.id(this.id)
+			.boardId(this.boardId)
+			.userId(this.userId)
+			.build();
 	}
 }
