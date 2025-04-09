@@ -22,7 +22,7 @@ import com.cotato.kampus.global.error.exception.AppException;
 
 
 @ExtendWith(MockitoExtension.class)
-class BoardEntityServiceTest {
+class BoardServiceTest {
 
 	@Mock
 	private BoardFinder boardFinder;
@@ -31,7 +31,7 @@ class BoardEntityServiceTest {
 	private BoardCategoryFinder boardCategoryFinder;
 
 	@InjectMocks
-	private BoardService boardService;
+	private BoardCategoryService boardCategoryService;
 
 	@Test
 	@DisplayName("존재하는 게시판의 카테고리 목록을 조회")
@@ -63,7 +63,7 @@ class BoardEntityServiceTest {
 		when(boardCategoryFinder.findAllByBoardId(boardId)).thenReturn(expectedCategories);
 
 		// when
-		List<BoardCategory> result = boardService.findCategories(boardId);
+		List<BoardCategory> result = boardCategoryService.findCategories(boardId);
 
 		// then
 		assertEquals(3, result.size());
@@ -90,7 +90,7 @@ class BoardEntityServiceTest {
 		// when & then
 		AppException exception = assertThrows(
 			AppException.class,
-			() -> boardService.findCategories(nonExistentBoardId)
+			() -> boardCategoryService.findCategories(nonExistentBoardId)
 		);
 
 		assertEquals(ErrorCode.BOARD_NOT_FOUND, exception.getErrorCode());
@@ -122,7 +122,7 @@ class BoardEntityServiceTest {
 		when(boardCategoryFinder.findAllByBoardId(boardId)).thenReturn(List.of());
 
 		// when
-		List<BoardCategory> result = boardService.findCategories(boardId);
+		List<BoardCategory> result = boardCategoryService.findCategories(boardId);
 
 		// then
 		assertTrue(result.isEmpty());

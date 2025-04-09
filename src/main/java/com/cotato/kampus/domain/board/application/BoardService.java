@@ -7,16 +7,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.domain.BoardCategory;
 import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
 import com.cotato.kampus.domain.board.domain.HomeBoardAndPostPreview;
-import com.cotato.kampus.domain.board.implement.BoardCategoryFinder;
 import com.cotato.kampus.domain.board.implement.BoardDtoEnhancer;
-import com.cotato.kampus.domain.board.implement.BoardFavoriteAppender;
-import com.cotato.kampus.domain.board.implement.BoardFavoriteDeleter;
 import com.cotato.kampus.domain.board.implement.BoardFavoriteReader;
 import com.cotato.kampus.domain.board.implement.BoardFinder;
-import com.cotato.kampus.domain.board.implement.BoardValidator;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.application.PostDtoMapper;
 import com.cotato.kampus.domain.post.application.PostFinder;
@@ -31,16 +26,12 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
 	private final BoardFinder boardFinder;
-	private final BoardValidator boardValidator;
 	private final BoardDtoEnhancer boardDtoEnhancer;
 	private final BoardFavoriteReader boardFavoriteReader;
-	private final BoardFavoriteAppender boardFavoriteAppender;
-	private final BoardFavoriteDeleter boardFavoriteDeleter;
 	private final UserValidator userValidator;
 	private final ApiUserResolver apiUserResolver;
 	private final PostFinder postFinder;
 	private final PostDtoMapper postDtoMapper;
-	private final BoardCategoryFinder boardCategoryFinder;
 
 	public List<BoardWithFavoriteStatus> getBoardList() {
 		// 유저 조회
@@ -71,22 +62,6 @@ public class BoardService {
 		List<Board> boards = boardFinder.findBoardsWithIds(favoriteBoardIds);
 
 		return postDtoMapper.mapToHomeBoardAndPostPreviewsByBoardDtos(boards);
-	}
-
-	public Long addFavoriteBoard(Long boardId) {
-		// 게시판 조회
-		Board board = boardFinder.findBoard(boardId);
-
-		// 게시판 검증
-		boardValidator.validateBoardIsActive(board);
-
-		// 즐겨찾기 추가
-		return boardFavoriteAppender.appendFavoriteBoard(board.getId());
-	}
-
-	public Long removeFavoriteBoard(Long boardId) {
-		boardFavoriteDeleter.deleteFavoriteBoard(boardId);
-		return boardId;
 	}
 
 	public Board getUniversityBoard() {
@@ -124,13 +99,5 @@ public class BoardService {
 		List<PostDto> trendingPosts = postFinder.findTrendingPosts(userUnivId);
 
 		return postDtoMapper.mapToHomeBoardAndPostPreviews(trendingPosts);
-	}
-
-	public List<BoardCategory> findCategories(Long boardId) {
-		// 존재하는 게시판인지 확인
-		boardFinder.findBoard(boardId);
-
-		// 카테고리 조회
-		return boardCategoryFinder.findAllByBoardId(boardId);
 	}
 }
