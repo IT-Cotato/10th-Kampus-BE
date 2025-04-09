@@ -6,10 +6,17 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.cotato.kampus.domain.board.dto.BoardDto;
-import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatus;
-import com.cotato.kampus.domain.board.dto.BoardCategoryDto;
-import com.cotato.kampus.domain.board.dto.HomeBoardAndPostPreview;
+import com.cotato.kampus.domain.board.domain.BoardDto;
+import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
+import com.cotato.kampus.domain.board.domain.BoardCategoryDto;
+import com.cotato.kampus.domain.board.domain.HomeBoardAndPostPreview;
+import com.cotato.kampus.domain.board.implement.BoardCategoryFinder;
+import com.cotato.kampus.domain.board.implement.BoardDtoEnhancer;
+import com.cotato.kampus.domain.board.implement.BoardFavoriteAppender;
+import com.cotato.kampus.domain.board.implement.BoardFavoriteDeleter;
+import com.cotato.kampus.domain.board.implement.BoardFavoriteReader;
+import com.cotato.kampus.domain.board.implement.BoardFinder;
+import com.cotato.kampus.domain.board.implement.BoardValidator;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.application.PostDtoMapper;
 import com.cotato.kampus.domain.post.application.PostFinder;

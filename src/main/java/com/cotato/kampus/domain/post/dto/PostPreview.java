@@ -2,7 +2,7 @@ package com.cotato.kampus.domain.post.dto;
 
 import java.time.LocalDateTime;
 
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.domain.BoardDto;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
 import com.fasterxml.jackson.annotation.JsonFormat;

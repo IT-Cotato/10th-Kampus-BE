@@ -1,6 +1,6 @@
-package com.cotato.kampus.domain.board.dto.response;
+package com.cotato.kampus.domain.board.api.response;
 
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.domain.BoardDto;
 
 public record UniversityBoardResponse(
 	String boardName

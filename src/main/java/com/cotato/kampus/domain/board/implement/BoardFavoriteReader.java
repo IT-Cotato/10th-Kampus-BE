@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.application;
+package com.cotato.kampus.domain.board.implement;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.dao.BoardFavoriteRepository;
-import com.cotato.kampus.domain.board.domain.BoardFavorite;
+import com.cotato.kampus.domain.board.dao.repository.BoardFavoriteRepository;
+import com.cotato.kampus.domain.board.dao.entity.BoardFavorite;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

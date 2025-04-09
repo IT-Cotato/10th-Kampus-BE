@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.dto.response;
+package com.cotato.kampus.domain.board.api.response;
 
 public record FavoriteBoardResponse(
 	Long boardId

@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.board.application.BoardService;
-import com.cotato.kampus.domain.board.dto.response.BoardListResponse;
-import com.cotato.kampus.domain.board.dto.response.BoardWithDescriptionResponse;
-import com.cotato.kampus.domain.board.dto.response.FavoriteBoardResponse;
-import com.cotato.kampus.domain.board.dto.response.HomeBoardAndPostPreviewResponse;
-import com.cotato.kampus.domain.board.dto.response.UniversityBoardResponse;
+import com.cotato.kampus.domain.board.api.response.BoardListResponse;
+import com.cotato.kampus.domain.board.api.response.BoardWithDescriptionResponse;
+import com.cotato.kampus.domain.board.api.response.FavoriteBoardResponse;
+import com.cotato.kampus.domain.board.api.response.HomeBoardAndPostPreviewResponse;
+import com.cotato.kampus.domain.board.api.response.UniversityBoardResponse;
 import com.cotato.kampus.domain.post.dto.response.BoardCategoryFindResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 

@@ -1,8 +1,8 @@
-package com.cotato.kampus.domain.board.dto.response;
+package com.cotato.kampus.domain.board.api.response;
 
 import java.util.List;
 
-import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatus;
+import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
 
 public record BoardListResponse(
 	List<BoardWithFavoriteStatus> boards

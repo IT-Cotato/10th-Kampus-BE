@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.domain;
+package com.cotato.kampus.domain.board.dao.entity;
 
 import java.time.LocalDateTime;
 

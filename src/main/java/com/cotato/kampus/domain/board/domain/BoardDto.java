@@ -1,8 +1,8 @@
-package com.cotato.kampus.domain.board.dto;
+package com.cotato.kampus.domain.board.domain;
 
 import java.time.LocalDateTime;
 
-import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.dao.entity.Board;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 

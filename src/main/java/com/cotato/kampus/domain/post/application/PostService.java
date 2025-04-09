@@ -6,14 +6,13 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cotato.kampus.domain.board.application.BoardFinder;
-import com.cotato.kampus.domain.board.application.BoardValidator;
-import com.cotato.kampus.domain.board.application.BoardCategoryResolver;
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.implement.BoardFinder;
+import com.cotato.kampus.domain.board.implement.BoardValidator;
+import com.cotato.kampus.domain.board.implement.BoardCategoryResolver;
+import com.cotato.kampus.domain.board.domain.BoardDto;
 import com.cotato.kampus.domain.comment.application.CommentDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
-import com.cotato.kampus.domain.post.domain.PostDraft;
 import com.cotato.kampus.domain.post.dto.CardNewsPreview;
 import com.cotato.kampus.domain.post.dto.MyPostWithPhoto;
 import com.cotato.kampus.domain.post.dto.PostDetails;

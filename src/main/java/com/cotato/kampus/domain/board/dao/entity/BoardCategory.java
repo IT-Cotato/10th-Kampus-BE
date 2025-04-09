@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.domain;
+package com.cotato.kampus.domain.board.dao.entity;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 

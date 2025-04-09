@@ -1,6 +1,5 @@
 package com.cotato.kampus.domain.admin.dto.response;
 
-import com.cotato.kampus.domain.board.dto.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 

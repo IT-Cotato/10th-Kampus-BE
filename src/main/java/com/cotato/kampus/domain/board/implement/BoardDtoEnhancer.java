@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.application;
+package com.cotato.kampus.domain.board.implement;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.admin.dto.AdminBoardDetail;
-import com.cotato.kampus.domain.board.dao.BoardFavoriteRepository;
-import com.cotato.kampus.domain.board.dto.BoardDto;
-import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatus;
+import com.cotato.kampus.domain.board.dao.repository.BoardFavoriteRepository;
+import com.cotato.kampus.domain.board.domain.BoardDto;
+import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.domain.user.dto.UserDto;

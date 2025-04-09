@@ -1,13 +1,13 @@
-package com.cotato.kampus.domain.board.application;
+package com.cotato.kampus.domain.board.implement;
 
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.dao.BoardCategoryRepository;
-import com.cotato.kampus.domain.board.domain.BoardCategory;
-import com.cotato.kampus.domain.board.dto.BoardCategoryDto;
+import com.cotato.kampus.domain.board.dao.repository.BoardCategoryRepository;
+import com.cotato.kampus.domain.board.dao.entity.BoardCategory;
+import com.cotato.kampus.domain.board.domain.BoardCategoryDto;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 

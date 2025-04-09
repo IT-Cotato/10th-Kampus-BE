@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.dao;
+package com.cotato.kampus.domain.board.dao.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.dao.entity.Board;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 

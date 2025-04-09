@@ -1,8 +1,8 @@
-package com.cotato.kampus.domain.board.dto.response;
+package com.cotato.kampus.domain.board.api.response;
 
 import java.util.List;
 
-import com.cotato.kampus.domain.board.dto.HomeBoardAndPostPreview;
+import com.cotato.kampus.domain.board.domain.HomeBoardAndPostPreview;
 
 public record HomeBoardAndPostPreviewResponse(
 	List<HomeBoardAndPostPreview> previewList

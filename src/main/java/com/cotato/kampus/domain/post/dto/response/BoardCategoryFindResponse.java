@@ -2,7 +2,7 @@ package com.cotato.kampus.domain.post.dto.response;
 
 import java.util.List;
 
-import com.cotato.kampus.domain.board.dto.BoardCategoryDto;
+import com.cotato.kampus.domain.board.domain.BoardCategoryDto;
 
 public record BoardCategoryFindResponse(
 	List<String> categories

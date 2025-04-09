@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.admin.dto;
 
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.domain.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 
 public record AdminBoardDetail(

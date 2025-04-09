@@ -1,12 +1,12 @@
-package com.cotato.kampus.domain.board.application;
+package com.cotato.kampus.domain.board.implement;
 
 import java.util.Objects;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.dao.BoardRepository;
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.dao.repository.BoardRepository;
+import com.cotato.kampus.domain.board.domain.BoardDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.user.dto.UserDto;

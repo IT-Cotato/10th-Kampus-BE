@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.application;
+package com.cotato.kampus.domain.board.implement;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.dao.BoardRepository;
-import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.dao.repository.BoardRepository;
+import com.cotato.kampus.domain.board.dao.entity.Board;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;

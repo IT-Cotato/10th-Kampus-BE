@@ -1,6 +1,6 @@
-package com.cotato.kampus.domain.board.dto;
+package com.cotato.kampus.domain.board.domain;
 
-import com.cotato.kampus.domain.board.domain.BoardCategory;
+import com.cotato.kampus.domain.board.dao.entity.BoardCategory;
 
 public record BoardCategoryDto(
 	Long categoryId,

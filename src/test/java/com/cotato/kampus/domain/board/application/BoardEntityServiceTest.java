@@ -11,10 +11,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.dto.BoardCategoryDto;
+import com.cotato.kampus.domain.board.dao.entity.Board;
+import com.cotato.kampus.domain.board.domain.BoardCategoryDto;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
+import com.cotato.kampus.domain.board.implement.BoardCategoryFinder;
+import com.cotato.kampus.domain.board.implement.BoardFinder;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 

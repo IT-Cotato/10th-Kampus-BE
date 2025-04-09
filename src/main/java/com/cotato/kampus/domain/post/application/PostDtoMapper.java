@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.application.BoardFinder;
-import com.cotato.kampus.domain.board.dto.BoardDto;
-import com.cotato.kampus.domain.board.dto.HomeBoardAndPostPreview;
+import com.cotato.kampus.domain.board.implement.BoardFinder;
+import com.cotato.kampus.domain.board.domain.BoardDto;
+import com.cotato.kampus.domain.board.domain.HomeBoardAndPostPreview;
 import com.cotato.kampus.domain.post.dao.PostPhotoRepository;
 import com.cotato.kampus.domain.post.dao.PostRepository;
 import com.cotato.kampus.domain.post.domain.Post;

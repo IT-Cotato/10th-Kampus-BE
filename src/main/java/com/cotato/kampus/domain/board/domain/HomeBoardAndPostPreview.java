@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.board.dto;
+package com.cotato.kampus.domain.board.domain;
 
 import com.cotato.kampus.domain.post.dto.PostDto;
 

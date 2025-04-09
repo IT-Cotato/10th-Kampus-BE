@@ -1,10 +1,10 @@
-package com.cotato.kampus.domain.board.application;
+package com.cotato.kampus.domain.board.implement;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.dao.BoardFavoriteRepository;
-import com.cotato.kampus.domain.board.domain.BoardFavorite;
+import com.cotato.kampus.domain.board.dao.repository.BoardFavoriteRepository;
+import com.cotato.kampus.domain.board.dao.entity.BoardFavorite;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
