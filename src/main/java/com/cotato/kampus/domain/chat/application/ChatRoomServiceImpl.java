@@ -75,7 +75,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		Long chatroomId = chatRoomAppender.appendChatRoom(postId, senderId, receiverId);
 
 		// 5. 채팅방 리스트 조회시 사용되는 뷰 생성
-		chatroomMetadataAppender.appendChatroomMetadatas(
+		chatroomMetadataAppender.createMetadataPair(
 			chatroomId,
 			postId,
 			postTitle,
