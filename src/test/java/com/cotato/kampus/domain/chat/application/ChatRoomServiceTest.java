@@ -63,7 +63,7 @@ class ChatRoomServiceTest {
 		when(apiUserResolver.getCurrentUserId()).thenReturn(1L);
 		doNothing().when(chatRoomValidator).validateDuplicateChatRoom(1L, 1L);
 		when(chatRoomAppender.appendChatRoom(1L, 1L, 2L)).thenReturn(123L);
-		doNothing().when(chatroomMetadataAppender).appendChatroomMetadatas(123L, postDto.id(),
+		doNothing().when(chatroomMetadataAppender).createMetadataPair(123L, postDto.id(),
 			postDto.title(), 1L, 2L);
 
 		Long id = target.createChatRoom(postDto.id());
