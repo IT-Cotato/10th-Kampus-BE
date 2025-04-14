@@ -1,0 +1,16 @@
+package com.cotato.kampus.domain.post.dao.repository;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.cotato.kampus.domain.post.domain.PostLike;
+
+public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
+	Boolean existsByPostIdAndUserId(Long postId, Long userId);
+
+	Optional<PostLike> findByUserIdAndPostId(Long userId, Long postId);
+
+	List<PostLike> findAllByPostId(Long postId);
+}

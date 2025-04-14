@@ -13,9 +13,9 @@ import com.cotato.kampus.domain.board.implement.board.BoardDtoEnhancer;
 import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteReader;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.post.application.PostDtoMapper;
-import com.cotato.kampus.domain.post.application.PostFinder;
-import com.cotato.kampus.domain.post.dto.PostDto;
+import com.cotato.kampus.domain.post.implement.post.PostDtoMapper;
+import com.cotato.kampus.domain.post.implement.post.PostFinder;
+import com.cotato.kampus.domain.post.domain.PostDto;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 

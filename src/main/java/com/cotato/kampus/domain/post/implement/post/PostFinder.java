@@ -1,0 +1,360 @@
+package com.cotato.kampus.domain.post.implement.post;
+
+import java.util.List;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
+import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryFinder;
+import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.post.dao.repository.PostCategoryRepository;
+import com.cotato.kampus.domain.post.dao.repository.PostDraftPhotoRepository;
+import com.cotato.kampus.domain.post.dao.repository.PostDraftRepository;
+import com.cotato.kampus.domain.post.dao.repository.PostPhotoRepository;
+import com.cotato.kampus.domain.post.dao.repository.PostRepository;
+import com.cotato.kampus.domain.post.dao.repository.PostScrapRepository;
+import com.cotato.kampus.domain.post.dao.repository.TrendingPostRepository;
+import com.cotato.kampus.domain.post.domain.Post;
+import com.cotato.kampus.domain.post.domain.PostDraft;
+import com.cotato.kampus.domain.post.domain.PostDraftPhoto;
+import com.cotato.kampus.domain.post.domain.PostPhoto;
+import com.cotato.kampus.domain.post.domain.PostScrap;
+import com.cotato.kampus.domain.post.domain.CardNewsPreview;
+import com.cotato.kampus.domain.post.domain.MyPostWithPhoto;
+import com.cotato.kampus.domain.post.domain.PostDraftDto;
+import com.cotato.kampus.domain.post.domain.PostDraftWithPhoto;
+import com.cotato.kampus.domain.post.domain.PostDto;
+import com.cotato.kampus.domain.post.domain.PostPreview;
+import com.cotato.kampus.domain.post.domain.PostReferenceDto;
+import com.cotato.kampus.domain.post.domain.PostWithPhotos;
+import com.cotato.kampus.domain.post.domain.SearchedPost;
+import com.cotato.kampus.domain.post.domain.TrendingPostPreview;
+import com.cotato.kampus.domain.post.enums.PostSortType;
+import com.cotato.kampus.global.common.dto.CustomPageRequest;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+
+@Component
+@Transactional(readOnly = true)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+public class PostFinder {
+
+	private final PostRepository postRepository;
+	private final PostPhotoRepository postPhotoRepository;
+	private final PostDraftRepository postDraftRepository;
+	private static final Integer PAGE_SIZE = 10;
+	private static final String SORT_PROPERTY = "createdTime";
+	private final ApiUserResolver apiUserResolver;
+	private final BoardFinder boardFinder;
+	private final PostScrapRepository postScrapRepository;
+	private final PostDraftPhotoRepository postDraftPhotoRepository;
+	private final TrendingPostRepository trendingPostRepository;
+	private final PostDtoMapper postDtoMapper;
+	private final PostCategoryRepository postCategoryRepository;
+	private final BoardCategoryFinder boardCategoryFinder;
+
+	public Post getPost(Long postId) {
+		return postRepository.findById(postId)
+			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+	}
+
+	public Slice<PostWithPhotos> findPosts(Long boardId, int page, PostSortType sortType) {
+		// 1. Post 리스트를 Slice로 조회
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, sortType.getDirection());
+
+		// 2. 정렬 기준에 맞게 조회
+		Slice<Post> posts = findPostsBySort(boardId, customPageRequest, sortType);
+
+		// 3. Post -> PostWithPhotos 매핑
+		return posts.map(post -> {
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
+				.orElse(null);
+			return PostWithPhotos.from(post, postPhoto);
+		});
+	}
+
+	public Slice<PostWithPhotos> findPostsByCategory(Long boardId, int page, PostSortType sortType, String categoryName) {
+		if (categoryName == null) {
+			return findPosts(boardId, page, sortType);
+		}
+
+		// 카테고리 ID 조회
+		Long categoryId = boardCategoryFinder.find(boardId, categoryName).getId();
+
+		// 페이지 요청 생성
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, sortType.getDirection());
+		Pageable pageable = customPageRequest.of(sortType.getProperty());
+
+		// 특정 카테고리의 Post 목록 조회
+		Slice<Long> postIdSlice = postCategoryRepository.findPostIdsByCategoryId(categoryId, pageable);
+
+		List<Long> postIds = postIdSlice.getContent();
+		if (postIds.isEmpty()) {
+			return new SliceImpl<>(List.of(), pageable, false);
+		}
+
+		// findPostsBySort 메소드를 호출하여 정렬 적용
+		Slice<Post> posts = findPostsByIdsAndSort(boardId, postIds, customPageRequest, sortType);
+
+		// Post -> PostWithPhotos 매핑
+		return posts.map(post -> {
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
+				.orElse(null);
+			return PostWithPhotos.from(post, postPhoto);
+		});
+	}
+
+	// 정렬 기준에 맞는 조회 로직 수행 (postIds로 정렬 적용)
+	private Slice<Post> findPostsByIdsAndSort(Long boardId, List<Long> postIds, CustomPageRequest pageRequest, PostSortType sortType) {
+		return switch (sortType) {
+			// 최신순
+			case recent -> postRepository.findAllByBoardIdAndIdInOrderByCreatedTimeDesc(
+				boardId,
+				postIds,
+				pageRequest.of(sortType.getProperty())
+			);
+			// 오래된순
+			case old -> postRepository.findAllByBoardIdAndIdInOrderByCreatedTimeAsc(
+				boardId,
+				postIds,
+				pageRequest.of(sortType.getProperty())
+			);
+			// 좋아요순(좋아요가 같을 경우 최신순)
+			case likes -> postRepository.findAllByBoardIdAndIdInOrderByLikesDescCreatedTimeDesc(
+				boardId,
+				postIds,
+				pageRequest.of(sortType.getProperty())
+			);
+		};
+	}
+
+	public Slice<CardNewsPreview> findAllCardNews(Long userId, int page) {
+		// 1. Post 리스트를 Slice로 조회
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+
+		// 2. 카드뉴스 게시판 조회
+		Long cardNewsBoardId = boardFinder.findCardNewsBoardId();
+
+		// 3. 최신순 정렬로 조회
+		Slice<Post> posts = postRepository.findAllByBoardIdOrderByCreatedTimeDesc(cardNewsBoardId,
+			customPageRequest.of(SORT_PROPERTY));
+
+		return posts.map(post -> {
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
+				.orElse(null);
+
+			Boolean isScrapped = postScrapRepository.existsByUserIdAndPostId(userId, post.getId());
+
+			return CardNewsPreview.from(post, postPhoto, isScrapped);
+		});
+
+	}
+
+	public List<PostDto> findTrendingPosts(Long userUnivId) {
+		List<Long> trendingPostIds = trendingPostRepository.findAllPostIds();
+
+		List<Post> trendingPosts = postRepository.findTop5TrendingPosts(trendingPostIds, userUnivId);
+
+		return trendingPosts.stream()
+			.map(PostDto::from)
+			.toList();
+	}
+
+	public Slice<TrendingPostPreview> findAllTrendingPosts(Long userUnivId, int page) {
+
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+
+		List<Long> trendingPostIds = trendingPostRepository.findAllPostIds();
+
+		// 트렌딩 게시글 조회
+		Slice<Post> trendingPosts = postRepository.findTrendingPosts(trendingPostIds, userUnivId,
+			customPageRequest.of(SORT_PROPERTY));
+
+		List<TrendingPostPreview> trendingPostPreviews = postDtoMapper.toTrendingPostPreviews(
+			trendingPosts.getContent());
+
+		return new SliceImpl<>(trendingPostPreviews, customPageRequest.of(SORT_PROPERTY), trendingPosts.hasNext());
+	}
+
+	// 정렬 기준에 맞는 조회 로직 수행
+	private Slice<Post> findPostsBySort(Long boardId, CustomPageRequest pageRequest, PostSortType sortType) {
+		return switch (sortType) {
+			// 최신순
+			case recent -> postRepository.findAllByBoardIdOrderByCreatedTimeDesc(
+				boardId,
+				pageRequest.of(sortType.getProperty())
+			);
+			// 오래된순
+			case old -> postRepository.findAllByBoardIdOrderByCreatedTimeAsc(
+				boardId,
+				pageRequest.of(sortType.getProperty())
+			);
+			// 좋아요순(좋아요가 같을 경우 최신순)
+			case likes -> postRepository.findAllByBoardIdOrderByLikesDescCreatedTimeDesc(
+				boardId,
+				pageRequest.of(sortType.getProperty())
+			);
+		};
+
+	}
+
+	// public Slice<PostWithPhotos> findUserCommentedPosts(List<Long> postIds, int page) {
+	//
+	// 	// CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+	// 	PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+	// 	String orderList = postIds.stream().map(String::valueOf).collect(Collectors.joining(","));
+	// 	Slice<Post> posts = postRepository.findPostsByIdsInOrder(postIds, orderList, pageRequest);
+	//
+	// 	// 3. Post -> PostWithPhotos 매핑
+	// 	return posts.map(post -> {
+	// 		PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
+	// 			.orElse(null);
+	// 		return PostWithPhotos.from(post, postPhoto);
+	// 	});
+	//
+	// }
+
+	public PostDto findPost(Long postId) {
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+
+		return PostDto.from(post);
+	}
+
+	public PostReferenceDto findPostReference(Long postId) {
+		return postRepository.findById(postId)
+			.map(PostReferenceDto::from)
+			.orElse(PostReferenceDto.deleted());
+	}
+
+	public Slice<MyPostWithPhoto> findUserPosts(int page) {
+
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+		Slice<Post> posts = postRepository.findAllByUserId(userId, customPageRequest.of(SORT_PROPERTY));
+
+		return posts.map(post -> {
+			Board board = boardFinder.findBoard(post.getBoardId());
+
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())
+				.orElse(null);
+
+			return MyPostWithPhoto.from(post, board, postPhoto);
+		});
+	}
+
+	public Slice<MyPostWithPhoto> findUserScrapedPosts(int page) {
+
+		Long userId = apiUserResolver.getCurrentUserId();
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+
+		// 스크랩된 포스트만 조회
+		Slice<PostScrap> postScraps = postScrapRepository.findAllByUserId(userId, customPageRequest.of(SORT_PROPERTY));
+
+		// 스크랩된 포스트에 해당하는 Post를 찾아서 반환
+		return postScraps.map(postScrap -> {
+			Post post = getPost(postScrap.getPostId());
+			Board board = boardFinder.findBoard(post.getBoardId());
+
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTimeAsc(post.getId())
+				.orElse(null);
+
+			return MyPostWithPhoto.from(post, board, postPhoto);
+		});
+	}
+
+	public Slice<PostDraftWithPhoto> findPostDrafts(Long userId, int page) {
+
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+		Slice<PostDraft> postDrafts = postDraftRepository.findAllByUserIdOrderByCreatedTimeDesc(
+			userId,
+			customPageRequest.of(SORT_PROPERTY)
+		);
+
+		return postDrafts.map(postDraft -> {
+			PostDraftPhoto postDraftPhoto = postDraftPhotoRepository.findFirstByPostDraftIdOrderByCreatedTimeDesc(
+					postDraft.getId())
+				.orElse(null);
+			return PostDraftWithPhoto.from(postDraft, postDraftPhoto);
+		});
+	}
+
+	public PostDraft findPostDraft(Long postDraftId) {
+		return postDraftRepository.findById(postDraftId)
+			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
+	}
+
+	public PostDraftDto findPostDraftDto(Long postDraftId) {
+		PostDraft postDraft = findPostDraft(postDraftId);
+
+		return PostDraftDto.from(postDraft);
+	}
+
+	public List<PostDraft> findPostDrafts(List<Long> postDraftIds) {
+		List<PostDraft> drafts = postDraftRepository.findAllById(postDraftIds);
+
+		if (drafts.size() != postDraftIds.size()) {
+			throw new AppException(ErrorCode.POST_NOT_FOUND);
+		}
+
+		return drafts;
+	}
+
+	public int findDraftsCount(Long userId){
+		return postDraftRepository.countByUserId(userId);
+	}
+
+	public List<Long> getPostDraftIdsByBoardAndUser(Long userId) {
+		List<PostDraft> postDrafts = postDraftRepository.findAllByUserId(userId);
+
+		return postDrafts.stream()
+			.map(PostDraft::getId)
+			.toList();
+	}
+
+	public Slice<SearchedPost> searchAllPosts(String keyword, int page) {
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+		Slice<Post> posts = postRepository.searchAll(keyword, customPageRequest.of(SORT_PROPERTY));
+		return mapToSearchedPost(posts);
+	}
+
+	public Slice<SearchedPost> searchBoardPosts(String keyword, Long boardId, int page) {
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+		Slice<Post> posts = postRepository.searchAllByBoardId(keyword, boardId, customPageRequest.of(SORT_PROPERTY));
+		return mapToSearchedPost(posts);
+	}
+
+	// 게시글 검색 결과에 사진과 게시판을 매핑
+	private Slice<SearchedPost> mapToSearchedPost(Slice<Post> posts) {
+		return posts.map(post -> {
+			String boardName = boardFinder.findBoard(post.getBoardId()).getBoardName();
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
+				.orElse(null);
+			return SearchedPost.of(post, boardName, postPhoto);
+		});
+	}
+
+	@Transactional
+	public Slice<PostPreview> getCommentedPosts(Long userId, int page) {
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+		// 한 번의 JOIN 쿼리로 게시글 정보 조회
+		Slice<Post> posts = postRepository.findPostsByUserComments(userId, customPageRequest.of(SORT_PROPERTY));
+
+		return posts.map(post -> {
+			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
+				.orElse(null);
+			Board board = boardFinder.findBoard(post.getBoardId());
+			return PostPreview.from(post, board, postPhoto);
+		});
+	}
+}

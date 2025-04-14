@@ -29,7 +29,7 @@ import com.cotato.kampus.domain.admin.dto.response.BoardInfoResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationListResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationResponse;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
-import com.cotato.kampus.domain.post.dto.response.AdminCardNewsListResponse;
+import com.cotato.kampus.domain.post.api.response.AdminCardNewsListResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
 

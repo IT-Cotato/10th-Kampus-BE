@@ -2,7 +2,7 @@ package com.cotato.kampus.domain.admin.dto.response;
 
 import java.time.LocalDateTime;
 
-import com.cotato.kampus.domain.post.dto.PostWithPhotos;
+import com.cotato.kampus.domain.post.domain.PostWithPhotos;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record AdminCardNewsPreview(

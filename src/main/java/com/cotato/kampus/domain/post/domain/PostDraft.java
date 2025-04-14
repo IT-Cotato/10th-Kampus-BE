@@ -1,12 +1,9 @@
 package com.cotato.kampus.domain.post.domain;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
-import com.cotato.kampus.domain.post.enums.PostCategory;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;

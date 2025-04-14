@@ -1,0 +1,79 @@
+package com.cotato.kampus.domain.post.implement.post;
+
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.common.enums.Anonymity;
+import com.cotato.kampus.domain.post.dao.repository.PostDraftRepository;
+import com.cotato.kampus.domain.post.domain.PostDraft;
+import com.cotato.kampus.domain.post.dao.repository.PostRepository;
+import com.cotato.kampus.domain.post.domain.Post;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Transactional(readOnly = true)
+public class PostAppender {
+
+	private final ApiUserResolver apiUserResolver;
+	private final PostRepository postRepository;
+	private final PostDraftRepository postDraftRepository;
+
+	@Transactional
+	public Long append(
+		Long userId,
+		Long boardId,
+		String title,
+		String content
+	) {
+		Post post = Post.builder()
+			.userId(userId)
+			.boardId(boardId)
+			.title(title)
+			.content(content)
+			.anonymity(Anonymity.ANONYMOUS)
+			.build();
+
+		return postRepository.save(post).getId();
+	}
+
+	@Transactional
+	public Long draft(
+		Long boardId,
+		String title,
+		String content
+	) {
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		PostDraft postDraft = PostDraft.builder()
+			.userId(userId)
+			.boardId(boardId)
+			.title(title)
+			.content(content)
+			.build();
+
+		return postDraftRepository.save(postDraft).getId();
+	}
+
+	@Transactional
+	public Long appendCardNews(
+		Long userId,
+		Long boardId,
+		String title,
+		String content
+	) {
+		Post post = Post.builder()
+			.userId(userId)
+			.boardId(boardId)
+			.title(title)
+			.content(content)
+			.anonymity(Anonymity.IDENTIFIED)
+			.build();
+
+		return postRepository.save(post).getId();
+	}
+
+}

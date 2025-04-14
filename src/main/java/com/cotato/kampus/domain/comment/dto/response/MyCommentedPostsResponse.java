@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Slice;
 
-import com.cotato.kampus.domain.post.dto.PostPreview;
+import com.cotato.kampus.domain.post.domain.PostPreview;
 
 public record MyCommentedPostsResponse(
 	List<PostPreview> posts,

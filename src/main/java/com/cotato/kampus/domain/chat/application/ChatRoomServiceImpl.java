@@ -25,9 +25,9 @@ import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataFinder;
 import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataMapper;
 import com.cotato.kampus.domain.chat.implement.read.MessageReadStatusDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.post.application.PostFinder;
-import com.cotato.kampus.domain.post.dto.PostDto;
-import com.cotato.kampus.domain.post.dto.PostReferenceDto;
+import com.cotato.kampus.domain.post.implement.post.PostFinder;
+import com.cotato.kampus.domain.post.domain.PostDto;
+import com.cotato.kampus.domain.post.domain.PostReferenceDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

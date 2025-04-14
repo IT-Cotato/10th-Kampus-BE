@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.post.application.PostFinder;
-import com.cotato.kampus.domain.post.dto.PostDto;
+import com.cotato.kampus.domain.post.implement.post.PostFinder;
+import com.cotato.kampus.domain.post.domain.PostDto;
 import com.cotato.kampus.domain.translation.dto.TranslatedPost;
 import com.cotato.kampus.domain.translation.dto.TranslatedText;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;

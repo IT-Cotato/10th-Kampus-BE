@@ -2,7 +2,6 @@ package com.cotato.kampus.domain.post.domain;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 import com.cotato.kampus.domain.common.enums.Anonymity;
-import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 
 import jakarta.persistence.Column;

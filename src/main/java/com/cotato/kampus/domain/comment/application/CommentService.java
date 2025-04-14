@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.comment.dto.CommentDetail;
 import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.post.application.PostFinder;
-import com.cotato.kampus.domain.post.application.PostUpdater;
-import com.cotato.kampus.domain.post.dto.PostDto;
-import com.cotato.kampus.domain.post.dto.PostPreview;
+import com.cotato.kampus.domain.post.implement.post.PostFinder;
+import com.cotato.kampus.domain.post.implement.post.PostUpdater;
+import com.cotato.kampus.domain.post.domain.PostDto;
+import com.cotato.kampus.domain.post.domain.PostPreview;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 

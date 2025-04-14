@@ -1,7 +1,5 @@
 package com.cotato.kampus.domain.verification.application;
 
-import static com.cotato.kampus.domain.post.application.PostFinder.*;
-
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;

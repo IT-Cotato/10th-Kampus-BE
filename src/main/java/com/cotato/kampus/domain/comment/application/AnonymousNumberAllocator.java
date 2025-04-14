@@ -9,9 +9,8 @@ import com.cotato.kampus.domain.comment.dao.CommentRepository;
 import com.cotato.kampus.domain.comment.domain.Comment;
 import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.common.enums.Anonymity;
-import com.cotato.kampus.domain.post.application.PostUpdater;
-import com.cotato.kampus.domain.post.dto.PostDto;
+import com.cotato.kampus.domain.post.implement.post.PostUpdater;
+import com.cotato.kampus.domain.post.domain.PostDto;
 import com.cotato.kampus.domain.user.application.UserFinder;
 import com.cotato.kampus.domain.user.dto.UserDto;
 

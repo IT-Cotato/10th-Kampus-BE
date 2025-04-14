@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.board.domain;
 
-import com.cotato.kampus.domain.post.dto.PostDto;
+import com.cotato.kampus.domain.post.domain.PostDto;
 
 public record HomeBoardAndPostPreview(
 	Long boardId,
