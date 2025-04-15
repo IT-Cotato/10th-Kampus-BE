@@ -42,6 +42,7 @@ public class BoardAppender {
 				.description(description)
 				.usesCategories(usesCategories)
 				.boardStatus(BoardStatus.ACTIVE)
+				.boardType(boardType)
 				.build();
 		}
 

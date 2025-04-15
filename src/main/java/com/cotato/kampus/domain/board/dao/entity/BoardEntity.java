@@ -74,13 +74,14 @@ public class BoardEntity extends BaseTimeEntity {
 
 	public Board toDomain() {
 		switch (boardType) {
-			case NORMAL:
+			case NORMAL, CARDNEWS:
 				return NormalBoard.builder()
 					.id(this.id)
 					.boardName(this.boardName)
 					.description(this.description)
 					.usesCategories(this.usesCategories)
 					.boardStatus(this.boardStatus)
+					.boardType(this.boardType)
 					.deletionScheduledAt(this.deletionScheduledAt)
 					.build();
 

@@ -18,9 +18,10 @@ public class NormalBoard extends Board {
 		String description,
 		Boolean usesCategories,
 		BoardStatus boardStatus,
+		BoardType boardType,
 		LocalDateTime deletionScheduledAt
 	) {
-		super(id, boardName, description, usesCategories, boardStatus, BoardType.NORMAL, deletionScheduledAt);
+		super(id, boardName, description, usesCategories, boardStatus, boardType, deletionScheduledAt);
 		validate();
 	}
 
@@ -32,6 +33,7 @@ public class NormalBoard extends Board {
 			.description(description)
 			.usesCategories(usesCategories)
 			.boardStatus(this.getBoardStatus())
+			.boardType(this.getBoardType())
 			.deletionScheduledAt(this.getDeletionScheduledAt())
 			.build();
 	}
@@ -44,6 +46,7 @@ public class NormalBoard extends Board {
 			.description(this.getDescription())
 			.usesCategories(this.getUsesCategories())
 			.boardStatus(boardStatus)
+			.boardType(this.getBoardType())
 			.deletionScheduledAt(this.getDeletionScheduledAt())
 			.build();
 	}
@@ -56,6 +59,7 @@ public class NormalBoard extends Board {
 			.description(this.getDescription())
 			.usesCategories(this.getUsesCategories())
 			.boardStatus(boardStatus)
+			.boardType(this.getBoardType())
 			.deletionScheduledAt(deletionScheduledAt)
 			.build();
 	}
