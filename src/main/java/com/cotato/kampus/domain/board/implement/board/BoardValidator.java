@@ -74,4 +74,10 @@ public class BoardValidator {
 			throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
 		}
 	}
+
+	public void validateBoardTypeAndUniversityId(BoardType boardType, Long universityId) {
+		if(boardType != BoardType.UNIVERSITY && universityId != null) {
+			throw new AppException(ErrorCode.INVALID_BOARD_TYPE);
+		}
+	}
 }

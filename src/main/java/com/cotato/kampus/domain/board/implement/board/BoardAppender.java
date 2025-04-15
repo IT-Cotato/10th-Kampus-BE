@@ -18,27 +18,30 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardAppender {
 	private final BoardRepository boardRepository;
+	private final BoardValidator boardValidator;
 
 	@Transactional
 	public Board appendBoard(String boardName, String description, BoardType boardType, Long universityId,
 		Boolean usesCategories) {
 
+		boardValidator.validateBoardTypeAndUniversityId(boardType, universityId);
+
 		Board board;
 
-		if(boardType == BoardType.NORMAL) {
-			board = NormalBoard.builder()
-				.boardName(boardName)
-				.description(description)
-				.usesCategories(usesCategories)
-				.boardStatus(BoardStatus.ACTIVE)
-				.build();
-		} else {
+		if(boardType == BoardType.UNIVERSITY) {
 			board = UniversityBoard.builder()
 				.boardName(boardName)
 				.description(description)
 				.usesCategories(usesCategories)
 				.boardStatus(BoardStatus.ACTIVE)
 				.universityId(universityId)
+				.build();
+		} else {
+			board = NormalBoard.builder()
+				.boardName(boardName)
+				.description(description)
+				.usesCategories(usesCategories)
+				.boardStatus(BoardStatus.ACTIVE)
 				.build();
 		}
 
