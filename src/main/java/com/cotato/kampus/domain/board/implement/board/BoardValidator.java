@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.UniversityBoard;
 import com.cotato.kampus.domain.board.implement.port.BoardRepository;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
@@ -43,32 +44,34 @@ public class BoardValidator {
 	public void validatePostCreationAccess(UserDto userDto, Board board) {
 		// 대학 게시판인 경우 자격 검증
 		if (board.getBoardType() == BoardType.UNIVERSITY) {
-			if(userDto.userRole() == UserRole.UNVERIFIED) {
-				throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
-			}
-
-			// 자기학교 게시판만 접근 가능
-			if(!Objects.equals(board.getUniversityId(), userDto.universityId())) {
-				throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
-			}
-		}
-
-		// 카드뉴스 게시판 접근 불가
-		if (board.getBoardType() == BoardType.CARDNEWS)
+			validateUniversityBoardAccess(userDto, (UniversityBoard) board);
+		} else if (board.getBoardType() == BoardType.CARDNEWS) {
 			throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
+		}
 	}
 
 	public void validateUniversityAccess(UserDto userDto, Board board) {
-		// 학교 게시판인 경우 자격 검증
-		if (board.getBoardType() == BoardType.UNIVERSITY &&
-			!Objects.equals(board.getUniversityId(), userDto.universityId())) {
-			throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
+		// 대학 게시판인 경우 자격 검증
+		if (board.getBoardType() == BoardType.UNIVERSITY) {
+			validateUniversityBoardAccess(userDto, (UniversityBoard) board);
 		}
 	}
 
 	public void isCategoryEnabled(Board board){
 		if(!board.getUsesCategories()) {
 			throw new AppException(ErrorCode.CATEGORY_NOT_ALLOWED);
+		}
+	}
+
+
+	private void validateUniversityBoardAccess(UserDto userDto, UniversityBoard board) {
+		if(userDto.userRole() == UserRole.UNVERIFIED) {
+			throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
+		}
+
+		// 자기학교 게시판만 접근 가능
+		if(!Objects.equals(board.getUniversityId(), userDto.universityId())) {
+			throw new AppException(ErrorCode.BOARD_ACCESS_DENIED);
 		}
 	}
 }

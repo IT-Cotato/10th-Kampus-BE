@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.NormalBoard;
+import com.cotato.kampus.domain.board.domain.UniversityBoard;
 import com.cotato.kampus.domain.board.implement.port.BoardRepository;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
@@ -18,16 +20,28 @@ public class BoardAppender {
 	private final BoardRepository boardRepository;
 
 	@Transactional
-	public Long appendBoard(String boardName, String description, Long universityId, Boolean usesCategories) {
-		BoardType boardType = (universityId != null) ? BoardType.UNIVERSITY : BoardType.GENERAL;
-		Board board = Board.builder()
-			.boardName(boardName)
-			.description(description)
-			.boardType(boardType)
-			.usesCategories(usesCategories)
-			.boardStatus(BoardStatus.ACTIVE)
-			.build();
+	public Board appendBoard(String boardName, String description, BoardType boardType, Long universityId,
+		Boolean usesCategories) {
 
-		return boardRepository.save(board).getId();
+		Board board;
+
+		if(boardType == BoardType.NORMAL) {
+			board = NormalBoard.builder()
+				.boardName(boardName)
+				.description(description)
+				.usesCategories(usesCategories)
+				.boardStatus(BoardStatus.ACTIVE)
+				.build();
+		} else {
+			board = UniversityBoard.builder()
+				.boardName(boardName)
+				.description(description)
+				.usesCategories(usesCategories)
+				.boardStatus(BoardStatus.ACTIVE)
+				.universityId(universityId)
+				.build();
+		}
+
+		return boardRepository.save(board);
 	}
 }
