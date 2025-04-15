@@ -17,6 +17,7 @@ import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
 import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsPreview;
 import com.cotato.kampus.domain.admin.dto.response.BoardInfo;
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.UniversityBoard;
 import com.cotato.kampus.domain.board.implement.board.BoardAppender;
 import com.cotato.kampus.domain.board.implement.board.BoardDtoEnhancer;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
@@ -84,7 +85,7 @@ public class AdminService {
 	private final BoardCategoryAppender boardCategoryAppender;
 
 	@Transactional
-	public Long createBoard(String boardName, String description, String universityCode, List<String> categories) {
+	public Long createBoard(String boardName, String description, BoardType boardType, String universityCode, List<String> categories) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -98,7 +99,7 @@ public class AdminService {
 		}
 
 		boolean usesCategories = !categories.isEmpty();
-		Long boardId = boardAppender.appendBoard(boardName, description, universityId, usesCategories);
+		Long boardId = boardAppender.appendBoard(boardName, description, boardType, universityId, usesCategories).getId();
 
 		// 카테고리 추가 로직
 		boardCategoryAppender.appendCategories(boardId, categories);
@@ -179,8 +180,8 @@ public class AdminService {
 		Board board = boardFinder.findBoard(boardId);
 
 		// 대학 이름 조회
-		if (board.getBoardType().equals(BoardType.UNIVERSITY)) {
-			String universityName = univFinder.findUniversityName(board.getUniversityId());
+		if (board instanceof UniversityBoard) {
+			String universityName = univFinder.findUniversityName(((UniversityBoard) board).getUniversityId());
 			return BoardInfo.from(board, universityName);
 		}
 

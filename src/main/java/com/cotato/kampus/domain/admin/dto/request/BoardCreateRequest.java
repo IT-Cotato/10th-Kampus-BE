@@ -2,12 +2,16 @@ package com.cotato.kampus.domain.admin.dto.request;
 
 import java.util.List;
 
+import com.cotato.kampus.domain.board.enums.BoardType;
+
 import jakarta.validation.constraints.NotBlank;
 
 public record BoardCreateRequest(
 	@NotBlank
 	String boardName,
+	@NotBlank
 	String description,
+	BoardType boardType,
 	String universityCode,
 	List<String> categories
 ) {
