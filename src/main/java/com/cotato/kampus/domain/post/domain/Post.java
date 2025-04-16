@@ -1,110 +1,130 @@
 package com.cotato.kampus.domain.post.domain;
 
-import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.enums.PostStatus;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@Entity
-@Table(name = "post")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class Post extends BaseTimeEntity {
+@RequiredArgsConstructor
+public abstract class Post {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "post_id")
-	private Long id;
+	private final Long id;
+	private final Long boardId;
+	private final Long userId;
+	private final String title;
+	private final String content;
+	// private final Long likes;
+	// private final Long scraps;
+	// private final Long comments;
+	private final Anonymity anonymity;
+	private final PostStatus postStatus;
+	private final PostType postType;
+	// private final Long nextAnonymousNumber;
 
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
+	protected void validate() {
+		validateBoardId();
+		validateUserId();
+		validatePostStatus();
 
-	@Column(name = "board_id", nullable = false)
-	private Long boardId;
-
-	@Column(name = "title", length = 50, nullable = false)
-	private String title;
-
-	@Column(name = "content", length = 1000)
-	private String content;
-
-	@Column(name = "likes", nullable = false)
-	private Long likes = 0L;
-
-	@Column(name = "scraps", nullable = false)
-	private Long scraps = 0L;
-
-	@Column(name = "comments", nullable = false)
-	private Long comments = 0L;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "anonymity", nullable = false)
-	private Anonymity anonymity;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "post_status", nullable = false)
-	private PostStatus postStatus = PostStatus.PUBLISHED;
-
-	@Column(name = "next_ananymous_number", nullable = false)
-	private Long nextAnonymousNumber = 1L;
-
-	@Builder
-	public Post(Long userId, Long boardId, String title, String content, Anonymity anonymity){
-		this.userId = userId;
-		this.boardId = boardId;
-		this.title = title;
-		this.content = content;
-		this.anonymity = anonymity;
+		if(postStatus != PostStatus.DRAFT) {
+			validateForPublishing();
+		}
 	}
 
-	public void update(String title, String content) {
-		this.title = title;
-		this.content = content;
+	protected void validateBoardId() {
+		if (boardId == null) {
+			throw new AppException(ErrorCode.POST_BOARD_ID_REQUIRED);
+		}
 	}
 
-	public void increaseNextAnonymousNumber() {
-		this.nextAnonymousNumber++;
+	protected void validateUserId() {
+		if (userId == null) {
+			throw new AppException(ErrorCode.POST_AUTHOR_ID_REQUIRED);
+		}
 	}
 
-	public void increaseScraps() {
-		this.scraps++;
+	protected void validatePostStatus() {
+		if(postStatus == null) {
+			throw new AppException(ErrorCode.POST_STATUS_EMPTY);
+		}
 	}
 
-	public void decreaseScraps() {
-		this.scraps--;
+	protected void validateForPublishing() {
+		validateTitle();
+		validatePostType();
+		validateAnonymous();
 	}
 
-	public void increaseLikes() {
-		this.likes++;
+	protected void validateTitle() {
+		if (title == null || title.trim().isEmpty()) {
+			throw new AppException(ErrorCode.POST_TITLE_EMPTY);
+		}
 	}
 
-	public void decreaseLikes() {
-		this.likes--;
+	protected void validatePostType() {
+		if (postType == null) {
+			throw new AppException(ErrorCode.POST_TYPE_EMPTY);
+		}
 	}
 
-	public void increaseComments() {
-		this.comments++;
+	protected void validateAnonymous() {
+		if (anonymity == null) {
+			throw new AppException(ErrorCode.POST_ANONYMOUS_EMPTY);
+		}
 	}
 
-	public void decreaseComments() {
-		this.comments--;
-	}
+	public abstract Post withUpdateInfo(String title, String content);
+	public abstract Post withPostStatus(PostStatus postStatus);
 
-	public void updateStatus(PostStatus postStatus) {
-		this.postStatus = postStatus;
-	}
+	//
+	// @Builder
+	// public Post(Long userId, Long boardId, String title, String content, Anonymity anonymity){
+	// 	this.userId = userId;
+	// 	this.boardId = boardId;
+	// 	this.title = title;
+	// 	this.content = content;
+	// 	this.anonymity = anonymity;
+	// }
+	//
+	// public void update(String title, String content) {
+	// 	this.title = title;
+	// 	this.content = content;
+	// }
+	//
+	// public void increaseNextAnonymousNumber() {
+	// 	this.nextAnonymousNumber++;
+	// }
+	//
+	// public void increaseScraps() {
+	// 	this.scraps++;
+	// }
+	//
+	// public void decreaseScraps() {
+	// 	this.scraps--;
+	// }
+	//
+	// public void increaseLikes() {
+	// 	this.likes++;
+	// }
+	//
+	// public void decreaseLikes() {
+	// 	this.likes--;
+	// }
+	//
+	// public void increaseComments() {
+	// 	this.comments++;
+	// }
+	//
+	// public void decreaseComments() {
+	// 	this.comments--;
+	// }
+	//
+	// public void updateStatus(PostStatus postStatus) {
+	// 	this.postStatus = postStatus;
+	// }
 }

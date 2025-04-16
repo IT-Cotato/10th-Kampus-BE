@@ -32,6 +32,16 @@ public enum ErrorCode {
 	CARD_NEWS_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "해당 게시글은 카드뉴스 게시글이 아닙니다.", "POST-012"),
 	POST_REQUIRED_FIELD_MISSING(HttpStatus.BAD_REQUEST, "게시글 필수 항목이 누락되었습니다.", "POST-013"),
 
+	POST_BOARD_ID_REQUIRED(HttpStatus.BAD_REQUEST, "게시글 작성 시 게시판 ID는 필수입니다.", "POST-014"),
+	POST_AUTHOR_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 작성 시 작성자 ID는 필수입니다.", "POST-015"),
+	POST_TITLE_EMPTY(HttpStatus.BAD_REQUEST, "게시글 제목은 필수 항목입니다.", "POST-016"),
+	POST_CONTENT_EMPTY(HttpStatus.BAD_REQUEST, "게시글 내용은 필수 항목입니다.", "POST-017"),
+	POST_CONTENT_TOO_LONG(HttpStatus.BAD_REQUEST, "게시글 내용이 너무 깁니다", "POST-018"),
+	POST_STATUS_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 상태는 필수 항목입니다.", "POST-019"),
+	POST_TYPE_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 타입은 필수 항목입니다.", "POST-020"),
+	POST_ANONYMOUS_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 익명 여부는 필수 항목입니다.", "POST-021"),
+	INVALID_POST_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 PostType 입니다.", "POST-022"),
+
 	//Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
 	IMAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "이미지는 필수입니다. 이미지를 첨부해주세요.", "IMAGE-002"),
@@ -78,7 +88,6 @@ public enum ErrorCode {
 	BOARD_ALREADY_PENDING(HttpStatus.BAD_REQUEST, "이미 삭제 대기 상태인 게시판입니다.", "BOARD-010"),
 	INVALID_BOARD_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 BoardType 입니다.", "BOARD-011"),
 
-	// Board 유효성 검사 관련 에러
 	BOARD_NAME_EMPTY(HttpStatus.BAD_REQUEST, "게시판 이름은 필수 항목입니다.", "BOARD-012"),
 	BOARD_DESCRIPTION_EMPTY(HttpStatus.BAD_REQUEST, "게시판 설명은 필수 항목입니다.", "BOARD-013"),
 	BOARD_DESCRIPTION_TOO_LONG(HttpStatus.BAD_REQUEST, "게시판 설명이 너무 깁니다.", "BOARD-014"),
