@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.chat.domain;
 
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.post.dto.PostReferenceDto;
 
 public record ChatRoomDetailDto(
@@ -12,13 +12,13 @@ public record ChatRoomDetailDto(
 	Long initialSenderId,
 	Long initialReceiverId
 ) {
-	public static ChatRoomDetailDto of(ChatRoom chatRoom, PostReferenceDto post, BoardDto board) {
+	public static ChatRoomDetailDto of(ChatRoom chatRoom, PostReferenceDto post, Board board) {
 		return new ChatRoomDetailDto(
 			chatRoom.getId(),
 			post.postId(),
 			post.title(),
-			board.boardId(),
-			board.boardName(),
+			board.getId(),
+			board.getBoardName(),
 			chatRoom.getInitialSenderId(),
 			chatRoom.getInitialReceiverId()
 		);

@@ -16,13 +16,14 @@ import com.cotato.kampus.domain.admin.dto.VerificationPhotoDto;
 import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
 import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsPreview;
 import com.cotato.kampus.domain.admin.dto.response.BoardInfo;
-import com.cotato.kampus.domain.board.application.BoardAppender;
-import com.cotato.kampus.domain.board.application.BoardDtoEnhancer;
-import com.cotato.kampus.domain.board.application.BoardFinder;
-import com.cotato.kampus.domain.board.application.BoardUpdater;
-import com.cotato.kampus.domain.board.application.BoardValidator;
-import com.cotato.kampus.domain.board.application.BoardCategoryAppender;
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.UniversityBoard;
+import com.cotato.kampus.domain.board.implement.board.BoardAppender;
+import com.cotato.kampus.domain.board.implement.board.BoardDtoEnhancer;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
+import com.cotato.kampus.domain.board.implement.board.BoardUpdater;
+import com.cotato.kampus.domain.board.implement.board.BoardValidator;
+import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryAppender;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -84,7 +85,7 @@ public class AdminService {
 	private final BoardCategoryAppender boardCategoryAppender;
 
 	@Transactional
-	public Long createBoard(String boardName, String description, String universityCode, List<String> categories) {
+	public Long createBoard(String boardName, String description, BoardType boardType, String universityCode, List<String> categories) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -98,7 +99,7 @@ public class AdminService {
 		}
 
 		boolean usesCategories = !categories.isEmpty();
-		Long boardId = boardAppender.appendBoard(boardName, description, universityId, usesCategories);
+		Long boardId = boardAppender.appendBoard(boardName, description, boardType, universityId, usesCategories).getId();
 
 		// 카테고리 추가 로직
 		boardCategoryAppender.appendCategories(boardId, categories);
@@ -165,10 +166,10 @@ public class AdminService {
 		userValidator.validateAdminAccess();
 
 		// 각 게시판의 게시글 수 매핑하여 반환
-		List<BoardDto> boardDtos = boardFinder.findAllBoards(boardStatus);
+		List<Board> boards = boardFinder.findAllBoards(boardStatus);
 
 		// 게시판 게시글 수, 삭제까지 남은 날짜 수 매핑
-		return boardDtoEnhancer.mapToAdminBoardDetail(boardDtos);
+		return boardDtoEnhancer.mapToAdminBoardDetail(boards);
 	}
 
 	public BoardInfo getBoard(Long boardId) {
@@ -176,15 +177,15 @@ public class AdminService {
 		userValidator.validateAdminAccess();
 
 		// 게시판 조회
-		BoardDto boardDto = boardFinder.findBoardDto(boardId);
+		Board board = boardFinder.findBoard(boardId);
 
 		// 대학 이름 조회
-		if (boardDto.boardType().equals(BoardType.UNIVERSITY)) {
-			String universityName = univFinder.findUniversityName(boardDto.universityId());
-			return BoardInfo.from(boardDto, universityName);
+		if (board instanceof UniversityBoard) {
+			String universityName = univFinder.findUniversityName(((UniversityBoard) board).getUniversityId());
+			return BoardInfo.from(board, universityName);
 		}
 
-		return BoardInfo.from(boardDto, null);
+		return BoardInfo.from(board, null);
 	}
 
 	public Slice<StudentVerification> getVerifications(int page) {

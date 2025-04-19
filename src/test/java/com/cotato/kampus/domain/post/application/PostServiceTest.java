@@ -24,10 +24,10 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cotato.kampus.domain.board.application.BoardFinder;
-import com.cotato.kampus.domain.board.application.BoardValidator;
-import com.cotato.kampus.domain.board.application.BoardCategoryResolver;
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
+import com.cotato.kampus.domain.board.implement.board.BoardValidator;
+import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryResolver;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.comment.application.CommentDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -91,8 +91,8 @@ class PostServiceTest {
 	private String content;
 	private UserDto verifiedUserDto;
 	private UserDto unverifiedUserDto;
-	private BoardDto generalBoardDto;
-	private BoardDto universityBoardDto;
+	private Board generalBoard;
+	private Board universityBoard;
 	private MockMultipartFile imageFile;
 	private List<MultipartFile> images;
 	private List<String> categories;
@@ -118,19 +118,19 @@ class PostServiceTest {
 		when(unverifiedUserDto.userRole()).thenReturn(UserRole.UNVERIFIED);
 
 		// 일반 게시판
-		BoardDto generalBoardDto = Mockito.mock(BoardDto.class);
-		when(generalBoardDto.boardId()).thenReturn(1L);
-		when(generalBoardDto.boardType()).thenReturn(BoardType.GENERAL);
+		Board generalBoardDto = Mockito.mock(Board.class);
+		when(generalBoardDto.getId()).thenReturn(1L);
+		when(generalBoardDto.getBoardType()).thenReturn(BoardType.GENERAL);
 
 		// 대학 게시판
-		BoardDto universityBoardDto = Mockito.mock(BoardDto.class);
-		when(universityBoardDto.boardId()).thenReturn(2L);
-		when(universityBoardDto.boardType()).thenReturn(BoardType.UNIVERSITY);
+		Board universityBoardDto = Mockito.mock(Board.class);
+		when(universityBoardDto.getId()).thenReturn(2L);
+		when(universityBoardDto.getBoardType()).thenReturn(BoardType.UNIVERSITY);
 
 		this.verifiedUserDto = verifiedUserDto;
 		this.unverifiedUserDto = unverifiedUserDto;
-		this.generalBoardDto = generalBoardDto;
-		this.universityBoardDto = universityBoardDto;
+		this.generalBoard = generalBoard;
+		this.universityBoard = universityBoard;
 
 		imageFile = new MockMultipartFile(
 			"image",
@@ -148,7 +148,7 @@ class PostServiceTest {
 	void createPost_WithImagesAndCategories_Success() throws ImageException {
 		// Given
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto);
-		when(boardFinder.findBoardDto(anyLong())).thenReturn(generalBoardDto);
+		when(boardFinder.findBoard(anyLong())).thenReturn(generalBoard);
 		when(postAppender.append(unverifiedUserDto.id(), boardId, title, content)).thenReturn(postId);
 		when(imageValidator.filterValidImages(images)).thenReturn(images);
 		when(s3Uploader.uploadFiles(images, "post")).thenReturn(List.of("image-url"));
@@ -159,8 +159,8 @@ class PostServiceTest {
 
 		// Then
 		assertThat(result).isEqualTo(postId);
-		verify(boardValidator).validateBoardIsActive(generalBoardDto);
-		verify(boardValidator).validatePostCreationAccess(unverifiedUserDto, generalBoardDto);
+		verify(boardValidator).validateBoardIsActive(generalBoard);
+		verify(boardValidator).validatePostCreationAccess(unverifiedUserDto, generalBoard);
 		verify(postAppender).append(unverifiedUserDto.id(), boardId, title, content);
 		verify(imageValidator).filterValidImages(images);
 		verify(s3Uploader).uploadFiles(images, "post");
@@ -177,7 +177,7 @@ class PostServiceTest {
 		List<String> emptyCategories = List.of();
 
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto);
-		when(boardFinder.findBoardDto(anyLong())).thenReturn(generalBoardDto);
+		when(boardFinder.findBoard(anyLong())).thenReturn(generalBoard);
 
 		when(postAppender.append(unverifiedUserDto.id(), boardId, title, content)).thenReturn(postId);
 		when(imageValidator.filterValidImages(emptyImages)).thenReturn(emptyImages);
@@ -188,8 +188,8 @@ class PostServiceTest {
 
 		// Then
 		assertThat(result).isEqualTo(postId);
-		verify(boardValidator).validateBoardIsActive(generalBoardDto);
-		verify(boardValidator).validatePostCreationAccess(unverifiedUserDto, generalBoardDto);
+		verify(boardValidator).validateBoardIsActive(generalBoard);
+		verify(boardValidator).validatePostCreationAccess(unverifiedUserDto, generalBoard);
 		verify(postAppender).append(unverifiedUserDto.id(), boardId, title, content);
 		verify(imageValidator).filterValidImages(emptyImages);
 		// S3 업로드는 호출되지 않아야 함
@@ -206,7 +206,7 @@ class PostServiceTest {
 	void createPost_WithInvalidCategory_ThrowsException() throws ImageException {
 		// Given
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto);
-		when(boardFinder.findBoardDto(anyLong())).thenReturn(generalBoardDto);
+		when(boardFinder.findBoard(anyLong())).thenReturn(generalBoard);
 
 		when(postAppender.append(unverifiedUserDto.id(), boardId, title, content)).thenReturn(postId);
 		when(imageValidator.filterValidImages(images)).thenReturn(images);
@@ -236,11 +236,11 @@ class PostServiceTest {
 	void createPost_UnverifiedUser_UniversityBoard_ThrowsException() {
 		// Given
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto);
-		when(boardFinder.findBoardDto(anyLong())).thenReturn(universityBoardDto);
+		when(boardFinder.findBoard(anyLong())).thenReturn(universityBoard);
 
 		// 예외를 던지도록 설정
 		Mockito.doThrow(new AppException(ErrorCode.USER_UNVERIFIED))
-			.when(boardValidator).validatePostCreationAccess(unverifiedUserDto, universityBoardDto);
+			.when(boardValidator).validatePostCreationAccess(unverifiedUserDto, universityBoard);
 
 		// When & Then
 		assertThatThrownBy(() ->
@@ -318,7 +318,7 @@ class PostServiceTest {
 		Slice<PostWithPhotos> expectedSlice = new SliceImpl<>(List.of(), Pageable.unpaged(), false);
 
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto); // 재학생 인증되지 않은 사용자
-		when(boardFinder.findBoardDto(boardId)).thenReturn(generalBoardDto); // 일반 게시판
+		when(boardFinder.findBoard(boardId)).thenReturn(generalBoard); // 일반 게시판
 		when(postFinder.findPostsByCategory(boardId, page, sortType, categoryName)).thenReturn(expectedSlice);
 
 		// When
@@ -326,8 +326,8 @@ class PostServiceTest {
 
 		// Then
 		assertThat(result).isEqualTo(expectedSlice);
-		verify(boardValidator).validateBoardIsActive(generalBoardDto);
-		verify(boardValidator).validateUniversityAccess(unverifiedUserDto, generalBoardDto);
+		verify(boardValidator).validateBoardIsActive(generalBoard);
+		verify(boardValidator).validateUniversityAccess(unverifiedUserDto, generalBoard);
 		verify(boardValidator, never()).isCategoryEnabled(any());
 		verify(postFinder).findPostsByCategory(boardId, page, sortType, categoryName);
 	}
@@ -344,7 +344,7 @@ class PostServiceTest {
 		Slice<PostWithPhotos> expectedSlice = new SliceImpl<>(List.of(), Pageable.unpaged(), false);
 
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(verifiedUserDto);
-		when(boardFinder.findBoardDto(boardId)).thenReturn(generalBoardDto);
+		when(boardFinder.findBoard(boardId)).thenReturn(generalBoard);
 		when(postFinder.findPostsByCategory(boardId, page, sortType, categoryName)).thenReturn(expectedSlice);
 
 		// When
@@ -352,9 +352,9 @@ class PostServiceTest {
 
 		// Then
 		assertThat(result).isEqualTo(expectedSlice);
-		verify(boardValidator).validateBoardIsActive(generalBoardDto);
-		verify(boardValidator).validateUniversityAccess(verifiedUserDto, generalBoardDto);
-		verify(boardValidator).isCategoryEnabled(generalBoardDto);
+		verify(boardValidator).validateBoardIsActive(generalBoard);
+		verify(boardValidator).validateUniversityAccess(verifiedUserDto, generalBoard);
+		verify(boardValidator).isCategoryEnabled(generalBoard);
 		verify(postFinder).findPostsByCategory(boardId, page, sortType, categoryName);
 	}
 
@@ -368,11 +368,11 @@ class PostServiceTest {
 		String categoryName = null;
 
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto); // 미인증 사용자
-		when(boardFinder.findBoardDto(boardId)).thenReturn(universityBoardDto); // 대학 게시판
+		when(boardFinder.findBoard(boardId)).thenReturn(universityBoard); // 대학 게시판
 
 		// 예외를 던지도록 설정
 		Mockito.doThrow(new AppException(ErrorCode.USER_UNVERIFIED))
-			.when(boardValidator).validateUniversityAccess(unverifiedUserDto, universityBoardDto);
+			.when(boardValidator).validateUniversityAccess(unverifiedUserDto, universityBoard);
 
 		// When & Then
 		assertThatThrownBy(() ->
@@ -380,7 +380,7 @@ class PostServiceTest {
 		).isInstanceOf(AppException.class)
 			.hasFieldOrPropertyWithValue("errorCode", ErrorCode.USER_UNVERIFIED);
 
-		verify(boardValidator).validateBoardIsActive(universityBoardDto);
+		verify(boardValidator).validateBoardIsActive(universityBoard);
 		verify(postFinder, never()).findPostsByCategory(anyLong(), anyInt(), any(), any());
 	}
 
@@ -394,11 +394,11 @@ class PostServiceTest {
 		String categoryName = "카테고리1";
 
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(verifiedUserDto);
-		when(boardFinder.findBoardDto(boardId)).thenReturn(generalBoardDto);
+		when(boardFinder.findBoard(boardId)).thenReturn(generalBoard);
 
 		// 카테고리 비활성화 예외 설정
 		Mockito.doThrow(new AppException(ErrorCode.CATEGORY_NOT_ALLOWED))
-			.when(boardValidator).isCategoryEnabled(generalBoardDto);
+			.when(boardValidator).isCategoryEnabled(generalBoard);
 
 		// When & Then
 		assertThatThrownBy(() ->
@@ -406,8 +406,8 @@ class PostServiceTest {
 		).isInstanceOf(AppException.class)
 			.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CATEGORY_NOT_ALLOWED);
 
-		verify(boardValidator).validateBoardIsActive(generalBoardDto);
-		verify(boardValidator).validateUniversityAccess(verifiedUserDto, generalBoardDto);
+		verify(boardValidator).validateBoardIsActive(generalBoard);
+		verify(boardValidator).validateUniversityAccess(verifiedUserDto, generalBoard);
 		verify(postFinder, never()).findPostsByCategory(anyLong(), anyInt(), any(), any());
 	}
 
@@ -416,7 +416,7 @@ class PostServiceTest {
 	void draftPost_Success() throws ImageException {
 		// given
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto);
-		when(boardFinder.findBoardDto(anyLong())).thenReturn(generalBoardDto);
+		when(boardFinder.findBoard(anyLong())).thenReturn(generalBoard);
 		when(postAppender.draft(boardId, title, content)).thenReturn(postDraftId);
 		when(imageValidator.filterValidImages(images)).thenReturn(images);
 		when(s3Uploader.uploadFiles(images, "post")).thenReturn(List.of("image-url"));
@@ -427,8 +427,8 @@ class PostServiceTest {
 
 		// Then
 		assertThat(result).isEqualTo(postDraftId);
-		verify(boardValidator).validateBoardIsActive(generalBoardDto);
-		verify(boardValidator).validatePostCreationAccess(unverifiedUserDto, generalBoardDto);
+		verify(boardValidator).validateBoardIsActive(generalBoard);
+		verify(boardValidator).validatePostCreationAccess(unverifiedUserDto, generalBoard);
 		verify(postAppender).draft(boardId, title, content);
 		verify(imageValidator).filterValidImages(images);
 		verify(s3Uploader).uploadFiles(images, "post");
@@ -445,7 +445,7 @@ class PostServiceTest {
 		List<String> emptyCategories = List.of();
 
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto);
-		when(boardFinder.findBoardDto(anyLong())).thenReturn(generalBoardDto);
+		when(boardFinder.findBoard(anyLong())).thenReturn(generalBoard);
 		when(postAppender.draft(boardId, title, content)).thenReturn(postDraftId);
 		when(imageValidator.filterValidImages(emptyImages)).thenReturn(emptyImages);
 		when(boardCategoryResolver.resolveCategoryIds(emptyCategories, boardId)).thenReturn(List.of());
@@ -455,8 +455,8 @@ class PostServiceTest {
 
 		// Then
 		assertThat(result).isEqualTo(postDraftId);
-		verify(boardValidator).validateBoardIsActive(generalBoardDto);
-		verify(boardValidator).validatePostCreationAccess(unverifiedUserDto, generalBoardDto);
+		verify(boardValidator).validateBoardIsActive(generalBoard);
+		verify(boardValidator).validatePostCreationAccess(unverifiedUserDto, generalBoard);
 		verify(postAppender).draft(boardId, title, content);
 		verify(imageValidator).filterValidImages(emptyImages);
 		// S3 업로드는 호출되지 않아야 함
@@ -473,7 +473,7 @@ class PostServiceTest {
 	void draftPost_InvalidCategory_Fail() throws ImageException {
 		// Given
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto);
-		when(boardFinder.findBoardDto(anyLong())).thenReturn(generalBoardDto);
+		when(boardFinder.findBoard(anyLong())).thenReturn(generalBoard);
 		when(postAppender.draft(boardId, title, content)).thenReturn(postDraftId);
 		when(imageValidator.filterValidImages(images)).thenReturn(images);
 		when(s3Uploader.uploadFiles(images, "post")).thenReturn(List.of("image-url"));
@@ -502,11 +502,11 @@ class PostServiceTest {
 	void draftPost_UnverifiedUser_UniversityBoard_Fail() {
 		// Given
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUserDto);
-		when(boardFinder.findBoardDto(anyLong())).thenReturn(universityBoardDto);
+		when(boardFinder.findBoard(anyLong())).thenReturn(universityBoard);
 
 		// 예외를 던지도록 설정
 		Mockito.doThrow(new AppException(ErrorCode.BOARD_ACCESS_DENIED))
-			.when(boardValidator).validatePostCreationAccess(unverifiedUserDto, universityBoardDto);
+			.when(boardValidator).validatePostCreationAccess(unverifiedUserDto, universityBoard);
 
 		// When & Then
 		assertThatThrownBy(() ->

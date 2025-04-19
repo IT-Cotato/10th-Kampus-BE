@@ -47,7 +47,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@Query("""
 			SELECT p FROM Post p
-			JOIN Board b ON p.boardId = b.id
+			JOIN BoardEntity b ON p.boardId = b.id
 			WHERE p.id IN :postIds
 			AND (b.boardType <> 'UNIVERSITY' OR b.universityId = :userUnivId)
 			ORDER BY p.createdTime DESC
@@ -57,7 +57,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 	@Query("""
 				SELECT p FROM Post p
-				JOIN Board b ON p.boardId = b.id
+				JOIN BoardEntity b ON p.boardId = b.id
 				WHERE p.id IN :postIds
 				AND b.boardStatus = 'ACTIVE'
 				AND (b.boardType <> 'UNIVERSITY' OR b.universityId = :userUnivId)
