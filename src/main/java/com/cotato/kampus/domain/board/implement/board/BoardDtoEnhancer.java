@@ -12,7 +12,7 @@ import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.port.BoardFavoriteRepository;
 import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
-import com.cotato.kampus.domain.post.dao.repository.PostRepository;
+import com.cotato.kampus.domain.post.implement.port.PostRepository;
 import com.cotato.kampus.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;

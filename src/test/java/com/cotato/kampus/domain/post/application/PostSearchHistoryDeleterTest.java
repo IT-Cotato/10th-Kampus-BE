@@ -9,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.cotato.kampus.domain.post.dao.repository.PostSearchHistoryRepository;
+import com.cotato.kampus.domain.post.implement.port.PostSearchHistoryRepository;
 import com.cotato.kampus.domain.post.implement.postSearch.PostSearchHistoryDeleter;
 
 @ExtendWith(MockitoExtension.class)

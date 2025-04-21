@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.board.enums.BoardType;
-import com.cotato.kampus.domain.post.dao.repository.PostScrapRepository;
+import com.cotato.kampus.domain.post.implement.port.PostScrapRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostDraftDto;
 import com.cotato.kampus.domain.post.domain.PostDto;

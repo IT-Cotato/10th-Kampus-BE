@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.post.dao.repository;
+package com.cotato.kampus.domain.post.implement.port;
 
 import java.util.List;
 

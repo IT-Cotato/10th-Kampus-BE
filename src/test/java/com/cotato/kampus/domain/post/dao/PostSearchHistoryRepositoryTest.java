@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.cotato.kampus.domain.post.domain.PostSearchHistory;
-import com.cotato.kampus.domain.post.dao.repository.PostSearchHistoryRepository;
+import com.cotato.kampus.domain.post.implement.port.PostSearchHistoryRepository;
 import com.cotato.kampus.global.config.JpaAuditingConfig;
 
 @DataJpaTest

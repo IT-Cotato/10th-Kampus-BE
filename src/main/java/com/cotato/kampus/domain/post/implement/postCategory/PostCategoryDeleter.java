@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.post.dao.repository.PostCategoryRepository;
-import com.cotato.kampus.domain.post.dao.repository.PostDraftCategoryRepository;
+import com.cotato.kampus.domain.post.implement.port.PostCategoryRepository;
+import com.cotato.kampus.domain.post.implement.port.PostDraftCategoryRepository;
 import com.cotato.kampus.domain.post.domain.PostCategory;
 import com.cotato.kampus.domain.post.domain.PostDraftCategory;
 

@@ -3,7 +3,7 @@ package com.cotato.kampus.domain.post.implement.postSearch;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.post.dao.repository.PostSearchHistoryRepository;
+import com.cotato.kampus.domain.post.implement.port.PostSearchHistoryRepository;
 import com.cotato.kampus.domain.post.domain.PostSearchHistory;
 import com.cotato.kampus.domain.post.domain.PostSearchHistoryDto;
 import com.cotato.kampus.domain.post.domain.PostSearchHistoryList;

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.post.dao.repository.PostDraftCategoryRepository;
+import com.cotato.kampus.domain.post.implement.port.PostDraftCategoryRepository;
 import com.cotato.kampus.domain.post.domain.PostDraftCategory;
 
 import lombok.AccessLevel;

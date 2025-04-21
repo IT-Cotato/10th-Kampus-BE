@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.post.dao.repository.PostLikeRepository;
+import com.cotato.kampus.domain.post.implement.port.PostLikeRepository;
 import com.cotato.kampus.domain.post.domain.PostLike;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;

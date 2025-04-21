@@ -3,7 +3,7 @@ package com.cotato.kampus.domain.post.implement.postTrending;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.post.dao.repository.TrendingPostRepository;
+import com.cotato.kampus.domain.post.implement.port.TrendingPostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.TrendingPost;
 import com.cotato.kampus.domain.post.implement.post.PostFinder;

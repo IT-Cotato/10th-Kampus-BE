@@ -3,7 +3,7 @@ package com.cotato.kampus.domain.post.implement.postLike;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.post.dao.repository.PostLikeRepository;
+import com.cotato.kampus.domain.post.implement.port.PostLikeRepository;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 

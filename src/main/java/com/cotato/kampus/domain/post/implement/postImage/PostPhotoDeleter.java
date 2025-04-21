@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.post.dao.repository.PostDraftPhotoRepository;
-import com.cotato.kampus.domain.post.dao.repository.PostPhotoRepository;
+import com.cotato.kampus.domain.post.implement.port.PostDraftPhotoRepository;
+import com.cotato.kampus.domain.post.implement.port.PostPhotoRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

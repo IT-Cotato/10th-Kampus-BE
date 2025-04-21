@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cotato.kampus.domain.post.dao.repository.PostPhotoRepository;
+import com.cotato.kampus.domain.post.implement.port.PostPhotoRepository;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;

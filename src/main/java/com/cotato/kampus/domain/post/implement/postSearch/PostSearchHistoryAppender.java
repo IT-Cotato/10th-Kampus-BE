@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.post.dao.repository.PostSearchHistoryRepository;
+import com.cotato.kampus.domain.post.implement.port.PostSearchHistoryRepository;
 import com.cotato.kampus.domain.post.domain.PostSearchHistory;
 
 import lombok.AccessLevel;
