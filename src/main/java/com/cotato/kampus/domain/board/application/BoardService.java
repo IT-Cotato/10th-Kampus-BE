@@ -6,10 +6,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.cotato.kampus.domain.board.dto.BoardDto;
-import com.cotato.kampus.domain.board.dto.BoardWithFavoriteStatus;
-import com.cotato.kampus.domain.board.dto.BoardCategoryDto;
-import com.cotato.kampus.domain.board.dto.HomeBoardAndPostPreview;
+import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
+import com.cotato.kampus.domain.board.domain.HomeBoardAndPostPreview;
+import com.cotato.kampus.domain.board.implement.board.BoardDtoEnhancer;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteReader;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.application.PostDtoMapper;
 import com.cotato.kampus.domain.post.application.PostFinder;
@@ -24,16 +26,12 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
 	private final BoardFinder boardFinder;
-	private final BoardValidator boardValidator;
 	private final BoardDtoEnhancer boardDtoEnhancer;
 	private final BoardFavoriteReader boardFavoriteReader;
-	private final BoardFavoriteAppender boardFavoriteAppender;
-	private final BoardFavoriteDeleter boardFavoriteDeleter;
 	private final UserValidator userValidator;
 	private final ApiUserResolver apiUserResolver;
 	private final PostFinder postFinder;
 	private final PostDtoMapper postDtoMapper;
-	private final BoardCategoryFinder boardCategoryFinder;
 
 	public List<BoardWithFavoriteStatus> getBoardList() {
 		// 유저 조회
@@ -43,7 +41,7 @@ public class BoardService {
 		List<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
 
 		// 공용 게시판 조회
-		List<BoardDto> boards = boardFinder.findPublicBoards();
+		List<Board> boards = boardFinder.findPublicBoards();
 
 		// 즐겨찾기 여부 매핑
 		List<BoardWithFavoriteStatus> boardWithFavorites = new ArrayList<>(
@@ -61,28 +59,12 @@ public class BoardService {
 
 		// 즐겨찾는 게시판 조회
 		List<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
-		List<BoardDto> boardDtos = boardFinder.findBoardDtos(favoriteBoardIds);
+		List<Board> boards = boardFinder.findBoardsWithIds(favoriteBoardIds);
 
-		return postDtoMapper.mapToHomeBoardAndPostPreviewsByBoardDtos(boardDtos);
+		return postDtoMapper.mapToHomeBoardAndPostPreviewsByBoardDtos(boards);
 	}
 
-	public Long addFavoriteBoard(Long boardId) {
-		// 게시판 조회
-		BoardDto boardDto = boardFinder.findBoardDto(boardId);
-
-		// 게시판 검증
-		boardValidator.validateBoardIsActive(boardDto);
-
-		// 즐겨찾기 추가
-		return boardFavoriteAppender.appendFavoriteBoard(boardDto.boardId());
-	}
-
-	public Long removeFavoriteBoard(Long boardId) {
-		boardFavoriteDeleter.deleteFavoriteBoard(boardId);
-		return boardId;
-	}
-
-	public BoardDto getUniversityBoard() {
+	public Board getUniversityBoard() {
 		// 유저 조회
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
@@ -94,18 +76,18 @@ public class BoardService {
 	}
 
 	public Boolean requiresCategory(Long boardId) {
-		BoardDto boardDto = boardFinder.findBoardDto(boardId);
+		Board board = boardFinder.findBoard(boardId);
 
-		return boardDto.usesCategories();
+		return board.getUsesCategories();
 	}
 
 	public BoardWithFavoriteStatus getBoard(Long boardId) {
 		// 유저 조회
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
-		BoardDto boardDto = boardFinder.findBoardDto(boardId);
+		Board board = boardFinder.findBoard(boardId);
 
-		return boardDtoEnhancer.mapToBoardWithFavoriteStatus(boardDto, userDto);
+		return boardDtoEnhancer.mapToBoardWithFavoriteStatus(board, userDto);
 	}
 
 	public List<HomeBoardAndPostPreview> getTrendingPreview() {
@@ -117,13 +99,5 @@ public class BoardService {
 		List<PostDto> trendingPosts = postFinder.findTrendingPosts(userUnivId);
 
 		return postDtoMapper.mapToHomeBoardAndPostPreviews(trendingPosts);
-	}
-
-	public List<BoardCategoryDto> findCategories(Long boardId) {
-		// 존재하는 게시판인지 확인
-		boardFinder.findBoard(boardId);
-
-		// 카테고리 조회
-		return boardCategoryFinder.findAllDtoByBoardId(boardId);
 	}
 }

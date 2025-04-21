@@ -57,6 +57,7 @@ public class AdminController {
 					adminService.createBoard(
 						request.boardName(),
 						request.description(),
+						request.boardType(),
 						request.universityCode(),
 						request.categories() == null ? List.of() : request.categories()
 					)

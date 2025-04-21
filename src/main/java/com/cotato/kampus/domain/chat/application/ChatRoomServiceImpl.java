@@ -6,8 +6,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.application.BoardFinder;
-import com.cotato.kampus.domain.board.dto.BoardDto;
+import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.chat.api.port.ChatRoomService;
 import com.cotato.kampus.domain.chat.domain.ChatRoom;
 import com.cotato.kampus.domain.chat.domain.ChatRoomDetailDto;
@@ -115,7 +115,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 			return ChatRoomDetailDto.ofDeleted(chatRoom, postReference);
 		}
 		// 4. 게시글이 존재하는 경우
-		BoardDto board = boardFinder.findBoardDto(postReference.boardId());
+		Board board = boardFinder.findBoard(postReference.boardId());
 		return ChatRoomDetailDto.of(chatRoom, postReference, board);
 	}
 

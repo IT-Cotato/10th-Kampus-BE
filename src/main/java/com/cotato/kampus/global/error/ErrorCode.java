@@ -76,6 +76,15 @@ public enum ErrorCode {
 	BOARD_NAME_DUPLICATED(HttpStatus.BAD_REQUEST, "게시판 이름이 이미 존재합니다.", "BOARD-008"),
 	BOARD_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 게시판 접근 자격이 없습니다.", "BOARD-009"),
 	BOARD_ALREADY_PENDING(HttpStatus.BAD_REQUEST, "이미 삭제 대기 상태인 게시판입니다.", "BOARD-010"),
+	INVALID_BOARD_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 BoardType 입니다.", "BOARD-011"),
+
+	// Board 유효성 검사 관련 에러
+	BOARD_NAME_EMPTY(HttpStatus.BAD_REQUEST, "게시판 이름은 필수 항목입니다.", "BOARD-012"),
+	BOARD_DESCRIPTION_EMPTY(HttpStatus.BAD_REQUEST, "게시판 설명은 필수 항목입니다.", "BOARD-013"),
+	BOARD_DESCRIPTION_TOO_LONG(HttpStatus.BAD_REQUEST, "게시판 설명이 너무 깁니다.", "BOARD-014"),
+	BOARD_STATUS_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "게시판 상태는 필수 항목입니다.", "BOARD-015"),
+	BOARD_TYPE_EMPTY(HttpStatus.BAD_REQUEST, "게시판 타입은 필수 항목입니다.", "BOARD-016"),
+	BOARD_UNIVERSITY_ID_REQUIRED(HttpStatus.BAD_REQUEST, "대학 게시판은 대학 ID가 필수입니다.", "BOARD-017"),
 
 	//University
 	UNIVERSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 대학을 찾을 수 없습니다.", "UNIVERSITY-001"),

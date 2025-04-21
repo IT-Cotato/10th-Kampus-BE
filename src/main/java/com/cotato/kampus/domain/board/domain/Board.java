@@ -4,76 +4,59 @@ import java.time.LocalDateTime;
 
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
-import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@Entity
-// @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Board extends BaseTimeEntity {
+@RequiredArgsConstructor
+public abstract class Board {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "board_id", nullable = false)
-	private Long id;
+	private final Long id;
+	private final String boardName;
+	private final String description;
+	private final Boolean usesCategories;
+	private final BoardStatus boardStatus;
+	private final BoardType boardType;
+	private final LocalDateTime deletionScheduledAt;
 
-	@Column(name = "board_name", nullable = false)
-	private String boardName;
-
-	@Column(name = "description", nullable = false)
-	private String description;
-
-	@Column(name = "university_id")
-	private Long universityId;
-
-	@Column(name = "uses_categories", nullable = false)
-	private Boolean usesCategories;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "board_status", nullable = false)
-	private BoardStatus boardStatus;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "board_type", nullable = false)
-	private BoardType boardType;
-
-	@Column(name = "deletion_scheduled_at")
-	private LocalDateTime deletionScheduledAt;
-
-	@Builder
-	public Board(String boardName, String description, Long universityId, Boolean usesCategories,
-		BoardStatus boardStatus, BoardType boardType) {
-		this.boardName = boardName;
-		this.description = description;
-		this.universityId = universityId;
-		this.usesCategories = usesCategories;
-		this.boardStatus = boardStatus;
-		this.boardType = boardType;
+	protected void validate() {
+		validateBoardName();
+		validateDescription();
+		validateBoardStatus();
+		validateBoardType();
 	}
 
-	public void update(String boardName, String description, Boolean usesCategories) {
-		this.boardName = boardName;
-		this.description = description;
-		this.usesCategories = usesCategories;
+	private void validateBoardName() {
+		if(boardName == null || boardName.trim().isEmpty()) {
+			throw new AppException(ErrorCode.BOARD_NAME_EMPTY);
+		}
 	}
 
-	public void updateStatus(BoardStatus boardStatus) {
-		this.boardStatus = boardStatus;
+	private void validateDescription() {
+		if(description == null || description.trim().isEmpty()) {
+			throw new AppException(ErrorCode.BOARD_DESCRIPTION_EMPTY);
+		}
+		if(description.length() > 90) {
+			throw new AppException(ErrorCode.BOARD_DESCRIPTION_TOO_LONG);
+		}
 	}
 
-	public void setDeletionScheduledAt(LocalDateTime deletionScheduledAt) {
-		this.deletionScheduledAt = deletionScheduledAt;
+	private void validateBoardStatus() {
+		if(boardStatus == null) {
+			throw new AppException(ErrorCode.BOARD_STATUS_EMPTY);
+		}
 	}
+
+	private void validateBoardType() {
+		if(boardType == null) {
+			throw new AppException(ErrorCode.BOARD_STATUS_EMPTY);
+		}
+	}
+
+	public abstract Board withUpdateInfo(String boardName, String description, Boolean usesCategories);
+	public abstract Board withBoardStatus(BoardStatus boardStatus);
+	public abstract Board withPendingInfo(BoardStatus boardStatus, LocalDateTime deletionScheduledAt);
 }

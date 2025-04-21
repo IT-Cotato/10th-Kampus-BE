@@ -1,0 +1,62 @@
+package com.cotato.kampus.domain.board.implement.board;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.cotato.kampus.domain.admin.dto.AdminBoardDetail;
+import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.implement.port.BoardFavoriteRepository;
+import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
+import com.cotato.kampus.domain.board.enums.BoardStatus;
+import com.cotato.kampus.domain.post.dao.PostRepository;
+import com.cotato.kampus.domain.user.dto.UserDto;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+
+@Component
+@Transactional(readOnly = true)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+public class BoardDtoEnhancer {
+
+	private final PostRepository postRepository;
+	private final BoardFavoriteRepository boardFavoriteRepository;
+
+	public BoardWithFavoriteStatus mapToBoardWithFavoriteStatus(Board board, UserDto userDto) {
+		Boolean isFavorite = boardFavoriteRepository.existsByUserIdAndBoardId(userDto.id(), board.getId());
+
+		return BoardWithFavoriteStatus.from(board, isFavorite);
+
+	}
+
+	public List<BoardWithFavoriteStatus> updateFavoriteStatus(List<Board> boards, List<Long> favoriteBoardIds) {
+		return boards.stream()
+			.map(board -> BoardWithFavoriteStatus.from(board, favoriteBoardIds.contains(board.getId())
+			))
+			.toList();
+	}
+
+	public List<AdminBoardDetail> mapToAdminBoardDetail(List<Board> boards) {
+		LocalDateTime now = LocalDateTime.now();
+
+		return boards.stream()
+			.map(board -> {
+				// 게시글 수
+				Long postCount = postRepository.countByBoardId(board.getId());
+
+				// 삭제 대기인 게시글은 삭제 날짜 카운트 반환
+				if (board.getBoardStatus().equals(BoardStatus.PENDING_DELETION)) {
+					// 삭제까지 남은 날짜
+					Long deletionCountDown = ChronoUnit.DAYS.between(now, board.getDeletionScheduledAt());
+					return AdminBoardDetail.of(board, postCount, deletionCountDown);
+				}
+
+				return AdminBoardDetail.of(board, postCount, null);
+			}).toList();
+	}
+
+}
