@@ -34,11 +34,15 @@ public class ChatMessageEntity extends BaseTimeEntity {
 	@Column(name = "content", nullable = false, length = 500)
 	private String content;
 
+	@Column(name = "is_image", nullable = false)
+	private boolean isImage;
+
 	@Builder
-	public ChatMessageEntity(Long chatroomId, Long senderId, String content) {
+	public ChatMessageEntity(Long chatroomId, Long senderId, String content, boolean isImage) {
 		this.chatroomId = chatroomId;
 		this.senderId = senderId;
 		this.content = content;
+		this.isImage = isImage;
 	}
 
 	public static ChatMessageEntity fromDomain(ChatMessage chatMessage) {
@@ -46,6 +50,7 @@ public class ChatMessageEntity extends BaseTimeEntity {
 			.chatroomId(chatMessage.getChatroomId())
 			.senderId(chatMessage.getSenderId())
 			.content(chatMessage.getContent())
+			.isImage(chatMessage.isImage())
 			.build();
 	}
 
@@ -55,6 +60,7 @@ public class ChatMessageEntity extends BaseTimeEntity {
 			.chatroomId(chatroomId)
 			.senderId(senderId)
 			.content(content)
+			.isImage(isImage)
 			.createdTime(getCreatedTime())
 			.lastModifiedTime(getLastModifiedTime())
 			.build();
