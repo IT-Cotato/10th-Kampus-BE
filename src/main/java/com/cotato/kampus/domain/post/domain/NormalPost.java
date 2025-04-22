@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.post.domain;
 
+import java.time.LocalDateTime;
+
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -9,7 +11,9 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class NormalPost extends Post{
+public class NormalPost extends Post {
+	private final String content;
+	private final Anonymity anonymity;
 
 	@Builder
 	public NormalPost(
@@ -17,46 +21,50 @@ public class NormalPost extends Post{
 		Long boardId,
 		Long userId,
 		String title,
-		String content,
-		Anonymity anonymity,
 		PostStatus postStatus,
-		PostType postType
-	) {
-		super(id, boardId, userId, title, content, anonymity, postStatus, postType);
-		validate();
-	}
+		LocalDateTime createdTime,
+		LocalDateTime lastModifiedTime,
 
-	@Override
-	protected void validateForPublishing() {
-		super.validateForPublishing();
+		// 추가 필드
+		String content,
+		Anonymity anonymity    // 추후 확장 가능성
+	) {
+		super(id, boardId, userId, title, postStatus, createdTime, lastModifiedTime);
+		this.content = content;
+		this.anonymity = anonymity;
+		validate();
 		validateContent();
+		validateAnonymous();
 	}
 
 	private void validateContent() {
-		if(getContent() == null || getContent().trim().isEmpty()) {
+		if (getContent() == null || getContent().trim().isEmpty()) {
 			throw new AppException(ErrorCode.POST_CONTENT_EMPTY);
 		}
-		if(getContent().length() > 1000) {
+		if (getContent().length() > 1000) {
 			throw new AppException(ErrorCode.POST_CONTENT_TOO_LONG);
 		}
 	}
 
-	@Override
-	public Post withUpdateInfo(String title, String content) {
+	private void validateAnonymous() {
+		if (anonymity == null) {
+			throw new AppException(ErrorCode.POST_ANONYMOUS_EMPTY);
+		}
+	}
+
+	public NormalPost withUpdateInfo(String title, String content, Anonymity anonymity) {
 		return NormalPost.builder()
 			.id(getId())
 			.boardId(getBoardId())
 			.userId(getUserId())
 			.title(title)
 			.content(content)
-			.anonymity(getAnonymity())
+			.anonymity(anonymity)
 			.postStatus(getPostStatus())
-			.postType(getPostType())
 			.build();
 	}
 
-	@Override
-	public Post withPostStatus(PostStatus postStatus) {
+	public NormalPost withPostStatus(PostStatus postStatus) {
 		return NormalPost.builder()
 			.id(getId())
 			.boardId(getBoardId())
@@ -65,7 +73,6 @@ public class NormalPost extends Post{
 			.content(getContent())
 			.anonymity(getAnonymity())
 			.postStatus(postStatus)
-			.postType(getPostType())
 			.build();
 	}
 }
