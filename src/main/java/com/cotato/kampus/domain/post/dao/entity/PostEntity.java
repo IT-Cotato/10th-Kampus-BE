@@ -43,5 +43,17 @@ public abstract class PostEntity extends BaseTimeEntity {
 	@Column(name = "post_status", nullable = false)
 	protected PostStatus postStatus;
 
+	@Column(name = "like_count", nullable = false, columnDefinition = "int default 0")
+	protected int likeCount = 0;
+
+	@Column(name = "comment_count", nullable = false, columnDefinition = "int default 0")
+	protected int commentCount = 0;
+
+	@Column(name = "scrap_count", nullable = false, columnDefinition = "int default 0")
+	protected int scrapCount = 0;
+
+	@Column(name = "anonymous_count", nullable = false, columnDefinition = "int default 1")
+	protected int anonymousCount = 1;
+
 	public abstract Post toDomain();
 }

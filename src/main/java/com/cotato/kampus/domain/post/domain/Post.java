@@ -18,6 +18,10 @@ public abstract class Post {
 	private final Long userId;
 	private final String title;
 	private final PostStatus postStatus;
+	private final int likeCount;
+	private final int commentCount;
+	private final int scrapCount;
+	private final int anonymousCount;
 	private final LocalDateTime createdTime;
 	private final LocalDateTime lastModifiedTime;
 

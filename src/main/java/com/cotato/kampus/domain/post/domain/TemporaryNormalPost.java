@@ -10,7 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class TemporaryNormalPost{
+public class TemporaryNormalPost {
 
 	private final Long id;
 	private final Long boardId;
@@ -68,6 +68,8 @@ public class TemporaryNormalPost{
 			.title(title)
 			.content(content)
 			.anonymity(anonymity)
+			.createdTime(getCreatedTime())
+			.lastModifiedTime(LocalDateTime.now())
 			.build();
 	}
 }

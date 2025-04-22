@@ -22,6 +22,10 @@ public class NormalPost extends Post {
 		Long userId,
 		String title,
 		PostStatus postStatus,
+		int likeCount,
+		int commentCount,
+		int scrapCount,
+		int anonymousCount,
 		LocalDateTime createdTime,
 		LocalDateTime lastModifiedTime,
 
@@ -29,7 +33,8 @@ public class NormalPost extends Post {
 		String content,
 		Anonymity anonymity    // 추후 확장 가능성
 	) {
-		super(id, boardId, userId, title, postStatus, createdTime, lastModifiedTime);
+		super(id, boardId, userId, title, postStatus, likeCount, commentCount, scrapCount, anonymousCount, createdTime,
+			lastModifiedTime);
 		this.content = content;
 		this.anonymity = anonymity;
 		validate();
@@ -61,6 +66,12 @@ public class NormalPost extends Post {
 			.content(content)
 			.anonymity(anonymity)
 			.postStatus(getPostStatus())
+			.likeCount(this.getLikeCount())
+			.commentCount(this.getCommentCount())
+			.scrapCount(this.getScrapCount())
+			.anonymousCount(this.getAnonymousCount())
+			.createdTime(this.getCreatedTime())
+			.lastModifiedTime(LocalDateTime.now())
 			.build();
 	}
 
@@ -73,6 +84,12 @@ public class NormalPost extends Post {
 			.content(getContent())
 			.anonymity(getAnonymity())
 			.postStatus(postStatus)
+			.likeCount(this.getLikeCount())
+			.commentCount(this.getCommentCount())
+			.scrapCount(this.getScrapCount())
+			.anonymousCount(this.getAnonymousCount())
+			.createdTime(this.getCreatedTime())
+			.lastModifiedTime(LocalDateTime.now())
 			.build();
 	}
 }

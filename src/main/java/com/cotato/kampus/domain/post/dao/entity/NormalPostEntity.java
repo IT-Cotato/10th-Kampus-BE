@@ -36,6 +36,12 @@ public class NormalPostEntity extends PostEntity {
 			.userId(userId)
 			.title(title)
 			.postStatus(postStatus)
+			.likeCount(likeCount)
+			.commentCount(commentCount)
+			.scrapCount(scrapCount)
+			.anonymousCount(anonymousCount)
+			.createdTime(getCreatedTime())
+			.lastModifiedTime(getLastModifiedTime())
 			.content(content)
 			.anonymity(anonymity)
 			.build();
@@ -48,6 +54,10 @@ public class NormalPostEntity extends PostEntity {
 		entity.userId = normalPost.getUserId();
 		entity.title = normalPost.getTitle();
 		entity.postStatus = normalPost.getPostStatus();
+		entity.likeCount = normalPost.getLikeCount();
+		entity.commentCount = normalPost.getCommentCount();
+		entity.scrapCount = normalPost.getScrapCount();
+		entity.anonymousCount = normalPost.getAnonymousCount();
 		entity.content = normalPost.getContent();
 		entity.anonymity = normalPost.getAnonymity();
 		return entity;

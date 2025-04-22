@@ -25,6 +25,12 @@ public class CardNewsPostEntity extends PostEntity {
 			.userId(userId)
 			.title(title)
 			.postStatus(postStatus)
+			.likeCount(likeCount)
+			.commentCount(commentCount)
+			.scrapCount(scrapCount)
+			.anonymousCount(anonymousCount)
+			.createdTime(getCreatedTime())
+			.lastModifiedTime(getLastModifiedTime())
 			.build();
 	}
 
@@ -35,6 +41,10 @@ public class CardNewsPostEntity extends PostEntity {
 		entity.userId = cardNewsPost.getUserId();
 		entity.title = cardNewsPost.getTitle();
 		entity.postStatus = cardNewsPost.getPostStatus();
+		entity.likeCount = cardNewsPost.getLikeCount();
+		entity.commentCount = cardNewsPost.getCommentCount();
+		entity.scrapCount = cardNewsPost.getScrapCount();
+		entity.anonymousCount = cardNewsPost.getAnonymousCount();
 		return entity;
 	}
 }
