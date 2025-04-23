@@ -41,6 +41,7 @@ public enum ErrorCode {
 	POST_TYPE_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 타입은 필수 항목입니다.", "POST-020"),
 	POST_ANONYMOUS_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 익명 여부는 필수 항목입니다.", "POST-021"),
 	INVALID_POST_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 PostType 입니다.", "POST-022"),
+	POST_TYPE_MISMATCH(HttpStatus.INTERNAL_SERVER_ERROR, "지원하지 않는 게시글 타입입니다.", "POST-023"),
 
 	//Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
