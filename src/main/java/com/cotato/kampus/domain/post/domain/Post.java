@@ -76,7 +76,51 @@ public abstract class Post {
 		}
 	}
 
-	public abstract Post withUpdateInfo(String title, String content, Anonymity anonymity);
-	public abstract Post withPostStatus(PostStatus postStatus);
+	protected abstract Post createCopy(String title, String content, Anonymity anonymity, PostStatus postStatus,
+		int likeCount, int commentCount, int scrapCount, int anonymousCount);
 
+	public Post withUpdateInfo(String title, String content, Anonymity anonymity) {
+		return createCopy(title, content, anonymity, this.postStatus,
+			this.likeCount, this.commentCount, this.scrapCount, this.anonymousCount);
+	}
+
+	public Post withPostStatus(PostStatus postStatus) {
+		return createCopy(this.title, this.content, this.anonymity, postStatus,
+			this.likeCount, this.commentCount, this.scrapCount, this.anonymousCount);
+	}
+
+	public Post increaseLikeCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount + 1, this.commentCount, this.scrapCount, this.anonymousCount);
+	}
+
+	public Post decreaseLikeCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			Math.max(0, this.likeCount - 1), this.commentCount, this.scrapCount, this.anonymousCount);
+	}
+
+	public Post increaseCommentCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount, this.commentCount + 1, this.scrapCount, this.anonymousCount);
+	}
+
+	public Post decreaseCommentCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount, Math.max(0, this.commentCount - 1), this.scrapCount, this.anonymousCount);
+	}
+
+	public Post increaseScrapCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount, this.commentCount, this.scrapCount + 1, this.anonymousCount);
+	}
+
+	public Post decreaseScrapCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount, this.commentCount, Math.max(0, this.scrapCount - 1), this.anonymousCount);
+	}
+
+	public Post increaseAnonymousCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount, this.commentCount, this.scrapCount, this.anonymousCount + 1);
+	}
 }

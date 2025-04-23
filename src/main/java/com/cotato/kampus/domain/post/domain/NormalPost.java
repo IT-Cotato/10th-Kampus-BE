@@ -33,7 +33,8 @@ public class NormalPost extends Post {
 	}
 
 	@Override
-	public NormalPost withUpdateInfo(String title, String content, Anonymity anonymity) {
+	protected NormalPost createCopy(String title, String content, Anonymity anonymity, PostStatus postStatus,
+		int likeCount, int commentCount, int scrapCount, int anonymousCount) {
 		return NormalPost.builder()
 			.id(getId())
 			.boardId(getBoardId())
@@ -41,31 +42,12 @@ public class NormalPost extends Post {
 			.title(title)
 			.content(content)
 			.anonymity(anonymity)
-			.postStatus(getPostStatus())
-			.likeCount(this.getLikeCount())
-			.commentCount(this.getCommentCount())
-			.scrapCount(this.getScrapCount())
-			.anonymousCount(this.getAnonymousCount())
-			.createdTime(this.getCreatedTime())
-			.lastModifiedTime(LocalDateTime.now())
-			.build();
-	}
-
-	@Override
-	public NormalPost withPostStatus(PostStatus postStatus) {
-		return NormalPost.builder()
-			.id(getId())
-			.boardId(getBoardId())
-			.userId(getUserId())
-			.title(getTitle())
-			.content(getContent())
-			.anonymity(getAnonymity())
 			.postStatus(postStatus)
-			.likeCount(this.getLikeCount())
-			.commentCount(this.getCommentCount())
-			.scrapCount(this.getScrapCount())
-			.anonymousCount(this.getAnonymousCount())
-			.createdTime(this.getCreatedTime())
+			.likeCount(likeCount)
+			.commentCount(commentCount)
+			.scrapCount(scrapCount)
+			.anonymousCount(anonymousCount)
+			.createdTime(getCreatedTime())
 			.lastModifiedTime(LocalDateTime.now())
 			.build();
 	}
