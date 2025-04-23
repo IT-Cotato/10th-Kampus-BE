@@ -2,6 +2,7 @@ package com.cotato.kampus.domain.post.domain;
 
 import java.time.LocalDateTime;
 
+import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 
 import lombok.Builder;
@@ -16,7 +17,9 @@ public class CardNewsPost extends Post {
 		Long boardId,
 		Long userId,
 		String title,
+		String content,
 		PostStatus postStatus,
+		Anonymity anonymity, // 추후 확장 가능
 		int likeCount,
 		int commentCount,
 		int scrapCount,
@@ -24,18 +27,21 @@ public class CardNewsPost extends Post {
 		LocalDateTime createdTime,
 		LocalDateTime lastModifiedTime
 	) {
-		super(id, boardId, userId, title, postStatus, likeCount, commentCount, scrapCount, anonymousCount, createdTime,
-			lastModifiedTime);
+		super(id, boardId, userId, title, content, postStatus, anonymity, likeCount, commentCount, scrapCount,
+			anonymousCount, createdTime, lastModifiedTime);
 		validate();
 	}
 
-	public CardNewsPost withUpdateInfo(String title) {
+	@Override
+	public CardNewsPost withUpdateInfo(String title, String content, Anonymity anonymity) {
 		return CardNewsPost.builder()
-			.id(this.getId())
-			.boardId(this.getBoardId())
-			.userId(this.getUserId())
+			.id(getId())
+			.boardId(getBoardId())
+			.userId(getUserId())
 			.title(title)
-			.postStatus(this.getPostStatus())
+			.content(content)
+			.anonymity(anonymity)
+			.postStatus(getPostStatus())
 			.likeCount(this.getLikeCount())
 			.commentCount(this.getCommentCount())
 			.scrapCount(this.getScrapCount())
@@ -45,12 +51,15 @@ public class CardNewsPost extends Post {
 			.build();
 	}
 
+	@Override
 	public CardNewsPost withPostStatus(PostStatus postStatus) {
 		return CardNewsPost.builder()
-			.id(this.getId())
-			.boardId(this.getBoardId())
-			.userId(this.getUserId())
-			.title(this.getTitle())
+			.id(getId())
+			.boardId(getBoardId())
+			.userId(getUserId())
+			.title(getTitle())
+			.content(getContent())
+			.anonymity(getAnonymity())
 			.postStatus(postStatus)
 			.likeCount(this.getLikeCount())
 			.commentCount(this.getCommentCount())

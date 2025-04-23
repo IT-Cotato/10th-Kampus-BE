@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.post.dao.entity;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
+import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 
@@ -39,9 +40,16 @@ public abstract class PostEntity extends BaseTimeEntity {
 	@Column(name = "title", nullable = false)
 	protected String title;
 
+	@Column(name = "content", nullable = false)
+	protected String content;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "post_status", nullable = false)
 	protected PostStatus postStatus;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "anonymity", nullable = false)
+	protected Anonymity anonymity;
 
 	@Column(name = "like_count", nullable = false, columnDefinition = "int default 0")
 	protected int likeCount = 0;

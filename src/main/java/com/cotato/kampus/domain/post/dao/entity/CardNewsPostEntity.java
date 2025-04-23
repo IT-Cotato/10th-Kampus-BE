@@ -24,7 +24,9 @@ public class CardNewsPostEntity extends PostEntity {
 			.boardId(boardId)
 			.userId(userId)
 			.title(title)
+			.content(content)
 			.postStatus(postStatus)
+			.anonymity(anonymity)
 			.likeCount(likeCount)
 			.commentCount(commentCount)
 			.scrapCount(scrapCount)
@@ -40,7 +42,9 @@ public class CardNewsPostEntity extends PostEntity {
 		entity.boardId = cardNewsPost.getBoardId();
 		entity.userId = cardNewsPost.getUserId();
 		entity.title = cardNewsPost.getTitle();
+		entity.content = cardNewsPost.getContent();
 		entity.postStatus = cardNewsPost.getPostStatus();
+		entity.anonymity = cardNewsPost.getAnonymity();
 		entity.likeCount = cardNewsPost.getLikeCount();
 		entity.commentCount = cardNewsPost.getCommentCount();
 		entity.scrapCount = cardNewsPost.getScrapCount();

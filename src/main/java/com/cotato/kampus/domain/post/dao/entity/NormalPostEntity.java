@@ -1,14 +1,10 @@
 package com.cotato.kampus.domain.post.dao.entity;
 
-import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.domain.NormalPost;
 import com.cotato.kampus.domain.post.domain.Post;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,13 +17,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NormalPostEntity extends PostEntity {
 
-	@Column(name = "content", nullable = false)
-	private String content;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "anonymity", nullable = false)
-	private Anonymity anonymity;
-
 	@Override
 	public Post toDomain() {
 		return NormalPost.builder()
@@ -35,15 +24,15 @@ public class NormalPostEntity extends PostEntity {
 			.boardId(boardId)
 			.userId(userId)
 			.title(title)
+			.content(content)
 			.postStatus(postStatus)
+			.anonymity(anonymity)
 			.likeCount(likeCount)
 			.commentCount(commentCount)
 			.scrapCount(scrapCount)
 			.anonymousCount(anonymousCount)
 			.createdTime(getCreatedTime())
 			.lastModifiedTime(getLastModifiedTime())
-			.content(content)
-			.anonymity(anonymity)
 			.build();
 	}
 
@@ -53,13 +42,13 @@ public class NormalPostEntity extends PostEntity {
 		entity.boardId = normalPost.getBoardId();
 		entity.userId = normalPost.getUserId();
 		entity.title = normalPost.getTitle();
+		entity.content = normalPost.getContent();
 		entity.postStatus = normalPost.getPostStatus();
+		entity.anonymity = normalPost.getAnonymity();
 		entity.likeCount = normalPost.getLikeCount();
 		entity.commentCount = normalPost.getCommentCount();
 		entity.scrapCount = normalPost.getScrapCount();
 		entity.anonymousCount = normalPost.getAnonymousCount();
-		entity.content = normalPost.getContent();
-		entity.anonymity = normalPost.getAnonymity();
 		return entity;
 	}
 
