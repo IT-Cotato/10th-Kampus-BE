@@ -1,7 +1,10 @@
 package com.cotato.kampus.domain.chat.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.chat.api.port.ChatMessageService;
 import com.cotato.kampus.domain.chat.domain.ChatMessage;
@@ -18,6 +21,8 @@ import com.cotato.kampus.domain.chat.implement.message.ChatMessageProcessor;
 import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataUpdater;
 import com.cotato.kampus.domain.chat.implement.read.MessageReadStatusUpdater;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.global.error.exception.ImageException;
+import com.cotato.kampus.global.util.s3.S3Uploader;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +44,9 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	private final MessageReadStatusUpdater messageReadStatusUpdater;
 
 	private final ChatroomMetadataUpdater chatroomMetadataUpdater;
+	private final S3Uploader s3Uploader;
+
+	private static final String IMAGE_FOLDER = "chat";
 
 	@Override
 	@Transactional
@@ -88,5 +96,14 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 		// 2. 해당 사용자의 메시지 읽음 상태 조회 또는 생성
 		messageReadStatusUpdater.updateStatus(chatroomId, userId, latestMessage.getId());
 		chatroomMetadataUpdater.resetReadCount(chatroomId, userId);
+	}
+
+	@Override
+	@Transactional
+	public List<String> uploadImage(Long chatroomId, List<MultipartFile> images) throws ImageException {
+		Long userId = apiUserResolver.getCurrentUserId();
+		chatRoomValidator.validateUser(userId, chatroomId);
+		// 1. 이미지 S3 업로드
+		return s3Uploader.uploadFiles(images, IMAGE_FOLDER);
 	}
 }
