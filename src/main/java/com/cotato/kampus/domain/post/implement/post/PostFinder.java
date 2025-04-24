@@ -14,21 +14,15 @@ import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.implement.port.PostCategoryRepository;
-import com.cotato.kampus.domain.post.implement.port.PostDraftPhotoRepository;
-import com.cotato.kampus.domain.post.implement.port.PostDraftRepository;
 import com.cotato.kampus.domain.post.implement.port.PostPhotoRepository;
 import com.cotato.kampus.domain.post.implement.port.PostRepository;
 import com.cotato.kampus.domain.post.implement.port.PostScrapRepository;
 import com.cotato.kampus.domain.post.implement.port.TrendingPostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
-import com.cotato.kampus.domain.post.domain.PostDraft;
-import com.cotato.kampus.domain.post.domain.PostDraftPhoto;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
 import com.cotato.kampus.domain.post.domain.PostScrap;
 import com.cotato.kampus.domain.post.domain.CardNewsPreview;
 import com.cotato.kampus.domain.post.domain.MyPostWithPhoto;
-import com.cotato.kampus.domain.post.domain.PostDraftDto;
-import com.cotato.kampus.domain.post.domain.PostDraftWithPhoto;
 import com.cotato.kampus.domain.post.domain.PostDto;
 import com.cotato.kampus.domain.post.domain.PostPreview;
 import com.cotato.kampus.domain.post.domain.PostReferenceDto;
@@ -50,13 +44,11 @@ public class PostFinder {
 
 	private final PostRepository postRepository;
 	private final PostPhotoRepository postPhotoRepository;
-	private final PostDraftRepository postDraftRepository;
 	private static final Integer PAGE_SIZE = 10;
 	private static final String SORT_PROPERTY = "createdTime";
 	private final ApiUserResolver apiUserResolver;
 	private final BoardFinder boardFinder;
 	private final PostScrapRepository postScrapRepository;
-	private final PostDraftPhotoRepository postDraftPhotoRepository;
 	private final TrendingPostRepository trendingPostRepository;
 	private final PostDtoMapper postDtoMapper;
 	private final PostCategoryRepository postCategoryRepository;
@@ -152,7 +144,7 @@ public class PostFinder {
 			PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
 				.orElse(null);
 
-			Boolean isScrapped = postScrapRepository.existsByUserIdAndPostId(userId, post.getId());
+			Boolean isScrapped = postScrapRepository.existsByPostIdAndUserId(userId, post.getId());
 
 			return CardNewsPreview.from(post, postPhoto, isScrapped);
 		});
@@ -207,22 +199,6 @@ public class PostFinder {
 
 	}
 
-	// public Slice<PostWithPhotos> findUserCommentedPosts(List<Long> postIds, int page) {
-	//
-	// 	// CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-	// 	PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
-	// 	String orderList = postIds.stream().map(String::valueOf).collect(Collectors.joining(","));
-	// 	Slice<Post> posts = postRepository.findPostsByIdsInOrder(postIds, orderList, pageRequest);
-	//
-	// 	// 3. Post -> PostWithPhotos 매핑
-	// 	return posts.map(post -> {
-	// 		PostPhoto postPhoto = postPhotoRepository.findFirstByPostIdOrderByCreatedTime(post.getId())
-	// 			.orElse(null);
-	// 		return PostWithPhotos.from(post, postPhoto);
-	// 	});
-	//
-	// }
-
 	public PostDto findPost(Long postId) {
 		Post post = postRepository.findById(postId)
 			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
@@ -271,55 +247,6 @@ public class PostFinder {
 
 			return MyPostWithPhoto.from(post, board, postPhoto);
 		});
-	}
-
-	public Slice<PostDraftWithPhoto> findPostDrafts(Long userId, int page) {
-
-		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-		Slice<PostDraft> postDrafts = postDraftRepository.findAllByUserIdOrderByCreatedTimeDesc(
-			userId,
-			customPageRequest.of(SORT_PROPERTY)
-		);
-
-		return postDrafts.map(postDraft -> {
-			PostDraftPhoto postDraftPhoto = postDraftPhotoRepository.findFirstByPostDraftIdOrderByCreatedTimeDesc(
-					postDraft.getId())
-				.orElse(null);
-			return PostDraftWithPhoto.from(postDraft, postDraftPhoto);
-		});
-	}
-
-	public PostDraft findPostDraft(Long postDraftId) {
-		return postDraftRepository.findById(postDraftId)
-			.orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND));
-	}
-
-	public PostDraftDto findPostDraftDto(Long postDraftId) {
-		PostDraft postDraft = findPostDraft(postDraftId);
-
-		return PostDraftDto.from(postDraft);
-	}
-
-	public List<PostDraft> findPostDrafts(List<Long> postDraftIds) {
-		List<PostDraft> drafts = postDraftRepository.findAllById(postDraftIds);
-
-		if (drafts.size() != postDraftIds.size()) {
-			throw new AppException(ErrorCode.POST_NOT_FOUND);
-		}
-
-		return drafts;
-	}
-
-	public int findDraftsCount(Long userId){
-		return postDraftRepository.countByUserId(userId);
-	}
-
-	public List<Long> getPostDraftIdsByBoardAndUser(Long userId) {
-		List<PostDraft> postDrafts = postDraftRepository.findAllByUserId(userId);
-
-		return postDrafts.stream()
-			.map(PostDraft::getId)
-			.toList();
 	}
 
 	public Slice<SearchedPost> searchAllPosts(String keyword, int page) {

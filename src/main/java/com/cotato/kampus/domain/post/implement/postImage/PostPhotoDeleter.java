@@ -16,12 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostPhotoDeleter {
 
-	private final PostDraftPhotoRepository postDraftPhotoRepository;
 	private final PostPhotoRepository postPhotoRepository;
-
-	public void deletePostDraftPhotos(List<String> imageUrls){
-		postDraftPhotoRepository.deleteByPhotoUrlIn(imageUrls);
-	}
 
 	public void deletePostPhotos(Long postId){
 		postPhotoRepository.deleteAllByPostId(postId);

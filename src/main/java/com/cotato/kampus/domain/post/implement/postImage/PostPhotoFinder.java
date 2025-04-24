@@ -19,25 +19,10 @@ import lombok.RequiredArgsConstructor;
 public class PostPhotoFinder {
 
 	private final PostPhotoRepository postPhotoRepository;
-	private final PostDraftPhotoRepository postDraftPhotoRepository;
 
 	public List<String> findPostPhotos(Long postId) {
 		return postPhotoRepository.findALlByPostId(postId).stream()
 			.map(PostPhoto::getPhotoUrl)
-			.toList();
-	}
-
-	public List<String> findAllDraftPhotos(List<Long> postDraftIds){
-		return postDraftPhotoRepository.findAllByPostDraftIdIn(postDraftIds)
-			.stream()
-			.map(PostDraftPhoto::getPhotoUrl)
-			.toList();
-	}
-
-	public List<String> findAllDraftPhotos(Long postDraftId){
-		return postDraftPhotoRepository.findAllByPostDraftId(postDraftId)
-			.stream()
-			.map(PostDraftPhoto::getPhotoUrl)
 			.toList();
 	}
 }
