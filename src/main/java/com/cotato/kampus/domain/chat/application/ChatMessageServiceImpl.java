@@ -80,7 +80,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	@Override
 	public ChatMessageSliceSnapshot getMessages(int page, Long chatroomId) {
 		Long userId = apiUserResolver.getCurrentUserId();
-		chatRoomValidator.validateUser(userId, chatroomId);
+		chatRoomValidator.validateEnteredUser(userId, chatroomId);
 
 		ChatMessageSlice chatMessageSlice = chatMessageFinder.findAllByChatRoomId(page, chatroomId);
 		// 조회 시점의 읽는 상태를 추가하여 반환

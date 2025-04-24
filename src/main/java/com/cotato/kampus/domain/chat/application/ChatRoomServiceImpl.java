@@ -68,14 +68,14 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		// 2. 채팅을 건 유저를 조회
 		Long senderId = apiUserResolver.getCurrentUserId();
 
-		// 3. 채팅방 생성 검증(보내는 사람 == 받는 사람 or 이미 있는 채팅방)
-		chatRoomValidator.validateNewChatRoom(postId, senderId, receiverId);
+		// 3. 채팅방 중복 검증(이미 있는 채팅방)
+		chatRoomValidator.validateDuplicateChatRoom(postId, senderId);
 
-		// 4. 채팅방 생성
+		// 4. 채팅방 생성(생성 시 검증 이루어짐(sender != receiver))
 		Long chatroomId = chatRoomAppender.appendChatRoom(postId, senderId, receiverId);
 
 		// 5. 채팅방 리스트 조회시 사용되는 뷰 생성
-		chatroomMetadataAppender.appendChatroomMetadatas(
+		chatroomMetadataAppender.createMetadataPair(
 			chatroomId,
 			postId,
 			postTitle,
@@ -126,7 +126,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 2. 채팅방 멤버 검증
-		chatRoomValidator.validateUser(userId, chatroomId);
+		chatRoomValidator.validateEnteredUser(userId, chatroomId);
 
 		// 3. 채팅 메시지 삭제(sender, receiver)
 		chatMessageDeleter.deleteByChatroomId(chatroomId);
