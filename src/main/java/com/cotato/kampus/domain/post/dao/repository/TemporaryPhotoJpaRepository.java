@@ -9,11 +9,11 @@ import com.cotato.kampus.domain.post.dao.entity.TemporaryPhotoEntity;
 
 public interface TemporaryPhotoJpaRepository extends JpaRepository<TemporaryPhotoEntity, Long> {
 
-	Optional<TemporaryPhotoEntity> findFirstByTemporaryPostIdOrderByCreatedTimeAsc(Long tempPostId);
+	Optional<TemporaryPhotoEntity> findByTemporaryPostIdAndOrder(Long tempPostId, int order);
 
-	List<TemporaryPhotoEntity> findAllByTemporaryPostId(Long tempPostId);
+	List<TemporaryPhotoEntity> findAllByTemporaryPostIdOrderByOrderAsc(Long tempPostId);
 
-	List<TemporaryPhotoEntity> findAllByTemporaryPostIdIn(List<Long> tempPostIds);
+	List<TemporaryPhotoEntity> findAllByTemporaryPostIdInOrderByOrderAsc(List<Long> tempPostIds);
 
 	void deleteAllByTemporaryPostId(Long tempPostId);
 

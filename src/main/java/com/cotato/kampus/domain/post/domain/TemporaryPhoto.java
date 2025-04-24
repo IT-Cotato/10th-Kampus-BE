@@ -12,12 +12,14 @@ public class TemporaryPhoto {
 	private final Long id;
 	private final Long temporaryPostId;
 	private final String photoUrl;
+	private final int order;
 
 	@Builder
-	public TemporaryPhoto(Long id, Long temporaryPostId, String photoUrl) {
+	public TemporaryPhoto(Long id, Long temporaryPostId, String photoUrl, int order) {
 		this.id = id;
 		this.temporaryPostId = temporaryPostId;
 		this.photoUrl = photoUrl;
+		this.order = order;
 		validate();
 	}
 

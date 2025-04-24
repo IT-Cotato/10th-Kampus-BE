@@ -18,21 +18,32 @@ public class TemporaryPhotoRepositoryImpl implements TemporaryPhotoRepository {
 	private final TemporaryPhotoJpaRepository temporaryPhotoJpaRepository;
 
 	@Override
-	public Optional<TemporaryPhoto> findFirstByTemporaryPostIdOrderByCreatedTimeAsc(Long tempPostId) {
-		return temporaryPhotoJpaRepository.findFirstByTemporaryPostIdOrderByCreatedTimeAsc(tempPostId)
-			.map(TemporaryPhotoEntity::toDomain);
-	}
+	public List<TemporaryPhoto> saveAll(List<TemporaryPhoto> temporaryPhotos){
+		List<TemporaryPhotoEntity> entities = temporaryPhotos.stream()
+			.map(TemporaryPhotoEntity::fromDomain)
+			.toList();
 
-	@Override
-	public List<TemporaryPhoto> findAllByTemporaryPostId(Long tempPostId) {
-		return temporaryPhotoJpaRepository.findAllByTemporaryPostId(tempPostId).stream()
+		return temporaryPhotoJpaRepository.saveAll(entities).stream()
 			.map(TemporaryPhotoEntity::toDomain)
 			.toList();
 	}
 
 	@Override
-	public List<TemporaryPhoto> findAllByTemporaryPostIdIn(List<Long> tempPostIds){
-		return temporaryPhotoJpaRepository.findAllByTemporaryPostIdIn(tempPostIds).stream()
+	public Optional<TemporaryPhoto> findByTemporaryPostIdAndOrder(Long tempPostId, int order) {
+		return temporaryPhotoJpaRepository.findByTemporaryPostIdAndOrder(tempPostId, order)
+			.map(TemporaryPhotoEntity::toDomain);
+	}
+
+	@Override
+	public List<TemporaryPhoto> findAllByTemporaryPostIdOrderByOrderAsc(Long tempPostId) {
+		return temporaryPhotoJpaRepository.findAllByTemporaryPostIdOrderByOrderAsc(tempPostId).stream()
+			.map(TemporaryPhotoEntity::toDomain)
+			.toList();
+	}
+
+	@Override
+	public List<TemporaryPhoto> findAllByTemporaryPostIdInOrderByOrderAsc(List<Long> tempPostIds){
+		return temporaryPhotoJpaRepository.findAllByTemporaryPostIdInOrderByOrderAsc(tempPostIds).stream()
 			.map(TemporaryPhotoEntity::toDomain)
 			.toList();
 	}

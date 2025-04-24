@@ -30,11 +30,15 @@ public class TemporaryPhotoEntity extends BaseTimeEntity {
 	@Column(name = "temp_photo_url", nullable = false)
 	private String photoUrl;
 
+	@Column(name = "temp_photo_order", nullable = false)
+	private int order;
+
 	public TemporaryPhoto toDomain() {
 		return TemporaryPhoto.builder()
 			.id(id)
 			.temporaryPostId(temporaryPostId)
 			.photoUrl(photoUrl)
+			.order(order)
 			.build();
 	}
 
@@ -43,6 +47,7 @@ public class TemporaryPhotoEntity extends BaseTimeEntity {
 		entity.id = temporaryPhoto.getId();
 		entity.temporaryPostId = temporaryPhoto.getTemporaryPostId();
 		entity.photoUrl = temporaryPhoto.getPhotoUrl();
+		entity.order = temporaryPhoto.getOrder();
 		return entity;
 	}
 }

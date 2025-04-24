@@ -7,11 +7,13 @@ import com.cotato.kampus.domain.post.domain.TemporaryPhoto;
 
 public interface TemporaryPhotoRepository {
 
-	Optional<TemporaryPhoto> findFirstByTemporaryPostIdOrderByCreatedTimeAsc(Long tempPostId);
+	List<TemporaryPhoto> saveAll(List<TemporaryPhoto> temporaryPhotos);
 
-	List<TemporaryPhoto> findAllByTemporaryPostId(Long tempPostId);
+	Optional<TemporaryPhoto> findByTemporaryPostIdAndOrder(Long tempPostId, int order);
 
-	List<TemporaryPhoto> findAllByTemporaryPostIdIn(List<Long> tempPostIds);
+	List<TemporaryPhoto> findAllByTemporaryPostIdOrderByOrderAsc(Long tempPostId);
+
+	List<TemporaryPhoto> findAllByTemporaryPostIdInOrderByOrderAsc(List<Long> tempPostIds);
 
 	void deleteAllByTemporaryPostId(Long tempPostId);
 
