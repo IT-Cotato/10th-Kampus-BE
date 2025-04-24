@@ -120,7 +120,7 @@ class PostServiceTest {
 		// 일반 게시판
 		Board generalBoardDto = Mockito.mock(Board.class);
 		when(generalBoardDto.getId()).thenReturn(1L);
-		when(generalBoardDto.getBoardType()).thenReturn(BoardType.GENERAL);
+		when(generalBoardDto.getBoardType()).thenReturn(BoardType.NORMAL);
 
 		// 대학 게시판
 		Board universityBoardDto = Mockito.mock(Board.class);
