@@ -10,7 +10,7 @@ import com.cotato.kampus.global.error.exception.ImageException;
 
 public interface ChatMessageService {
 
-	ChatNotificationResult processNewMessage(Long chatroomId, String message);
+	ChatNotificationResult processNewMessage(Long chatroomId, boolean isImage, String message);
 
 	ChatMessageSliceSnapshot getMessages(int page, Long chatroomId);
 

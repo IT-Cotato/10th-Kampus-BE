@@ -50,12 +50,12 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
 	@Override
 	@Transactional
-	public ChatNotificationResult processNewMessage(Long chatroomId, String message) {
+	public ChatNotificationResult processNewMessage(Long chatroomId, boolean isImage, String message) {
 		// 1. 메시지 보내는 유저의 id 조회
 		Long senderId = apiUserResolver.getCurrentUserId();
 
 		// 2. 메시지 저장
-		ChatMessage chatMessage = chatMessageAppender.appendChatMessage(senderId, chatroomId, message);
+		ChatMessage chatMessage = chatMessageAppender.appendChatMessage(senderId, chatroomId, isImage, message);
 
 		// 3. 메시지 수신자 id 조회
 		Long receiverId = chatMemberFinder.findReceiverId(chatroomId, senderId);

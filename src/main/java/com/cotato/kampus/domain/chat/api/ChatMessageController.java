@@ -54,7 +54,7 @@ public class ChatMessageController {
 	@MessageMapping("/chatrooms/{chatroomId}")
 	@Operation(summary = "채팅 보내기")
 	public void sendMessage(@DestinationVariable Long chatroomId, @Payload ChatMessageRequest request) {
-		ChatNotificationResult result = chatMessageService.processNewMessage(chatroomId, request.message());
+		ChatNotificationResult result = chatMessageService.processNewMessage(chatroomId, request.isImage(), request.message());
 
 		// 채팅방 채널로 메시지 전송
 		messagingTemplate.convertAndSend(
