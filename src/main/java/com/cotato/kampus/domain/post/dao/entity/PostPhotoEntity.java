@@ -30,11 +30,15 @@ public class PostPhotoEntity extends BaseTimeEntity {
 	@Column(name = "photo_url", nullable = false)
 	private String photoUrl;
 
+	@Column(name = "photo_order", nullable = false)
+	private int order;
+
 	public PostPhoto toDomain() {
 		return PostPhoto.builder()
 			.id(id)
 			.postId(postId)
 			.photoUrl(photoUrl)
+			.order(order)
 			.build();
 	}
 
@@ -43,6 +47,7 @@ public class PostPhotoEntity extends BaseTimeEntity {
 		entity.id = postPhoto.getId();
 		entity.postId = postPhoto.getPostId();
 		entity.photoUrl = postPhoto.getPhotoUrl();
+		entity.order = postPhoto.getOrder();
 		return entity;
 	}
 }

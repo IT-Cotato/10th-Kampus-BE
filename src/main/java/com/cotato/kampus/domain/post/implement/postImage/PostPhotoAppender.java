@@ -1,47 +1,32 @@
 package com.cotato.kampus.domain.post.implement.postImage;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.post.implement.port.PostDraftPhotoRepository;
 import com.cotato.kampus.domain.post.implement.port.PostPhotoRepository;
-import com.cotato.kampus.domain.post.domain.PostDraftPhoto;
 import com.cotato.kampus.domain.post.domain.PostPhoto;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@Transactional(readOnly = true)
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Transactional
+@RequiredArgsConstructor
 public class PostPhotoAppender {
 
 	private final PostPhotoRepository postPhotoRepository;
-	private final PostDraftPhotoRepository postDraftPhotoRepository;
 
-	@Transactional
-	public void appendAll(Long postId, List<String> imageUrls){
-			imageUrls.forEach(imageUrl -> {
-				PostPhoto postPhoto = PostPhoto.builder()
+	public List<PostPhoto> appendAll(Long postId, List<String> photoUrls){
+		List<PostPhoto> postPhotos = IntStream.range(0, photoUrls.size())
+				.mapToObj(i -> PostPhoto.builder()
 					.postId(postId)
-					.photoUrl(imageUrl)
-					.build();
+					.photoUrl(photoUrls.get(i))
+					.order(i)
+					.build())
+				.toList();
 
-				postPhotoRepository.save(postPhoto);
-			});
-	}
-
-	@Transactional
-	public void appendAllDraftImage(Long postDraftId, List<String> imageUrls){
-		imageUrls.forEach(imageUrl -> {
-			PostDraftPhoto postDraftPhoto = PostDraftPhoto.builder()
-				.postDraftId(postDraftId)
-				.photoUrl(imageUrl)
-				.build();
-
-			postDraftPhotoRepository.save(postDraftPhoto);
-		});
+		return postPhotoRepository.saveAll(postPhotos);
 	}
 }

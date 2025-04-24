@@ -3,19 +3,15 @@ package com.cotato.kampus.domain.post.implement.port;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import com.cotato.kampus.domain.post.domain.PostPhoto;
 
-@Repository
-public interface PostPhotoRepository extends JpaRepository<PostPhoto, Long> {
+public interface PostPhotoRepository{
 
-	Optional<PostPhoto> findFirstByPostIdOrderByCreatedTime(Long postId);
+	Optional<PostPhoto> findByPostIdAndOrder(Long postId, int order);
 
-	Optional<PostPhoto> findFirstByPostIdOrderByCreatedTimeAsc(Long postId);
+	List<PostPhoto> findAllByPostId(Long postId);
 
-	List<PostPhoto> findALlByPostId(Long postId);
+	List<PostPhoto> saveAll(List<PostPhoto> postPhotos);
 
 	void deleteAllByPostId(Long postId);
 }
