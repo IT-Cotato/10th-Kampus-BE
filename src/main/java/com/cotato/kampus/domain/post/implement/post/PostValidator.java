@@ -19,7 +19,7 @@ public class PostValidator {
 
 	public void validateDuplicatedScrap(Long postId, Long userId) {
 		// 중복 스크랩 예외처리
-		if (postScrapRepository.existsByUserIdAndPostId(userId, postId)) {
+		if (postScrapRepository.existsByPostIdAndUserId(userId, postId)) {
 			throw new AppException(ErrorCode.POST_SCRAP_DUPLICATED);
 		}
 	}

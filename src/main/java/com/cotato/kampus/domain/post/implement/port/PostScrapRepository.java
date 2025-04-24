@@ -1,21 +1,23 @@
 package com.cotato.kampus.domain.post.implement.port;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cotato.kampus.domain.post.domain.PostScrap;
 
-public interface PostScrapRepository extends JpaRepository<PostScrap, Long> {
+public interface PostScrapRepository {
 
-	boolean existsByUserIdAndPostId(Long userId, Long postId);
+	PostScrap save(PostScrap postScrap);
 
-	Optional<PostScrap> findByUserIdAndPostId(Long userId, Long postId);
+	void delete(PostScrap postScrap);
+
+	void deleteAllByPostId(Long postId);
+
+	boolean existsByPostIdAndUserId(Long postId, Long userId);
+
+	Optional<PostScrap> findByPostIdAndUserId(Long postId, Long userId);
 
 	Slice<PostScrap> findAllByUserId(Long userId, Pageable pageable);
-
-	List<PostScrap> findAllByPostId(Long postId);
 }

@@ -21,17 +21,13 @@ public class PostScrapFinder {
 	private final PostScrapRepository postScrapRepository;
 
 	public boolean isPostScrappedByUser(Long userId, Long postId) {
-		return postScrapRepository.existsByUserIdAndPostId(userId, postId);
+		return postScrapRepository.existsByPostIdAndUserId(userId, postId);
 	}
 
 	public PostScrap find(Long userId, Long postId) {
-		PostScrap postScrap = postScrapRepository.findByUserIdAndPostId(userId, postId)
+		PostScrap postScrap = postScrapRepository.findByPostIdAndUserId(userId, postId)
 			.orElseThrow(() -> new AppException(ErrorCode.POST_SCRAP_NOT_EXIST));
 
 		return postScrap;
-	}
-
-	public List<PostScrap> findAllByPostId(Long postId) {
-		return postScrapRepository.findAllByPostId(postId);
 	}
 }
