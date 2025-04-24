@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "temp_normal_post")
+@Table(name = "temp_post")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TemporaryPostEntity extends BaseTimeEntity {

@@ -3,6 +3,8 @@ package com.cotato.kampus.domain.post.dao.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.post.dao.entity.TemporaryPostEntity;
@@ -33,6 +35,19 @@ public class TemporaryPostRepositoryImpl implements TemporaryPostRepository {
 		return temporaryPostJpaRepository.findAllByIdIn(ids).stream()
 			.map(TemporaryPostEntity::toDomain)
 			.toList();
+	}
+
+	@Override
+	public List<TemporaryPost> findAllByUserId(Long userId) {
+		return temporaryPostJpaRepository.findAllByUserId(userId).stream()
+			.map(TemporaryPostEntity::toDomain)
+			.toList();
+	}
+
+	@Override
+	public Slice<TemporaryPost> findAllByUserId(Long userId, Pageable pageable) {
+		return temporaryPostJpaRepository.findAllByUserId(userId, pageable)
+			.map(TemporaryPostEntity::toDomain);
 	}
 
 	@Override
