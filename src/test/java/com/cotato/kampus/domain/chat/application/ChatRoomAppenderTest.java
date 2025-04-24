@@ -1,20 +1,19 @@
 package com.cotato.kampus.domain.chat.application;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.cotato.kampus.domain.chat.dao.repository.ChatRoomJpaRepository;
-import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
-import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
+import com.cotato.kampus.domain.chat.domain.ChatRoom;
 import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomAppender;
+import com.cotato.kampus.domain.chat.implement.chatroom.port.ChatRoomRepository;
 
 @ExtendWith(MockitoExtension.class)
 class ChatRoomAppenderTest {
@@ -23,26 +22,23 @@ class ChatRoomAppenderTest {
 	private ChatRoomAppender target;
 
 	@Mock
-	private ChatRoomJpaRepository chatRoomJpaRepository;
+	private ChatRoomRepository chatRoomRepository;
 
 	@Test
+	@DisplayName("채팅방 생성 성공")
 	public void 채팅방_생성() {
 		// given
-		ChatRoomEntity chatRoomEntity = ChatRoomEntity.builder()
-			.postId(1L)
-			.initialSenderId(1L)
-			.initialReceiverId(2L)
-			.isBlocked(false)
-			.initiatedFrom(InitiatedFrom.POST)
-			.build();
+		ChatRoom chatRoom = ChatRoom.create(1L, 1L, 2L);
 
 		// private 변수에 접근할 수 있음
-		ReflectionTestUtils.setField(chatRoomEntity, "id", 123L);
-		// when
-		when(chatRoomJpaRepository.save(Mockito.any(ChatRoomEntity.class)))
-			.thenReturn(chatRoomEntity);
+		ReflectionTestUtils.setField(chatRoom, "id", 123L);
 
+		// when
+		given(chatRoomRepository.save(any(ChatRoom.class))).willReturn(123L);
 		Long id = target.appendChatRoom(1L, 1L, 2L);
+
+		// then
 		Assertions.assertThat(id).isNotNull();
+		Assertions.assertThat(id).isEqualTo(123L);
 	}
 }

@@ -39,14 +39,14 @@ public class ChatroomMetadata {
 	}
 
 	public static ChatroomMetadata create(Long chatroomId, Long userId, Long postId,
-		String postTitle, boolean isLastMessageImage) {
+		String postTitle) {
 		return ChatroomMetadata.builder()
 			.chatroomId(chatroomId)
 			.userId(userId)
 			.postId(postId)
 			.postTitle(postTitle)
 			.lastMessageId(0L)
-			.isLastMessageImage(isLastMessageImage)
+			.isLastMessageImage(false)
 			.lastMessageContent("")
 			.lastChatTime(LocalDateTime.now())
 			.unreadCount(0L)

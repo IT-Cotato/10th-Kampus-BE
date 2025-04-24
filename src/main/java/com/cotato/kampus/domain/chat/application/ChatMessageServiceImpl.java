@@ -102,7 +102,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 	@Transactional
 	public List<String> uploadImage(Long chatroomId, List<MultipartFile> images) throws ImageException {
 		Long userId = apiUserResolver.getCurrentUserId();
-		chatRoomValidator.validateUser(userId, chatroomId);
+		chatRoomValidator.validateEnteredUser(userId, chatroomId);
 		// 1. 이미지 S3 업로드
 		return s3Uploader.uploadFiles(images, IMAGE_FOLDER);
 	}
