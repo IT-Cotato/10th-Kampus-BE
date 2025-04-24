@@ -72,4 +72,10 @@ public class TemporaryPost {
 			.lastModifiedTime(LocalDateTime.now())
 			.build();
 	}
+
+	public void validateAuthor(Long userId) {
+		if(!this.userId.equals(userId)) {
+			throw new AppException(ErrorCode.TEMP_POST_NOT_AUTHOR);
+		}
+	}
 }

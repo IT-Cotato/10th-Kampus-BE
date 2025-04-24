@@ -43,6 +43,10 @@ public enum ErrorCode {
 	INVALID_POST_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 PostType 입니다.", "POST-022"),
 	POST_TYPE_MISMATCH(HttpStatus.INTERNAL_SERVER_ERROR, "지원하지 않는 게시글 타입입니다.", "POST-023"),
 
+	// TemporaryPost
+	TEMP_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "임시저장 게시글을 찾을 수 없습니다.", "TEMP_POST-001"),
+	TEMP_POST_NOT_AUTHOR(HttpStatus.FORBIDDEN, "임시저장 게시글 작성자가 아닙니다.", "TEMP_POST-002"),
+
 	// TrendingPost
 	TRENDING_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "TrendingPost 게시글 ID는 필수입니다.", "TRENDING_POST-001"),
 
@@ -58,7 +62,7 @@ public enum ErrorCode {
 	POST_PHOTO_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostPhoto 게시글 ID는 필수입니다.", "POST_PHOTO-001"),
 	POST_PHOTO_URL_REQUIRED(HttpStatus.BAD_REQUEST, "PostScrap 사진 URL은 필수입니다.", "POST_PHOTO-002"),
 
-	// category
+	// Category
 	CATEGORY_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "Category 생성시 카테고리 이름은 필수입니다.", "CATEGORY-001"),
 
 	//Image
