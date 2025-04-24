@@ -2,7 +2,7 @@ package com.cotato.kampus.domain.post.dao.entity;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 import com.cotato.kampus.domain.common.enums.Anonymity;
-import com.cotato.kampus.domain.post.domain.TemporaryNormalPost;
+import com.cotato.kampus.domain.post.domain.TemporaryPost;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "temp_normal_post")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TemporaryNormalPostEntity extends BaseTimeEntity {
+public class TemporaryPostEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,8 +43,8 @@ public class TemporaryNormalPostEntity extends BaseTimeEntity {
 	@Column(name = "anonymity")
 	private Anonymity anonymity;
 
-	public TemporaryNormalPost toDomain() {
-		return TemporaryNormalPost.builder()
+	public TemporaryPost toDomain() {
+		return TemporaryPost.builder()
 			.id(id)
 			.boardId(boardId)
 			.userId(userId)
@@ -56,14 +56,14 @@ public class TemporaryNormalPostEntity extends BaseTimeEntity {
 			.build();
 	}
 
-	public static TemporaryNormalPostEntity fromDomain(TemporaryNormalPost temporaryNormalPost) {
-		TemporaryNormalPostEntity entity = new TemporaryNormalPostEntity();
-		entity.id = temporaryNormalPost.getId();
-		entity.boardId = temporaryNormalPost.getBoardId();
-		entity.userId = temporaryNormalPost.getUserId();
-		entity.title = temporaryNormalPost.getTitle();
-		entity.content = temporaryNormalPost.getContent();
-		entity.anonymity = temporaryNormalPost.getAnonymity();
+	public static TemporaryPostEntity fromDomain(TemporaryPost temporaryPost) {
+		TemporaryPostEntity entity = new TemporaryPostEntity();
+		entity.id = temporaryPost.getId();
+		entity.boardId = temporaryPost.getBoardId();
+		entity.userId = temporaryPost.getUserId();
+		entity.title = temporaryPost.getTitle();
+		entity.content = temporaryPost.getContent();
+		entity.anonymity = temporaryPost.getAnonymity();
 		return entity;
 	}
 }

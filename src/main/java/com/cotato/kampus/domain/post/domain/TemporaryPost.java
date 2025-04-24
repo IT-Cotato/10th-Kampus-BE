@@ -10,7 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class TemporaryNormalPost {
+public class TemporaryPost {
 
 	private final Long id;
 	private final Long boardId;
@@ -22,7 +22,7 @@ public class TemporaryNormalPost {
 	private final LocalDateTime lastModifiedTime;
 
 	@Builder
-	public TemporaryNormalPost(
+	public TemporaryPost(
 		Long id,
 		Long boardId,
 		Long userId,
@@ -60,8 +60,8 @@ public class TemporaryNormalPost {
 		}
 	}
 
-	public TemporaryNormalPost withUpdateInfo(String title, String content, Anonymity anonymity) {
-		return TemporaryNormalPost.builder()
+	public TemporaryPost withUpdateInfo(String title, String content, Anonymity anonymity) {
+		return TemporaryPost.builder()
 			.id(getId())
 			.boardId(getBoardId())
 			.userId(getUserId())
