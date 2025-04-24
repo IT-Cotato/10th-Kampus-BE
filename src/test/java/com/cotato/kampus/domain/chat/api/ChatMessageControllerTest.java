@@ -7,11 +7,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,6 +29,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.cotato.kampus.domain.chat.api.port.ChatMessageService;
 import com.cotato.kampus.domain.chat.api.port.ChatRoomService;
+import com.cotato.kampus.domain.chat.api.request.ChatMessageRequest;
+import com.cotato.kampus.domain.chat.domain.ChatMessage;
+import com.cotato.kampus.domain.chat.domain.ChatNotification;
+import com.cotato.kampus.domain.chat.domain.ChatNotificationResult;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -48,8 +56,54 @@ class ChatMessageControllerTest {
 	@MockitoBean
 	private ChatRoomService chatRoomService;
 
+	private ChatMessageController controller;
+
 	@BeforeEach
-	public void init() {
+	void setUp() {
+		controller = new ChatMessageController(chatMessageService, messagingTemplate);
+	}
+
+	@ParameterizedTest
+	@DisplayName("채팅 메시지 전송 성공")
+	@MethodSource("chatMessageTestCases")
+	void sendMessage_Success(String testName, boolean isImage, String message) {
+		// Given
+		Long chatroomId = 1L;
+		Long senderId = 123L;
+		Long receiverId = 456L;
+
+		ChatMessageRequest request = new ChatMessageRequest(chatroomId, senderId, isImage, message);
+
+		ChatMessage chatMessage = ChatMessage.builder()
+			.chatroomId(chatroomId)
+			.senderId(senderId)
+			.isImage(isImage)
+			.content(message)
+			.build();
+
+		ChatNotification chatNotification = ChatNotification.from(chatMessage, 5L);
+
+		given(chatMessageService.processNewMessage(eq(chatroomId), eq(isImage), eq(message)))
+			.willReturn(new ChatNotificationResult(chatMessage, chatNotification, receiverId));
+
+		// When
+		controller.sendMessage(chatroomId, request);
+
+		// Then
+		verify(chatMessageService).processNewMessage(chatroomId, isImage, message);
+		verify(messagingTemplate).convertAndSend("/chatrooms/" + chatroomId, chatMessage);
+		verify(messagingTemplate).convertAndSendToUser(
+			receiverId.toString(),
+			"/notifications/chat",
+			chatNotification
+		);
+	}
+
+	private static Stream<Arguments> chatMessageTestCases() {
+		return Stream.of(
+			Arguments.of("이미지 메시지 전송", true, "http://example.com/image.jpg"),
+			Arguments.of("텍스트 메시지 전송", false, "Hello, World!")
+		);
 	}
 
 	@Test
