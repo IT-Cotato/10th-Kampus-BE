@@ -1,36 +1,27 @@
 package com.cotato.kampus.domain.post.domain;
 
-import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "trending_post")
 @Getter
-@Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class TrendingPost extends BaseTimeEntity {
+public class TrendingPost{
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "trending_post_id")
-	private Long id;
+	private final Long id;
+	private final Long postId;
 
-	@Column(name = "post_id", nullable = false)
-	private Long postId;
+	@Builder
+	public TrendingPost(Long id, Long postId) {
+		this.id = id;
+		this.postId = postId;
+		validate();
+	}
 
-
-	@Column(name = "board_id", nullable = false)
-	private Long boardId;
+	private void validate() {
+		if (postId == null) {
+			throw new AppException(ErrorCode.TRENDING_POST_ID_REQUIRED);
+		}
+	}
 }

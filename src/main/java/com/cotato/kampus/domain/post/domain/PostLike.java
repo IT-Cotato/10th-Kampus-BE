@@ -1,38 +1,32 @@
 package com.cotato.kampus.domain.post.domain;
 
-import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "post_like")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostLike extends BaseTimeEntity {
+public class PostLike {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "post_like_id")
-	private Long id;
-
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
-
-	@Column(name = "post_id", nullable = false)
-	private Long postId;
+	private final Long id;
+	private final Long userId;
+	private final Long postId;
 
 	@Builder
-	public PostLike(Long userId, Long postId) {
+	public PostLike(Long id, Long userId, Long postId) {
+		this.id = id;
 		this.userId = userId;
 		this.postId = postId;
+		validate();
+	}
+
+	private void validate() {
+		if (userId == null) {
+			throw new AppException(ErrorCode.POST_LIKE_USER_ID_REQUIRED);
+		}
+		if (postId == null) {
+			throw new AppException(ErrorCode.POST_LIKE_POST_ID_REQUIRED);
+		}
 	}
 }

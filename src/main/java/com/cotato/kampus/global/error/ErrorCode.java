@@ -43,6 +43,22 @@ public enum ErrorCode {
 	INVALID_POST_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 PostType 입니다.", "POST-022"),
 	POST_TYPE_MISMATCH(HttpStatus.INTERNAL_SERVER_ERROR, "지원하지 않는 게시글 타입입니다.", "POST-023"),
 
+	// TrendingPost
+	TRENDING_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "TrendingPost 게시글 ID는 필수입니다.", "TRENDING_POST-001"),
+
+	// PostLike
+	POST_LIKE_USER_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostLike 사용자 ID는 필수입니다.", "POST_LIKE-001"),
+	POST_LIKE_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostLike 게시글 ID는 필수입니다.", "POST_LIKE-002"),
+
+	// PostScrap
+	POST_SCRAP_USER_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostScrap 사용자 ID는 필수입니다.", "POST_SCRAP-001"),
+	POST_SCRAP_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostScrap 게시글 ID는 필수입니다.", "POST_SCRAP-002"),
+
+	// PostPhoto
+	POST_PHOTO_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostPhoto 게시글 ID는 필수입니다.", "POST_PHOTO-001"),
+	POST_PHOTO_URL_REQUIRED(HttpStatus.BAD_REQUEST, "PostScrap 사진 URL은 필수입니다.", "POST_PHOTO-002"),
+
+
 	//Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
 	IMAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "이미지는 필수입니다. 이미지를 첨부해주세요.", "IMAGE-002"),
