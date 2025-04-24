@@ -3,77 +3,55 @@ package com.cotato.kampus.domain.post.implement.post;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
-import com.cotato.kampus.domain.post.implement.port.PostDraftRepository;
-import com.cotato.kampus.domain.post.domain.PostDraft;
+import com.cotato.kampus.domain.post.domain.CardNewsPost;
+import com.cotato.kampus.domain.post.domain.NormalPost;
+import com.cotato.kampus.domain.post.enums.PostStatus;
 import com.cotato.kampus.domain.post.implement.port.PostRepository;
 import com.cotato.kampus.domain.post.domain.Post;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@Transactional(readOnly = true)
+@RequiredArgsConstructor
+@Transactional
 public class PostAppender {
 
-	private final ApiUserResolver apiUserResolver;
 	private final PostRepository postRepository;
-	private final PostDraftRepository postDraftRepository;
 
-	@Transactional
-	public Long append(
+	public Post appendNormalPost(
 		Long userId,
 		Long boardId,
 		String title,
 		String content
 	) {
-		Post post = Post.builder()
+		Post post = NormalPost.builder()
 			.userId(userId)
 			.boardId(boardId)
 			.title(title)
 			.content(content)
+			.postStatus(PostStatus.PUBLISHED)
 			.anonymity(Anonymity.ANONYMOUS)
 			.build();
 
-		return postRepository.save(post).getId();
+		return postRepository.save(post);
 	}
 
-	@Transactional
-	public Long draft(
-		Long boardId,
-		String title,
-		String content
-	) {
-		Long userId = apiUserResolver.getCurrentUserId();
-
-		PostDraft postDraft = PostDraft.builder()
-			.userId(userId)
-			.boardId(boardId)
-			.title(title)
-			.content(content)
-			.build();
-
-		return postDraftRepository.save(postDraft).getId();
-	}
-
-	@Transactional
-	public Long appendCardNews(
+	public Post appendCardNewsPost(
 		Long userId,
 		Long boardId,
 		String title,
 		String content
 	) {
-		Post post = Post.builder()
+		Post post = CardNewsPost.builder()
 			.userId(userId)
 			.boardId(boardId)
 			.title(title)
 			.content(content)
-			.anonymity(Anonymity.IDENTIFIED)
+			.postStatus(PostStatus.PUBLISHED)
+			.anonymity(Anonymity.ANONYMOUS)
 			.build();
 
-		return postRepository.save(post).getId();
+		return postRepository.save(post);
 	}
-
 }
