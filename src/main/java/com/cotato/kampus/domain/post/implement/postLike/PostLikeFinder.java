@@ -1,7 +1,5 @@
 package com.cotato.kampus.domain.post.implement.postLike;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,26 +8,21 @@ import com.cotato.kampus.domain.post.domain.PostLike;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PostLikeFinder {
 
 	private final PostLikeRepository postLikeRepository;
 
-	public boolean isPostLikedByUser(Long userId, Long postId) {
+	public boolean hasUserLikedPost(Long userId, Long postId) {
 		return postLikeRepository.existsByPostIdAndUserId(postId, userId);
 	}
 
-	public PostLike findPostLikeByUserAndPost(Long postId, Long userId) {
-		return postLikeRepository.findByUserIdAndPostId(userId, postId)
-			.orElseThrow(() -> new AppException(ErrorCode.POST_UNLIKE_FORBIDDEN));
+	public PostLike findPostLikeByPostIdAndUserId(Long postId, Long userId) {
+		return postLikeRepository.findByPostIdAndUserId(postId, userId)
+			.orElseThrow(() -> new AppException(ErrorCode.POST_LIKE_NOT_FOUND));
 	}
-
-	public List<PostLike> findAllByPostId(Long postId){
-		return postLikeRepository.findAllByPostId(postId);
-	}
- }
+}
