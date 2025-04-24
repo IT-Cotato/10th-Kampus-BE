@@ -1,7 +1,7 @@
-package com.cotato.kampus.domain.post.dao.entity;
+package com.cotato.kampus.domain.category.dao.entity;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
-import com.cotato.kampus.domain.post.domain.Category;
+import com.cotato.kampus.domain.category.domain.Category;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,8 +34,8 @@ public class CategoryEntity extends BaseTimeEntity {
 
 	public Category toDomain() {
 		return Category.builder()
-			.id(this.id)
-			.categoryName(this.categoryName)
+			.id(id)
+			.categoryName(categoryName)
 			.build();
 	}
 }

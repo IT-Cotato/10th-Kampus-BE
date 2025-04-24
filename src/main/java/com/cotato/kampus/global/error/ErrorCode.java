@@ -58,6 +58,8 @@ public enum ErrorCode {
 	POST_PHOTO_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostPhoto 게시글 ID는 필수입니다.", "POST_PHOTO-001"),
 	POST_PHOTO_URL_REQUIRED(HttpStatus.BAD_REQUEST, "PostScrap 사진 URL은 필수입니다.", "POST_PHOTO-002"),
 
+	// category
+	CATEGORY_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "Category 생성시 카테고리 이름은 필수입니다.", "CATEGORY-001"),
 
 	//Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
