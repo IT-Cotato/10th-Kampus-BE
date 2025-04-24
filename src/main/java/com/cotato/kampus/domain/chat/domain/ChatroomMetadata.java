@@ -15,12 +15,14 @@ public class ChatroomMetadata {
 	private Long postId;
 	private String postTitle;
 	private Long lastMessageId;
+	private boolean isLastMessageImage;
 	private String lastMessageContent;
 	private LocalDateTime lastChatTime;
 	private Long unreadCount;
 
-	public void updateLastMessage(Long messageId, String content, LocalDateTime chatTime) {
+	public void updateLastMessage(Long messageId, boolean isImage, String content, LocalDateTime chatTime) {
 		this.lastMessageId = messageId;
+		this.isLastMessageImage = isImage;
 		this.lastMessageContent = content;
 		this.lastChatTime = chatTime;
 	}
