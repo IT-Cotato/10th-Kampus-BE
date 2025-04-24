@@ -1,9 +1,7 @@
 package com.cotato.kampus.domain.post.implement.port;
 
+import java.util.List;
 import java.util.Optional;
-
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 
 import com.cotato.kampus.domain.post.domain.PostScrap;
 
@@ -19,5 +17,5 @@ public interface PostScrapRepository {
 
 	Optional<PostScrap> findByPostIdAndUserId(Long postId, Long userId);
 
-	Slice<PostScrap> findAllByUserId(Long userId, Pageable pageable);
+	List<Long> findAllPostIdsByUserId(Long userId);
 }

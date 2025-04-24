@@ -1,9 +1,8 @@
 package com.cotato.kampus.domain.post.dao.repository;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.post.dao.entity.PostScrapEntity;
@@ -41,14 +40,13 @@ public class PostScrapRepositoryImpl implements PostScrapRepository {
 	}
 
 	@Override
-	public Optional<PostScrap> findByPostIdAndUserId(Long postId, Long userId){
+	public Optional<PostScrap> findByPostIdAndUserId(Long postId, Long userId) {
 		return postScrapJpaRepository.findByPostIdAndUserId(postId, userId)
 			.map(PostScrapEntity::toDomain);
 	}
 
 	@Override
-	public Slice<PostScrap> findAllByUserId(Long userId, Pageable pageable) {
-		return postScrapJpaRepository.findAllByUserId(userId, pageable)
-			.map(PostScrapEntity::toDomain);
+	public List<Long> findAllPostIdsByUserId(Long userId) {
+		return postScrapJpaRepository.findAllPostIdsByUserId(userId);
 	}
 }

@@ -30,4 +30,8 @@ public class PostScrapFinder {
 
 		return postScrap;
 	}
+
+	public List<Long> findAllByUserId(Long userId) {
+		return postScrapRepository.findAllPostIdsByUserId(userId);
+	}
 }
