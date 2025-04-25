@@ -19,10 +19,9 @@ import lombok.RequiredArgsConstructor;
 public class UnivFinder {
 
 	private final UniversityRepository universityRepository;
-	private final VerificationRecordRepository verificationRecordRepository;
 
-	public Long findUniversityId(String universityName) {
-		University university = universityRepository.findByUniversityName(universityName)
+	public Long findUniversityId(String universityCode) {
+		University university = universityRepository.findByUniversityCode(universityCode)
 			.orElseThrow(() -> new AppException(ErrorCode.UNIVERSITY_NOT_FOUND));
 
 		return university.getId();
