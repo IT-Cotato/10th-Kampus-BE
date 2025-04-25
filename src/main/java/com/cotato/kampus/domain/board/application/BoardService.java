@@ -61,9 +61,10 @@ public class BoardService {
 
 		// 즐겨찾는 게시판 조회
 		List<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
-		List<Board> boards = boardFinder.findBoardsWithIds(favoriteBoardIds);
 
-		return postDtoMapper.mapToHomeBoardAndPostPreviewsByBoardDtos(boards);
+		List<Post> latestPosts = postFinder.findTopPosts(favoriteBoardIds);
+
+		return postDtoMapper.toHomePostThumbnails(latestPosts);
 	}
 
 	public Board getUniversityBoard() {

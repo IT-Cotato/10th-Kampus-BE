@@ -58,6 +58,12 @@ public class PostFinder {
 		return postRepository.findTopAccessiblePostsByIds(trendingPostIds, userUniversityId, HOME_POST_PREVIEW_LIMIT);
 	}
 
+	public List<Post> findTopPosts(List<Long> boardIds) {
+		return boardIds.stream()
+			.map(postRepository::findTopByBoardIdOrderByCreatedTimeDesc)
+			.toList();
+	}
+
 	public PostReferenceDto findPostReference(Long postId) {
 		return postRepository.findById(postId)
 			.map(PostReferenceDto::from)

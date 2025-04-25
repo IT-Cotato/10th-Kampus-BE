@@ -13,7 +13,6 @@ import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostThumbnail;
 import com.cotato.kampus.domain.post.domain.PostThumbnailWithBoardName;
-import com.cotato.kampus.domain.post.implement.port.PostRepository;
 import com.cotato.kampus.domain.post.implement.postImage.PostPhotoFinder;
 import com.cotato.kampus.domain.post.implement.postSrcap.PostScrapFinder;
 
@@ -25,21 +24,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostDtoMapper {
 
-	private final PostRepository postRepository;
 	private final PostPhotoFinder postPhotoFinder;
 	private final PostScrapFinder postScrapFinder;
 	private final BoardFinder boardFinder;
-
-	public List<HomePostThumbnail> mapToHomeBoardAndPostPreviewsByBoardDtos(List<Board> boards) {
-		// 각 boardId에 대해 가장 최근의 PostDto 조회
-		return boards.stream()
-			.map(board -> {
-				Post latestPost = postRepository.findTopByBoardIdOrderByCreatedTimeDesc(board.getId())
-					.orElse(null);
-				return HomePostThumbnail.from(board, latestPost);
-			})
-			.toList();
-	}
 
 	public PostThumbnail toPostThumbnail(Post post, Long userId) {
 		String thumbnail = postPhotoFinder.findFirstPhoto(post.getId());

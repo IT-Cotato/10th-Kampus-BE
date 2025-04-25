@@ -49,7 +49,7 @@ public interface PostRepository {
 		Pageable pageable);
 
 	// 게시판의 최신 게시글 1개 조회
-	Optional<Post> findTopByBoardIdOrderByCreatedTimeDesc(Long boardId);
+	Post findTopByBoardIdOrderByCreatedTimeDesc(Long boardId);
 
 	// 사용자가 댓글을 작성한 게시글 목록 조회
 	Slice<Post> findPostsByUserComments(Long userId, Pageable pageable);
