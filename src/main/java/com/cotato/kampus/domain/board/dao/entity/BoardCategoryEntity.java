@@ -23,7 +23,7 @@ public class BoardCategoryEntity extends BaseTimeEntity {
 	private Long id;
 
 	@Column(name = "category_id", nullable = false)
-	private Long categoryid;
+	private Long categoryId;
 
 	@Column(name = "board_id", nullable = false)
 	private Long boardId;
@@ -31,7 +31,7 @@ public class BoardCategoryEntity extends BaseTimeEntity {
 	public static BoardCategoryEntity fromDomain(BoardCategory boardCategory) {
 		BoardCategoryEntity result = new BoardCategoryEntity();
 		result.id = boardCategory.getId();
-		result.categoryid = boardCategory.getCategoryId();
+		result.categoryId = boardCategory.getCategoryId();
 		result.boardId = boardCategory.getBoardId();
 		return result;
 	}
@@ -39,7 +39,7 @@ public class BoardCategoryEntity extends BaseTimeEntity {
 	public BoardCategory toDomain() {
 		return BoardCategory.builder()
 			.id(this.id)
-			.categoryId(this.categoryid)
+			.categoryId(this.categoryId)
 			.boardId(this.boardId)
 			.build();
 	}
