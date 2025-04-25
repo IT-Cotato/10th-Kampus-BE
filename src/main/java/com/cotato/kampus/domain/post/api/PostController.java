@@ -2,41 +2,28 @@ package com.cotato.kampus.domain.post.api;
 
 import java.util.List;
 
-import org.hibernate.validator.constraints.Length;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cotato.kampus.domain.post.api.response.SliceResponse;
 import com.cotato.kampus.domain.post.application.PostService;
-import com.cotato.kampus.domain.post.api.request.DraftDeleteRequest;
 import com.cotato.kampus.domain.post.api.request.PostCreateRequest;
-import com.cotato.kampus.domain.post.api.request.PostDraftRequest;
-import com.cotato.kampus.domain.post.api.request.PostDraftUpdateRequest;
 import com.cotato.kampus.domain.post.api.request.PostUpdateRequest;
-import com.cotato.kampus.domain.post.api.response.CardNewsListResponse;
-import com.cotato.kampus.domain.post.api.response.MyPostResponse;
 import com.cotato.kampus.domain.post.api.response.PostCreateResponse;
 import com.cotato.kampus.domain.post.api.response.PostDeleteResponse;
 import com.cotato.kampus.domain.post.api.response.PostDetailResponse;
-import com.cotato.kampus.domain.post.api.response.PostDraftCreateResponse;
-import com.cotato.kampus.domain.post.api.response.PostDraftDetailResponse;
-import com.cotato.kampus.domain.post.api.response.PostDraftSliceFindResponse;
-import com.cotato.kampus.domain.post.api.response.PostSliceFindResponse;
-import com.cotato.kampus.domain.post.api.response.SearchKeywordDeleteResponse;
-import com.cotato.kampus.domain.post.api.response.SearchKeywordListResponse;
-import com.cotato.kampus.domain.post.api.response.SearchedPostResponse;
-import com.cotato.kampus.domain.post.api.response.TrendingListResponse;
+import com.cotato.kampus.domain.post.domain.PostThumbnail;
+import com.cotato.kampus.domain.post.domain.PostThumbnailWithBoardName;
 import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -46,7 +33,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -60,7 +46,7 @@ public class PostController {
 	private final PostService postService;
 
 	@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "게시글 생성", description = "게시글 생성 요청입니다. 사진, 카테고리가 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
+	@Operation(summary = "게시글 생성", description = "게시글 생성 요청입니다.")
 	public ResponseEntity<DataResponse<PostCreateResponse>> createPost(
 		@Parameter(description = "Post creation request")
 		@Valid @ModelAttribute PostCreateRequest request) throws ImageException {
@@ -71,8 +57,8 @@ public class PostController {
 						request.boardId(),
 						request.title(),
 						request.content(),
-						request.images() == null ? List.of() : request.images(),
-						request.categories() == null ? List.of() : request.categories()
+						request.images(),
+						request.categories()
 					)
 				)
 			)
@@ -82,14 +68,14 @@ public class PostController {
 	@GetMapping("/boards/{boardId}")
 	@Operation(summary = "게시판의 게시글 리스트 조회",
 		description = "게시글을 정렬 기준과 카테고리 기준에 따라 조회합니다.(정렬 기본값: 최신순, 카테고리 기본값: 전체, 페이지당 게시글 수: 10)")
-	public ResponseEntity<DataResponse<PostSliceFindResponse>> findPosts(
+	public ResponseEntity<DataResponse<SliceResponse<PostThumbnail>>> findPosts(
 		@PathVariable Long boardId,
 		@RequestParam(required = false, defaultValue = "1") int page,
 		@Parameter(
 			name = "sort",
-			description = "정렬 기준 (recent: 최신순, old: 오래된순, likes: 좋아요순)",
+			description = "정렬 기준 (recent: 최신순, old: 오래된순, likeCount: 좋아요순)",
 			schema = @Schema(type = "string", defaultValue = "recent",
-				allowableValues = {"recent", "old", "likes"})
+				allowableValues = {"recent", "old", "likeCount"})
 		)
 		@RequestParam(required = false, defaultValue = "recent") PostSortType sort,
 		@Parameter(
@@ -101,22 +87,8 @@ public class PostController {
 	) {
 		return ResponseEntity.ok(
 			DataResponse.from(
-				PostSliceFindResponse.from(
+				SliceResponse.from(
 					postService.findPosts(boardId, page, sort, category)
-				)
-			)
-		);
-	}
-
-	@GetMapping("/cardNews")
-	@Operation(summary = "카드뉴스 게시글 목록 조회", description = "카드뉴스 목록을 조회합니다.")
-	public ResponseEntity<DataResponse<CardNewsListResponse>> findAllCardNews(
-		@RequestParam(required = false, defaultValue = "1") int page
-	) {
-		return ResponseEntity.ok(
-			DataResponse.from(
-				CardNewsListResponse.from(
-					postService.findAllCardNews(page)
 				)
 			)
 		);
@@ -124,12 +96,12 @@ public class PostController {
 
 	@GetMapping("/trending")
 	@Operation(summary = "트렌딩 게시판의 게시글 목록 조회", description = "트렌딩 게시판의 전체 게시글을 조회합니다.")
-	public ResponseEntity<DataResponse<TrendingListResponse>> findTrendingPosts(
+	public ResponseEntity<DataResponse<SliceResponse<PostThumbnailWithBoardName>>> findTrendingPosts(
 		@RequestParam(required = false, defaultValue = "1") int page
 	) {
 		return ResponseEntity.ok(
 			DataResponse.from(
-				TrendingListResponse.from(
+				SliceResponse.from(
 					postService.findTrendingPosts(page)
 				)
 			)
@@ -173,221 +145,9 @@ public class PostController {
 			postId,
 			request.title(),
 			request.content(),
-			request.categories() == null ? List.of() : request.categories(),
-			request.newImages() == null ? List.of() : request.newImages()); // 이미지 없는 경우 빈 리스트로 요청
+			request.categories(),
+			request.images());
 
-		return ResponseEntity.ok(DataResponse.ok());
-	}
-
-	@PostMapping(value = "/draft", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "게시글 임시 저장", description = "게시글을 임시 저장합니다. boardId는 필수 값입니다. 사진이 없는 경우 빈 값('')을 보내지 말고, 해당 필드를 생략하거나 값을 보내지 않도록 해주세요.")
-	public ResponseEntity<DataResponse<PostDraftCreateResponse>> draftPost(
-		@Parameter(description = "Post creation request")
-		@Valid @ModelAttribute PostDraftRequest request) throws ImageException {
-		return ResponseEntity.ok(DataResponse.from(
-			PostDraftCreateResponse.of(
-				postService.draftPost(
-					request.boardId(),
-					request.title(),
-					request.content(),
-					request.categories() == null ? List.of() : request.categories(),
-					request.images() == null ? List.of() : request.images()
-				)
-			)
-		));
-	}
-
-	@GetMapping(value = "/draft")
-	@Operation(summary = "임시 저장글 목록 조회", description = "모든 임시 저장글을 최신순으로 조회합니다.")
-	public ResponseEntity<DataResponse<PostDraftSliceFindResponse>> findDraftList(
-		@RequestParam(required = false, defaultValue = "1") int page
-	) {
-		return ResponseEntity.ok(DataResponse.from(
-				PostDraftSliceFindResponse.from(
-					postService.findPostDrafts(page)
-				)
-			)
-		);
-	}
-
-	@GetMapping(value = "/draft/{postDraftId}")
-	@Operation(summary = "임시 저장 게시글 조회", description = "특정 임시 저장글을 조회합니다.")
-	public ResponseEntity<DataResponse<PostDraftDetailResponse>> findDraftPost(
-		@PathVariable Long postDraftId
-	) {
-		return ResponseEntity.ok(DataResponse.from(
-				PostDraftDetailResponse.from(
-					postService.findDraftDetail(postDraftId)
-				)
-			)
-		);
-	}
-
-	@PostMapping("/draft/{postDraftId}")
-	@Operation(summary = "임시 저장글 발행", description = "임시 저장글을 발행합니다.")
-	public ResponseEntity<DataResponse<PostCreateResponse>> publishDraftPost(
-		@PathVariable Long postDraftId
-	) {
-		// 게시글 발행
-		Long postId = postService.publishDraftPost(postDraftId);
-
-		// 임시 저장글 삭제
-		postService.deleteSelectedDraftPosts(List.of(postDraftId));
-		return ResponseEntity.ok(DataResponse.from(
-				PostCreateResponse.of(postId)
-			)
-		);
-	}
-
-	@PatchMapping(value = "/draft/{postDraftId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@Operation(summary = "임시 저장글 수정", description = "기존 임시 저장글에 덮어씁니다.")
-	public ResponseEntity<DataResponse<PostDraftCreateResponse>> updateDraftPost(
-		@PathVariable Long postDraftId,
-		@Valid @ModelAttribute PostDraftUpdateRequest request
-	) throws ImageException {
-		return ResponseEntity.ok(DataResponse.from(
-			PostDraftCreateResponse.of(
-				postService.updateDraftPost(
-					postDraftId,
-					request.title(),
-					request.content(),
-					request.categories() == null ? List.of() : request.categories(),
-					request.images() == null ? List.of() : request.images()
-				)
-			)
-		));
-	}
-
-	@DeleteMapping(value = "/draft/select")
-	@Operation(summary = "임시 저장 게시글 선택 삭제", description = "선택된 임시 저장글들을 삭제합니다.")
-	public ResponseEntity<DataResponse<Void>> deleteDraftPost(
-		@RequestBody DraftDeleteRequest request
-	) {
-		postService.deleteSelectedDraftPosts(request.draftPostIds());
-		return ResponseEntity.ok(DataResponse.ok());
-	}
-
-	@DeleteMapping(value = "/draft/all")
-	@Operation(summary = "임시 저장 게시글 전체 삭제", description = "모든 임시 저장글을 삭제합니다.")
-	public ResponseEntity<DataResponse<Void>> deleteAllDraftPost() {
-		postService.deleteAllDraftPost();
-		return ResponseEntity.ok(DataResponse.ok());
-	}
-
-	@GetMapping("/my")
-	@Operation(summary = "[마이페이지] 내가 쓴 게시글 조회", description = "현재 사용자가 작성한 게시글을 최신순으로 조회합니다.")
-	public ResponseEntity<DataResponse<MyPostResponse>> findMyPosts(
-		@RequestParam(required = false, defaultValue = "1") int page
-	) {
-		return ResponseEntity.ok(DataResponse.from(
-				MyPostResponse.from(
-					postService.findUserPosts(page)
-				)
-			)
-		);
-	}
-
-	@PostMapping("/{postId}/likes")
-	@Operation(summary = "게시글 좋아요", description = "게시글 좋아요")
-	public ResponseEntity<DataResponse<Void>> likePost(
-		@PathVariable Long postId
-	) {
-		postService.likePost(postId);
-		return ResponseEntity.ok(DataResponse.ok());
-	}
-
-	@DeleteMapping("/{postId}/likes")
-	@Operation(summary = "게시글 좋아요 취소", description = "게시글 좋아요 취소")
-	public ResponseEntity<DataResponse<Void>> unlikePost(
-		@PathVariable Long postId
-	) {
-		postService.unlikePost(postId);
-		return ResponseEntity.ok(DataResponse.ok());
-	}
-
-	@PostMapping("/{postId}/scrap")
-	@Operation(summary = "게시글 스크랩", description = "게시글을 스크랩합니다.")
-	public ResponseEntity<DataResponse<Void>> scrapPost(
-		@PathVariable Long postId
-	) {
-		postService.scrapPost(postId);
-		return ResponseEntity.ok(DataResponse.ok());
-	}
-
-	@DeleteMapping("/{postId}/scrap")
-	@Operation(summary = "게시글 스크랩 취소", description = "게시글 스크랩을 해제합니다.")
-	public ResponseEntity<DataResponse<Void>> unscrapPost(
-		@PathVariable Long postId
-	) {
-		postService.unscrapPost(postId);
-		return ResponseEntity.ok(DataResponse.ok());
-	}
-
-	@GetMapping("/my/scrap")
-	@Operation(summary = "[마이페이지] 스크랩한 게시글 조회", description = "현재 사용자가 스크랩한 게시글을 최신순으로 조회합니다.")
-	public ResponseEntity<DataResponse<MyPostResponse>> findMyScrapedPosts(
-		@RequestParam(required = false, defaultValue = "1") int page
-	) {
-		return ResponseEntity.ok(DataResponse.from(
-				MyPostResponse.from(
-					postService.findUserScrapedPosts(page)
-				)
-			)
-		);
-	}
-
-	@GetMapping("/search")
-	@Operation(summary = "전체 게시글 검색")
-	public ResponseEntity<DataResponse<SearchedPostResponse>> searchAllPosts(
-		@RequestParam @NotBlank @Length(min = 2, max = 10, message = "keyword는 2자 이상 10자 이하로 구성해야 합니다.") String keyword,
-		@RequestParam(required = false, defaultValue = "1") int page
-	) {
-		return ResponseEntity.ok(DataResponse.from(
-			SearchedPostResponse.from(
-				postService.searchAllPosts(keyword, page)
-			)
-		));
-	}
-
-	@GetMapping("/search/{boardId}")
-	@Operation(summary = "게시판 내 게시글 검색")
-	public ResponseEntity<DataResponse<SearchedPostResponse>> searchBoardPosts(
-		@RequestParam @NotBlank @Length(min = 2, max = 10, message = "keyword는 2자 이상 10자 이하로 구성해야 합니다.") String keyword,
-		@PathVariable Long boardId,
-		@RequestParam(required = false, defaultValue = "1") int page
-	) {
-		return ResponseEntity.ok(DataResponse.from(
-			SearchedPostResponse.from(
-				postService.searchBoardPosts(keyword, boardId, page)
-			)
-		));
-	}
-
-	@GetMapping("/search/keywords")
-	@Operation(summary = "게시글 검색 키워드 조회", description = "게시글 검색 키워드를 조회합니다.(최대 10개, 최신순 정렬)")
-	public ResponseEntity<DataResponse<SearchKeywordListResponse>> searchAllPosts() {
-		return ResponseEntity.ok(DataResponse.from(
-			SearchKeywordListResponse.from(
-				postService.findSearchKeyword()
-			)
-		));
-	}
-
-	@DeleteMapping("search/keywords/{keywordId}")
-	@Operation(summary = "게시글 검색 키워드 단건 삭제", description = "게시글 검색 키워드 Id를 통해 삭제합니다.")
-	public ResponseEntity<DataResponse<SearchKeywordDeleteResponse>> deleteKeyword(
-		@PathVariable Long keywordId) {
-		return ResponseEntity.ok(DataResponse.from(
-			SearchKeywordDeleteResponse.from(
-				postService.deleteSearchKeyword(keywordId)
-			)
-		));
-	}
-
-	@DeleteMapping("search/keywords")
-	@Operation(summary = "게시글 검색 키워드 단건 삭제", description = "게시글 검색 키워드 Id를 통해 삭제합니다.")
-	public ResponseEntity<DataResponse<Void>> deleteAllKeyword() {
-		postService.deleteAllSearchKeyword();
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 }
