@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.cotato.kampus.domain.post.dao.entity.PostScrapEntity;
 
@@ -15,5 +17,6 @@ public interface PostScrapJpaRepository extends JpaRepository<PostScrapEntity, L
 
 	Optional<PostScrapEntity> findByPostIdAndUserId(Long postId, Long userId);
 
-	List<Long> findAllPostIdsByUserId(Long userId);
+	@Query("SELECT p.postId FROM PostScrapEntity p WHERE p.userId =:userId")
+	List<Long> findAllPostIdsByUserId(@Param("userId") Long userId);
 }
