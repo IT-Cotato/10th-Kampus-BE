@@ -7,8 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.BoardCategory;
 import com.cotato.kampus.domain.board.implement.port.BoardCategoryRepository;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +19,7 @@ public class BoardCategoryFinder {
 	private final BoardCategoryRepository boardCategoryRepository;
 
 	public List<BoardCategory> findAllByBoardId(Long boardId) {
-
-		List<BoardCategory> categoryList = boardCategoryRepository.findAllByBoardId(boardId);
-
-		return categoryList;
-	}
-
-	public BoardCategory find(Long boardId, String categoryName) {
-		BoardCategory category = boardCategoryRepository.findByBoardIdAndCategoryName(boardId, categoryName)
-			.orElseThrow(() -> new AppException(ErrorCode.INVALID_CATEGORY));
-
-		return category;
+		List<BoardCategory> categories = boardCategoryRepository.findAllByBoardId(boardId);
+		return categories;
 	}
 }

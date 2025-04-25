@@ -19,7 +19,7 @@ public class BoardCategoryEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "category_id", nullable = false)
+	@Column(name = "board_category_id", nullable = false)
 	private Long id;
 
 	@Column(name = "category_id", nullable = false)

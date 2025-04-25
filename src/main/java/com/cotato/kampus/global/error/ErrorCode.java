@@ -20,8 +20,6 @@ public enum ErrorCode {
 	//Post
 	POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글을 찾을 수 없습니다.", "POST-001"),
 	POST_NOT_AUTHOR(HttpStatus.FORBIDDEN, "게시글 작성자가 아닙니다.", "POST-002"),
-	POST_UNLIKE_FORBIDDEN(HttpStatus.FORBIDDEN, "좋아요 내역이 없는 게시글입니다.", "POST-003"),
-	POST_LIKE_DUPLICATED(HttpStatus.FORBIDDEN, "이미 좋아요한 게시글입니다.", "POST-004"),
 	POST_SCRAP_FORBIDDEN(HttpStatus.FORBIDDEN, "자신의 게시글을 스크랩 할 수 없습니다.", "POST-005"),
 	POST_SCRAP_DUPLICATED(HttpStatus.FORBIDDEN, "이미 스크랩한 글입니다.", "POST-006"),
 	POST_SCRAP_NOT_EXIST(HttpStatus.FORBIDDEN, "스크랩 되지 않은 게시글은 삭제할 수 없습니다.", "POST-007"),
@@ -42,10 +40,15 @@ public enum ErrorCode {
 	POST_ANONYMOUS_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 익명 여부는 필수 항목입니다.", "POST-021"),
 	INVALID_POST_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 PostType 입니다.", "POST-022"),
 	POST_TYPE_MISMATCH(HttpStatus.INTERNAL_SERVER_ERROR, "지원하지 않는 게시글 타입입니다.", "POST-023"),
+	POST_NOT_PUBLISHED(HttpStatus.BAD_REQUEST, "게시 상태가 아닌 게시글에는 해당 작업을 수행할 수 없습니다.", "POST-024"),
 
 	// TemporaryPost
 	TEMP_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "임시저장 게시글을 찾을 수 없습니다.", "TEMP_POST-001"),
 	TEMP_POST_NOT_AUTHOR(HttpStatus.FORBIDDEN, "임시저장 게시글 작성자가 아닙니다.", "TEMP_POST-002"),
+	TEMP_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "임시저장 게시글 ID는 필수입니다.", "TEMP_POST-003"),
+	TEMP_PHOTO_URL_REQUIRED(HttpStatus.BAD_REQUEST, "임시저장 사진 URL은 필수입니다.", "TEMP_POST-004"),
+	TEMP_PHOTO_ORDER_REQUIRED(HttpStatus.BAD_REQUEST, "임시저장 사진 order는 필수입니다.", "TEMP_POST-005"),
+
 
 	// TrendingPost
 	TRENDING_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "TrendingPost 게시글 ID는 필수입니다.", "TRENDING_POST-001"),
@@ -53,6 +56,9 @@ public enum ErrorCode {
 	// PostLike
 	POST_LIKE_USER_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostLike 사용자 ID는 필수입니다.", "POST_LIKE-001"),
 	POST_LIKE_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostLike 게시글 ID는 필수입니다.", "POST_LIKE-002"),
+	POST_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "좋아요 내역을 찾을 수 없습니다. ", "POST_LIKE-003"),
+	POST_LIKE_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 좋아요한 게시글입니다.", "POST_LIKE-004"),
+
 
 	// PostScrap
 	POST_SCRAP_USER_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostScrap 사용자 ID는 필수입니다.", "POST_SCRAP-001"),
@@ -64,6 +70,8 @@ public enum ErrorCode {
 
 	// Category
 	CATEGORY_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "Category 생성시 카테고리 이름은 필수입니다.", "CATEGORY-001"),
+	CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "Category를 찾을 수 없습니다.", "CATEGORY-002"),
+	CATEGORY_NOT_BELONG_TO_BOARD(HttpStatus.BAD_REQUEST, "카테고리가 해당 게시판에 속하지 않습니다.", "CATEGORY-003"),
 
 	//Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
@@ -110,6 +118,7 @@ public enum ErrorCode {
 	BOARD_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 게시판 접근 자격이 없습니다.", "BOARD-009"),
 	BOARD_ALREADY_PENDING(HttpStatus.BAD_REQUEST, "이미 삭제 대기 상태인 게시판입니다.", "BOARD-010"),
 	INVALID_BOARD_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 BoardType 입니다.", "BOARD-011"),
+	BOARD_NOT_ACTIVE(HttpStatus.FORBIDDEN, "게시판이 활성화되지 않았습니다.", "BOARD-012"),
 
 	BOARD_NAME_EMPTY(HttpStatus.BAD_REQUEST, "게시판 이름은 필수 항목입니다.", "BOARD-012"),
 	BOARD_DESCRIPTION_EMPTY(HttpStatus.BAD_REQUEST, "게시판 설명은 필수 항목입니다.", "BOARD-013"),

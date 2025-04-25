@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.board.application.BoardCategoryService;
-import com.cotato.kampus.domain.post.api.response.BoardCategoryFindResponse;
+import com.cotato.kampus.domain.board.api.response.BoardCategoryFindResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
