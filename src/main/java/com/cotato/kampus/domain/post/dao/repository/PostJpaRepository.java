@@ -21,6 +21,10 @@ public interface PostJpaRepository extends JpaRepository<PostEntity, Long> {
 
 	Slice<PostEntity> findAllByIdInOrderByCreatedTimeDesc(List<Long> postIds, Pageable pageable);
 
+	Slice<PostEntity> findAllByIdInAndPostStatus(List<Long> postIds, PostStatus postStatus, Pageable pageable);
+
+	Slice<PostEntity> findAllByUserIdAndPostStatus(Long userId, PostStatus postStatus, Pageable pageable);
+
 	@Query("SELECT p FROM PostEntity p WHERE p.title LIKE %:keyword% OR p.content LIKE %:keyword% ORDER BY p.createdTime DESC")
 	Slice<PostEntity> searchAll(@Param("keyword") String keyword, Pageable pageable);
 
@@ -69,6 +73,7 @@ public interface PostJpaRepository extends JpaRepository<PostEntity, Long> {
 		    FROM PostEntity p
 		    JOIN Comment c ON p.id = c.postId
 		    WHERE c.userId = :userId
+			AND p.postStatus = 'PUBLISHED'
 		    GROUP BY p.id
 		    ORDER BY MAX(c.createdTime) DESC
 		""")

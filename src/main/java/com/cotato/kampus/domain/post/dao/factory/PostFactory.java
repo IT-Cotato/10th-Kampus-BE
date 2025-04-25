@@ -26,4 +26,14 @@ public class PostFactory {
 			throw new AppException(ErrorCode.POST_TYPE_MISMATCH);
 		}
 	}
+
+	public Post createDomain(PostEntity entity) {
+		if(entity instanceof NormalPostEntity normalPostEntity) {
+			return normalPostEntity.toDomain();
+		} else if (entity instanceof CardNewsPostEntity cardNewsPostEntity) {
+			return cardNewsPostEntity.toDomain();
+		} else {
+			throw new AppException(ErrorCode.POST_TYPE_MISMATCH);
+		}
+	}
 }

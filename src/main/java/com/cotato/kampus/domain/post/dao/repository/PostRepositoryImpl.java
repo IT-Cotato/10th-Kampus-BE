@@ -23,14 +23,32 @@ public class PostRepositoryImpl implements PostRepository {
 	private final PostFactory postFactory;
 
 	@Override
-	public Post save(Post post){
+	public Post save(Post post) {
 		PostEntity entity = postFactory.createEntity(post);
 		return postJpaRepository.save(entity).toDomain();
 	}
 
 	@Override
-	public Optional<Post> findById(Long postId){
+	public Optional<Post> findById(Long postId) {
 		return postJpaRepository.findById(postId).map(PostEntity::toDomain);
+	}
+
+	@Override
+	public Slice<Post> findAllByBoardIdAndPostStatus(Long boardId, PostStatus postStatus, Pageable pageable) {
+		return postJpaRepository.findAllByBoardIdAndPostStatus(boardId, postStatus, pageable)
+			.map(PostEntity::toDomain);
+	}
+
+	@Override
+	public Slice<Post> findAllByIdInAndPostStatus(List<Long> postIds, PostStatus postStatus, Pageable pageable) {
+		return postJpaRepository.findAllByIdInAndPostStatus(postIds, postStatus, pageable)
+			.map(entity -> postFactory.createDomain(entity));
+	}
+
+	@Override
+	public Slice<Post> findAllByUserIdAndPostStatus(Long userId, PostStatus postStatus, Pageable pageable) {
+		return postJpaRepository.findAllByUserIdAndPostStatus(userId, postStatus, pageable)
+			.map(PostEntity::toDomain);
 	}
 
 	@Override

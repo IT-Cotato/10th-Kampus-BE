@@ -15,6 +15,12 @@ public interface PostRepository {
 
 	Optional<Post> findById(Long postId);
 
+	Slice<Post> findAllByBoardIdAndPostStatus(Long boardId, PostStatus postStatus, Pageable pageable);
+
+	Slice<Post> findAllByIdInAndPostStatus(List<Long> postIds, PostStatus postStatus, Pageable pageable);
+
+	Slice<Post> findAllByUserIdAndPostStatus(Long userId, PostStatus postStatus, Pageable pageable);
+
 	void delete(Post post);
 
 	// 게시판의 총 게시글 수
