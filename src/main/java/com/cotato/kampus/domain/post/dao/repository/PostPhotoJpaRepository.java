@@ -13,7 +13,5 @@ public interface PostPhotoJpaRepository extends JpaRepository<PostPhotoEntity, L
 
 	List<PostPhotoEntity> findAllByPostId(Long postId);
 
-	List<PostPhotoEntity> saveAll(List<PostPhotoEntity> entities);
-
 	void deleteAllByPostId(Long postId);
 }
