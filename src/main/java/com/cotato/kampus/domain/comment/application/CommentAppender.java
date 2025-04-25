@@ -22,7 +22,7 @@ public class CommentAppender {
 	private final ApiUserResolver apiUserResolver;
 
 	@Transactional
-	public Long append(Long postId, String content, Long anonymousNumber, Long parentId, Long targetId){
+	public Long append(Long postId, String content, Integer anonymousNumber, Long parentId, Long targetId){
 
 		Long userId = apiUserResolver.getCurrentUserId();
 

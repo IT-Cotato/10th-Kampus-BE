@@ -42,9 +42,9 @@ public class PostUpdater {
 		postRepository.save(updatedPost);
 	}
 
-	public void increaseAnonymousCount(Post post) {
+	public Post increaseAnonymousCount(Post post) {
 		Post updatedPost = post.increaseAnonymousCount();
-		postRepository.save(updatedPost);
+		return postRepository.save(updatedPost);
 	}
 
 	public void increaseScrapCount(Post post) {

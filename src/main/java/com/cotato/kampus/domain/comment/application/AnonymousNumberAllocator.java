@@ -8,10 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.comment.dao.CommentRepository;
 import com.cotato.kampus.domain.comment.domain.Comment;
 import com.cotato.kampus.domain.comment.dto.CommentDto;
-import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.implement.post.PostUpdater;
-import com.cotato.kampus.domain.post.domain.PostDto;
-import com.cotato.kampus.domain.user.application.UserFinder;
 import com.cotato.kampus.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;
@@ -23,19 +21,17 @@ import lombok.RequiredArgsConstructor;
 public class AnonymousNumberAllocator {
 
 	private final CommentRepository commentRepository;
-	private final ApiUserResolver apiUserResolver;
 	private final PostUpdater postUpdater;
-	private final UserFinder userFinder;
 
-	public Long allocateAnonymousNumber(PostDto postDto, UserDto userDto){
+	public Integer allocateAnonymousNumber(Post post, UserDto userDto){
 		// 작성자가 아닌 경우에만 익명 번호 증가
-		if(!postDto.userId().equals(userDto.id())) {
+		if(!post.getUserId().equals(userDto.id())) {
 			// 해당 Post에 현재 User의 댓글 작성 여부 확인
 			Optional<Comment> comment = commentRepository.findFirstByPostIdAndUserId(
-				postDto.id(), userDto.id()
+				post.getId(), userDto.id()
 			);
 			return comment.map(Comment::getAnonymousNumber)
-				.orElseGet(() -> (postUpdater.increaseNextAnonymousNumber(postDto.id())));
+				.orElseGet(() -> (postUpdater.increaseAnonymousCount(post)).getAnonymousCount());
 		} else {
 			return null;
 		}
