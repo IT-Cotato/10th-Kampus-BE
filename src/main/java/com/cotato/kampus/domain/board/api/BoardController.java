@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cotato.kampus.domain.board.application.BoardService;
 import com.cotato.kampus.domain.board.api.response.BoardListResponse;
 import com.cotato.kampus.domain.board.api.response.BoardWithDescriptionResponse;
-import com.cotato.kampus.domain.board.api.response.HomeBoardAndPostPreviewResponse;
+import com.cotato.kampus.domain.board.api.response.HomePostThumbnailsResponse;
 import com.cotato.kampus.domain.board.api.response.UniversityBoardResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
@@ -47,9 +47,9 @@ public class BoardController {
 
 	@GetMapping("/favorite")
 	@Operation(summary = "즐겨찾기 게시판 목록 조회 (홈화면)", description = "즐겨찾기에 등록된 게시판과 각 게시판의 최신 글을 조회합니다.")
-	public ResponseEntity<DataResponse<HomeBoardAndPostPreviewResponse>> getFavoriteBoardPreview() {
+	public ResponseEntity<DataResponse<HomePostThumbnailsResponse>> getFavoriteBoardPreview() {
 		return ResponseEntity.ok(DataResponse.from(
-			HomeBoardAndPostPreviewResponse.from(
+			HomePostThumbnailsResponse.from(
 				boardService.getFavoriteBoardPreview()
 			)
 		));
@@ -57,10 +57,10 @@ public class BoardController {
 
 	@GetMapping("/trending")
 	@Operation(summary = "트렌딩 게시판 미리보기 (홈화면)", description = "트렌딩 게시판의 최근 5개 게시글+게시판을 조회합니다. (타학교 게시판은 제외)")
-	public ResponseEntity<DataResponse<HomeBoardAndPostPreviewResponse>> getTrendingPreview() {
+	public ResponseEntity<DataResponse<HomePostThumbnailsResponse>> getTrendingPreview() {
 		return ResponseEntity.ok(
 			DataResponse.from(
-				HomeBoardAndPostPreviewResponse.from(
+				HomePostThumbnailsResponse.from(
 					boardService.getTrendingPreview()
 				)
 			)

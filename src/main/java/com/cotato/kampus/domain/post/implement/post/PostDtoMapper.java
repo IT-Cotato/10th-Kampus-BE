@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsThumbnail;
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.domain.HomeBoardAndPostPreview;
+import com.cotato.kampus.domain.board.domain.HomePostThumbnail;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostThumbnail;
@@ -30,13 +30,13 @@ public class PostDtoMapper {
 	private final PostScrapFinder postScrapFinder;
 	private final BoardFinder boardFinder;
 
-	public List<HomeBoardAndPostPreview> mapToHomeBoardAndPostPreviewsByBoardDtos(List<Board> boards) {
+	public List<HomePostThumbnail> mapToHomeBoardAndPostPreviewsByBoardDtos(List<Board> boards) {
 		// 각 boardId에 대해 가장 최근의 PostDto 조회
 		return boards.stream()
 			.map(board -> {
 				Post latestPost = postRepository.findTopByBoardIdOrderByCreatedTimeDesc(board.getId())
 					.orElse(null);
-				return HomeBoardAndPostPreview.from(board, latestPost);
+				return HomePostThumbnail.from(board, latestPost);
 			})
 			.toList();
 	}
@@ -69,5 +69,14 @@ public class PostDtoMapper {
 
 	public Slice<AdminCardNewsThumbnail> toAdminCardNewsThumbnails(Slice<Post> posts){
 		return posts.map(this::toAdminCardNewsThumbnail);
+	}
+
+	public HomePostThumbnail toHomePostThumbnail(Post post) {
+		Board board = boardFinder.findBoard(post.getBoardId());
+		return HomePostThumbnail.from(board, post);
+	}
+
+	public List<HomePostThumbnail> toHomePostThumbnails(List<Post> posts) {
+		return posts.stream().map(this::toHomePostThumbnail).toList();
 	}
 }

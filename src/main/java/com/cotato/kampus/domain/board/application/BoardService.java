@@ -8,12 +8,15 @@ import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
-import com.cotato.kampus.domain.board.domain.HomeBoardAndPostPreview;
+import com.cotato.kampus.domain.board.domain.HomePostThumbnail;
 import com.cotato.kampus.domain.board.implement.board.BoardDtoEnhancer;
 import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteReader;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.implement.post.PostDtoMapper;
+import com.cotato.kampus.domain.post.implement.post.PostFinder;
+import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 
@@ -29,6 +32,8 @@ public class BoardService {
 	private final UserValidator userValidator;
 	private final ApiUserResolver apiUserResolver;
 	private final PostDtoMapper postDtoMapper;
+	private final TrendingPostFinder trendingPostFinder;
+	private final PostFinder postFinder;
 
 	public List<BoardWithFavoriteStatus> getBoardList() {
 		// 유저 조회
@@ -50,7 +55,7 @@ public class BoardService {
 		return boardWithFavorites;
 	}
 
-	public List<HomeBoardAndPostPreview> getFavoriteBoardPreview() {
+	public List<HomePostThumbnail> getFavoriteBoardPreview() {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
@@ -79,5 +84,15 @@ public class BoardService {
 		Board board = boardFinder.findBoard(boardId);
 
 		return boardDtoEnhancer.mapToBoardWithFavoriteStatus(board, userDto);
+	}
+
+	public List<HomePostThumbnail> getTrendingPreview() {
+		UserDto user = apiUserResolver.getCurrentUserDto();
+
+		List<Long> trendingPostIds = trendingPostFinder.findAllPostIds();
+
+		List<Post> trendingPosts = postFinder.findTopTrendingPosts(trendingPostIds, user.universityId());
+
+		return postDtoMapper.toHomePostThumbnails(trendingPosts);
 	}
 }

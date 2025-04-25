@@ -2,14 +2,14 @@ package com.cotato.kampus.domain.board.domain;
 
 import com.cotato.kampus.domain.post.domain.Post;
 
-public record HomeBoardAndPostPreview(
+public record HomePostThumbnail(
 	Long boardId,
 	String boardName,
 	Long id,
 	String postTitle
 ) {
-	public static HomeBoardAndPostPreview from(Board board, Post post) {
-		return new HomeBoardAndPostPreview(
+	public static HomePostThumbnail from(Board board, Post post) {
+		return new HomePostThumbnail(
 			board.getId(),
 			board.getBoardName(),
 			post != null ? post.getId() : null,

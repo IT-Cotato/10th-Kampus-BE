@@ -27,6 +27,7 @@ public class PostFinder {
 	private final PostRepository postRepository;
 	private static final Integer PAGE_SIZE = 10;
 	private static final String SORT_PROPERTY = "createdTime";
+	private static final int HOME_POST_PREVIEW_LIMIT = 5;
 
 	public Post find(Long postId) {
 		return postRepository.findById(postId)
@@ -51,6 +52,10 @@ public class PostFinder {
 	public Slice<Post> findAllTrendingPosts(List<Long> trendingPostIds, Long userUniversityId, int page) {
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
 		return postRepository.findAllAccessiblePostsByIds(trendingPostIds, userUniversityId, customPageRequest.of(SORT_PROPERTY));
+	}
+
+	public List<Post> findTopTrendingPosts(List<Long> trendingPostIds, Long userUniversityId) {
+		return postRepository.findTopAccessiblePostsByIds(trendingPostIds, userUniversityId, HOME_POST_PREVIEW_LIMIT);
 	}
 
 	public PostReferenceDto findPostReference(Long postId) {
