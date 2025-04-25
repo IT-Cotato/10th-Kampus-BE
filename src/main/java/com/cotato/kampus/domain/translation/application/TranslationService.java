@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.implement.post.PostFinder;
-import com.cotato.kampus.domain.post.domain.PostDto;
 import com.cotato.kampus.domain.translation.dto.TranslatedPost;
 import com.cotato.kampus.domain.translation.dto.TranslatedText;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
@@ -26,13 +26,13 @@ public class TranslationService {
 
 	public TranslatedPost translatePost(Long postId) throws DeepLException, InterruptedException {
 		// 1. 게시글 조회
-		PostDto post = postFinder.findPost(postId);
+		Post post = postFinder.find(postId);
 
 		// 2. 사용자의 선호 언어 조회
 		PreferredLanguage preferredLanguage = apiUserResolver.getCurrentUser().getPreferredLanguage();
 
 		// 3. 번역
-		return postTranslator.translatePost(post.title(), post.content(), preferredLanguage.getCode());
+		return postTranslator.translatePost(post.getTitle(), post.getContent(), preferredLanguage.getCode());
 	}
 
 	public TranslatedPost translatePost(String title, String content, String targetLanguageCode) throws
