@@ -129,4 +129,10 @@ public abstract class Post {
 			throw new AppException(ErrorCode.POST_NOT_AUTHOR);
 		}
 	}
+
+	public void validatePublish() {
+		if(this.postStatus != PostStatus.PUBLISHED) {
+			throw new AppException(ErrorCode.POST_NOT_PUBLISHED);
+		}
+	}
 }

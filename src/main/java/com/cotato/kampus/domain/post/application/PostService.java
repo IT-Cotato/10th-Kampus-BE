@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.post.application;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -10,48 +11,60 @@ import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.board.implement.board.BoardValidator;
 import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryResolver;
+import com.cotato.kampus.domain.category.domain.Category;
+import com.cotato.kampus.domain.category.implement.CategoryFinder;
 import com.cotato.kampus.domain.comment.application.CommentDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
+import com.cotato.kampus.domain.post.domain.Post;
+import com.cotato.kampus.domain.post.domain.PostLike;
+import com.cotato.kampus.domain.post.domain.PostPhoto;
+import com.cotato.kampus.domain.post.domain.PostScrap;
+import com.cotato.kampus.domain.post.domain.TemporaryPhoto;
+import com.cotato.kampus.domain.post.domain.TemporaryPost;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPhotoAppender;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPhotoDeleter;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPhotoFinder;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostAppender;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostCategoryDeleter;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostDeleter;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostFinder;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostUpdater;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostCategoryAppender;
 import com.cotato.kampus.domain.post.implement.post.PostAppender;
 import com.cotato.kampus.domain.post.implement.post.PostDeleter;
+import com.cotato.kampus.domain.post.implement.post.PostDtoMapper;
 import com.cotato.kampus.domain.post.implement.post.PostFinder;
 import com.cotato.kampus.domain.post.implement.post.PostUpdater;
 import com.cotato.kampus.domain.post.implement.post.PostValidator;
 import com.cotato.kampus.domain.post.implement.postCategory.PostCategoryAppender;
 import com.cotato.kampus.domain.post.implement.postCategory.PostCategoryDeleter;
 import com.cotato.kampus.domain.post.implement.postCategory.PostCategoryFinder;
-import com.cotato.kampus.domain.post.implement.postImage.PostImageUpdater;
+import com.cotato.kampus.domain.post.implement.postLike.PostLikeAppender;
+import com.cotato.kampus.domain.post.implement.postLike.PostLikeDeleter;
 import com.cotato.kampus.domain.post.implement.postLike.PostLikeFinder;
-import com.cotato.kampus.domain.post.implement.postLike.PostLikeUpdater;
 import com.cotato.kampus.domain.post.implement.postLike.PostLikeValidator;
 import com.cotato.kampus.domain.post.implement.postImage.PostPhotoAppender;
 import com.cotato.kampus.domain.post.implement.postImage.PostPhotoDeleter;
 import com.cotato.kampus.domain.post.implement.postImage.PostPhotoFinder;
+import com.cotato.kampus.domain.post.implement.postSrcap.PostScrapAppender;
+import com.cotato.kampus.domain.post.implement.postSrcap.PostScrapDeleter;
 import com.cotato.kampus.domain.post.implement.postSrcap.PostScrapFinder;
-import com.cotato.kampus.domain.post.implement.postSrcap.PostScrapUpdater;
 import com.cotato.kampus.domain.post.implement.postSearch.PostSearchHistoryAppender;
 import com.cotato.kampus.domain.post.implement.postSearch.PostSearchHistoryDeleter;
 import com.cotato.kampus.domain.post.implement.postSearch.PostSearchHistoryFinder;
 import com.cotato.kampus.domain.post.implement.postSearch.PostSearchHistoryValidator;
-import com.cotato.kampus.domain.post.implement.postTrending.TrendingPostAppender;
-import com.cotato.kampus.domain.post.domain.CardNewsPreview;
-import com.cotato.kampus.domain.post.domain.MyPostWithPhoto;
+import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostAppender;
 import com.cotato.kampus.domain.post.domain.PostDetails;
-import com.cotato.kampus.domain.post.domain.PostDraftDetails;
-import com.cotato.kampus.domain.post.domain.PostDraftDto;
-import com.cotato.kampus.domain.post.domain.PostDraftSliceFindDto;
-import com.cotato.kampus.domain.post.domain.PostDraftWithPhoto;
-import com.cotato.kampus.domain.post.domain.PostDto;
+import com.cotato.kampus.domain.post.domain.TempPostDetails;
+import com.cotato.kampus.domain.post.domain.TempPostThumbnail;
 import com.cotato.kampus.domain.post.domain.PostSearchHistoryList;
-import com.cotato.kampus.domain.post.domain.PostWithPhotos;
-import com.cotato.kampus.domain.post.domain.SearchedPost;
-import com.cotato.kampus.domain.post.domain.TrendingPostPreview;
-import com.cotato.kampus.domain.post.enums.PostCategory;
+import com.cotato.kampus.domain.post.domain.PostThumbnail;
+import com.cotato.kampus.domain.post.domain.PostThumbnailWithBoardName;
 import com.cotato.kampus.domain.post.enums.PostSortType;
+import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostDeleter;
+import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostFinder;
 import com.cotato.kampus.domain.user.dto.UserDto;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -69,16 +82,13 @@ public class PostService {
 
 	private final PostPhotoAppender postPhotoAppender;
 	private final PostPhotoFinder postPhotoFinder;
-	private final PostImageUpdater postImageUpdater;
 	private final PostPhotoDeleter postPhotoDeleter;
 
-	private final PostScrapUpdater postScrapUpdater;
 	private final PostScrapFinder postScrapFinder;
 	private final ApiUserResolver apiUserResolver;
 	private final S3Uploader s3Uploader;
 
 	private final ImageValidator imageValidator;
-	private final PostLikeUpdater postLikeUpdater;
 	private final PostLikeValidator postLikeValidator;
 	private final PostLikeFinder postLikeFinder;
 	private final PostValidator postValidator;
@@ -98,24 +108,46 @@ public class PostService {
 	private final CommentDeleter commentDeleter;
 	private final PostCategoryFinder postCategoryFinder;
 
+	private final TemporaryPostAppender temporaryPostAppender;
+	private final TemporaryPostFinder temporaryPostFinder;
+	private final TemporaryPostDeleter temporaryPostDeleter;
+	private final TrendingPostDeleter trendingPostDeleter;
+	private final TrendingPostFinder trendingPostFinder;
+	private final TemporaryPostUpdater temporaryPostUpdater;
+
+	private final PostLikeAppender postLikeAppender;
+	private final PostLikeDeleter postLikeDeleter;
+
+	private final PostScrapAppender postScrapAppender;
+	private final PostScrapDeleter postScrapDeleter;
+	private final TemporaryPhotoFinder temporaryPhotoFinder;
+	private final TemporaryPhotoDeleter temporaryPhotoDeleter;
+	private final TemporaryPhotoAppender temporaryPhotoAppender;
+	private final CategoryFinder categoryFinder;
+	private final TemporaryPostCategoryAppender temporaryPostCategoryAppender;
+	private final TemporaryPostCategoryDeleter temporaryPostCategoryDeleter;
+	private final PostDtoMapper postDtoMapper;
+
 	@Transactional
 	public Long createPost(
 		Long boardId,
 		String title,
 		String content,
 		List<MultipartFile> images,
-		List<String> categories
+		List<String> categoryNames
 	) throws ImageException {
-		// 게시판, 유저 조회
+		// 1. 유저 및 게시판 조회/검증
+		UserDto user = apiUserResolver.getCurrentUserDto();
 		Board board = boardFinder.findBoard(boardId);
-		UserDto userDto = apiUserResolver.getCurrentUserDto();
+		board.validateActive();
+		boardValidator.validatePostCreationAccess(user, board);
 
-		// 게시판 검증
-		boardValidator.validateBoardIsActive(board);
-		boardValidator.validatePostCreationAccess(userDto, board);
-
-		// 게시글 추가
-		Long postId = postAppender.append(userDto.id(), board.getId(), title, content);
+		// 카테고리 조회, 검증
+		List<Long> categoryIds = categoryNames.stream()
+			.map(categoryFinder::find)
+			.map(Category::getId)
+			.toList();
+		boardCategoryResolver.validateMatching(categoryIds, boardId);
 
 		// 유효한 이미지 필터링 & S3 업로드
 		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
@@ -123,97 +155,97 @@ public class PostService {
 			List.of() :
 			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
 
-		// PostPhoto 추가
-		postPhotoAppender.appendAll(postId, imageUrls);
+		// Post, PostPhoto, PostCategory 추가
+		Post post = postAppender.appendNormalPost(user.id(), board.getId(), title, content);
+		postPhotoAppender.appendAll(post.getId(), imageUrls);
+		postCategoryAppender.appendAll(post.getId(), categoryIds);
 
-		// 카테고리 조회, 검증
-		List<Long> categoryIds = boardCategoryResolver.resolveCategoryIds(categories, boardId);
-
-		// PostCategory 추가
-		postCategoryAppender.appendAll(postId, categoryIds);
-
-		return postId;
+		return post.getId();
 	}
 
 	@Transactional
 	public Long deletePost(Long postId) {
-		// 작성자 검증: 현재 사용자가 게시글 작성자인지 확인
+		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
-		postValidator.validatePostOwner(postId, userId);
 
-		// 이미지 조회, 삭제
-		List<String> imageUrls = postPhotoFinder.findPostPhotos(postId);
+		// Post 조회 & 작성자 검증
+		Post post = postFinder.find(postId);
+		post.validateAuthor(userId);
+
+		// S3 이미지 삭제
+		List<String> imageUrls = postPhotoFinder.findPostPhotos(postId).stream()
+			.map(PostPhoto::getPhotoUrl)
+			.toList();
 		s3Uploader.deleteFiles(imageUrls);
 
-		// PostPhoto 삭제
+		// PostPhoto, PostCategory, PostLike, PostScrap 삭제
 		postPhotoDeleter.deletePostPhotos(postId);
-
-		// PostCategory 삭제
 		postCategoryDeleter.deleteAllByPostId(postId);
-
-		// PostLike, PostScrap 삭제
-		postLikeUpdater.deleteAllByPostId(postId);
-		postScrapUpdater.deleteAllByPostId(postId);
+		postLikeDeleter.deleteAllByPostId(postId);
+		postScrapDeleter.deleteAllByPostId(postId);
 
 		// Comment, CommentLike 삭제
 		commentDeleter.deleteAllByPostId(postId);
 
-		// 게시글 삭제
-		postDeleter.delete(postId);
+		// TrendingPost 삭제
+		trendingPostDeleter.deleteByPostId(postId);
+
+		// Post 삭제
+		postDeleter.delete(post);
 
 		return postId;
 	}
 
-	public Slice<PostWithPhotos> findPosts(Long boardId, int page, PostSortType sortType, String categoryName) {
-		// 현재 사용자 정보 조회
+	public Slice<PostThumbnail> findPosts(Long boardId, int page, PostSortType sortType,
+		Optional<String> categoryName) {
+		// 유저 조회
 		UserDto user = apiUserResolver.getCurrentUserDto();
-		Board board = boardFinder.findBoard(boardId);
 
-		// 게시판 접근 권한 검증
-		boardValidator.validateBoardIsActive(board);
+		// Board 조회, 유효성 검사
+		Board board = boardFinder.findBoard(boardId);
+		board.validateBoardIsActive();
 		boardValidator.validateUniversityAccess(user, board);
 
-		if (categoryName != null) {
-			boardValidator.isCategoryEnabled(board);
+		Slice<Post> posts;
+
+		if (categoryName.isPresent()) {
+			// 카테고리 필터링
+			Category category = categoryFinder.find(categoryName.get());
+			boardCategoryResolver.validateMatching(category.getId(), boardId);
+			List<Long> postIds = postCategoryFinder.findAllPostIdsByCategoryId(category.getId());
+			posts = postFinder.findAllByBoardIdAndCategoryId(boardId, postIds, page, sortType);
+		} else {
+			posts = postFinder.findAllByBoardId(boardId, page, sortType);
 		}
 
-		return postFinder.findPostsByCategory(boardId, page, sortType, categoryName);
+		return postDtoMapper.toPostThumbnails(posts, user.id());
 	}
 
-	public Slice<CardNewsPreview> findAllCardNews(int page) {
-		// 현재 사용자 정보 조회
-		Long userId = apiUserResolver.getCurrentUserId();
-
-		// 카드뉴스 조회
-		return postFinder.findAllCardNews(userId, page);
-	}
-
-	public Slice<TrendingPostPreview> findTrendingPosts(int page) {
-		// 유저 정보 조회
-		UserDto userDto = apiUserResolver.getCurrentUserDto();
-		Long userUnivId = userDto.universityId();
+	public Slice<PostThumbnailWithBoardName> findTrendingPosts(int page) {
+		// 유저 조회
+		UserDto user = apiUserResolver.getCurrentUserDto();
 
 		// Trending 게시글 조회 (타 대학 게시글 제외)
-		return postFinder.findAllTrendingPosts(userUnivId, page);
+		List<Long> trendingPostIds = trendingPostFinder.findAllPostIds();
+		Slice<Post> trendingPosts = postFinder.findAllTrendingPosts(trendingPostIds, user.universityId(), page);
+
+		return postDtoMapper.toPostThumbnailsWithBoardName(trendingPosts, user.id());
 	}
 
 	public PostDetails findPostDetail(Long postId) {
-		// 1. Post 조회하여 Dto에 저장
-		PostDto postDto = postFinder.findPost(postId);
+		// 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
 
-		// 2. Post의 이미지 조회
-		List<String> postPhotos = postPhotoFinder.findPostPhotos(postId);
+		// Post 조회
+		Post post = postFinder.find(postId);
 
-		// 3. 유저 조회
-		UserDto userDto = apiUserResolver.getCurrentUserDto();
+		// PostPhoto 조회
+		List<PostPhoto> postPhotos = postPhotoFinder.findPostPhotos(postId);
 
-		// 4. 게시글 작성자 여부, 좋아요 여부, 스크랩 여부 조회
-		boolean isAuthor = postDto.userId().equals(userDto.id());
-		boolean isLiked = postLikeFinder.isPostLikedByUser(userDto.id(), postId);
-		boolean isScrapped = postScrapFinder.isPostScrappedByUser(userDto.id(), postId);
-
-		// 5. 게시글 세부 내역 리턴
-		return PostDetails.of(postDto, postPhotos, isAuthor, isLiked, isScrapped);
+		boolean isAuthor = post.getUserId().equals(userId);
+		boolean isLiked = postLikeFinder.hasUserLikedPost(userId, postId);
+		boolean isScrapped = postScrapFinder.isPostScrappedByUser(userId, postId);
+		return PostDetails.of(post, postPhotos, isAuthor, isLiked, isScrapped);
 	}
 
 	@Transactional
@@ -221,313 +253,366 @@ public class PostService {
 		Long postId,
 		String title,
 		String content,
-		List<String> categories,
+		List<String> categoryNames,
 		List<MultipartFile> images
 	) throws ImageException {
-		// 1. Post Author 검증
+		// 1. 유저 및 게시글 조회/검증
 		Long userId = apiUserResolver.getCurrentUserId();
-		postValidator.validatePostOwner(postId, userId);
+		Post post = postFinder.find(postId);
+		post.validateAuthor(userId);
 
-		// 2. PostCategory 업데이트
-		postCategoryDeleter.deleteAllByPostId(postId);
-		if (!categories.isEmpty()) {
-			// 게시판이 카테고리 쓰는지 확인
-			PostDto postDto = postFinder.findPost(postId);
-			Board board = boardFinder.findBoard(postDto.boardId());
-			boardValidator.isCategoryEnabled(board);
+		// 2. 카테고리 검증
+		List<Long> categoryIds = categoryNames.stream()
+			.map(categoryFinder::find)
+			.map(Category::getId)
+			.toList();
+		boardCategoryResolver.validateMatching(categoryIds, post.getBoardId());
 
-			// 카테고리 조회, 검증
-			List<Long> categoryIds = boardCategoryResolver.resolveCategoryIds(categories, board.getId());
-
-			// PostCategory 추가
-			postCategoryAppender.appendAll(postId, categoryIds);
-		}
-
-		// 3. 기존 PostPhoto 삭제
-		List<String> deletePhotos = postPhotoFinder.findPostPhotos(postId);
-		s3Uploader.deleteFiles(deletePhotos);
-		postPhotoDeleter.deletePostPhotos(postId);
-
-		// 4. 유효한 이미지 필터링 & S3 업로드
-		List<MultipartFile> validphotos = imageValidator.filterValidImages(images);
-		List<String> photoUrls = (validphotos.isEmpty()) ?
-			List.of() :
-			s3Uploader.uploadFiles(validphotos, POST_IMAGE_FOLDER);
-
-		// 5. PostPhoto 추가
-		postPhotoAppender.appendAll(postId, photoUrls);
-
-		// 4. Post 업데이트
-		postUpdater.updatePost(postId, title, content);
-
-	}
-
-	@Transactional
-	public Long draftPost(
-		Long boardId,
-		String title,
-		String content,
-		List<String> categories,
-		List<MultipartFile> images
-	) throws ImageException {
-		// 게시판, 유저 조회
-		Board board = boardFinder.findBoard(boardId);
-		UserDto userDto = apiUserResolver.getCurrentUserDto();
-
-		// 게시판 검증
-		boardValidator.validateBoardIsActive(board);
-		boardValidator.validatePostCreationAccess(userDto, board);
-
-		// PostDraft 추가
-		Long postDraftId = postAppender.draft(boardId, title, content);
-
-		// 유효한 이미지 필터링 & S3 업로드
+		// 3. 이미지 처리
+		// 3.1 새 이미지 업로드
 		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
 		List<String> imageUrls = (validImages.isEmpty()) ?
 			List.of() :
 			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
 
-		// PostDraftPhoto 추가
-		postPhotoAppender.appendAllDraftImage(postDraftId, imageUrls);
+		// 3.2 기존 이미지 삭제
+		List<String> deleteImageUrls = postPhotoFinder.findPostPhotos(postId).stream()
+			.map(PostPhoto::getPhotoUrl)
+			.toList();
+		s3Uploader.deleteFiles(deleteImageUrls);
 
-		// 카테고리 검증, PostDraftCategory 추가
-		List<Long> categoryIds = boardCategoryResolver.resolveCategoryIds(categories, boardId);
-		postCategoryAppender.appendAllDraftCategory(postDraftId, categoryIds);
+		// 4. 연관 데이터 갱신
+		// 4.1 기존 데이터 삭제
+		postPhotoDeleter.deletePostPhotos(postId);
+		postCategoryDeleter.deleteAllByPostId(postId);
 
-		return postDraftId;
+		// 4.2 새 데이터 추가
+		postCategoryAppender.appendAll(postId, categoryIds);
+		postPhotoAppender.appendAll(post.getId(), imageUrls);
+
+		// 5. 게시글 내용 업데이트
+		postUpdater.update(post, title, content);
 	}
 
 	@Transactional
-	public void deleteSelectedDraftPosts(List<Long> postDraftIds) {
-		// 유저 조회, 검증
+	public Long createTempPost(
+		Long boardId,
+		String title,
+		String content,
+		List<String> categoryNames,
+		List<MultipartFile> images
+	) throws ImageException {
+		// 1. 유저 및 게시판 조회/검증
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		Board board = boardFinder.findBoard(boardId);
+		board.validateBoardIsActive();
+		boardValidator.validatePostCreationAccess(user, board);
+
+		// 2. 카테고리 검증
+		List<Long> categoryIds = categoryNames.stream()
+			.map(categoryFinder::find)
+			.map(Category::getId)
+			.toList();
+		boardCategoryResolver.validateMatching(categoryIds, boardId);
+
+		// 3. 이미지 처리
+		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
+		List<String> imageUrls = (validImages.isEmpty()) ?
+			List.of() :
+			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
+
+		// 4. 임시 게시글 생성
+		TemporaryPost temporaryPost = temporaryPostAppender.append(user.id(), boardId, title, content);
+
+		// 5. 관련 데이터 추가
+		temporaryPostCategoryAppender.appendAll(temporaryPost.getId(), categoryIds);
+		temporaryPhotoAppender.appendAll(temporaryPost.getId(), imageUrls);
+
+		return temporaryPost.getId();
+	}
+
+	@Transactional
+	public void deleteSelectedTempPosts(List<Long> tempPostIds) {
+		// 1. 유저 및 임시 게시글 조회/검증
 		Long userId = apiUserResolver.getCurrentUserId();
-		postDraftIds.forEach(postDraftId -> {
-			PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
-			postValidator.validatePostDraftOwner(postDraftDto, userId);
-		});
+		List<TemporaryPost> temporaryPosts = temporaryPostFinder.findAllByIds(tempPostIds);
+		temporaryPosts.forEach(temporaryPost -> temporaryPost.validateAuthor(userId));
 
-		// 이미지 조회, 삭제
-		List<String> imageUrls = postPhotoFinder.findAllDraftPhotos(postDraftIds);
-		s3Uploader.deleteFiles(imageUrls);
+		// 2 S3이미지 삭제
+		List<String> photoUrls = temporaryPhotoFinder.findAllPhotoUrls(tempPostIds);
+		s3Uploader.deleteFiles(photoUrls);
 
-		// PostDraftPhoto 삭제
-		postPhotoDeleter.deletePostDraftPhotos(imageUrls);
+		// 3. 관련 데이터 삭제
+		temporaryPhotoDeleter.deleteAllByTempPostIds(tempPostIds);
+		temporaryPostCategoryDeleter.deleteAllByTemporaryPostIds(tempPostIds);
 
-		// PostDraftCategory 삭제
-		postCategoryDeleter.deleteAllByPostDraftIds(postDraftIds);
-
-		// PostDraft 삭제
-		postDeleter.deleteDraftAll(postDraftIds);
-
+		// 4. 임시 게시글 삭제
+		temporaryPostDeleter.deleteAllByIds(tempPostIds);
 	}
 
 	@Transactional
-	public void deleteAllDraftPost() {
-		// 유저 조회
-		Long userId = apiUserResolver.getCurrentUserId();
-
-		// 임시 저장 게시글 조회
-		List<Long> draftPostIds = postFinder.getPostDraftIdsByBoardAndUser(userId);
-		List<String> imageUrls = postPhotoFinder.findAllDraftPhotos(draftPostIds);
-
-		// S3에서 이미지 삭제
-		s3Uploader.deleteFiles(imageUrls);
-
-		// PostDraftPhoto 삭제
-		postPhotoDeleter.deletePostDraftPhotos(imageUrls);
-
-		// 임시저장 글 삭제
-		postDeleter.deleteDraftAll(draftPostIds);
-	}
-
-	@Transactional
-	public PostDraftSliceFindDto findPostDrafts(int page) {
-		// 유저 조회
-		Long userId = apiUserResolver.getCurrentUserId();
-
-		// 임시 저장 글 조회
-		Slice<PostDraftWithPhoto> postDrafts = postFinder.findPostDrafts(userId, page);
-		int count = postFinder.findDraftsCount(userId);
-
-		return PostDraftSliceFindDto.from(postDrafts, count);
-	}
-
-	@Transactional
-	public PostDraftDetails findDraftDetail(Long postDraftId) {
-
-		PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
-
-		List<String> postDraftPhotos = postPhotoFinder.findAllDraftPhotos(postDraftId);
-
-		return PostDraftDetails.of(postDraftDto, postDraftPhotos);
-	}
-
-	@Transactional
-	public Long publishDraftPost(Long postDraftId) {
+	public void deleteAllTempPost() {
 		// 1. 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
-		// 2. 임시 저장 게시글 정보 조회
-		PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
+		// 2. 임시 게시글 조회
+		List<TemporaryPost> temporaryPosts = temporaryPostFinder.findAllByUserId(userId);
+		List<Long> tempPostIds = temporaryPosts.stream()
+			.map(TemporaryPost::getId)
+			.toList();
 
-		// 게시글 필수값 유효성 검증
-		postValidator.validatePublishable(postDraftDto);
+		// 3. S3 이미지 삭제
+		List<String> photoUrls = temporaryPhotoFinder.findAllPhotoUrls(tempPostIds);
+		s3Uploader.deleteFiles(photoUrls);
 
-		// 3. 게시글 생성 (임시 저장된 게시글에서 필요한 정보로 새로운 게시글을 생성)
-		Long postId = postAppender.append(userId, postDraftDto.boardId(), postDraftDto.title(), postDraftDto.content());
+		// 4. 관련 데이터 삭제
+		temporaryPhotoDeleter.deleteAllByTempPostIds(tempPostIds);
+		temporaryPostCategoryDeleter.deleteAllByTemporaryPostIds(tempPostIds);
 
-		// 기존 이미지로 PostPhoto 생성
-		List<String> imageUrls = postPhotoFinder.findAllDraftPhotos(postDraftId);
-		postPhotoAppender.appendAll(postId, imageUrls);
-		//
-		// // PostDraftPhoto 삭제
-		// postPhotoDeleter.deletePostDraftPhotos(imageUrls);
+		// 5. 임시 게시글 삭제
+		temporaryPostDeleter.deleteAllByUser(userId);
+	}
 
-		// 기존 카테고리로 PostCategory 생성
-		List<Long> categoryIds = postCategoryFinder.findAllCategoryId(postDraftId);
-		postCategoryAppender.appendAll(postId, categoryIds);
-		//
-		// // PostDraftCategory 삭제
-		// postCategoryDeleter.deleteAllByPostDraftId(postDraftId);
-		//
-		// // 임시저장글 삭제
-		// postDeleter.deleteDraftPost(postDraftId);
+	@Transactional
+	public Slice<TempPostThumbnail> findPostDrafts(int page) {
+		// 1. 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
 
-		return postId;
+		// 2. 임시 게시글 조회
+		Slice<TemporaryPost> temporaryPosts = temporaryPostFinder.findAllByUserId(userId, page);
+
+		return temporaryPosts.map(tempPost -> {
+			String thumbnail = temporaryPhotoFinder.findFirstPhoto(tempPost.getId());
+			Board board = boardFinder.findBoard(tempPost.getBoardId());
+			return TempPostThumbnail.from(tempPost, board.getBoardName(), thumbnail);
+		});
+	}
+
+	@Transactional
+	public TempPostDetails findTempPostDetail(Long postDraftId) {
+		// 1. 유저 및 임시게시글 조회/검증
+		Long userId = apiUserResolver.getCurrentUserId();
+		TemporaryPost temporaryPost = temporaryPostFinder.find(postDraftId);
+		temporaryPost.validateAuthor(userId);
+
+		List<TemporaryPhoto> tempPhotos = temporaryPhotoFinder.findAllByTempPostId(postDraftId);
+		String boardName = boardFinder.findBoard(temporaryPost.getBoardId()).getBoardName();
+		return TempPostDetails.of(temporaryPost, boardName, tempPhotos);
+	}
+
+	@Transactional
+	public Long publishDraftPost(
+		Long tempPostId,
+		String title,
+		String content,
+		List<String> categoryNames,
+		List<MultipartFile> images
+	) throws ImageException {
+		// 1. 유저, 임시 게시글 조회/검증
+		Long userId = apiUserResolver.getCurrentUserId();
+		TemporaryPost temporaryPost = temporaryPostFinder.find(tempPostId);
+		temporaryPost.validateAuthor(userId);
+
+		// 2. 카테고리 검증
+		List<Long> categoryIds = categoryNames.stream()
+			.map(categoryFinder::find)
+			.map(Category::getId)
+			.toList();
+		boardCategoryResolver.validateMatching(categoryIds, temporaryPost.getBoardId());
+
+		// 3. 이미지 처리
+		// 3.1 새 이미지 업로드
+		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
+		List<String> imageUrls = (validImages.isEmpty()) ?
+			List.of() :
+			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
+
+		// 3.2 기존 이미지 삭제
+		List<String> photoUrls = temporaryPhotoFinder.findAllPhotoUrls(tempPostId);
+		s3Uploader.deleteFiles(photoUrls);
+
+		// 4. 임시 게시글 관련 데이터 삭제
+		temporaryPhotoDeleter.deleteAllByTempPostId(tempPostId);
+		temporaryPostCategoryDeleter.deleteAllByTemporaryPostId(tempPostId);
+
+		// 5. 임시 게시글 삭제
+		temporaryPostDeleter.delete(temporaryPost);
+
+		// 6. 새 데이터 추가
+		Post post = postAppender.appendNormalPost(userId, temporaryPost.getBoardId(), title, content);
+		postPhotoAppender.appendAll(post.getId(), imageUrls);
+		postCategoryAppender.appendAll(post.getId(), categoryIds);
+
+		return post.getId();
 	}
 
 	@Transactional
 	public Long updateDraftPost(
-		Long postDraftId,
+		Long tempPostId,
 		String title,
 		String content,
-		List<String> categories,
+		List<String> categoryNames,
 		List<MultipartFile> images
 	) throws ImageException {
-		// PostDraft, 유저 조회
-		PostDraftDto postDraftDto = postFinder.findPostDraftDto(postDraftId);
+		// 1. 유저 및 임시 게시글 조회/검증
 		Long userId = apiUserResolver.getCurrentUserId();
+		TemporaryPost temporaryPost = temporaryPostFinder.find(tempPostId);
+		temporaryPost.validateAuthor(userId);
 
-		// 작성자 검증
-		postValidator.validatePostDraftOwner(postDraftDto, userId);
+		// 2. 카테고리 검증
+		List<Long> categoryIds = categoryNames.stream()
+			.map(categoryFinder::find)
+			.map(Category::getId)
+			.toList();
+		boardCategoryResolver.validateMatching(categoryIds, temporaryPost.getBoardId());
 
-		// 이미지 조회, 삭제
-		List<String> deletePhotos = postPhotoFinder.findAllDraftPhotos(postDraftId);
-		s3Uploader.deleteFiles(deletePhotos);
-
-		// PostDraftPhoto 삭제
-		postPhotoDeleter.deletePostDraftPhotos(deletePhotos);
-
-		// PostDraftCategory 삭제
-		postCategoryDeleter.deleteAllByPostDraftId(postDraftId);
-
-		// 유효한 이미지 필터링 & S3 업로드
+		// 3. 이미지 처리
+		// 3.1 새 이미지 업로드
 		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
 		List<String> imageUrls = (validImages.isEmpty()) ?
 			List.of() :
 			s3Uploader.uploadFiles(validImages, POST_IMAGE_FOLDER);
 
-		// PostDraftPhoto 추가
-		postPhotoAppender.appendAllDraftImage(postDraftId, imageUrls);
+		// 3.2 기존 이미지 삭제
+		List<String> deletePhotos = temporaryPhotoFinder.findAllPhotoUrls(tempPostId);
+		s3Uploader.deleteFiles(deletePhotos);
 
-		// 카테고리 검증, PostDraftCategory 추가
-		List<Long> categoryIds = boardCategoryResolver.resolveCategoryIds(categories, postDraftDto.boardId());
-		postCategoryAppender.appendAllDraftCategory(postDraftId, categoryIds);
+		// 4. 연관 데이터 갱신
+		// 4.1 기존 데이터 삭제
+		temporaryPhotoDeleter.deleteAllByTempPostId(tempPostId);
+		temporaryPostCategoryDeleter.deleteAllByTemporaryPostId(tempPostId);
 
-		postUpdater.updateDraftPost(postDraftId, title, content);
+		// 4.2 새 데이터 추가
+		temporaryPostCategoryAppender.appendAll(temporaryPost.getId(), categoryIds);
+		temporaryPhotoAppender.appendAll(temporaryPost.getId(), imageUrls);
 
-		return postDraftId;
+		// 5. 임시 게사글 내용 업데이트
+		temporaryPostUpdater.update(temporaryPost, title, content);
+		return tempPostId;
 	}
 
 	@Transactional
 	public void likePost(Long postId) {
-		// 1. userId 조회
+		// 1. 유저 및 게시글 조회/검증
 		Long userId = apiUserResolver.getCurrentUserId();
+		Post post = postFinder.find(postId);
+		post.validatePublish();
 
 		// 2. 좋아요 제약 조건 검증(이미 좋아요한 게시글)
 		postLikeValidator.validateDuplicateLike(postId, userId);
 
 		// 3. 좋아요 추가
-		postLikeUpdater.append(postId, userId);
+		postLikeAppender.append(postId, userId);
 
 		// 4. 기존에 좋아요가 2개였다면 Trending 게시판에 추가
-		trendingPostAppender.appendTrendingPost(postId);
+		//  TRENDING_LIKE_THRESHOLD 추가
+		boolean isTrending = trendingPostFinder.existsByPostId(postId);
+		if (!isTrending) {
+			trendingPostAppender.append(postId);
+		}
 
-		// 5. post의 likes + 1
-		postUpdater.increasePostLike(postId);
+		// 5. post의 likeCount + 1
+		postUpdater.increaseLikeCount(post);
 
 	}
 
 	@Transactional
 	public void unlikePost(Long postId) {
-		// 1. userId 조회
+		// 1. 유저 및 게시글 조회/검증
 		Long userId = apiUserResolver.getCurrentUserId();
+		Post post = postFinder.find(postId);
+		post.validatePublish();
 
 		// 2. 좋아요 삭제
-		postLikeUpdater.delete(postId, userId);
+		PostLike postLike = postLikeFinder.findPostLikeByPostIdAndUserId(postId, userId);
+		postLikeDeleter.delete(postLike);
 
 		// 4. 기존에 좋아요가 3개 였다면 Trending 게시판에서 제거
-		postDeleter.deleteTrendingPost(postId);
+		boolean isTrending = trendingPostFinder.existsByPostId(postId);
 
-		// 3. post의 likes - 1
-		postUpdater.decreasePostLike(postId);
+		if (isTrending) {
+			// private static final int TRENDING_LIKE_THRESHOLD = 3;
+
+			trendingPostDeleter.deleteByPostId(postId);
+		}
+		// 3. post의 likeCount - 1
+		postUpdater.decreaseLikeCount(post);
 
 	}
 
-	public Slice<MyPostWithPhoto> findUserPosts(int page) {
-		return postFinder.findUserPosts(page);
+	@Transactional
+	public Slice<PostThumbnailWithBoardName> findUserPosts(int page) {
+		// 1. 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		Slice<Post> posts = postFinder.findAllByUserId(userId, page);
+
+		return postDtoMapper.toPostThumbnailsWithBoardName(posts, userId);
 	}
 
 	@Transactional
 	public void scrapPost(Long postId) {
-		// 유저 조회
+		// 1. 유저 및 게시글 조회/검증
 		Long userId = apiUserResolver.getCurrentUserId();
+		Post post = postFinder.find(postId);
+		post.validatePublish();
 
 		// 스크랩 중복 검증
 		postValidator.validateDuplicatedScrap(postId, userId);
 
 		// 게시글 스크랩 수 추가
-		postUpdater.increaseScraps(postId);
+		postUpdater.increaseScrapCount(post);
 
 		// 스크랩 데이터 추가
-		postScrapUpdater.append(postId, userId);
+		postScrapAppender.append(postId, userId);
 	}
 
 	@Transactional
 	public void unscrapPost(Long postId) {
-		// 유저 조회
+		// 1. 유저 및 게시글 조회/검증
 		Long userId = apiUserResolver.getCurrentUserId();
+		Post post = postFinder.find(postId);
+		post.validatePublish();
 
 		// 게시글 스크랩 수 감소
-		postUpdater.decreaseScraps(postId);
+		postUpdater.decreaseScrapCount(post);
 
+		PostScrap postScrap = postScrapFinder.find(userId, postId);
 		// 스크랩 데이터 삭제
-		postScrapUpdater.delete(postId, userId);
+		postScrapDeleter.delete(postScrap);
 	}
 
-	public Slice<MyPostWithPhoto> findUserScrapedPosts(int page) {
-		return postFinder.findUserScrapedPosts(page);
+	public Slice<PostThumbnailWithBoardName> findUserScrapedPosts(int page) {
+		// 1. 유저 및 게시글 조회/검증
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		// 스크랩된 포스트만 조회
+		List<Long> postIds = postScrapFinder.findAllByUserId(userId);
+
+		Slice<Post> posts = postFinder.findPublishedByIds(postIds, page);
+
+		return postDtoMapper.toPostThumbnailsWithBoardName(posts, userId);
 	}
 
-	public void validateCategoryForBoard(boolean requiresCategory, PostCategory postCategory) {
-		// 카테고리 필요 없는데 값이 들어온 경우 -> 예외 발생
-		if (!requiresCategory && (postCategory != null))
-			throw new AppException(ErrorCode.CATEGORY_NOT_ALLOWED);
-	}
-
-	public Slice<SearchedPost> searchAllPosts(String keyword, int page) {
+	public Slice<PostThumbnailWithBoardName> searchAllPosts(String keyword, int page) {
 		// 최대 5개 까지 키워드 저장
 		Long userId = apiUserResolver.getCurrentUserId();
 		postSearchHistoryAppender.append(userId, keyword);
+
 		// 검색 결과 리턴
-		return postFinder.searchAllPosts(keyword, page);
+		Slice<Post> searchedPosts = postFinder.searchAllPosts(keyword, page);
+
+		return postDtoMapper.toPostThumbnailsWithBoardName(searchedPosts, userId);
 	}
 
-	public Slice<SearchedPost> searchBoardPosts(String keyword, Long boardId, int page) {
+	public Slice<PostThumbnailWithBoardName> searchBoardPosts(String keyword, Long boardId, int page) {
 		// 최대 5개 까지 키워드 저장
 		Long userId = apiUserResolver.getCurrentUserId();
 		postSearchHistoryAppender.append(userId, keyword);
-		return postFinder.searchBoardPosts(keyword, boardId, page);
+
+		Slice<Post> searchedPosts = postFinder.searchBoardPosts(keyword, boardId, page);
+
+		return postDtoMapper.toPostThumbnailsWithBoardName(searchedPosts, userId);
 	}
 
 	public PostSearchHistoryList findSearchKeyword() {
