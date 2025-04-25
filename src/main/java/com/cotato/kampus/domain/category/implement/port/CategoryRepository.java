@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.category.implement.port;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.cotato.kampus.domain.category.domain.Category;
@@ -11,4 +12,6 @@ public interface CategoryRepository {
 	Optional<Category> findById(Long id);
 
 	Optional<Category> findByCategoryName(String categoryName);
+
+	List<Category> findAll();
 }

@@ -27,6 +27,7 @@ import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsThumbnail;
 import com.cotato.kampus.domain.admin.dto.response.AdminUserDetailsResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardCreateResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardInfoResponse;
+import com.cotato.kampus.domain.admin.dto.response.CategoryListResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationListResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationResponse;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
@@ -235,6 +236,17 @@ public class AdminController {
 		@RequestParam String categoryName) {
 			return ResponseEntity.ok(DataResponse.from(
 				categoryService.createCategory(categoryName)
+			)
+		);
+	}
+
+	@GetMapping("/categories")
+	@Operation(summary = "카테고리 목록 조회", description = "게시판 생성 시 사용 가능한 카테고리 목록을 조회합니다.")
+	public ResponseEntity<DataResponse<CategoryListResponse>> findAllCategory() {
+			return ResponseEntity.ok(DataResponse.from(
+				CategoryListResponse.from(
+					categoryService.findAllCategory()
+				)
 			)
 		);
 	}

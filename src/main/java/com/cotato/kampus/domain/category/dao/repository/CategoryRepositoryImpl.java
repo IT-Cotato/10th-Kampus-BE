@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.category.dao.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
@@ -32,5 +33,12 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 	public Optional<Category> findByCategoryName(String categoryName) {
 		return categoryJpaRepository.findByCategoryName(categoryName)
 			.map(CategoryEntity::toDomain);
+	}
+
+	@Override
+	public List<Category> findAll() {
+		return categoryJpaRepository.findAll().stream()
+			.map(CategoryEntity::toDomain)
+			.toList();
 	}
 }
