@@ -23,7 +23,7 @@ public class BoardCategoryController {
 
 	private final BoardCategoryService boardCategoryService;
 
-	@GetMapping("/boards/{boardId}/categories")
+	@GetMapping("/{boardId}/categories")
 	@Operation(summary = "게시판에 적용되는 카테고리 조회",
 		description = "boardId에 해당하는 게시판에 적용되는 카테고리를 조회합니다.")
 	public ResponseEntity<DataResponse<BoardCategoryFindResponse>> findCategories(
