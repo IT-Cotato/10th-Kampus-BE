@@ -22,7 +22,7 @@ public interface TemporaryPostRepository {
 
 	void delete(TemporaryPost temporaryPost);
 
-	void deleteAll(List<TemporaryPost> temporaryPosts);
+	void deleteAllByIdIn(List<Long> tempPostIds);
 
 	void deleteAllByUserId(Long userId);
 }

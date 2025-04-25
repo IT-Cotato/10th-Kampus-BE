@@ -21,8 +21,8 @@ public class TemporaryPostDeleter {
 		temporaryPostRepository.delete(temporaryPost);
 	}
 
-	public void deleteAll(List<TemporaryPost> temporaryPosts) {
-		temporaryPostRepository.deleteAll(temporaryPosts);
+	public void deleteAllByIds(List<Long> tempPostIds) {
+		temporaryPostRepository.deleteAllByIdIn(tempPostIds);
 	}
 
 	public void deleteAllByUser(Long userId) {

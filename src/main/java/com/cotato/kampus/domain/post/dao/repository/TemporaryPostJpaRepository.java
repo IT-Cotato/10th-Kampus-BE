@@ -16,5 +16,7 @@ public interface TemporaryPostJpaRepository extends JpaRepository<TemporaryPostE
 
 	Slice<TemporaryPostEntity> findAllByUserId(Long userId, Pageable pageable);
 
+	void deleteAllByIdIn(List<Long> tempPostIds);
+
 	void deleteAllByUserId(Long userId);
 }

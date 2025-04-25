@@ -23,15 +23,19 @@ public class TemporaryPhotoFinder {
 			.orElse(null);
 	}
 
-	public List<String> findAllPhotos(Long tempPostId) {
+	public List<String> findAllPhotoUrls(Long tempPostId) {
 		return temporaryPhotoRepository.findAllByTemporaryPostIdOrderByOrderAsc(tempPostId).stream()
 			.map(TemporaryPhoto::getPhotoUrl)
 			.toList();
 	}
 
-	public List<String> findAllPhotos(List<Long> tempPostIds) {
+	public List<String> findAllPhotoUrls(List<Long> tempPostIds) {
 		return temporaryPhotoRepository.findAllByTemporaryPostIdInOrderByOrderAsc(tempPostIds).stream()
 			.map(TemporaryPhoto::getPhotoUrl)
 			.toList();
+	}
+
+	public List<TemporaryPhoto> findAllByTempPostId(Long tempPostId) {
+		return temporaryPhotoRepository.findAllByTemporaryPostIdOrderByOrderAsc(tempPostId);
 	}
 }

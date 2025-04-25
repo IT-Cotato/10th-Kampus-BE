@@ -57,11 +57,8 @@ public class TemporaryPostRepositoryImpl implements TemporaryPostRepository {
 	}
 
 	@Override
-	public void deleteAll(List<TemporaryPost> temporaryPosts) {
-		List<TemporaryPostEntity> entities = temporaryPosts.stream()
-			.map(TemporaryPostEntity::fromDomain)
-			.toList();
-		temporaryPostJpaRepository.deleteAll(entities);
+	public void deleteAllByIdIn(List<Long> tempPostIds) {
+		temporaryPostJpaRepository.deleteAllByIdIn(tempPostIds);
 	}
 
 	@Override
