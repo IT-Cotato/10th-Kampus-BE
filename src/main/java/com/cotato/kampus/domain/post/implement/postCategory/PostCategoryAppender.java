@@ -6,9 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.post.implement.port.PostCategoryRepository;
-import com.cotato.kampus.domain.post.implement.port.PostDraftCategoryRepository;
 import com.cotato.kampus.domain.post.domain.PostCategory;
-import com.cotato.kampus.domain.post.domain.PostDraftCategory;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostCategoryAppender {
 	private final PostCategoryRepository postCategoryRepository;
-	private final PostDraftCategoryRepository postDraftCategoryRepository;
 
 	public void appendAll(Long postId, List<Long> categoryIds) {
 		List<PostCategory> postCategories = categoryIds.stream()
@@ -29,16 +26,5 @@ public class PostCategoryAppender {
 				).toList();
 
 		postCategoryRepository.saveAll(postCategories);
-	}
-
-	public void appendAllDraftCategory(Long postDraftId, List<Long> categoryIds) {
-		List<PostDraftCategory> postDraftCategories = categoryIds.stream()
-			.map(categoryId -> PostDraftCategory.builder()
-				.postDraftId(postDraftId)
-				.categoryId(categoryId)
-				.build()
-			).toList();
-
-		postDraftCategoryRepository.saveAll(postDraftCategories);
 	}
 }
