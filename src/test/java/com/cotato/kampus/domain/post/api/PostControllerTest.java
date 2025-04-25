@@ -15,6 +15,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.cotato.kampus.domain.board.application.BoardService;
+import com.cotato.kampus.domain.post.application.PostSearchService;
 import com.cotato.kampus.domain.post.application.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -30,7 +31,7 @@ class PostControllerTest {
 	private ObjectMapper objectMapper;
 
 	@MockitoBean
-	private PostService postService;
+	private PostSearchService postSearchService;
 
 	@MockitoBean
 	private BoardService boardService;
@@ -38,7 +39,7 @@ class PostControllerTest {
 	@Test
 	@DisplayName("검색 기록 전체 삭제 성공 케이스")
 	void deleteAllHistory() throws Exception {
-		doNothing().when(postService).deleteAllSearchKeyword();
+		doNothing().when(postSearchService).deleteAllSearchKeyword();
 		mockMvc.perform(delete("/v1/api/posts/search/keywords"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").value("OK"));
