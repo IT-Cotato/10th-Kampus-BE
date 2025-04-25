@@ -2,8 +2,6 @@ package com.cotato.kampus.domain.post.domain;
 
 import java.time.LocalDateTime;
 
-import org.springframework.security.core.parameters.P;
-
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 import com.cotato.kampus.global.error.ErrorCode;
