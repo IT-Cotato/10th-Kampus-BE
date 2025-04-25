@@ -23,13 +23,15 @@ import com.cotato.kampus.domain.admin.dto.request.CardNewsCreateRequest;
 import com.cotato.kampus.domain.admin.dto.request.ChangeUserRoleRequest;
 import com.cotato.kampus.domain.admin.dto.request.VerifyRejectRequest;
 import com.cotato.kampus.domain.admin.dto.response.AdminBoardListResponse;
+import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsThumbnail;
 import com.cotato.kampus.domain.admin.dto.response.AdminUserDetailsResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardCreateResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardInfoResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationListResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationResponse;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
-import com.cotato.kampus.domain.post.api.response.AdminCardNewsListResponse;
+import com.cotato.kampus.domain.category.application.CategoryService;
+import com.cotato.kampus.domain.post.api.response.SliceResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
 
@@ -46,6 +48,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 
 	private final AdminService adminService;
+	private final CategoryService categoryService;
 
 	@PostMapping(value = "/boards", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "게시판 생성", description = "게시판을 생성합니다. 학교 게시판이 아닌 경우 universityCode를 null로 주세요")
@@ -198,11 +201,11 @@ public class AdminController {
 
 	@GetMapping(value = "/cardNews")
 	@Operation(summary = "카드뉴스 조회", description = "카드뉴스 목록을 조회합니다,")
-	public ResponseEntity<DataResponse<AdminCardNewsListResponse>> getAllCardNews(
+	public ResponseEntity<DataResponse<SliceResponse<AdminCardNewsThumbnail>>> getAllCardNews(
 		@RequestParam(required = false, defaultValue = "1") int page
 	) {
 		return ResponseEntity.ok(DataResponse.from(
-			AdminCardNewsListResponse.from(
+			SliceResponse.from(
 				adminService.getAllCardNews(page)
 			)
 		));
@@ -224,5 +227,15 @@ public class AdminController {
 		@RequestBody ChangeUserRoleRequest request) {
 		adminService.changeUserRole(request.userId(), request.role());
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PostMapping("/categories")
+	@Operation(summary = "카테고리 생성", description = "게시판 생성 시 사용할 카테고리를 생성합니다. (중복 허용 X)")
+	public ResponseEntity<DataResponse<Long>> createCategory(
+		@RequestParam String categoryName) {
+			return ResponseEntity.ok(DataResponse.from(
+				categoryService.createCategory(categoryName)
+			)
+		);
 	}
 }
