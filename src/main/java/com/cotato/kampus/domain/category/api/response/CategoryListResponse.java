@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.admin.dto.response;
+package com.cotato.kampus.domain.category.api.response;
 
 import java.util.List;
 
