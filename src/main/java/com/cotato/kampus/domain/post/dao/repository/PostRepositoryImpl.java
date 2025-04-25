@@ -63,8 +63,8 @@ public class PostRepositoryImpl implements PostRepository {
 	}
 
 	@Override
-	public Slice<Post> findAllByBoardIdAndIdIn(Long boardId, List<Long> postIds, Pageable pageable) {
-		return postJpaRepository.findAllByIdInOrderByCreatedTimeDesc(postIds, pageable)
+	public Slice<Post> findAllByBoardIdAndIdInAndPostStatus(Long boardId, List<Long> postIds, PostStatus postStatus, Pageable pageable) {
+		return postJpaRepository.findAllByBoardIdAndIdInAndPostStatus(boardId, postIds, postStatus, pageable)
 			.map(PostEntity::toDomain);
 	}
 

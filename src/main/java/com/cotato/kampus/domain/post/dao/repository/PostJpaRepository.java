@@ -19,7 +19,7 @@ public interface PostJpaRepository extends JpaRepository<PostEntity, Long> {
 
 	Slice<PostEntity> findAllByBoardIdAndPostStatus(Long boardId, PostStatus postStatus, Pageable pageable);
 
-	Slice<PostEntity> findAllByIdInOrderByCreatedTimeDesc(List<Long> postIds, Pageable pageable);
+	Slice<PostEntity> findAllByBoardIdAndIdInAndPostStatus(Long boardId, List<Long> postIds, PostStatus postStatus, Pageable pageable);
 
 	Slice<PostEntity> findAllByIdInAndPostStatus(List<Long> postIds, PostStatus postStatus, Pageable pageable);
 

@@ -38,6 +38,11 @@ public class PostFinder {
 		return postRepository.findAllByBoardIdAndPostStatus(boardId, PostStatus.PUBLISHED, customPageRequest.of(sortType.getProperty()));
 	}
 
+	public Slice<Post> findAllByBoardIdAndCategoryId(Long boardId, List<Long> postIds, int page, PostSortType sortType) {
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, sortType.getDirection());
+		return postRepository.findAllByBoardIdAndIdInAndPostStatus(boardId, postIds, PostStatus.PUBLISHED, customPageRequest.of(sortType.getProperty()));
+	}
+
 	public Slice<Post> findPublishedByIds(List<Long> postIds, int page){
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
 		return postRepository.findAllByIdInAndPostStatus(postIds, PostStatus.PUBLISHED, customPageRequest.of(SORT_PROPERTY));

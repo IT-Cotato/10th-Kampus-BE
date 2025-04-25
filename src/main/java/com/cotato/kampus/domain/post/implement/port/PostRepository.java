@@ -27,7 +27,7 @@ public interface PostRepository {
 	Long countByBoardId(Long boardId);
 
 	// 게시판에서 일부(postIds) 게시글 조회
-	Slice<Post> findAllByBoardIdAndIdIn(Long boardId, List<Long> postIds, Pageable pageable);
+	Slice<Post> findAllByBoardIdAndIdInAndPostStatus(Long boardId, List<Long> postIds, PostStatus postStatus, Pageable pageable);
 
 	// 전체 게시글 검색
 	Slice<Post> searchAll(String keyword, Pageable pageable);
