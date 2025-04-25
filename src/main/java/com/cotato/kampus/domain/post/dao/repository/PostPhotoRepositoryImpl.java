@@ -24,14 +24,14 @@ public class PostPhotoRepositoryImpl implements PostPhotoRepository {
 	}
 
 	@Override
-	public List<PostPhoto> findAllByPostId(Long postId){
+	public List<PostPhoto> findAllByPostId(Long postId) {
 		return postPhotoJpaRepository.findAllByPostId(postId).stream()
 			.map(PostPhotoEntity::toDomain)
 			.toList();
 	}
 
 	@Override
-	public List<PostPhoto> saveAll(List<PostPhoto> postPhotos){
+	public List<PostPhoto> saveAll(List<PostPhoto> postPhotos) {
 		List<PostPhotoEntity> entities = postPhotos.stream()
 			.map(PostPhotoEntity::fromDomain)
 			.toList();

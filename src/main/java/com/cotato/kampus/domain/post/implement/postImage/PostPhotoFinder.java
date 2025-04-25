@@ -24,9 +24,7 @@ public class PostPhotoFinder {
 			.orElse(null);
 	}
 
-	public List<String> findPostPhotos(Long postId) {
-		return postPhotoRepository.findAllByPostId(postId).stream()
-			.map(PostPhoto::getPhotoUrl)
-			.toList();
+	public List<PostPhoto> findPostPhotos(Long postId) {
+		return postPhotoRepository.findAllByPostId(postId);
 	}
 }
