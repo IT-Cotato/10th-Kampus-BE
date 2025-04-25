@@ -4,16 +4,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.cotato.kampus.domain.post.domain.PostDetails;
+import com.cotato.kampus.domain.post.domain.PostPhotoInfo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record PostDetailResponse(
 	Long postId,
 	String title,
 	String content,
-	Long likes,
-	Long scraps,
-	Long comments,
-	List<String> postPhotoUrls,
+	int likes,
+	int scraps,
+	int comments,
+	List<PostPhotoInfo> postPhotos,
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	LocalDateTime createdTime,
 	boolean isAuthor,
@@ -28,7 +29,7 @@ public record PostDetailResponse(
 			postDetails.likes(),
 			postDetails.scraps(),
 			postDetails.comments(),
-			postDetails.postPhotoUrls(),
+			postDetails.postPhotos(),
 			postDetails.createdTime(),
 			postDetails.isAuthor(),
 			postDetails.isLiked(),

@@ -5,13 +5,9 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record PostCreateRequest(
-	@NotNull
-	Long boardId,
-
+public record TempPostPublishRequest(
 	@NotBlank
 	@Size(max = 50, message = "제목은 최대 50자까지 입력할 수 있습니다.")
 	String title,
@@ -23,7 +19,7 @@ public record PostCreateRequest(
 	List<MultipartFile> images,
 	List<String> categories
 ) {
-	public PostCreateRequest {
+	public TempPostPublishRequest {
 		if(images == null) {
 			images = List.of();
 		}

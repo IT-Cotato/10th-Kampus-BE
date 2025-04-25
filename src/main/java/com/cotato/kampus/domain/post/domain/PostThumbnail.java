@@ -1,46 +1,33 @@
 package com.cotato.kampus.domain.post.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-public record PostDetails(
+/**
+ * 게시글 목록 조회에 사용 (게시판 이름 미포함)
+ */
+
+public record PostThumbnail(
 	Long postId,
-	Long boardId,
 	String title,
 	String content,
 	int likes,
-	int scraps,
 	int comments,
-	List<PostPhotoInfo> postPhotos,
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	LocalDateTime createdTime,
-	boolean isAuthor,
-	boolean isLiked,
+	String thumbnailUrl,
 	boolean isScrapped
 ) {
-	public static PostDetails of(
-		Post post,
-		List<PostPhoto> postPhotos,
-		boolean isAuthor,
-		boolean isLiked,
-		boolean isScrapped
-	) {
-		return new PostDetails(
+	public static PostThumbnail from(Post post, String thumbnailUrl, boolean isScrapped) {
+		return new PostThumbnail(
 			post.getId(),
-			post.getBoardId(),
 			post.getTitle(),
 			post.getContent(),
 			post.getLikeCount(),
-			post.getScrapCount(),
 			post.getCommentCount(),
-			postPhotos.stream()
-				.map(PostPhotoInfo::from)
-				.toList(),
 			post.getCreatedTime(),
-			isAuthor,
-			isLiked,
+			thumbnailUrl,
 			isScrapped
 		);
 	}
