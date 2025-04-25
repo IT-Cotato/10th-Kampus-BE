@@ -5,8 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.post.implement.port.PostDraftCategoryRepository;
-import com.cotato.kampus.domain.post.domain.PostDraftCategory;
+import com.cotato.kampus.domain.post.implement.port.PostCategoryRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +14,10 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostCategoryFinder {
-	private final PostDraftCategoryRepository postDraftCategoryRepository;
 
-	public List<Long> findAllCategoryId(Long postDraftId) {
-		List<PostDraftCategory> postDraftCategories = postDraftCategoryRepository.findByPostDraftId(postDraftId);
+	private final PostCategoryRepository postCategoryRepository;
 
-		return postDraftCategories.stream()
-			.map(PostDraftCategory::getCategoryId)
-			.toList();
+	public List<Long> findAllPostIdsByCategoryId(Long categoryId) {
+		return postCategoryRepository.findPostIdsByCategoryId(categoryId);
 	}
 }

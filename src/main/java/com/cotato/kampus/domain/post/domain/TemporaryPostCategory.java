@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class PostCategory {
+public class TemporaryPostCategory {
 
 	private final Long id;
 	private final Long categoryId;
-	private final Long postId;
+	private final Long temporaryPostId;
 }

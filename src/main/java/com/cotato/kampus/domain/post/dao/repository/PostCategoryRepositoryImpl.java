@@ -2,8 +2,6 @@ package com.cotato.kampus.domain.post.dao.repository;
 
 import java.util.List;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.post.dao.entity.PostCategoryEntity;
@@ -26,8 +24,8 @@ public class PostCategoryRepositoryImpl implements PostCategoryRepository {
 	}
 
 	@Override
-	public Slice<Long> findPostIdsByCategoryId(Long categoryId, Pageable pageable) {
-		return postCategoryJpaRepository.findPostIdsByCategoryId(categoryId, pageable);
+	public List<Long> findPostIdsByCategoryId(Long categoryId) {
+		return postCategoryJpaRepository.findPostIdsByCategoryId(categoryId);
 	}
 
 	@Override
