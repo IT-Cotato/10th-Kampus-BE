@@ -37,4 +37,13 @@ public class BoardCategoryResolver {
 			throw new AppException(ErrorCode.CATEGORY_NOT_BELONG_TO_BOARD);
 		}
 	}
+
+	public void validateNoDuplicateCategories(List<Long> newCategoryIds, List<Long> originCategoryIds) {
+		boolean hasDuplicates = newCategoryIds.stream()
+			.anyMatch(originCategoryIds::contains);
+
+		if(hasDuplicates) {
+			throw new AppException(ErrorCode.CATEGORY_DUPLICATED);
+		}
+	}
 }
