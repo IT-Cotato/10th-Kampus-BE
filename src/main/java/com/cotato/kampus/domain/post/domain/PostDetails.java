@@ -3,16 +3,19 @@ package com.cotato.kampus.domain.post.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.cotato.kampus.domain.post.enums.PostStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record PostDetails(
 	Long postId,
 	Long boardId,
+	String boardName,
 	String title,
 	String content,
-	int likes,
-	int scraps,
-	int comments,
+	int likeCount,
+	int scrapCount,
+	int commentCount,
+	PostStatus postStatus,
 	List<PostPhotoInfo> postPhotos,
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	LocalDateTime createdTime,
@@ -22,6 +25,7 @@ public record PostDetails(
 ) {
 	public static PostDetails of(
 		Post post,
+		String boardName,
 		List<PostPhoto> postPhotos,
 		boolean isAuthor,
 		boolean isLiked,
@@ -32,9 +36,11 @@ public record PostDetails(
 			post.getBoardId(),
 			post.getTitle(),
 			post.getContent(),
+			boardName,
 			post.getLikeCount(),
 			post.getScrapCount(),
 			post.getCommentCount(),
+			post.getPostStatus(),
 			postPhotos.stream()
 				.map(PostPhotoInfo::from)
 				.toList(),

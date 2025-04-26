@@ -12,12 +12,13 @@ public record PostThumbnail(
 	Long postId,
 	String title,
 	String content,
-	int likes,
-	int comments,
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	LocalDateTime createdTime,
+	int likeCount,
+	int commentCount,
+	int scrapCount,
 	String thumbnailUrl,
-	boolean isScrapped
+	boolean isScrapped,
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	LocalDateTime createdTime
 ) {
 	public static PostThumbnail from(Post post, String thumbnailUrl, boolean isScrapped) {
 		return new PostThumbnail(
@@ -26,9 +27,10 @@ public record PostThumbnail(
 			post.getContent(),
 			post.getLikeCount(),
 			post.getCommentCount(),
-			post.getCreatedTime(),
+			post.getScrapCount(),
 			thumbnailUrl,
-			isScrapped
+			isScrapped,
+			post.getCreatedTime()
 		);
 	}
 }
