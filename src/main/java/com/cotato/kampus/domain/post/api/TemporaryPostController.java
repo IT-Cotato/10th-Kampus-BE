@@ -130,7 +130,7 @@ public class TemporaryPostController {
 	public ResponseEntity<DataResponse<Void>> deleteDraftPost(
 		@RequestBody DraftDeleteRequest request
 	) {
-		temporaryPostService.deleteSelectedTempPosts(request.draftPostIds());
+		temporaryPostService.deleteSelectedTempPosts(request.tempPostIds());
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
