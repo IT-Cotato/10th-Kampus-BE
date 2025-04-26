@@ -261,4 +261,9 @@ public class TemporaryPostService {
 		temporaryPostUpdater.update(temporaryPost, title, content);
 		return tempPostId;
 	}
+
+	public Integer findTempPostCount() {
+		Long userId = apiUserResolver.getCurrentUserId();
+		return temporaryPostFinder.findAllByUserId(userId).size();
+	}
 }

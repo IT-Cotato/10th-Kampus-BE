@@ -140,4 +140,13 @@ public class TemporaryPostController {
 		temporaryPostService.deleteAllTempPost();
 		return ResponseEntity.ok(DataResponse.ok());
 	}
+
+	@GetMapping(value = "/draft/count")
+	@Operation(summary = "임시 게시글 개수 조회", description = "임시 게시글 개수를 조회합니다.")
+	public ResponseEntity<DataResponse<Integer>> findTempPostCount() {
+			return ResponseEntity.ok(DataResponse.from(
+				temporaryPostService.findTempPostCount()
+			)
+		);
+	}
 }
