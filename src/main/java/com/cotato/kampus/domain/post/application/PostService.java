@@ -1,7 +1,6 @@
 package com.cotato.kampus.domain.post.application;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.board.implement.board.BoardValidator;
-import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryResolver;
+import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryValidator;
 import com.cotato.kampus.domain.category.domain.Category;
 import com.cotato.kampus.domain.category.implement.CategoryFinder;
 import com.cotato.kampus.domain.comment.application.CommentDeleter;
@@ -70,7 +69,7 @@ public class PostService {
 	// 게시판 관련
 	private final BoardValidator boardValidator;
 	private final BoardFinder boardFinder;
-	private final BoardCategoryResolver boardCategoryResolver;
+	private final BoardCategoryValidator boardCategoryValidator;
 
 	// 상호작용 관련
 	private final PostLikeFinder postLikeFinder;
@@ -110,7 +109,7 @@ public class PostService {
 			.map(categoryFinder::find)
 			.map(Category::getId)
 			.toList();
-		boardCategoryResolver.validateMatching(categoryIds, boardId);
+		boardCategoryValidator.validateMatching(categoryIds, boardId);
 
 		// 유효한 이미지 필터링 & S3 업로드
 		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
@@ -144,7 +143,7 @@ public class PostService {
 		if (categoryName != null && !categoryName.isEmpty()) {
 			// 카테고리 필터링
 			Category category = categoryFinder.find(categoryName);
-			boardCategoryResolver.validateMatching(category.getId(), boardId);
+			boardCategoryValidator.validateMatching(category.getId(), boardId);
 			List<Long> postIds = postCategoryFinder.findAllPostIdsByCategoryId(category.getId());
 			posts = postFinder.findAllByBoardIdAndCategoryId(boardId, postIds, page, sortType);
 		} else {
@@ -232,7 +231,7 @@ public class PostService {
 			.map(categoryFinder::find)
 			.map(Category::getId)
 			.toList();
-		boardCategoryResolver.validateMatching(categoryIds, post.getBoardId());
+		boardCategoryValidator.validateMatching(categoryIds, post.getBoardId());
 
 		// 3. 이미지 처리
 		// 3.1 새 이미지 업로드

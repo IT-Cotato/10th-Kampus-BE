@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.board.implement.board.BoardValidator;
-import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryResolver;
+import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryValidator;
 import com.cotato.kampus.domain.category.domain.Category;
 import com.cotato.kampus.domain.category.implement.CategoryFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -50,7 +50,7 @@ public class TemporaryPostService {
 
 	private final BoardFinder boardFinder;
 	private final BoardValidator boardValidator;
-	private final BoardCategoryResolver boardCategoryResolver;
+	private final BoardCategoryValidator boardCategoryValidator;
 	private final CategoryFinder categoryFinder;
 	private final PostCategoryAppender postCategoryAppender;
 	private final PostAppender postAppender;
@@ -86,7 +86,7 @@ public class TemporaryPostService {
 			.map(categoryFinder::find)
 			.map(Category::getId)
 			.toList();
-		boardCategoryResolver.validateMatching(categoryIds, boardId);
+		boardCategoryValidator.validateMatching(categoryIds, boardId);
 
 		// 3. 이미지 처리
 		List<MultipartFile> validImages = imageValidator.filterValidImages(images);
@@ -189,7 +189,7 @@ public class TemporaryPostService {
 			.map(categoryFinder::find)
 			.map(Category::getId)
 			.toList();
-		boardCategoryResolver.validateMatching(categoryIds, temporaryPost.getBoardId());
+		boardCategoryValidator.validateMatching(categoryIds, temporaryPost.getBoardId());
 
 		// 3. 이미지 처리
 		// 3.1 새 이미지 업로드
@@ -235,7 +235,7 @@ public class TemporaryPostService {
 			.map(categoryFinder::find)
 			.map(Category::getId)
 			.toList();
-		boardCategoryResolver.validateMatching(categoryIds, temporaryPost.getBoardId());
+		boardCategoryValidator.validateMatching(categoryIds, temporaryPost.getBoardId());
 
 		// 3. 이미지 처리
 		// 3.1 새 이미지 업로드

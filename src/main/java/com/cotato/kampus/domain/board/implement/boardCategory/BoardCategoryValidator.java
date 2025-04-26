@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardCategoryResolver {
+public class BoardCategoryValidator {
 
 	private final BoardCategoryRepository boardCategoryRepository;
 
