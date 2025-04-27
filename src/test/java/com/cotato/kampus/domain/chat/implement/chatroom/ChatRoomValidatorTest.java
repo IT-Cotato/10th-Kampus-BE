@@ -18,71 +18,79 @@ import com.cotato.kampus.global.error.exception.AppException;
 class ChatRoomValidatorTest {
 
 	@InjectMocks
-	private ChatRoomValidator chatRoomValidator;
+	private ChatRoomValidator target;
 
 	@Mock
 	private ChatRoomFinder chatRoomFinder;
 
 	@Test
-	@DisplayName("채팅방 중복 검증 - 중복된 채팅방이 있는 경우 예외 발생")
-	public void validateDuplicateChatRoom() {
+	@DisplayName("채팅방 중복 검증 성공 - 채팅방이 존재하지 않음")
+	void validateDuplicateChatRoom_Success() {
 		// given
 		Long postId = 1L;
-		Long senderId = 1L;
-		when(chatRoomFinder.existsByPostIdAndSenderId(postId, senderId)).thenReturn(true);
+		Long senderId = 2L;
 
-		// when
-		// then
-		assertThatThrownBy(() -> chatRoomValidator.validateDuplicateChatRoom(postId, senderId))
-			.isInstanceOf(AppException.class)
-			.hasMessageContaining(ErrorCode.CHATROOM_DUPLICATED.getMessage());
-	}
+		when(chatRoomFinder.existsByPostIdAndSenderId(postId, senderId))
+			.thenReturn(false);
 
-	@Test
-	@DisplayName("채팅방 중복 검증 - 중복된 채팅방이 없는 경우 예외 발생하지 않음")
-	public void validateDuplicateChatRoom_NoDuplicate() {
-		// given
-		Long postId = 1L;
-		Long senderId = 1L;
-		when(chatRoomFinder.existsByPostIdAndSenderId(postId, senderId)).thenReturn(false);
-
-		// when
-		// then
-		assertThatCode(() -> chatRoomValidator.validateDuplicateChatRoom(postId, senderId))
+		// when & then
+		assertThatCode(() -> target.validateDuplicateChatRoom(postId, senderId))
 			.doesNotThrowAnyException();
 	}
 
 	@Test
-	@DisplayName("채팅방 조회 - 채팅방에 들어가 있지 않은 유저가 조회하는 경우 예외 발생")
-	public void validateEnteredUser() {
+	@DisplayName("채팅방 중복 검증 실패 - 채팅방이 이미 존재함")
+	void validateDuplicateChatRoom_Failure() {
 		// given
-		Long userId = 1L;
+		Long postId = 1L;
+		Long senderId = 2L;
+
+		when(chatRoomFinder.existsByPostIdAndSenderId(postId, senderId))
+			.thenReturn(true);
+
+		// when & then
+		assertThatThrownBy(() -> target.validateDuplicateChatRoom(postId, senderId))
+			.isInstanceOf(AppException.class)
+			.hasMessage(ErrorCode.CHATROOM_DUPLICATED.getMessage());
+	}
+
+	@Test
+	@DisplayName("채팅방 사용자 검증 성공 - 채팅방에 참여한 사용자")
+	void validateEnteredUser_Success() {
+		// given
 		Long chatroomId = 1L;
+		Long userId = 2L;
+
 		ChatRoom chatRoom = mock(ChatRoom.class);
-		when(chatRoomFinder.findByChatRoomId(chatroomId)).thenReturn(chatRoom);
+
+		when(chatRoomFinder.findByChatRoomId(chatroomId))
+			.thenReturn(chatRoom);
+
+		doNothing().when(chatRoom).validateEnteredUser(userId);
+
+		// when & then
+		assertThatCode(() -> target.validateEnteredUser(userId, chatroomId))
+			.doesNotThrowAnyException();
+	}
+
+	@Test
+	@DisplayName("채팅방 사용자 검증 실패 - 채팅방에 참여하지 않은 사용자")
+	void validateEnteredUser_Failure() {
+		// given
+		Long chatroomId = 1L;
+		Long userId = 4L;
+
+		ChatRoom chatRoom = mock(ChatRoom.class);
+
+		when(chatRoomFinder.findByChatRoomId(chatroomId))
+			.thenReturn(chatRoom);
+
 		doThrow(new AppException(ErrorCode.CHATROOM_NOT_ENTERED))
 			.when(chatRoom).validateEnteredUser(userId);
 
-		// when
-		// then
-		assertThatThrownBy(() -> chatRoomValidator.validateEnteredUser(userId, chatroomId))
+		// when & then
+		assertThatThrownBy(() -> target.validateEnteredUser(userId, chatroomId))
 			.isInstanceOf(AppException.class)
-			.hasMessageContaining(ErrorCode.CHATROOM_NOT_ENTERED.getMessage());
-	}
-
-	@Test
-	@DisplayName("채팅방 조회 - 채팅방에 들어가 있는 유저가 조회하는 경우 예외 발생하지 않음")
-	public void validateEnteredUser_EnteredUser() {
-		// given
-		Long userId = 1L;
-		Long chatroomId = 1L;
-		ChatRoom chatRoom = mock(ChatRoom.class);
-		when(chatRoomFinder.findByChatRoomId(chatroomId)).thenReturn(chatRoom);
-		doNothing().when(chatRoom).validateEnteredUser(userId);
-
-		// when
-		// then
-		assertThatCode(() -> chatRoomValidator.validateEnteredUser(userId, chatroomId))
-			.doesNotThrowAnyException();
+			.hasMessage(ErrorCode.CHATROOM_NOT_ENTERED.getMessage());
 	}
 }

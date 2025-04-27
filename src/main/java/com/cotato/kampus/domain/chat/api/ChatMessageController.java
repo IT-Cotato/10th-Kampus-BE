@@ -1,5 +1,8 @@
 package com.cotato.kampus.domain.chat.api;
 
+import java.util.List;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -11,13 +14,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.chat.api.port.ChatMessageService;
 import com.cotato.kampus.domain.chat.api.request.ChatMessageRequest;
+import com.cotato.kampus.domain.chat.api.response.ChatImageResponse;
 import com.cotato.kampus.domain.chat.api.response.ChatMessageListResponse;
 import com.cotato.kampus.domain.chat.domain.ChatMessageSliceSnapshot;
 import com.cotato.kampus.domain.chat.domain.ChatNotificationResult;
 import com.cotato.kampus.global.common.dto.DataResponse;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.ImageException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,7 +54,7 @@ public class ChatMessageController {
 	@MessageMapping("/chatrooms/{chatroomId}")
 	@Operation(summary = "채팅 보내기")
 	public void sendMessage(@DestinationVariable Long chatroomId, @Payload ChatMessageRequest request) {
-		ChatNotificationResult result = chatMessageService.processNewMessage(chatroomId, request.message());
+		ChatNotificationResult result = chatMessageService.processNewMessage(chatroomId, request.isImage(), request.message());
 
 		// 채팅방 채널로 메시지 전송
 		messagingTemplate.convertAndSend(
@@ -61,6 +68,23 @@ public class ChatMessageController {
 			"/notifications/chat",
 			result.notification()
 		);
+	}
+
+	@PostMapping(value = "/chatrooms/{chatroomId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@Operation(summary = "채팅 이미지 업로드")
+	public ResponseEntity<DataResponse<ChatImageResponse>> uploadImage(@PathVariable Long chatroomId,
+		@RequestParam("images") List<MultipartFile> images) throws
+		ImageException {
+
+		if (images.isEmpty()) {
+			throw new ImageException(ErrorCode.IMAGE_NOT_FOUND);
+		}
+		if (images.size() > 10) {
+			throw new ImageException(ErrorCode.IMAGE_SIZE_EXCEEDED);
+		}
+
+		List<String> chatImages = chatMessageService.uploadImage(chatroomId, images);
+		return ResponseEntity.ok(DataResponse.from(ChatImageResponse.from(chatImages)));
 	}
 
 	@PostMapping("/{chatroomId}/read")

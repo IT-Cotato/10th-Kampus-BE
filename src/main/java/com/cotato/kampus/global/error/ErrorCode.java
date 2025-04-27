@@ -76,6 +76,7 @@ public enum ErrorCode {
 	//Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
 	IMAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "이미지는 필수입니다. 이미지를 첨부해주세요.", "IMAGE-002"),
+	IMAGE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "한 번에 보낼 수 있는 이미지 수를 초과했습니다.", "IMAGE-003"),
 
 	//Comment
 	COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글을 찾을 수 없습니다.", "COMMENT-001"),
@@ -172,9 +173,7 @@ public enum ErrorCode {
 
 	// UnivCert
 	UNIVCERT_ERROR(HttpStatus.BAD_REQUEST, "대학 이메일 인증 중 오류가 발생하였습니다.", "UNIVCERT-001"),
-
 	;
-
 	private final HttpStatus httpStatus;
 	private final String message;
 	private final String code;
