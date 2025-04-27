@@ -6,9 +6,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
+import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.error.exception.JwtException;
 import com.cotato.kampus.global.error.exception.UnivCertException;
 import com.cotato.kampus.global.error.response.ErrorResponse;
@@ -123,4 +125,23 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 
+	@ExceptionHandler(ImageException.class)
+	public ResponseEntity<ErrorResponse> handleImageException(ImageException e,
+		HttpServletRequest request) {
+		log.error("Image Exception 발생: {}", e.getMessage());
+		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
+		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode(), request);
+		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+			.body(errorResponse);
+	}
+
+	@ExceptionHandler(MissingServletRequestPartException.class)
+	public ResponseEntity<ErrorResponse> handleMissingServletRequestPartException(
+		MissingServletRequestPartException e, HttpServletRequest request) {
+		log.error("파일 누락 예외: {}", e.getMessage());
+		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
+		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.FILE_IS_EMPTY, request);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			.body(errorResponse);
+	}
 }

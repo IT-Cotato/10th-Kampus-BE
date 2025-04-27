@@ -27,8 +27,9 @@ class ChatroomMetadataTest {
 		assertEquals(postId, metadata.getPostId());
 		assertEquals(postTitle, metadata.getPostTitle());
 		assertEquals(0L, metadata.getLastMessageId());
+		assertFalse(metadata.isLastMessageImage());
 		assertEquals("", metadata.getLastMessageContent());
-		assertNotNull(metadata.getLastChatTime()); // 향후에 Time관련 util으로 변경 예정
+		assertNotNull(metadata.getLastChatTime());
 		assertEquals(0L, metadata.getUnreadCount());
 	}
 
@@ -43,14 +44,16 @@ class ChatroomMetadataTest {
 		ChatroomMetadata metadata = ChatroomMetadata.create(chatroomId, senderId, postId, postTitle);
 
 		Long messageId = 4L;
+		boolean isImage = true;
 		String content = "Test Message Content";
 		LocalDateTime chatTime = LocalDateTime.now();
 
 		// when
-		metadata.updateLastMessage(messageId, content, chatTime);
+		metadata.updateLastMessage(messageId, isImage, content, chatTime);
 
 		// then
 		assertEquals(messageId, metadata.getLastMessageId());
+		assertTrue(metadata.isLastMessageImage());
 		assertEquals(content, metadata.getLastMessageContent());
 		assertEquals(chatTime, metadata.getLastChatTime());
 	}
