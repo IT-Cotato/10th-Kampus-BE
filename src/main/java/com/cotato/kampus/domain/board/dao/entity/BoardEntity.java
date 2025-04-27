@@ -29,7 +29,7 @@ public class BoardEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "board_id", nullable = false)
+	@Column(name = "board_id")
 	private Long id;
 
 	@Column(name = "board_name", nullable = false)

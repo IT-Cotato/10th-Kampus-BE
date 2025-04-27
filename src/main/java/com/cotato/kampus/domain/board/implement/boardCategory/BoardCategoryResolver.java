@@ -1,13 +1,11 @@
 package com.cotato.kampus.domain.board.implement.boardCategory;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.board.domain.BoardCategory;
+import com.cotato.kampus.domain.board.implement.port.BoardCategoryRepository;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -19,29 +17,24 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardCategoryResolver {
 
-	private final BoardCategoryFinder boardCategoryFinder;
+	private final BoardCategoryRepository boardCategoryRepository;
 
-	public List<Long> resolveCategoryIds(List<String> categoryNames, Long boardId) {
-		List<BoardCategory> usableCategories = boardCategoryFinder.findAllByBoardId(boardId);
+	public void validateMatching(List<Long> categoryIds, Long boardId) {
+		List<Long> boardCategoryIds = boardCategoryRepository.findAllCategoryIdByBoardId(boardId);
 
-		Map<String, Long> usableCategoryIds = usableCategories.stream()
-			.collect(Collectors.toMap(
-				BoardCategory::getCategoryName,
-				BoardCategory::getId
-			));
+		boolean allMatch = categoryIds.stream()
+			.allMatch(boardCategoryIds::contains);
 
-		// 유효하지 않은 카테고리 필터링
-		List<String> invalidCategories = categoryNames.stream()
-			.filter(name -> !usableCategoryIds.containsKey(name))
-			.collect(Collectors.toList());
-
-		// 유효하지 않은 카테고리가 있으면 예외 발생
-		if (!invalidCategories.isEmpty()) {
-			throw new AppException(ErrorCode.INVALID_CATEGORY);
+		if (!allMatch) {
+			throw new AppException(ErrorCode.CATEGORY_NOT_BELONG_TO_BOARD);
 		}
+	}
 
-		return categoryNames.stream()
-			.map(usableCategoryIds::get)
-			.toList();
+	public void validateMatching(Long categoryId, Long boardId) {
+		boolean match = boardCategoryRepository.existsByCategoryIdAndBoardId(categoryId, boardId);
+
+		if (!match) {
+			throw new AppException(ErrorCode.CATEGORY_NOT_BELONG_TO_BOARD);
+		}
 	}
 }

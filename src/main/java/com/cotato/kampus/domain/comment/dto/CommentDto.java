@@ -17,7 +17,7 @@ public record CommentDto (
 	CommentStatus commentStatus,
 	Anonymity anonymity,
 	Long reports,
-	Long anonymousNumber,
+	Integer anonymousNumber,
 	Long parentId,
 	Long targetId,
 	LocalDateTime createdTime

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import com.cotato.kampus.domain.board.domain.BoardCategory;
 import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryFinder;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
+import com.cotato.kampus.domain.category.domain.Category;
+import com.cotato.kampus.domain.category.implement.CategoryFinder;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,12 +18,16 @@ public class BoardCategoryService {
 
 	private final BoardFinder boardFinder;
 	private final BoardCategoryFinder boardCategoryFinder;
+	private final CategoryFinder categoryFinder;
 
-	public List<BoardCategory> findCategories(Long boardId) {
+	public List<Category> findCategories(Long boardId) {
 		// 존재하는 게시판인지 확인
 		boardFinder.findBoard(boardId);
 
 		// 카테고리 조회
-		return boardCategoryFinder.findAllByBoardId(boardId);
+		List<Long> categoryIds = boardCategoryFinder.findAllByBoardId(boardId).stream()
+			.map(BoardCategory::getCategoryId).toList();
+
+		return categoryIds.stream().map(categoryFinder::find).toList();
 	}
 }

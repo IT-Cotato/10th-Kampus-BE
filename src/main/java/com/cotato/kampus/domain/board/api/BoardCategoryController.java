@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.board.application.BoardCategoryService;
-import com.cotato.kampus.domain.post.dto.response.BoardCategoryFindResponse;
+import com.cotato.kampus.domain.board.api.response.BoardCategoryFindResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +23,7 @@ public class BoardCategoryController {
 
 	private final BoardCategoryService boardCategoryService;
 
-	@GetMapping("/boards/{boardId}/categories")
+	@GetMapping("/{boardId}/categories")
 	@Operation(summary = "게시판에 적용되는 카테고리 조회",
 		description = "boardId에 해당하는 게시판에 적용되는 카테고리를 조회합니다.")
 	public ResponseEntity<DataResponse<BoardCategoryFindResponse>> findCategories(

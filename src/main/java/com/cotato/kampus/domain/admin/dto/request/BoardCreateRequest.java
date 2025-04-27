@@ -17,4 +17,9 @@ public record BoardCreateRequest(
 	String universityCode,
 	List<String> categories
 ) {
+	public BoardCreateRequest {
+		if(categories == null) {
+			categories = List.of();
+		}
+	}
 }

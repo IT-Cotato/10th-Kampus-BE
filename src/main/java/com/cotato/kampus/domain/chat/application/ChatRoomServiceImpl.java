@@ -25,9 +25,9 @@ import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataFinder;
 import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataMapper;
 import com.cotato.kampus.domain.chat.implement.read.MessageReadStatusDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.post.application.PostFinder;
-import com.cotato.kampus.domain.post.dto.PostDto;
-import com.cotato.kampus.domain.post.dto.PostReferenceDto;
+import com.cotato.kampus.domain.post.domain.Post;
+import com.cotato.kampus.domain.post.implement.post.PostFinder;
+import com.cotato.kampus.domain.post.domain.PostReferenceDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -61,9 +61,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	@Transactional
 	public Long createChatRoom(Long postId) {
 		// 1. 게시글 정보 조회
-		PostDto post = postFinder.findPost(postId);
-		Long receiverId = post.userId();
-		String postTitle = post.title();
+		Post post = postFinder.find(postId);
+		Long receiverId = post.getUserId();
+		String postTitle = post.getTitle();
 
 		// 2. 채팅을 건 유저를 조회
 		Long senderId = apiUserResolver.getCurrentUserId();

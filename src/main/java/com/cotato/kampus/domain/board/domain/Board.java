@@ -56,7 +56,18 @@ public abstract class Board {
 		}
 	}
 
+	public void validateBoardIsActive() {
+		if(boardStatus != BoardStatus.ACTIVE) {
+			throw new AppException(ErrorCode.BOARD_NOT_ACTIVE);
+		}
+	}
+
 	public abstract Board withUpdateInfo(String boardName, String description, Boolean usesCategories);
 	public abstract Board withBoardStatus(BoardStatus boardStatus);
 	public abstract Board withPendingInfo(BoardStatus boardStatus, LocalDateTime deletionScheduledAt);
+
+	public void validateActive() {
+		if(boardStatus != BoardStatus.ACTIVE)
+			throw new AppException(ErrorCode.BOARD_NOT_ACTIVE);
+	}
 }

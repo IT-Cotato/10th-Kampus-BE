@@ -8,14 +8,15 @@ import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
-import com.cotato.kampus.domain.board.domain.HomeBoardAndPostPreview;
+import com.cotato.kampus.domain.board.domain.HomePostThumbnail;
 import com.cotato.kampus.domain.board.implement.board.BoardDtoEnhancer;
 import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteReader;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.post.application.PostDtoMapper;
-import com.cotato.kampus.domain.post.application.PostFinder;
-import com.cotato.kampus.domain.post.dto.PostDto;
+import com.cotato.kampus.domain.post.domain.Post;
+import com.cotato.kampus.domain.post.implement.post.PostDtoMapper;
+import com.cotato.kampus.domain.post.implement.post.PostFinder;
+import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 
@@ -30,8 +31,9 @@ public class BoardService {
 	private final BoardFavoriteReader boardFavoriteReader;
 	private final UserValidator userValidator;
 	private final ApiUserResolver apiUserResolver;
-	private final PostFinder postFinder;
 	private final PostDtoMapper postDtoMapper;
+	private final TrendingPostFinder trendingPostFinder;
+	private final PostFinder postFinder;
 
 	public List<BoardWithFavoriteStatus> getBoardList() {
 		// 유저 조회
@@ -53,15 +55,16 @@ public class BoardService {
 		return boardWithFavorites;
 	}
 
-	public List<HomeBoardAndPostPreview> getFavoriteBoardPreview() {
+	public List<HomePostThumbnail> getFavoriteBoardPreview() {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 즐겨찾는 게시판 조회
 		List<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
-		List<Board> boards = boardFinder.findBoardsWithIds(favoriteBoardIds);
 
-		return postDtoMapper.mapToHomeBoardAndPostPreviewsByBoardDtos(boards);
+		List<Post> latestPosts = postFinder.findTopPosts(favoriteBoardIds);
+
+		return postDtoMapper.toHomePostThumbnails(latestPosts);
 	}
 
 	public Board getUniversityBoard() {
@@ -75,12 +78,6 @@ public class BoardService {
 		return boardFinder.findUserUniversityBoard(userUniversityId);
 	}
 
-	public Boolean requiresCategory(Long boardId) {
-		Board board = boardFinder.findBoard(boardId);
-
-		return board.getUsesCategories();
-	}
-
 	public BoardWithFavoriteStatus getBoard(Long boardId) {
 		// 유저 조회
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
@@ -90,14 +87,13 @@ public class BoardService {
 		return boardDtoEnhancer.mapToBoardWithFavoriteStatus(board, userDto);
 	}
 
-	public List<HomeBoardAndPostPreview> getTrendingPreview() {
-		// 유저 정보 조회
-		UserDto userDto = apiUserResolver.getCurrentUserDto();
-		Long userUnivId = userDto.universityId();
+	public List<HomePostThumbnail> getTrendingPreview() {
+		UserDto user = apiUserResolver.getCurrentUserDto();
 
-		// Trending 게시글 조회 (타 대학 게시글 제외)
-		List<PostDto> trendingPosts = postFinder.findTrendingPosts(userUnivId);
+		List<Long> trendingPostIds = trendingPostFinder.findAllPostIds();
 
-		return postDtoMapper.mapToHomeBoardAndPostPreviews(trendingPosts);
+		List<Post> trendingPosts = postFinder.findTopTrendingPosts(trendingPostIds, user.universityId());
+
+		return postDtoMapper.toHomePostThumbnails(trendingPosts);
 	}
 }

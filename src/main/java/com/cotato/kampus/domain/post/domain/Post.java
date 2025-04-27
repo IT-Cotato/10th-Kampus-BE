@@ -1,111 +1,138 @@
 package com.cotato.kampus.domain.post.domain;
 
-import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
+import java.time.LocalDateTime;
+
 import com.cotato.kampus.domain.common.enums.Anonymity;
-import com.cotato.kampus.domain.post.enums.PostCategory;
 import com.cotato.kampus.domain.post.enums.PostStatus;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@Entity
-@Table(name = "post")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class Post extends BaseTimeEntity {
+@RequiredArgsConstructor
+public abstract class Post {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "post_id")
-	private Long id;
+	private final Long id;
+	private final Long boardId;
+	private final Long userId;
+	private final String title;
+	private final String content;
+	private final PostStatus postStatus;
+	private final Anonymity anonymity;
+	private final int likeCount;
+	private final int commentCount;
+	private final int scrapCount;
+	private final int anonymousCount;
+	private final LocalDateTime createdTime;
+	private final LocalDateTime lastModifiedTime;
 
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
-
-	@Column(name = "board_id", nullable = false)
-	private Long boardId;
-
-	@Column(name = "title", length = 50, nullable = false)
-	private String title;
-
-	@Column(name = "content", length = 1000)
-	private String content;
-
-	@Column(name = "likes", nullable = false)
-	private Long likes = 0L;
-
-	@Column(name = "scraps", nullable = false)
-	private Long scraps = 0L;
-
-	@Column(name = "comments", nullable = false)
-	private Long comments = 0L;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "anonymity", nullable = false)
-	private Anonymity anonymity;
-
-	@Enumerated(EnumType.STRING)
-	@Column(name = "post_status", nullable = false)
-	private PostStatus postStatus = PostStatus.PUBLISHED;
-
-	@Column(name = "next_ananymous_number", nullable = false)
-	private Long nextAnonymousNumber = 1L;
-
-	@Builder
-	public Post(Long userId, Long boardId, String title, String content, Anonymity anonymity){
-		this.userId = userId;
-		this.boardId = boardId;
-		this.title = title;
-		this.content = content;
-		this.anonymity = anonymity;
+	protected void validate() {
+		validateBoardId();
+		validateUserId();
+		validateTitle();
+		validateContent();
+		validatePostStatus();
+		validateAnonymous();
 	}
 
-	public void update(String title, String content) {
-		this.title = title;
-		this.content = content;
+	protected void validateBoardId() {
+		if (boardId == null) {
+			throw new AppException(ErrorCode.POST_BOARD_ID_REQUIRED);
+		}
 	}
 
-	public void increaseNextAnonymousNumber() {
-		this.nextAnonymousNumber++;
+	protected void validateUserId() {
+		if (userId == null) {
+			throw new AppException(ErrorCode.POST_AUTHOR_ID_REQUIRED);
+		}
 	}
 
-	public void increaseScraps() {
-		this.scraps++;
+	protected void validateTitle() {
+		if (title == null || title.trim().isEmpty()) {
+			throw new AppException(ErrorCode.POST_TITLE_EMPTY);
+		}
 	}
 
-	public void decreaseScraps() {
-		this.scraps--;
+	protected void validateContent() {
+		if (getContent() == null || getContent().trim().isEmpty()) {
+			throw new AppException(ErrorCode.POST_CONTENT_EMPTY);
+		}
+		if (getContent().length() > 1000) {
+			throw new AppException(ErrorCode.POST_CONTENT_TOO_LONG);
+		}
 	}
 
-	public void increaseLikes() {
-		this.likes++;
+	protected void validateAnonymous() {
+		if (anonymity == null) {
+			throw new AppException(ErrorCode.POST_ANONYMOUS_EMPTY);
+		}
 	}
 
-	public void decreaseLikes() {
-		this.likes--;
+	protected void validatePostStatus() {
+		if (postStatus == null) {
+			throw new AppException(ErrorCode.POST_STATUS_EMPTY);
+		}
 	}
 
-	public void increaseComments() {
-		this.comments++;
+	protected abstract Post createCopy(String title, String content, Anonymity anonymity, PostStatus postStatus,
+		int likeCount, int commentCount, int scrapCount, int anonymousCount);
+
+	public Post withUpdateInfo(String title, String content, Anonymity anonymity) {
+		return createCopy(title, content, anonymity, this.postStatus,
+			this.likeCount, this.commentCount, this.scrapCount, this.anonymousCount);
 	}
 
-	public void decreaseComments() {
-		this.comments--;
+	public Post withPostStatus(PostStatus postStatus) {
+		return createCopy(this.title, this.content, this.anonymity, postStatus,
+			this.likeCount, this.commentCount, this.scrapCount, this.anonymousCount);
 	}
 
-	public void updateStatus(PostStatus postStatus) {
-		this.postStatus = postStatus;
+	public Post increaseLikeCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount + 1, this.commentCount, this.scrapCount, this.anonymousCount);
+	}
+
+	public Post decreaseLikeCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			Math.max(0, this.likeCount - 1), this.commentCount, this.scrapCount, this.anonymousCount);
+	}
+
+	public Post increaseCommentCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount, this.commentCount + 1, this.scrapCount, this.anonymousCount);
+	}
+
+	public Post decreaseCommentCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount, Math.max(0, this.commentCount - 1), this.scrapCount, this.anonymousCount);
+	}
+
+	public Post increaseScrapCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount, this.commentCount, this.scrapCount + 1, this.anonymousCount);
+	}
+
+	public Post decreaseScrapCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount, this.commentCount, Math.max(0, this.scrapCount - 1), this.anonymousCount);
+	}
+
+	public Post increaseAnonymousCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount, this.commentCount, this.scrapCount, this.anonymousCount + 1);
+	}
+
+	public void validateAuthor(Long userId) {
+		if(!this.userId.equals(userId)) {
+			throw new AppException(ErrorCode.POST_NOT_AUTHOR);
+		}
+	}
+
+	public void validatePublish() {
+		if(this.postStatus != PostStatus.PUBLISHED) {
+			throw new AppException(ErrorCode.POST_NOT_PUBLISHED);
+		}
 	}
 }

@@ -14,7 +14,8 @@ import com.cotato.kampus.domain.comment.application.CommentService;
 import com.cotato.kampus.domain.comment.dto.request.CommentCreateRequest;
 import com.cotato.kampus.domain.comment.dto.response.CommentCreateResponse;
 import com.cotato.kampus.domain.comment.dto.response.CommentListResponse;
-import com.cotato.kampus.domain.comment.dto.response.MyCommentedPostsResponse;
+import com.cotato.kampus.domain.post.api.response.SliceResponse;
+import com.cotato.kampus.domain.post.domain.PostThumbnailWithBoardName;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -94,11 +95,11 @@ public class CommentController {
 
 	@GetMapping("/my/commented-post")
 	@Operation(summary = "내가 댓글 단 게시글 조회", description = "현재 사용자가 댓글을 작성했던 게시글을 최신순(댓글을 단 시간 기준)으로 조회합니다.")
-	public ResponseEntity<DataResponse<MyCommentedPostsResponse>> getCommentedPosts(
+	public ResponseEntity<DataResponse<SliceResponse<PostThumbnailWithBoardName>>> getCommentedPosts(
 		@RequestParam(required = false, defaultValue = "1") int page
 	) {
 		return ResponseEntity.ok(DataResponse.from(
-				MyCommentedPostsResponse.from(
+			SliceResponse.from(
 					commentService.getCommentedPosts(page)
 				)
 			)

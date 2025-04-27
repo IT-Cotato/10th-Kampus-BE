@@ -1,7 +1,5 @@
 package com.cotato.kampus.domain.admin.api;
 
-import java.util.List;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,13 +21,14 @@ import com.cotato.kampus.domain.admin.dto.request.CardNewsCreateRequest;
 import com.cotato.kampus.domain.admin.dto.request.ChangeUserRoleRequest;
 import com.cotato.kampus.domain.admin.dto.request.VerifyRejectRequest;
 import com.cotato.kampus.domain.admin.dto.response.AdminBoardListResponse;
+import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsThumbnail;
 import com.cotato.kampus.domain.admin.dto.response.AdminUserDetailsResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardCreateResponse;
 import com.cotato.kampus.domain.admin.dto.response.BoardInfoResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationListResponse;
 import com.cotato.kampus.domain.admin.dto.response.StudentVerificationResponse;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
-import com.cotato.kampus.domain.post.dto.response.AdminCardNewsListResponse;
+import com.cotato.kampus.domain.post.api.response.SliceResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
 
@@ -59,7 +58,7 @@ public class AdminController {
 						request.description(),
 						request.boardType(),
 						request.universityCode(),
-						request.categories() == null ? List.of() : request.categories()
+						request.categories()
 					)
 				)
 			)
@@ -198,11 +197,11 @@ public class AdminController {
 
 	@GetMapping(value = "/cardNews")
 	@Operation(summary = "카드뉴스 조회", description = "카드뉴스 목록을 조회합니다,")
-	public ResponseEntity<DataResponse<AdminCardNewsListResponse>> getAllCardNews(
+	public ResponseEntity<DataResponse<SliceResponse<AdminCardNewsThumbnail>>> getAllCardNews(
 		@RequestParam(required = false, defaultValue = "1") int page
 	) {
 		return ResponseEntity.ok(DataResponse.from(
-			AdminCardNewsListResponse.from(
+			SliceResponse.from(
 				adminService.getAllCardNews(page)
 			)
 		));

@@ -14,7 +14,7 @@ import com.cotato.kampus.domain.admin.dto.AdminUserInfo;
 import com.cotato.kampus.domain.admin.dto.StudentVerification;
 import com.cotato.kampus.domain.admin.dto.VerificationPhotoDto;
 import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
-import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsPreview;
+import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsThumbnail;
 import com.cotato.kampus.domain.admin.dto.response.BoardInfo;
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.domain.UniversityBoard;
@@ -26,17 +26,19 @@ import com.cotato.kampus.domain.board.implement.board.BoardValidator;
 import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryAppender;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
+import com.cotato.kampus.domain.category.implement.CategoryFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
-import com.cotato.kampus.domain.post.application.PostAppender;
-import com.cotato.kampus.domain.post.application.PostDeleter;
-import com.cotato.kampus.domain.post.application.PostFinder;
-import com.cotato.kampus.domain.post.application.PostPhotoAppender;
-import com.cotato.kampus.domain.post.application.PostPhotoDeleter;
-import com.cotato.kampus.domain.post.application.PostPhotoFinder;
-import com.cotato.kampus.domain.post.application.PostUpdater;
-import com.cotato.kampus.domain.post.application.PostValidator;
-import com.cotato.kampus.domain.post.dto.PostWithPhotos;
+import com.cotato.kampus.domain.post.domain.Post;
+import com.cotato.kampus.domain.post.domain.PostPhoto;
+import com.cotato.kampus.domain.post.implement.post.PostAppender;
+import com.cotato.kampus.domain.post.implement.post.PostDeleter;
+import com.cotato.kampus.domain.post.implement.post.PostDtoMapper;
+import com.cotato.kampus.domain.post.implement.post.PostFinder;
+import com.cotato.kampus.domain.post.implement.postImage.PostPhotoAppender;
+import com.cotato.kampus.domain.post.implement.postImage.PostPhotoDeleter;
+import com.cotato.kampus.domain.post.implement.postImage.PostPhotoFinder;
+import com.cotato.kampus.domain.post.implement.post.PostUpdater;
 import com.cotato.kampus.domain.post.enums.PostSortType;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.application.UserUpdater;
@@ -81,11 +83,12 @@ public class AdminService {
 	private final PostFinder postFinder;
 	private final PostPhotoFinder postPhotoFinder;
 	private final PostPhotoDeleter postPhotoDeleter;
-	private final PostValidator postValidator;
 	private final BoardCategoryAppender boardCategoryAppender;
+	private final PostDtoMapper postDtoMapper;
+	private final CategoryFinder categoryFinder;
 
 	@Transactional
-	public Long createBoard(String boardName, String description, BoardType boardType, String universityCode, List<String> categories) {
+	public Long createBoard(String boardName, String description, BoardType boardType, String universityCode, List<String> categoryNames) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -98,11 +101,12 @@ public class AdminService {
 			boardValidator.validateUniversityBoardExists(universityId);
 		}
 
-		boolean usesCategories = !categories.isEmpty();
+		boolean usesCategories = !categoryNames.isEmpty();
 		Long boardId = boardAppender.appendBoard(boardName, description, boardType, universityId, usesCategories).getId();
 
 		// 카테고리 추가 로직
-		boardCategoryAppender.appendCategories(boardId, categories);
+		List<Long> categoryIds = categoryNames.stream().map(name -> categoryFinder.find(name).getId()).toList();
+		boardCategoryAppender.appendCategories(boardId, categoryIds);
 
 		return boardId;
 	}
@@ -134,7 +138,7 @@ public class AdminService {
 		boardUpdater.activeBoard(boardId);
 
 		// 게시글 상태 변경
-		postUpdater.revertPendingPosts(boardId);
+		postUpdater.revertPendingAllByBoardId(boardId);
 	}
 
 	@Transactional
@@ -146,7 +150,7 @@ public class AdminService {
 		boardUpdater.pendingBoard(boardId);
 
 		// 포함된 게시글 상태 변경
-		postUpdater.pendingPost(boardId);
+		postUpdater.pendingAllByBoardId(boardId);
 	}
 
 	@Scheduled(cron = "0 0 3 * * *")
@@ -155,7 +159,7 @@ public class AdminService {
 		List<Long> expiredBoardIds = boardFinder.findExpiredBoardIds(LocalDateTime.now());
 
 		// 포함된 게시글 삭제
-		postDeleter.deletePostsByBoardIds(expiredBoardIds);
+		postDeleter.deleteAllByBoardIds(expiredBoardIds);
 
 		// 게시판 삭제
 		boardUpdater.deleteExpiredBoards();
@@ -247,7 +251,7 @@ public class AdminService {
 		// 카드뉴스 추가
 		Long userId = apiUserResolver.getCurrentUserId();
 		Long boardId = boardFinder.findCardNewsBoardId();
-		Long postId = postAppender.appendCardNews(userId, boardId, title, content);
+		Long postId = postAppender.appendCardNewsPost(userId, boardId, title, content).getId();
 
 		// 카드뉴스 사진 추가
 		postPhotoAppender.appendAll(postId, imageUrls);
@@ -256,13 +260,12 @@ public class AdminService {
 	@Transactional
 	public void deleteCardNews(Long postId) {
 		// 관리자 검증
+		Post post = postFinder.find(postId);
 		userValidator.validateAdminAccess();
 
-		// 카드뉴스 검증
-		postValidator.validateDeleteCardNews(postId);
-
 		// 이미지 조회
-		List<String> imageUrls = postPhotoFinder.findPostPhotos(postId);
+		List<PostPhoto> postPhotos = postPhotoFinder.findPostPhotos(postId);
+		List<String> imageUrls = postPhotos.stream().map(PostPhoto::getPhotoUrl).toList();
 
 		// S3에서 이미지 삭제
 		s3Uploader.deleteFiles(imageUrls);
@@ -271,10 +274,10 @@ public class AdminService {
 		postPhotoDeleter.deletePostPhotos(postId);
 
 		// 게시글 삭제
-		postDeleter.delete(postId);
+		postDeleter.delete(post);
 	}
 
-	public Slice<AdminCardNewsPreview> getAllCardNews(int page) {
+	public Slice<AdminCardNewsThumbnail> getAllCardNews(int page) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
@@ -282,9 +285,9 @@ public class AdminService {
 		Long cardNewsBoardId = boardFinder.findCardNewsBoardId();
 
 		// 카드뉴스 조회
-		Slice<PostWithPhotos> posts = postFinder.findPosts(cardNewsBoardId, page, PostSortType.recent);
+		Slice<Post> posts = postFinder.findAllByBoardId(cardNewsBoardId, page, PostSortType.recent);
 
-		return posts.map(AdminCardNewsPreview::from);
+		return postDtoMapper.toAdminCardNewsThumbnails(posts);
 	}
 
 	// 관리자 정보 조회

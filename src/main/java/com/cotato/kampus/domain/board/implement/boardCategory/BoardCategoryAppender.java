@@ -19,10 +19,10 @@ public class BoardCategoryAppender {
 	private final BoardCategoryRepository boardCategoryRepository;
 
 	@Transactional
-	public void appendCategories(Long boardId, List<String> categories) {
+	public void appendCategories(Long boardId, List<Long> categories) {
 		List<BoardCategory> boardCategoryList = categories.stream()
-			.map(categoryName -> BoardCategory.builder()
-				.categoryName(categoryName)
+			.map(categoryId -> BoardCategory.builder()
+				.categoryId(categoryId)
 				.boardId(boardId)
 				.build())
 			.toList();

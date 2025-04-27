@@ -1,7 +1,6 @@
 package com.cotato.kampus.domain.board.dao.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,6 +10,7 @@ public interface BoardCategoryJpaRepository extends JpaRepository<BoardCategoryE
 
 	List<BoardCategoryEntity> findAllByBoardId(Long boardId);
 
-	Optional<BoardCategoryEntity> findByBoardIdAndCategoryName(Long boardId, String categoryName);
+	List<Long> findAllCategoryIdByBoardId(Long boardId);
 
+	boolean existsByCategoryIdAndBoardId(Long categoryId, Long boadId);
 }

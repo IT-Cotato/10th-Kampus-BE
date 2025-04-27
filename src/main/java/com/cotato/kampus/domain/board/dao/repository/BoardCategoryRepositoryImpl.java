@@ -25,12 +25,6 @@ public class BoardCategoryRepositoryImpl implements BoardCategoryRepository {
 	}
 
 	@Override
-	public Optional<BoardCategory> findByBoardIdAndCategoryName(Long boardId, String categoryName) {
-		return boardCategoryJpaRepository.findByBoardIdAndCategoryName(boardId, categoryName)
-			.map(BoardCategoryEntity::toDomain);
-	}
-
-	@Override
 	public List<BoardCategory> saveAll(List<BoardCategory> boardCategories) {
 		List<BoardCategoryEntity> boardCategoryEntities = boardCategories.stream()
 			.map(BoardCategoryEntity::fromDomain)
@@ -40,4 +34,16 @@ public class BoardCategoryRepositoryImpl implements BoardCategoryRepository {
 			.map(BoardCategoryEntity::toDomain)
 			.toList();
 	}
+
+	@Override
+	public List<Long> findAllCategoryIdByBoardId(Long boardId) {
+		return boardCategoryJpaRepository.findAllCategoryIdByBoardId(boardId);
+	}
+
+	@Override
+	public boolean existsByCategoryIdAndBoardId(Long categoryId, Long boardId){
+		return boardCategoryJpaRepository.existsByCategoryIdAndBoardId(categoryId, boardId);
+	}
+
+
 }
