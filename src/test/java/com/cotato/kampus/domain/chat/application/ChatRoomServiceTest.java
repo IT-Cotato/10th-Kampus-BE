@@ -45,7 +45,7 @@ class ChatRoomServiceTest {
 		//postId = 1, senderId = 1, receiverId = 2
 		Post post = NormalPost.builder()
 			.id(1L)
-			.userId(1L)
+			.userId(2L)
 			.boardId(1L)
 			.title("test")
 			.content("test")

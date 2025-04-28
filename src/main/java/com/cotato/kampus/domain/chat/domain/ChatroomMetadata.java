@@ -17,13 +17,14 @@ public class ChatroomMetadata {
 	private Long postId;
 	private String postTitle;
 	private Long lastMessageId;
+	private boolean isLastMessageImage;
 	private String lastMessageContent;
 	private LocalDateTime lastChatTime;
 	private Long unreadCount;
 
 	@Builder
 	private ChatroomMetadata(Long id, Long chatroomId, Long userId, Long postId,
-		String postTitle, Long lastMessageId, String lastMessageContent,
+		String postTitle, boolean isLastMessageImage, Long lastMessageId, String lastMessageContent,
 		LocalDateTime lastChatTime, Long unreadCount) {
 		this.id = id;
 		this.chatroomId = chatroomId;
@@ -31,6 +32,7 @@ public class ChatroomMetadata {
 		this.postId = postId;
 		this.postTitle = postTitle;
 		this.lastMessageId = lastMessageId;
+		this.isLastMessageImage = isLastMessageImage;
 		this.lastMessageContent = lastMessageContent;
 		this.lastChatTime = lastChatTime;
 		this.unreadCount = unreadCount != null ? unreadCount : 0L;
@@ -44,14 +46,16 @@ public class ChatroomMetadata {
 			.postId(postId)
 			.postTitle(postTitle)
 			.lastMessageId(0L)
+			.isLastMessageImage(false)
 			.lastMessageContent("")
 			.lastChatTime(LocalDateTime.now())
 			.unreadCount(0L)
 			.build();
 	}
 
-	public void updateLastMessage(Long messageId, String content, LocalDateTime chatTime) {
+	public void updateLastMessage(Long messageId, boolean isImage, String content, LocalDateTime chatTime) {
 		this.lastMessageId = messageId;
+		this.isLastMessageImage = isImage;
 		this.lastMessageContent = content;
 		this.lastChatTime = chatTime;
 	}

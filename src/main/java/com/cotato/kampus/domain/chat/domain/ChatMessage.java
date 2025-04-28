@@ -13,6 +13,7 @@ public class ChatMessage {
 	private Long chatroomId;
 	private Long senderId;
 	private String content;
+	private boolean isImage;
 	private LocalDateTime createdTime;
 	private LocalDateTime lastModifiedTime;
 }

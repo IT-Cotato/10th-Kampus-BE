@@ -27,6 +27,7 @@ public class ChatroomMetadataUpdater {
 
 		senderMetadata.updateLastMessage(
 			message.getId(),
+			message.isImage(),
 			message.getContent(),
 			message.getCreatedTime()
 		);
@@ -42,6 +43,7 @@ public class ChatroomMetadataUpdater {
 
 		receiverMetadata.updateLastMessage(
 			message.getId(),
+			message.isImage(),
 			message.getContent(),
 			message.getCreatedTime()
 		);
