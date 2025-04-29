@@ -20,6 +20,8 @@ public interface TemporaryPostRepository {
 
 	Slice<TemporaryPost> findAllByUserId(Long userId, Pageable pageable);
 
+	int countByUserId(Long userId);
+
 	void delete(TemporaryPost temporaryPost);
 
 	void deleteAllByIdIn(List<Long> tempPostIds);

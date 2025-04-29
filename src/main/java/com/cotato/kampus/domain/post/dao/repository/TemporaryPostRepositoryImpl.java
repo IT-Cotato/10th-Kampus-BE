@@ -51,6 +51,11 @@ public class TemporaryPostRepositoryImpl implements TemporaryPostRepository {
 	}
 
 	@Override
+	public int countByUserId(Long userId) {
+		return temporaryPostJpaRepository.countByUserId(userId);
+	}
+
+	@Override
 	public void delete(TemporaryPost temporaryPost) {
 		TemporaryPostEntity entity = TemporaryPostEntity.fromDomain(temporaryPost);
 		temporaryPostJpaRepository.delete(entity);

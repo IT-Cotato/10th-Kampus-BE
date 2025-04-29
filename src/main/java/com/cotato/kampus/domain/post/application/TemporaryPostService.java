@@ -264,6 +264,6 @@ public class TemporaryPostService {
 
 	public Integer findTempPostCount() {
 		Long userId = apiUserResolver.getCurrentUserId();
-		return temporaryPostFinder.findAllByUserId(userId).size();
+		return temporaryPostFinder.findCountByUserId(userId);
 	}
 }
