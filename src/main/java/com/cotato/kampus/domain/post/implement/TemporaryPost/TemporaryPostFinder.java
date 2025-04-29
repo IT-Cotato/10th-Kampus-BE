@@ -43,4 +43,8 @@ public class TemporaryPostFinder {
 		return temporaryPostRepository.findAllByUserId(userId, customPageRequest.of(SORT_PROPERTY));
 	}
 
+	public int findCountByUserId(Long userId) {
+		return temporaryPostRepository.countByUserId(userId);
+	}
+
 }
