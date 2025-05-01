@@ -5,8 +5,6 @@ import com.cotato.kampus.domain.board.domain.BoardCategory;
 
 public interface BoardCategoryRepository{
 
-	List<BoardCategory> findAllByBoardId(Long boardId);
-
 	List<BoardCategory> saveAll(List<BoardCategory> boardCategoryEntities);
 
 	List<Long> findAllCategoryIdByBoardId(Long boardId);

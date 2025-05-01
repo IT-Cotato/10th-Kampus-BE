@@ -10,8 +10,6 @@ import com.cotato.kampus.domain.board.dao.entity.BoardCategoryEntity;
 
 public interface BoardCategoryJpaRepository extends JpaRepository<BoardCategoryEntity, Long> {
 
-	List<BoardCategoryEntity> findAllByBoardId(Long boardId);
-
 	@Query("SELECT b.categoryId FROM BoardCategoryEntity b WHERE b.boardId = :boardId")
 	List<Long> findAllCategoryIdByBoardId(@Param("boardId") Long boardId);
 

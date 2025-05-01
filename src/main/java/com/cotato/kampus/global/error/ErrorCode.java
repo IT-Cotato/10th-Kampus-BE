@@ -49,7 +49,6 @@ public enum ErrorCode {
 	TEMP_PHOTO_URL_REQUIRED(HttpStatus.BAD_REQUEST, "임시저장 사진 URL은 필수입니다.", "TEMP_POST-004"),
 	TEMP_PHOTO_ORDER_REQUIRED(HttpStatus.BAD_REQUEST, "임시저장 사진 order는 필수입니다.", "TEMP_POST-005"),
 
-
 	// TrendingPost
 	TRENDING_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "TrendingPost 게시글 ID는 필수입니다.", "TRENDING_POST-001"),
 
@@ -58,7 +57,6 @@ public enum ErrorCode {
 	POST_LIKE_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostLike 게시글 ID는 필수입니다.", "POST_LIKE-002"),
 	POST_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "좋아요 내역을 찾을 수 없습니다. ", "POST_LIKE-003"),
 	POST_LIKE_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 좋아요한 게시글입니다.", "POST_LIKE-004"),
-
 
 	// PostScrap
 	POST_SCRAP_USER_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostScrap 사용자 ID는 필수입니다.", "POST_SCRAP-001"),
@@ -72,6 +70,7 @@ public enum ErrorCode {
 	CATEGORY_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "Category 생성시 카테고리 이름은 필수입니다.", "CATEGORY-001"),
 	CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "Category를 찾을 수 없습니다.", "CATEGORY-002"),
 	CATEGORY_NOT_BELONG_TO_BOARD(HttpStatus.BAD_REQUEST, "카테고리가 해당 게시판에 속하지 않습니다.", "CATEGORY-003"),
+	CATEGORY_DUPLICATED(HttpStatus.BAD_REQUEST, "카테고리가 중복됩니다.", "Category-004"),
 
 	//Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),

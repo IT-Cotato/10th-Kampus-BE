@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardCategoryResolver {
+public class BoardCategoryValidator {
 
 	private final BoardCategoryRepository boardCategoryRepository;
 
@@ -35,6 +35,15 @@ public class BoardCategoryResolver {
 
 		if (!match) {
 			throw new AppException(ErrorCode.CATEGORY_NOT_BELONG_TO_BOARD);
+		}
+	}
+
+	public void validateNoDuplicateCategories(List<Long> newCategoryIds, List<Long> originCategoryIds) {
+		boolean hasDuplicates = newCategoryIds.stream()
+			.anyMatch(originCategoryIds::contains);
+
+		if(hasDuplicates) {
+			throw new AppException(ErrorCode.CATEGORY_DUPLICATED);
 		}
 	}
 }
