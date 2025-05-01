@@ -7,6 +7,8 @@ import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteAppen
 import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteDeleter;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.board.implement.board.BoardValidator;
+import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.user.dto.UserDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,13 +21,16 @@ public class BoardFavoriteService {
 
 	private final BoardFavoriteAppender boardFavoriteAppender;
 	private final BoardFavoriteDeleter boardFavoriteDeleter;
+	private final ApiUserResolver apiUserResolver;
 
 	public Long addFavoriteBoard(Long boardId) {
-		// 게시판 조회
+		// 유저. 게시판 조회
+		UserDto user = apiUserResolver.getCurrentUserDto();
 		Board board = boardFinder.findBoard(boardId);
 
 		// 게시판 검증
 		boardValidator.validateBoardIsActive(board);
+		boardValidator.validateUniversityAccess(user, board);
 
 		// 즐겨찾기 추가
 		return boardFavoriteAppender.appendFavoriteBoard(board.getId());
