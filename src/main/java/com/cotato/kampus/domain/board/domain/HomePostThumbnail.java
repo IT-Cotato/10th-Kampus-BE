@@ -5,7 +5,7 @@ import com.cotato.kampus.domain.post.domain.Post;
 public record HomePostThumbnail(
 	Long boardId,
 	String boardName,
-	Long id,
+	Long postId,
 	String postTitle
 ) {
 	public static HomePostThumbnail from(Board board, Post post) {

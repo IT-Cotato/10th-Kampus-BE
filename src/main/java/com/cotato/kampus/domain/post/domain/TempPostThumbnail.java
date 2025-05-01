@@ -10,9 +10,11 @@ public record TempPostThumbnail(
 	String boardName,
 	String title,
 	String content,
+	String thumbnailUrl,
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	LocalDateTime createdTime,
-	String thumbnailUrl
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	LocalDateTime lastModifiedTime
 ) {
 	public static TempPostThumbnail from(TemporaryPost tempPost, String boardName, String thumbnailUrl) {
 		return new TempPostThumbnail(
@@ -21,8 +23,9 @@ public record TempPostThumbnail(
 			boardName,
 			tempPost.getTitle(),
 			tempPost.getContent(),
+			thumbnailUrl,
 			tempPost.getCreatedTime(),
-			thumbnailUrl
+			tempPost.getLastModifiedTime()
 		);
 	}
 }

@@ -79,7 +79,7 @@ public class AdminController {
 	}
 
 	@GetMapping("/boards/{boardId}")
-	@Operation(summary = "게시판 조회", description = "게시판 세부 정보를 조회합니다.")
+	@Operation(summary = "게시판 상세 조회", description = "게시판 세부 정보를 조회합니다.")
 	public ResponseEntity<DataResponse<BoardInfoResponse>> getBoards(
 		@PathVariable Long boardId) {
 		return ResponseEntity.ok(DataResponse.from(

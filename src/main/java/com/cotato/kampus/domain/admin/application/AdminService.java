@@ -15,7 +15,7 @@ import com.cotato.kampus.domain.admin.dto.StudentVerification;
 import com.cotato.kampus.domain.admin.dto.VerificationPhotoDto;
 import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
 import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsThumbnail;
-import com.cotato.kampus.domain.admin.dto.response.BoardInfo;
+import com.cotato.kampus.domain.admin.dto.BoardDetails;
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.domain.UniversityBoard;
 import com.cotato.kampus.domain.board.implement.board.BoardAppender;
@@ -26,6 +26,8 @@ import com.cotato.kampus.domain.board.implement.board.BoardValidator;
 import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryAppender;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
+import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryFinder;
+import com.cotato.kampus.domain.category.domain.Category;
 import com.cotato.kampus.domain.category.implement.CategoryFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
@@ -86,6 +88,7 @@ public class AdminService {
 	private final BoardCategoryAppender boardCategoryAppender;
 	private final PostDtoMapper postDtoMapper;
 	private final CategoryFinder categoryFinder;
+	private final BoardCategoryFinder boardCategoryFinder;
 
 	@Transactional
 	public Long createBoard(String boardName, String description, BoardType boardType, String universityCode, List<String> categoryNames) {
@@ -176,20 +179,23 @@ public class AdminService {
 		return boardDtoEnhancer.mapToAdminBoardDetail(boards);
 	}
 
-	public BoardInfo getBoard(Long boardId) {
+	public BoardDetails getBoard(Long boardId) {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
 		// 게시판 조회
 		Board board = boardFinder.findBoard(boardId);
 
+		List<Long> categoryIds = boardCategoryFinder.findAllByBoardId(boardId);
+		List<Category> categories = categoryIds.stream().map(categoryFinder::find).toList();
+
 		// 대학 이름 조회
 		if (board instanceof UniversityBoard) {
 			String universityName = univFinder.findUniversityName(((UniversityBoard) board).getUniversityId());
-			return BoardInfo.from(board, universityName);
+			return BoardDetails.from(board, universityName, categories);
 		}
 
-		return BoardInfo.from(board, null);
+		return BoardDetails.from(board, null, categories);
 	}
 
 	public Slice<StudentVerification> getVerifications(int page) {

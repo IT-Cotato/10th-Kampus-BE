@@ -1,26 +1,13 @@
 package com.cotato.kampus.domain.admin.dto.response;
 
-import com.cotato.kampus.domain.board.enums.BoardStatus;
-import com.cotato.kampus.domain.board.enums.BoardType;
+import com.cotato.kampus.domain.admin.dto.BoardDetails;
 
 public record BoardInfoResponse(
-	Long boardId,
-	String boardName,
-	String description,
-	String universityName,
-	Boolean usesCategories,
-	BoardStatus boardStatus,
-	BoardType boardType
+	BoardDetails boardDetails
 ) {
-	public static BoardInfoResponse from(BoardInfo boardInfo) {
+	public static BoardInfoResponse from(BoardDetails boardDetails) {
 		return new BoardInfoResponse(
-			boardInfo.boardId(),
-			boardInfo.boardName(),
-			boardInfo.description(),
-			boardInfo.universityName(),
-			boardInfo.usesCategories(),
-			boardInfo.boardStatus(),
-			boardInfo.boardType()
+			boardDetails
 		);
 	}
 }
