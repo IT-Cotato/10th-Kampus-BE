@@ -127,6 +127,13 @@ public enum ErrorCode {
 	BOARD_TYPE_EMPTY(HttpStatus.BAD_REQUEST, "게시판 타입은 필수 항목입니다.", "BOARD-016"),
 	BOARD_UNIVERSITY_ID_REQUIRED(HttpStatus.BAD_REQUEST, "대학 게시판은 대학 ID가 필수입니다.", "BOARD-017"),
 
+	// Product
+	PRODUCT_USER_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 등록 시 사용자 ID는 필수입니다.", "PRODUCT-201"),
+	PRODUCT_TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "상품 제목은 필수 항목입니다.", "PRODUCT-202"),
+	PRODUCT_PRICE_REQUIRED(HttpStatus.BAD_REQUEST, "상품 가격은 필수 항목입니다.", "PRODUCT-203"),
+	PRODUCT_DESCRIPTION_REQUIRED(HttpStatus.BAD_REQUEST, "상품 설명은 필수 항목입니다.", "PRODUCT-204"),
+	PRODUCT_STATUS_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 상태는 필수 항목입니다.", "PRODUCT-205"),
+
 	//University
 	UNIVERSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 대학을 찾을 수 없습니다.", "UNIVERSITY-001"),
 
