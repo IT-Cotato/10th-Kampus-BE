@@ -1,40 +1,34 @@
 package com.cotato.kampus.domain.product.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
+
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "product_photo")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductPhoto {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "product_photo_id")
-	private Long id;
-
-	@Column(name = "product_id", nullable = false)
-	private Long productId;
-
-	@Column(name = "product_photo_url", nullable = false)
-	private String productPhotoUrl;
-
-	@Column(name = "product_thumbnail_url", nullable = false)
-	private String productThumbnailUrl;
+	private final Long id;
+	private final Long productId;
+	private final String photoUrl;
+	private final Integer order;
 
 	@Builder
-	public ProductPhoto(Long productId, String productPhotoUrl, String productThumbnailUrl) {
+	public ProductPhoto(Long id, Long productId, String photoUrl, Integer order) {
+		this.id = id;
 		this.productId = productId;
-		this.productPhotoUrl = productPhotoUrl;
-		this.productThumbnailUrl = productThumbnailUrl;
+		this.photoUrl = photoUrl;
+		this.order = order;
+		validate();
+	}
+
+	private void validate() {
+		if(productId == null) {
+			throw new AppException(ErrorCode.PRODUCT_PHOTO_PRODUCT_ID_REQUIRED);
+		}
+		if(photoUrl == null) {
+			throw new AppException(ErrorCode.PRUDUCT_PHOTO_URL_REQUIRED);
+		}
 	}
 }

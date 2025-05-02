@@ -134,6 +134,10 @@ public enum ErrorCode {
 	PRODUCT_DESCRIPTION_REQUIRED(HttpStatus.BAD_REQUEST, "상품 설명은 필수 항목입니다.", "PRODUCT-204"),
 	PRODUCT_STATUS_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 상태는 필수 항목입니다.", "PRODUCT-205"),
 
+	// ProductPhoto
+	PRODUCT_PHOTO_PRODUCT_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 사진의 상품 ID는 필수입니다.", "PRODUCT_PHOTO-201"),
+	PRUDUCT_PHOTO_URL_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 사진의 url은 필수입니다.", "PRODUCT_PHOTO-202"),
+
 	//University
 	UNIVERSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 대학을 찾을 수 없습니다.", "UNIVERSITY-001"),
 
