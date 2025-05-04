@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 		log.info("Token extracted from header: {}", token);
 
 		// 토큰 검증
-		validateToken(token);
+		jwtUtil.validateToken(token);
 
 		// 사용자 정보 추출 및 인증 객체 생성
 		AppUserDetailsRequest detailsRequest = createPrincipalDetailsRequest(token);
@@ -74,12 +74,6 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 			throw new JwtException(ErrorCode.TOKEN_NOT_FOUND);
 		}
 		return authorizationHeader.substring(7).trim(); // Bearer 제거
-	}
-
-	private void validateToken(String token) {
-		if (jwtUtil.isExpired(token)) {
-			throw new JwtException(ErrorCode.TOKEN_EXPIRED);
-		}
 	}
 
 	private AppUserDetailsRequest createPrincipalDetailsRequest(String token) {
