@@ -2,6 +2,8 @@ package com.cotato.kampus.global.error;
 
 import org.springframework.http.HttpStatus;
 
+import com.google.api.Http;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -133,10 +135,18 @@ public enum ErrorCode {
 	PRODUCT_PRICE_REQUIRED(HttpStatus.BAD_REQUEST, "상품 가격은 필수 항목입니다.", "PRODUCT-203"),
 	PRODUCT_DESCRIPTION_REQUIRED(HttpStatus.BAD_REQUEST, "상품 설명은 필수 항목입니다.", "PRODUCT-204"),
 	PRODUCT_STATUS_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 상태는 필수 항목입니다.", "PRODUCT-205"),
+	PRODUCT_CATEGORY_REQUIRED(HttpStatus.BAD_REQUEST, "상품 카테고리는 필수입니다.", "PRODUCT-204"),
 
 	// ProductPhoto
 	PRODUCT_PHOTO_PRODUCT_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 사진의 상품 ID는 필수입니다.", "PRODUCT_PHOTO-201"),
-	PRUDUCT_PHOTO_URL_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 사진의 url은 필수입니다.", "PRODUCT_PHOTO-202"),
+	PRODUCT_PHOTO_URL_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 사진의 url은 필수입니다.", "PRODUCT_PHOTO-202"),
+	PRODUCT_PHOTO_REQUIRED(HttpStatus.BAD_REQUEST, "상품의 사진은 필수입니다.", "PRODUCT_PHOTO_203"),
+	PRODUCT_PHOTO_EXCEED(HttpStatus.BAD_REQUEST, "상품 사진은 최대 10장까지만 가능합니다.", "PRODUCT_PHOTO_204"),
+
+	// ProductCategory
+	PRODUCT_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "상품 카테고리를 찾을 수 없습니다.", "PRODUCT_CATEGORY-101"),
+	PRODUCT_CATEGORY_PRODUCT_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 카테고리 매핑에 상품 ID는 필수입니다.", "PRODUCT_CATEGORY-102"),
+	PRODUCT_CATEGORY_CATEGORY_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 카테고리 매핑에 카테고리 ID는 필수입니다.", "PRODUCT_CATEGORY-102"),
 
 	//University
 	UNIVERSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 대학을 찾을 수 없습니다.", "UNIVERSITY-001"),

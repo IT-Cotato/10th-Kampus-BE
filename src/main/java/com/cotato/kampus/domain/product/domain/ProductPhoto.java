@@ -28,7 +28,7 @@ public class ProductPhoto {
 			throw new AppException(ErrorCode.PRODUCT_PHOTO_PRODUCT_ID_REQUIRED);
 		}
 		if(photoUrl == null) {
-			throw new AppException(ErrorCode.PRUDUCT_PHOTO_URL_REQUIRED);
+			throw new AppException(ErrorCode.PRODUCT_PHOTO_URL_REQUIRED);
 		}
 	}
 }
