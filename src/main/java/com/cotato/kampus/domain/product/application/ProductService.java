@@ -16,6 +16,8 @@ import com.cotato.kampus.domain.product.implement.productCategory.ProductCategor
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -49,7 +51,10 @@ public class ProductService {
 		UserDto user = apiUserResolver.getCurrentUserDto();
 		userValidator.validateStudentVerification(user);
 
-		// 2. 카테고리 조회, 검증
+		// 2. 카테고리 검증/조회
+		if (categoryNames == null || categoryNames.isEmpty()) {
+			throw new AppException(ErrorCode.PRODUCT_CATEGORY_REQUIRED);
+		}
 		List<Long> categoryIds = categoryNames.stream()
 			.map(productCategoryFinder::find)
 			.map(ProductCategory::getId)
