@@ -29,7 +29,7 @@ public class ProductPhotoEntity {
 	@Column(name = "photo_url", nullable = false)
 	private String photoUrl;
 
-	@Column(name = "order", nullable = false)
+	@Column(name = "photo_order", nullable = false)
 	private Integer order;
 
 	public ProductPhoto toDomain() {
