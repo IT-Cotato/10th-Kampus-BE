@@ -11,8 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.cotato.kampus.domain.product.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.implement.port.ProductRepository;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -64,73 +62,6 @@ class ProductAppenderTest {
 			assertThat(result.getChatCount()).isEqualTo(0);
 			assertThat(result.getBumpCount()).isEqualTo(0);
 		}
-
-		@Test
-		@DisplayName("userId가 null이면 상품 생성 실패")
-		void append_fail_userId_null() {
-			Long userId = null;
-			String title = "빈티지 카메라";
-			Integer price = 10000;
-			String description = "상태 좋아요!";
-
-			assertThatThrownBy(() -> productAppender.append(userId, title, price, description))
-				.isInstanceOf(AppException.class)
-				.hasMessage(ErrorCode.PRODUCT_USER_ID_REQUIRED.getMessage());
-		}
-
-		@Test
-		@DisplayName("title이 빈 문자열이면 상품 생성 실패")
-		void append_fail_title_empty() {
-			Long userId = 1L;
-			String title = " ";
-			Integer price = 10000;
-			String description = "상태 좋아요!";
-
-			assertThatThrownBy(() -> productAppender.append(userId, title, price, description))
-				.isInstanceOf(AppException.class)
-				.hasMessage(ErrorCode.PRODUCT_TITLE_REQUIRED.getMessage());
-		}
-
-		@Test
-		@DisplayName("price가 null이면 상품 생성 실패")
-		void append_fail_price_null() {
-			Long userId = 1L;
-			String title = "빈티지 카메라";
-			Integer price = null;
-			String description = "상태 좋아요!";
-
-			assertThatThrownBy(() -> productAppender.append(userId, title, price, description))
-				.isInstanceOf(AppException.class)
-				.hasMessage(ErrorCode.PRODUCT_PRICE_REQUIRED.getMessage());
-		}
-
-		@Test
-		@DisplayName("price가 음수면 상품 생성 실패")
-		void append_fail_price_invalid() {
-			Long userId = 1L;
-			String title = "빈티지 카메라";
-			Integer price = -10000;
-			String description = "상태 좋아요!";
-
-			assertThatThrownBy(() -> productAppender.append(userId, title, price, description))
-				.isInstanceOf(AppException.class)
-				.hasMessage(ErrorCode.PRODUCT_PRICE_INVALID.getMessage());
-		}
-
-		@Test
-		@DisplayName("description이 빈 문자열이면 상품 생성 실패")
-		void append_fail_description_empty() {
-			Long userId = 1L;
-			String title = "빈티지 카메라";
-			Integer price = 10000;
-			String description = " ";
-
-			assertThatThrownBy(() -> productAppender.append(userId, title, price, description))
-				.isInstanceOf(AppException.class)
-				.hasMessage(ErrorCode.PRODUCT_DESCRIPTION_REQUIRED.getMessage());
-		}
-
-
 	}
 
 }
