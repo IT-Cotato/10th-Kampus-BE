@@ -20,13 +20,7 @@ public class ProductAppender {
 	@Transactional
 	public Product append(Long userId, String title, Integer price, String description) {
 
-		Product product = Product.builder()
-			.userId(userId)
-			.title(title)
-			.price(price)
-			.description(description)
-			.status(ProductStatus.ACTIVE)
-			.build();
+		Product product = Product.create(userId, title, price, description);
 		return productRepository.save(product);
 	}
 }

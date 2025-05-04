@@ -3,9 +3,8 @@ package com.cotato.kampus.domain.product.domain;
 import java.time.LocalDateTime;
 
 import com.cotato.kampus.domain.product.ProductStatus;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -26,94 +25,48 @@ public class Product {
 	private final LocalDateTime createdTime;
 	private final LocalDateTime lastModifiedTime;
 
-	@Builder
-	public Product(
-		Long id,
-		Long userId,
-		String title,
-		Integer price,
-		String description,
-		Integer viewCount,
-		Integer scrapCount,
-		Integer chatCount,
-		Integer bumpCount,
-		LocalDateTime bumpedTime,
-		ProductStatus status,
-		LocalDateTime createdTime,
-		LocalDateTime lastModifiedTime
-	) {
+	@Builder(access = AccessLevel.PRIVATE)
+	private Product(Long id, Long userId, String title, Integer price, String description, Integer viewCount,
+		Integer scrapCount, Integer chatCount, Integer bumpCount, LocalDateTime bumpedTime, ProductStatus status,
+		LocalDateTime createdTime, LocalDateTime lastModifiedTime) {
 		this.id = id;
 		this.userId = userId;
 		this.title = title;
 		this.price = price;
 		this.description = description;
-		this.viewCount = viewCount != null ? viewCount : 0;
-		this.scrapCount = scrapCount != null ? scrapCount : 0;
-		this.chatCount = chatCount != null ? chatCount : 0;
-		this.bumpCount = bumpCount != null ? bumpCount : 0;
-		this.bumpedTime = bumpedTime != null ? bumpedTime : LocalDateTime.now();
+		this.viewCount = viewCount;
+		this.scrapCount = scrapCount;
+		this.chatCount = chatCount;
+		this.bumpCount = bumpCount;
+		this.bumpedTime = bumpedTime;
 		this.status = status;
 		this.createdTime = createdTime;
 		this.lastModifiedTime = lastModifiedTime;
-		validate();
 	}
 
-	private void validate() {
-		validateUserId();
-		validateTitle();
-		validatePrice();
-		validateDescription();
-		validateStatus();
-	}
-
-	private void validateUserId() {
-		if (userId == null) {
-			throw new AppException(ErrorCode.PRODUCT_USER_ID_REQUIRED);
-		}
-	}
-
-	private void validateTitle() {
-		if (title == null || title.trim().isEmpty()) {
-			throw new AppException(ErrorCode.PRODUCT_TITLE_REQUIRED);
-		}
-	}
-
-	private void validatePrice() {
-		if (price == null) {
-			throw new AppException(ErrorCode.PRODUCT_PRICE_REQUIRED);
-		}
-
-		if (price < 0) {
-			throw new AppException(ErrorCode.PRODUCT_PRICE_INVALID);
-		}
-	}
-
-	private void validateDescription() {
-		if (description == null || description.trim().isEmpty()) {
-			throw new AppException(ErrorCode.PRODUCT_DESCRIPTION_REQUIRED);
-		}
-	}
-
-	private void validateStatus() {
-		if (status == null) {
-			throw new AppException(ErrorCode.PRODUCT_STATUS_REQUIRED);
-		}
-	}
-
-	private Product createCopy(
-		String title,
-		Integer price,
-		String description,
-		Integer viewCount,
-		Integer scrapCount,
-		Integer chatCount,
-		Integer bumpCount,
-		LocalDateTime bumpedTime,
-		ProductStatus status
-	) {
+	public static Product create(Long userId, String title, Integer price, String description) {
 		return Product.builder()
-			.id(getId())
-			.userId(getUserId())
+			.userId(userId)
+			.title(title)
+			.price(price)
+			.description(description)
+			.viewCount(0)
+			.scrapCount(0)
+			.chatCount(0)
+			.bumpCount(0)
+			.bumpedTime(LocalDateTime.now())
+			.status(ProductStatus.ACTIVE)
+			.build();
+	}
+
+	// createdTime과 lastModifiedTime은 DB에서만 관리되므로, 도메인 생성(create)에선 제외되고, fromEntity에서만 주입됨
+	public static Product fromEntity(
+		Long id, Long userId, String title, Integer price, String description, Integer viewCount,
+		Integer scrapCount, Integer chatCount, Integer bumpCount, LocalDateTime bumpedTime, ProductStatus status,
+		LocalDateTime createdTime, LocalDateTime lastModifiedTime) {
+		return Product.builder()
+			.id(id)
+			.userId(userId)
 			.title(title)
 			.price(price)
 			.description(description)
@@ -123,49 +76,73 @@ public class Product {
 			.bumpCount(bumpCount)
 			.bumpedTime(bumpedTime)
 			.status(status)
-			.createdTime(getCreatedTime())
-			.lastModifiedTime(LocalDateTime.now())
+			.createdTime(createdTime)
+			.lastModifiedTime(lastModifiedTime)
 			.build();
 	}
 
-	public Product withUpdateInfo(String title, Integer price, String description){
-		return createCopy(title, price, description, this.viewCount, this.scrapCount, this.chatCount, this.bumpCount,
-			this.bumpedTime, this.status);
+	public Product withUpdateInfo(String title, Integer price, String description) {
+		return createCopy(title, price, description, this.viewCount, this.scrapCount,
+			this.chatCount, this.bumpCount, this.bumpedTime, this.status);
 	}
 
+
 	public Product withProductStatus(ProductStatus status) {
-		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount, this.chatCount, this.bumpCount,
+		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount, this.chatCount,
+			this.bumpCount,
 			this.bumpedTime, status);
 	}
 
 	public Product increaseViewCount() {
-		return createCopy(this.title, this.price, this.description, this.viewCount + 1, this.scrapCount, this.chatCount, this.bumpCount,
+		return createCopy(this.title, this.price, this.description, this.viewCount + 1, this.scrapCount, this.chatCount,
+			this.bumpCount,
 			this.bumpedTime, this.status);
 	}
 
 	public Product increaseScrapCount() {
-		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount + 1, this.chatCount, this.bumpCount,
+		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount + 1, this.chatCount,
+			this.bumpCount,
 			this.bumpedTime, this.status);
 	}
 
 	public Product decreaseScrapCount() {
-		return createCopy(this.title, this.price, this.description, this.viewCount, Math.max(0, this.scrapCount - 1), this.chatCount, this.bumpCount,
+		return createCopy(this.title, this.price, this.description, this.viewCount, Math.max(0, this.scrapCount - 1),
+			this.chatCount, this.bumpCount,
 			this.bumpedTime, this.status);
 	}
 
 	public Product increaseChatCount() {
-		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount, this.chatCount + 1, this.bumpCount,
+		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount, this.chatCount + 1,
+			this.bumpCount,
 			this.bumpedTime, this.status);
 	}
 
 	public Product decreaseChatCount() {
-		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount, Math.max(0, this.chatCount - 1), this.bumpCount,
+		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount,
+			Math.max(0, this.chatCount - 1), this.bumpCount,
 			this.bumpedTime, this.status);
 	}
 
 	// 끌어올리기 규칙 필요
 	public Product bump() {
-		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount, this.chatCount, this.bumpCount + 1,
-			LocalDateTime.now(), this.status);
+		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount, this.chatCount,
+			this.bumpCount + 1, LocalDateTime.now(), this.status);
+	}
+
+	private Product createCopy(String title, Integer price, String description, Integer viewCount,
+		Integer scrapCount, Integer chatCount, Integer bumpCount, LocalDateTime bumpedTime, ProductStatus status) {
+		return Product.builder()
+			.id(this.id)
+			.userId(this.userId)
+			.title(title)
+			.price(price)
+			.description(description)
+			.viewCount(viewCount)
+			.scrapCount(scrapCount)
+			.chatCount(chatCount)
+			.bumpCount(bumpCount)
+			.bumpedTime(bumpedTime)
+			.status(status)
+			.build();
 	}
 }

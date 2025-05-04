@@ -3,6 +3,7 @@ package com.cotato.kampus.domain.product.application;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.BDDMockito.*;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -88,14 +89,22 @@ class ProductServiceTest {
 				.categoryName("가전")
 				.build();
 
-			Product createdProduct = Product.builder()
-				.id(100L)
-				.userId(user.id())
-				.title(title)
-				.price(price)
-				.description(description)
-				.status(ProductStatus.ACTIVE)
-				.build();
+			Product createdProduct = Product.fromEntity(
+				100L,                    // id
+				user.id(),              // userId
+				title,                  // title
+				price,                  // price
+				description,            // description
+				0,                      // viewCount
+				0,                      // scrapCount
+				0,                      // chatCount
+				0,                      // bumpCount
+				LocalDateTime.now(),    // bumpedTime
+				ProductStatus.ACTIVE,   // status
+				LocalDateTime.now(),    // createdTime
+				LocalDateTime.now()     // lastModifiedTime
+			);
+
 
 			List<String> imageUrls = Arrays.asList("url1", "url2");
 

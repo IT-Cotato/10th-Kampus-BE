@@ -40,14 +40,12 @@ class ProductAppenderTest {
 			Integer price = 10000;
 			String description = "상태 좋아요!";
 
-			Product expectProduct = Product.builder()
-				.id(1L)
-				.userId(userId)
-				.title(title)
-				.price(price)
-				.description(description)
-				.status(ProductStatus.ACTIVE)
-				.build();
+			Product expectProduct = Product.create(
+				userId,
+				title,
+				price,
+				description
+			);
 
 			given(productRepository.save(any(Product.class))).willReturn(expectProduct);
 

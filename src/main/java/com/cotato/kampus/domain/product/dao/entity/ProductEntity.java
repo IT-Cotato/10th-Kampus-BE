@@ -61,21 +61,8 @@ public class ProductEntity extends BaseTimeEntity {
 	private ProductStatus productStatus;
 
 	public Product toDomain() {
-		return Product.builder()
-			.id(id)
-			.userId(userId)
-			.title(title)
-			.price(price)
-			.description(description)
-			.viewCount(viewCount)
-			.scrapCount(scrapCount)
-			.chatCount(chatCount)
-			.bumpCount(bumpCount)
-			.bumpedTime(bumpedTime)
-			.status(productStatus)
-			.createdTime(getCreatedTime())
-			.lastModifiedTime(getLastModifiedTime())
-			.build();
+		return Product.fromEntity(id, userId, title, price, description, viewCount, scrapCount, chatCount, bumpCount,
+			bumpedTime, productStatus, getCreatedTime(), getLastModifiedTime());
 	}
 
 	public static ProductEntity fromDomain(Product product) {
