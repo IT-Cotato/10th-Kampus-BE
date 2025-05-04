@@ -1,0 +1,22 @@
+package com.cotato.kampus.domain.product.dao.repository;
+
+import org.springframework.stereotype.Repository;
+
+import com.cotato.kampus.domain.product.dao.entity.ProductCategoryMappingEntity;
+import com.cotato.kampus.domain.product.domain.ProductCategoryMapping;
+import com.cotato.kampus.domain.product.implement.port.ProductCategoryMappingRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor
+public class ProductCategoryMappingRepositoryImpl implements ProductCategoryMappingRepository {
+
+	private final ProductCategoryMappingJpaRepository productCategoryMappingJpaRepository;
+
+	@Override
+	public ProductCategoryMapping save(ProductCategoryMapping productCategoryMapping) {
+		ProductCategoryMappingEntity entity = ProductCategoryMappingEntity.fromDomain(productCategoryMapping);
+		return productCategoryMappingJpaRepository.save(entity).toDomain();
+	}
+}
