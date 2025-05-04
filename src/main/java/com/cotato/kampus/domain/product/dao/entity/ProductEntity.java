@@ -72,6 +72,7 @@ public class ProductEntity extends BaseTimeEntity {
 			.chatCount(chatCount)
 			.bumpCount(bumpCount)
 			.bumpedTime(bumpedTime)
+			.status(productStatus)
 			.createdTime(getCreatedTime())
 			.lastModifiedTime(getLastModifiedTime())
 			.build();
@@ -89,6 +90,7 @@ public class ProductEntity extends BaseTimeEntity {
 		entity.chatCount = product.getChatCount();
 		entity.bumpCount = product.getBumpCount();
 		entity.bumpedTime = product.getBumpedTime();
+		entity.productStatus = product.getStatus();
 		return entity;
 	}
 }
