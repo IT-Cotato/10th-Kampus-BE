@@ -79,6 +79,7 @@ public enum ErrorCode {
 	IMAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "이미지는 필수입니다. 이미지를 첨부해주세요.", "IMAGE-002"),
 	IMAGE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "한 번에 보낼 수 있는 이미지 수를 초과했습니다.", "IMAGE-003"),
 	INVALID_IMAGE_FORMAT(HttpStatus.BAD_REQUEST, "올바르지 않은 이미지 형식입니다.", "IMAGE-004"),
+
 	//Comment
 	COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글을 찾을 수 없습니다.", "COMMENT-001"),
 	INVALID_PARENT_COMMENT(HttpStatus.BAD_REQUEST, "유효하지 않은 부모 댓글입니다.", "COMMENT-002"),
@@ -147,7 +148,8 @@ public enum ErrorCode {
 	// ProductCategory
 	PRODUCT_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "상품 카테고리를 찾을 수 없습니다.", "PRODUCT_CATEGORY-101"),
 	PRODUCT_CATEGORY_PRODUCT_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 카테고리 매핑에 상품 ID는 필수입니다.", "PRODUCT_CATEGORY-102"),
-	PRODUCT_CATEGORY_CATEGORY_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 카테고리 매핑에 카테고리 ID는 필수입니다.", "PRODUCT_CATEGORY-102"),
+	PRODUCT_CATEGORY_CATEGORY_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 카테고리 매핑에 카테고리 ID는 필수입니다.", "PRODUCT_CATEGORY-103"),
+	PRODUCT_CATEGORY_DUPLICATED(HttpStatus.BAD_REQUEST, "카테고리가 중복됩니다.", "PRODUCT_CATEGORY-104"),
 
 	//University
 	UNIVERSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 대학을 찾을 수 없습니다.", "UNIVERSITY-001"),
