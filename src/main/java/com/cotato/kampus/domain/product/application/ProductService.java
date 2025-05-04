@@ -6,7 +6,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cotato.kampus.domain.product.ProductCategory;
+import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.common.application.ImageValidator;
+import com.cotato.kampus.domain.product.domain.Product;
+import com.cotato.kampus.domain.product.domain.ProductCategory;
+import com.cotato.kampus.domain.product.implement.product.ProductAppender;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingAdapter;
+import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
+import com.cotato.kampus.domain.user.application.UserValidator;
+import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -22,20 +31,39 @@ public class ProductService {
 	private final ProductPhotoAppender productPhotoAppender;
 	private final S3Uploader s3Uploader;
 	private static final String PRODUCT_IMAGE_FOLDER = "product";
+	private final ApiUserResolver apiUserResolver;
+	private final UserValidator userValidator;
+	private final ImageValidator imageValidator;
+	private final ProductCategoryFinder productCategoryFinder;
+	private final ProductCategoryMappingAdapter productCategoryMappingAdapter;
 
 	@Transactional
-	public Long createProduct(String title, Long sellPrice, String description, ProductCategory productCategory,
-		List<MultipartFile> imageFiles) throws ImageException {
+	public Long createProduct(
+		String title,
+		Integer price,
+		String description,
+		List<String> categoryNames,
+		List<MultipartFile> images
+	) throws ImageException {
+		// 1. 유저 조회/검증
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		userValidator.validateStudentVerification(user);
 
-		// s3에 이미지 업로드
-		List<String> imageUrls = s3Uploader.uploadFiles(imageFiles, PRODUCT_IMAGE_FOLDER);
+		// 2. 카테고리 조회, 검증
+		List<Long> categoryIds = categoryNames.stream()
+			.map(productCategoryFinder::find)
+			.map(ProductCategory::getId)
+			.toList();
 
-		// 상품 추가
-		Long productId = productAppender.append(title, sellPrice, description, productCategory);
+		// 3. 유효한 이미지 필터링 & S3 업로드
+		imageValidator.validateImagesOrThrow(images);
+		List<String> imageUrls = s3Uploader.uploadFiles(images, PRODUCT_IMAGE_FOLDER);
 
-		// 상품 이미지 추가
-		productPhotoAppender.appendAll(productId, imageUrls);
+		// 3. Product 추가
+		Product product = productAppender.append(user.id(), title, price, description);
+		productCategoryMappingAdapter.saveAll(product.getId(), categoryIds);
+		productPhotoAppender.appendAll(product.getId(), imageUrls);
 
-		return productId;
+		return product.getId();
 	}
 }

@@ -1,20 +1,21 @@
 package com.cotato.kampus.domain.product.api;
 
-import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.product.application.ProductService;
-import com.cotato.kampus.domain.product.dto.request.ProductCreateRequest;
-import com.cotato.kampus.domain.product.dto.response.ProductCreateResponse;
+import com.cotato.kampus.domain.product.api.request.ProductCreateRequest;
+import com.cotato.kampus.domain.product.api.response.ProductCreateResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
 
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -25,19 +26,19 @@ public class ProductController {
 
 	private final ProductService productService;
 
-	@PostMapping("")
+	@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@Operation(summary = "상품 등록")
 	public ResponseEntity<DataResponse<ProductCreateResponse>> createProduct(
-		@RequestPart ProductCreateRequest request,
-		@RequestPart List<MultipartFile> images) throws ImageException {
+		@Valid @ModelAttribute ProductCreateRequest request) throws ImageException {
 
 		return ResponseEntity.ok(DataResponse.from(
 				ProductCreateResponse.of(
 					productService.createProduct(
 						request.title(),
-						request.sellPrice(),
+						request.price(),
 						request.description(),
-						request.productCategory(),
-						images
+						request.categoryNames(),
+						request.images()
 					)
 				)
 			)
