@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.product.application.ProductService;
-import com.cotato.kampus.domain.product.api.request.ProductCreateRequest;
+import com.cotato.kampus.domain.product.api.request.CreateProductRequest;
 import com.cotato.kampus.domain.product.api.response.ProductCreateResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -31,7 +31,7 @@ public class ProductController {
 	@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "상품 등록")
 	public ResponseEntity<DataResponse<ProductCreateResponse>> createProduct(
-		@Valid @ModelAttribute ProductCreateRequest request) throws ImageException {
+		@Valid @ModelAttribute CreateProductRequest request) throws ImageException {
 
 		return ResponseEntity.ok(DataResponse.from(
 				ProductCreateResponse.of(
