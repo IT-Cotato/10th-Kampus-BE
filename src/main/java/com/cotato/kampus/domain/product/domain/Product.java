@@ -82,6 +82,10 @@ public class Product {
 		if (price == null) {
 			throw new AppException(ErrorCode.PRODUCT_PRICE_REQUIRED);
 		}
+
+		if (price < 0) {
+			throw new AppException(ErrorCode.PRODUCT_PRICE_INVALID);
+		}
 	}
 
 	private void validateDescription() {
