@@ -56,7 +56,7 @@ public class ProductService {
 			.toList();
 
 		// 3. 유효한 이미지 필터링 & S3 업로드
-		imageValidator.validateImagesOrThrow(images);
+		imageValidator.validateProductImages(images);
 		List<String> imageUrls = s3Uploader.uploadFiles(images, PRODUCT_IMAGE_FOLDER);
 
 		// 3. Product 추가

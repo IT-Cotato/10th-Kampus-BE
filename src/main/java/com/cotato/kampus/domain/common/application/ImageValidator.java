@@ -32,17 +32,40 @@ public class ImageValidator {
 	}
 
 	/**
-	 * 모든 이미지가 유효한지 검증하고, 유효하지 않은 이미지가 있을 경우 예외를 발생시킵니다.
+	 * 상품 등록용 이미지 검증 (상품 사진 필수)
+	 * 이미지가 없거나 비어있으면 예외 발생
 	 *
 	 *  @param images 검증할 이미지 파일 목록
-	 *  @throws RuntimeException 유효하지 않은 이미지가 있을 경우 발생하는 예외
+	 *  @throws AppException PRODUCT_PHOTO_REQUIRED - 상품 사진이 없을 때 발생
+	 *  @throws AppException IMAGE_SIZE_EXCEEDED - 최대 10개 초과 시 발생
+	 *  @throws RuntimeException - 유효하지 않은 이미지 형식일 때 발생
 	 */
-	public void validateImagesOrThrow(List<MultipartFile> images) {
-		// 이미지 개수 검증
+	public void validateProductImages(List<MultipartFile> images) {
+		// 이미지 필수 여부 검증
 		if(images == null || images.isEmpty()) {
 			throw new AppException(ErrorCode.PRODUCT_PHOTO_REQUIRED);
 		}
+		// 공통 이미지 검증 로직 사용
+		validateImagesOrThrow(images);
+	}
 
+	/**
+	 * 공통 이미지 검증 로직
+	 * - 이미지 개수 검증
+	 * - 이미지 MIME 타입 검증
+	 * - 빈 파일 검증
+	 *
+	 *  @param images 검증할 이미지 파일 목록
+	 *  @throws AppException IMAGE_SIZE_EXCEEDED - 최대 10개 초과 시 발생
+	 *  @throws RuntimeException - 유효하지 않은 이미지 형식일 때 발생
+	 */
+	public void validateImagesOrThrow(List<MultipartFile> images) {
+		// null 체크는 호출하는 메서드에서 처리
+		if (images == null) {
+			return;
+		}
+
+		// 이미지 개수 검증
 		if(images.size() > MAX_IMAGE_COUNT) {
 			throw new AppException(ErrorCode.IMAGE_SIZE_EXCEEDED);
 		}
