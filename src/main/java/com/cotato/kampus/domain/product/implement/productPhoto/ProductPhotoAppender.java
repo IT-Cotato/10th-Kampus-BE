@@ -6,8 +6,8 @@ import java.util.stream.IntStream;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.product.dao.repository.ProductPhotoJpaRepository;
 import com.cotato.kampus.domain.product.domain.ProductPhoto;
+import com.cotato.kampus.domain.product.implement.port.ProductPhotoRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class ProductPhotoAppender {
 
-	private final ProductPhotoJpaRepository productPhotoRepository;
+	private final ProductPhotoRepository productPhotoRepository;
 
 	@Transactional
 	public void appendAll(Long productId, List<String> photoUrls) {

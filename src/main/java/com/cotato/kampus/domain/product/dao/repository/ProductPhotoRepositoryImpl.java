@@ -22,4 +22,12 @@ public class ProductPhotoRepositoryImpl implements ProductPhotoRepository {
 			.map(ProductPhotoEntity::toDomain)
 			.toList();
 	}
+
+	@Override
+	public void saveAll(List<ProductPhoto> productPhotos) {
+		List<ProductPhotoEntity> entities = productPhotos.stream()
+			.map(ProductPhotoEntity::fromDomain)
+			.toList();
+		productPhotoJpaRepository.saveAll(entities);
+	}
 }

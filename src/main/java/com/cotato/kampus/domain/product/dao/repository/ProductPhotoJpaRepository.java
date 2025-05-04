@@ -5,9 +5,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cotato.kampus.domain.product.dao.entity.ProductPhotoEntity;
-import com.cotato.kampus.domain.product.domain.ProductPhoto;
 
-public interface ProductPhotoJpaRepository extends JpaRepository<ProductPhoto, Long> {
+public interface ProductPhotoJpaRepository extends JpaRepository<ProductPhotoEntity, Long> {
 
 	List<ProductPhotoEntity> findByProductId(Long productId);
 }
