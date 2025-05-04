@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
+import com.cotato.kampus.global.error.exception.ImageValidationException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -89,10 +90,10 @@ public class ImageValidator {
 
 		// 유효하지 않은 이미지가 있으면 예외 발생
 		if(!invalidImageNames.isEmpty()) {
-			StringBuilder errorMessage = new StringBuilder("다음 이미지 파일은 유효하지 않습니다: ");
+			StringBuilder errorMessage = new StringBuilder();
 
 			if(!invalidTypeImageNames.isEmpty()) {
-				errorMessage.append("\n- 지원되지 않는 형식: ")
+				errorMessage.append("지원되지 않는 형식: ")
 					.append(String.join(", ", invalidTypeImageNames))
 					.append(" (지원 형식: ")
 					.append(ALLOWED_MIME_TYPES.stream()
@@ -101,7 +102,7 @@ public class ImageValidator {
 					.append(")");
 			}
 
-			throw new RuntimeException(errorMessage.toString());
+			throw new ImageValidationException(ErrorCode.INVALID_IMAGE_FORMAT, errorMessage.toString());
 		}
 	}
 }

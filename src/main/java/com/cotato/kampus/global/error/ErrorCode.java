@@ -78,7 +78,7 @@ public enum ErrorCode {
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
 	IMAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "이미지는 필수입니다. 이미지를 첨부해주세요.", "IMAGE-002"),
 	IMAGE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "한 번에 보낼 수 있는 이미지 수를 초과했습니다.", "IMAGE-003"),
-
+	INVALID_IMAGE_FORMAT(HttpStatus.BAD_REQUEST, "올바르지 않은 이미지 형식입니다.", "IMAGE-004"),
 	//Comment
 	COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글을 찾을 수 없습니다.", "COMMENT-001"),
 	INVALID_PARENT_COMMENT(HttpStatus.BAD_REQUEST, "유효하지 않은 부모 댓글입니다.", "COMMENT-002"),
