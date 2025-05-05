@@ -11,6 +11,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
+import com.cotato.kampus.global.error.exception.ImageValidationException;
 import com.cotato.kampus.global.error.exception.JwtException;
 import com.cotato.kampus.global.error.exception.UnivCertException;
 import com.cotato.kampus.global.error.response.ErrorResponse;
@@ -142,6 +143,16 @@ public class GlobalExceptionHandler {
 		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
 		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.FILE_IS_EMPTY, request);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+			.body(errorResponse);
+	}
+
+	@ExceptionHandler(ImageValidationException.class)
+	public ResponseEntity<ErrorResponse> handleImageValidationException(ImageValidationException e,
+		HttpServletRequest request) {
+		log.error("Image Validation Exception 발생: {}", e.getDetailMessage());
+		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
+		ErrorResponse errorResponse = ErrorResponse.of(request, e.getErrorCode(), e.getDetailMessage());
+		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
 			.body(errorResponse);
 	}
 }

@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.product.dto.response;
+package com.cotato.kampus.domain.product.api.response;
 
 public record ProductCreateResponse(
 	Long productId

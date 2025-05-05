@@ -1,12 +1,13 @@
-package com.cotato.kampus.domain.product.application;
+package com.cotato.kampus.domain.product.implement.productPhoto;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.product.dao.ProductPhotoRepository;
 import com.cotato.kampus.domain.product.domain.ProductPhoto;
+import com.cotato.kampus.domain.product.implement.port.ProductPhotoRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,17 +20,16 @@ public class ProductPhotoAppender {
 	private final ProductPhotoRepository productPhotoRepository;
 
 	@Transactional
-	public void appendAll(Long productId, List<String> imageFiles) {
-		List<ProductPhoto> productPhotos = imageFiles.stream()
-			.map(imageFile -> ProductPhoto.builder()
+	public void appendAll(Long productId, List<String> photoUrls) {
+		List<ProductPhoto> productPhotoPhotos = IntStream.range(0, photoUrls.size())
+			.mapToObj(i -> ProductPhoto.builder()
 				.productId(productId)
-				.productPhotoUrl(imageFile)
-				.productThumbnailUrl(imageFile)
+				.photoUrl(photoUrls.get(i))
+				.order(i)
 				.build())
 			.toList();
 
-		productPhotoRepository.saveAll(productPhotos);
+		productPhotoRepository.saveAll(productPhotoPhotos);
 	}
-
 }
 
