@@ -81,7 +81,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 					String authHeader = accessor.getFirstNativeHeader("Authorization");
 
 					String token = extractToken(authHeader);
-					validateToken(token);
+
+					jwtUtil.validateToken(token);
 
 					// 사용자 정보 추출 및 인증 객체 생성
 					AppUserDetailsRequest detailsRequest = createPrincipalDetailsRequest(token);
@@ -107,12 +108,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 			throw new JwtException(ErrorCode.TOKEN_NOT_FOUND);
 		}
 		return authorizationHeader.substring(7).trim(); // Bearer 제거
-	}
-
-	private void validateToken(String token) {
-		if (jwtUtil.isExpired(token)) {
-			throw new JwtException(ErrorCode.TOKEN_EXPIRED);
-		}
 	}
 
 	private AppUserDetailsRequest createPrincipalDetailsRequest(String token) {
