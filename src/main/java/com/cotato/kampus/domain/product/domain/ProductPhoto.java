@@ -1,8 +1,5 @@
 package com.cotato.kampus.domain.product.domain;
 
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
-
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,15 +17,5 @@ public class ProductPhoto {
 		this.productId = productId;
 		this.photoUrl = photoUrl;
 		this.order = order;
-		validate();
-	}
-
-	private void validate() {
-		if(productId == null) {
-			throw new AppException(ErrorCode.PRODUCT_PHOTO_PRODUCT_ID_REQUIRED);
-		}
-		if(photoUrl == null) {
-			throw new AppException(ErrorCode.PRODUCT_PHOTO_URL_REQUIRED);
-		}
 	}
 }
