@@ -41,4 +41,9 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 			.map(CategoryEntity::toDomain)
 			.toList();
 	}
+
+	@Override
+	public boolean existsByCategoryName(String categoryName) {
+		return categoryJpaRepository.existsByCategoryName(categoryName);
+	}
 }
