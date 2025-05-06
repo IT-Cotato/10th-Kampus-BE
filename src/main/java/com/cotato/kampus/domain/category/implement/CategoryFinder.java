@@ -32,4 +32,8 @@ public class CategoryFinder {
 	public List<Category> findAll() {
 		return categoryRepository.findAll();
 	}
+
+	public boolean existsByCategoryName(String categoryName) {
+		return categoryRepository.existsByCategoryName(categoryName);
+	}
 }
