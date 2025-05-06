@@ -26,12 +26,10 @@ import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.domain.user.enums.UserStatus;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
+import com.cotato.kampus.helper.TestUserHelper;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {
-
-	@Mock
-	private ApiUserResolver apiUserResolver;
 
 	@Mock
 	private CategoryAppender categoryAppender;
@@ -52,37 +50,8 @@ class CategoryServiceTest {
 	@BeforeEach
 	void setUp() {
 		// 각 테스트 실행 전에 사용자 객체 초기화
-		adminUser = new UserDto(
-			1L,                     // id
-			"admin@example.com",    // email
-			"unique123",            // uniqueId
-			"provider123",          // providerId
-			"Admin User",           // username
-			"admin",                // nickname
-			1L,                     // universityId
-			"profile.jpg",          // profileImage
-			Nationality.KOREA,     // nationality
-			PreferredLanguage.KOREAN, // preferredLanguage
-			"device123",            // deviceToken
-			UserRole.ADMIN,         // userRole
-			UserStatus.ACTIVE       // userStatus
-		);
-
-		normalUser = new UserDto(
-			2L,                     // id
-			"user@example.com",     // email
-			"unique456",            // uniqueId
-			"provider456",          // providerId
-			"Normal User",          // username
-			"user",                 // nickname
-			2L,                     // universityId
-			"profile.jpg",          // profileImage
-			Nationality.KOREA,     // nationality
-			PreferredLanguage.KOREAN, // preferredLanguage
-			"device456",            // deviceToken
-			UserRole.VERIFIED,      // userRole - 일반 사용자
-			UserStatus.ACTIVE       // userStatus
-		);
+		adminUser = TestUserHelper.createUserDto(1L,  null, UserRole.ADMIN);
+		normalUser = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
 	}
 
 	@Test
@@ -95,8 +64,8 @@ class CategoryServiceTest {
 			.categoryName(categoryName)
 			.build();
 
-		when(apiUserResolver.getCurrentUserDto()).thenReturn(adminUser);
-		doNothing().when(userValidator).validateAdminAccess(adminUser);
+		doNothing().when(userValidator).validateAdminAccess();
+		when(categoryFinder.existsByCategoryName(categoryName)).thenReturn(false);
 		when(categoryAppender.append(categoryName)).thenReturn(newCategory);
 
 		// when
@@ -104,8 +73,8 @@ class CategoryServiceTest {
 
 		// then
 		assertThat(categoryId).isEqualTo(1L);
-		verify(apiUserResolver).getCurrentUserDto();
-		verify(userValidator).validateAdminAccess(adminUser);
+		verify(userValidator).validateAdminAccess();
+		verify(categoryFinder).existsByCategoryName(categoryName);
 		verify(categoryAppender).append(categoryName);
 	}
 
@@ -115,17 +84,37 @@ class CategoryServiceTest {
 		// given
 		String categoryName = "새 카테고리";
 
-		when(apiUserResolver.getCurrentUserDto()).thenReturn(normalUser);
 		doThrow(new AppException(ErrorCode.USER_NOT_ADMIN))
-			.when(userValidator).validateAdminAccess(normalUser);
+			.when(userValidator).validateAdminAccess();
 
 		// when & then
 		assertThatThrownBy(() -> categoryService.createCategory(categoryName))
 			.isInstanceOf(AppException.class)
 			.hasFieldOrPropertyWithValue("errorCode", ErrorCode.USER_NOT_ADMIN);
 
-		verify(apiUserResolver).getCurrentUserDto();
-		verify(userValidator).validateAdminAccess(normalUser);
+		verify(userValidator).validateAdminAccess();
+		verify(categoryFinder, never()).existsByCategoryName(anyString());
+		verify(categoryAppender, never()).append(anyString());
+	}
+
+	@Test
+	@DisplayName("카테고리 생성 실패 테스트 - 카테고리 이름 중복")
+	void createCategory_Failure_DuplicateName() {
+		// given
+		String categoryName = "중복 카테고리";
+
+		// 관리자 검증은 통과하지만 카테고리 이름이 중복
+		doNothing().when(userValidator).validateAdminAccess();
+		when(categoryFinder.existsByCategoryName(categoryName)).thenReturn(true);
+
+		// when & then
+		assertThatThrownBy(() -> categoryService.createCategory(categoryName))
+			.isInstanceOf(AppException.class)
+			.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CATEGORY_DUPLICATED);
+
+		verify(userValidator).validateAdminAccess();
+		verify(categoryFinder).existsByCategoryName(categoryName);
+		verify(categoryAppender, never()).append(anyString());
 	}
 
 	@Test
