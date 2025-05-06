@@ -1,0 +1,49 @@
+package com.cotato.kampus.global.auth.nativeapp.filter;
+
+import java.io.IOException;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.response.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class JwtExceptionFilter extends OncePerRequestFilter {
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+		throws ServletException, IOException {
+		try {
+			filterChain.doFilter(request, response);
+		} catch (ExpiredJwtException e) {
+			ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.TOKEN_EXPIRED, request);
+			setErrorResponse(response, errorResponse);
+		} catch (MalformedJwtException | SignatureException e) {
+			ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.MALFORMED_TOKEN, request);
+			setErrorResponse(response, errorResponse);
+		} catch (Exception e) {
+			ErrorResponse errorResponse = ErrorResponse.of(request, ErrorCode.INVALID_TOKEN, e.getMessage());
+			setErrorResponse(response, errorResponse);
+		}
+	}
+
+	private void setErrorResponse(HttpServletResponse response, ErrorResponse errorResponse)
+		throws IOException {
+		log.error("jwt 토큰 인증 에러 발생: {}", errorResponse.message());
+		ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+		response.setStatus(HttpStatus.UNAUTHORIZED.value());
+		response.setContentType("application/json; charset=UTF-8");
+		response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+	}
+}

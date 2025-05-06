@@ -3,6 +3,7 @@ package com.cotato.kampus.global.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -23,8 +24,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.global.auth.nativeapp.AppUserDetails;
 import com.cotato.kampus.global.auth.nativeapp.AppUserDetailsRequest;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.JwtException;
 import com.cotato.kampus.global.util.JwtUtil;
 
 import lombok.AccessLevel;
@@ -80,9 +79,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 					// JWT 인증 헤더 확인
 					String authHeader = accessor.getFirstNativeHeader("Authorization");
 
-					String token = extractToken(authHeader);
-
-					jwtUtil.validateToken(token);
+					String token = HttpHeaders.AUTHORIZATION.substring(7).trim();
 
 					// 사용자 정보 추출 및 인증 객체 생성
 					AppUserDetailsRequest detailsRequest = createPrincipalDetailsRequest(token);
@@ -101,13 +98,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 				return message;
 			}
 		});
-	}
-
-	private String extractToken(String authorizationHeader) {
-		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-			throw new JwtException(ErrorCode.TOKEN_NOT_FOUND);
-		}
-		return authorizationHeader.substring(7).trim(); // Bearer 제거
 	}
 
 	private AppUserDetailsRequest createPrincipalDetailsRequest(String token) {

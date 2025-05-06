@@ -16,6 +16,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import com.cotato.kampus.global.auth.SkipPathRequestMatcher;
 import com.cotato.kampus.global.auth.nativeapp.NativeAppAuthProvider;
 import com.cotato.kampus.global.auth.nativeapp.filter.JwtAuthenticationFilter;
+import com.cotato.kampus.global.auth.nativeapp.filter.JwtExceptionFilter;
 import com.cotato.kampus.global.auth.nativeapp.filter.NativeAppLoginFilter;
 import com.cotato.kampus.global.auth.oauth.handler.OAuthSuccessHandler;
 import com.cotato.kampus.global.auth.oauth.service.CustomOAuth2UserService;
@@ -67,6 +68,7 @@ public class SecurityConfig {
 
 			.addFilterAt(nativeAppLoginFilter(http), UsernamePasswordAuthenticationFilter.class)
 			.addFilterAfter(jwtAuthenticationFilter(), NativeAppLoginFilter.class)
+			.addFilterBefore(new JwtExceptionFilter(), JwtAuthenticationFilter.class)
 			.oauth2Login(oauth2 -> oauth2
 				.userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
 				.successHandler(OAuthSuccessHandler)
