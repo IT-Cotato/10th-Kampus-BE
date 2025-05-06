@@ -22,7 +22,7 @@ import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.product.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
-import com.cotato.kampus.domain.product.implement.product.ProductAppender;
+import com.cotato.kampus.domain.product.implement.product.ProductSaver;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingAdapter;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
@@ -42,7 +42,7 @@ class ProductServiceTest {
 	private ProductService productService;
 
 	@Mock
-	private ProductAppender productAppender;
+	private ProductSaver productSaver;
 
 	@Mock
 	private ProductPhotoAppender productPhotoAppender;
@@ -114,7 +114,7 @@ class ProductServiceTest {
 			given(productCategoryFinder.find("가전")).willReturn(category2);
 			willDoNothing().given(imageValidator).validateProductImages(images);
 			given(s3Uploader.uploadFiles(images, "product")).willReturn(imageUrls);
-			given(productAppender.append(1L, title, price, description)).willReturn(createdProduct);
+			given(productSaver.append(1L, title, price, description)).willReturn(createdProduct);
 			willDoNothing().given(productCategoryMappingAdapter).saveAll(100L, Arrays.asList(10L, 20L));
 			willDoNothing().given(productPhotoAppender).appendAll(100L, imageUrls);
 
@@ -129,7 +129,7 @@ class ProductServiceTest {
 			then(productCategoryFinder).should().find("가전");
 			then(imageValidator).should().validateProductImages(images);
 			then(s3Uploader).should().uploadFiles(images, "product");
-			then(productAppender).should().append(1L, title, price, description);
+			then(productSaver).should().append(1L, title, price, description);
 			then(productCategoryMappingAdapter).should().saveAll(100L, Arrays.asList(10L, 20L));
 			then(productPhotoAppender).should().appendAll(100L, imageUrls);
 
@@ -184,7 +184,7 @@ class ProductServiceTest {
 				.hasMessage(ErrorCode.PRODUCT_CATEGORY_REQUIRED.getMessage());
 
 			then(productCategoryFinder).should(never()).find(anyString());
-			then(productAppender).should(never()).append(anyLong(), anyString(), any(), anyString());
+			then(productSaver).should(never()).append(anyLong(), anyString(), any(), anyString());
 		}
 
 		@Test
@@ -209,7 +209,7 @@ class ProductServiceTest {
 				.isInstanceOf(AppException.class)
 				.hasMessage(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND.getMessage());
 
-			then(productAppender).should(never()).append(anyLong(), anyString(), any(), anyString());
+			then(productSaver).should(never()).append(anyLong(), anyString(), any(), anyString());
 		}
 
 		@Test
@@ -241,7 +241,7 @@ class ProductServiceTest {
 				.hasMessage(ErrorCode.PRODUCT_PHOTO_REQUIRED.getMessage());
 
 			then(s3Uploader).should(never()).uploadFiles(anyList(), anyString());
-			then(productAppender).should(never()).append(anyLong(), anyString(), any(), anyString());
+			then(productSaver).should(never()).append(anyLong(), anyString(), any(), anyString());
 
 		}
 	}

@@ -3,7 +3,6 @@ package com.cotato.kampus.domain.product.implement.product;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.product.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.implement.port.ProductRepository;
 
@@ -13,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductAppender {
+public class ProductSaver {
 
 	private final ProductRepository productRepository;
 
