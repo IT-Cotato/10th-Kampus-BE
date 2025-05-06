@@ -2,8 +2,6 @@ package com.cotato.kampus.global.error;
 
 import org.springframework.http.HttpStatus;
 
-import com.google.api.Http;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -146,8 +144,10 @@ public enum ErrorCode {
 
 	// ProductCategory
 	PRODUCT_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "상품 카테고리를 찾을 수 없습니다.", "PRODUCT_CATEGORY-101"),
-	PRODUCT_CATEGORY_PRODUCT_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 카테고리 매핑에 상품 ID는 필수입니다.", "PRODUCT_CATEGORY-102"),
-	PRODUCT_CATEGORY_CATEGORY_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 카테고리 매핑에 카테고리 ID는 필수입니다.", "PRODUCT_CATEGORY-102"),
+	PRODUCT_CATEGORY_PRODUCT_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 카테고리 매핑에 상품 ID는 필수입니다.",
+		"PRODUCT_CATEGORY-102"),
+	PRODUCT_CATEGORY_CATEGORY_ID_REQUIRED(HttpStatus.INTERNAL_SERVER_ERROR, "상품 카테고리 매핑에 카테고리 ID는 필수입니다.",
+		"PRODUCT_CATEGORY-102"),
 
 	//University
 	UNIVERSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 대학을 찾을 수 없습니다.", "UNIVERSITY-001"),

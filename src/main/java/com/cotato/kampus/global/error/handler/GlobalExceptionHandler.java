@@ -12,7 +12,6 @@ import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.error.exception.ImageValidationException;
-import com.cotato.kampus.global.error.exception.JwtException;
 import com.cotato.kampus.global.error.exception.UnivCertException;
 import com.cotato.kampus.global.error.response.ErrorResponse;
 import com.deepl.api.DeepLException;
@@ -57,16 +56,6 @@ public class GlobalExceptionHandler {
 		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
 		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.ENTITY_NOT_FOUND, request);
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-	}
-
-	@ExceptionHandler(JwtException.class)
-	public ResponseEntity<ErrorResponse> handleJwtException(JwtException e,
-		HttpServletRequest request) {
-		log.error("엑세스 토큰 만료 Exception 발생: {}", e.getMessage());
-		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
-		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode(), request);
-		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-			.body(errorResponse);
 	}
 
 	@ExceptionHandler(DeepLException.class)
