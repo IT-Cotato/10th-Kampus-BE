@@ -8,9 +8,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
+import com.cotato.kampus.domain.product.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
-import com.cotato.kampus.domain.product.implement.product.ProductAppender;
+import com.cotato.kampus.domain.product.implement.product.ProductSaver;
+import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingAdapter;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
@@ -29,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductService {
 
-	private final ProductAppender productAppender;
+	private final ProductSaver productSaver;
 	private final ProductPhotoAppender productPhotoAppender;
 	private final S3Uploader s3Uploader;
 	private static final String PRODUCT_IMAGE_FOLDER = "product";
@@ -38,6 +40,7 @@ public class ProductService {
 	private final ImageValidator imageValidator;
 	private final ProductCategoryFinder productCategoryFinder;
 	private final ProductCategoryMappingAdapter productCategoryMappingAdapter;
+	private final ProductFinder productFinder;
 
 	@Transactional
 	public Long createProduct(
@@ -65,10 +68,22 @@ public class ProductService {
 		List<String> imageUrls = s3Uploader.uploadFiles(images, PRODUCT_IMAGE_FOLDER);
 
 		// 3. Product 추가
-		Product product = productAppender.append(user.id(), title, price, description);
+		Product product = productSaver.append(user.id(), title, price, description);
 		productCategoryMappingAdapter.saveAll(product.getId(), categoryIds);
 		productPhotoAppender.appendAll(product.getId(), imageUrls);
 
 		return product.getId();
+	}
+
+	@Transactional
+	public void deleteProduct(Long productId) {
+		// 1. 유저, 상품 조회/검증
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		Product product = productFinder.findById(productId);
+		product.validateDeletable(user.id());
+
+		// 2. 상품 상태를 삭제로 업데이트
+		Product updatedProduct = product.withProductStatus(ProductStatus.DELETED);
+		productSaver.update(updatedProduct);
 	}
 }

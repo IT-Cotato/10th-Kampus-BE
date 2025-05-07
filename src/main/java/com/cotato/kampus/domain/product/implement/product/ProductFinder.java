@@ -5,6 +5,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.implement.port.ProductRepository;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -12,19 +14,12 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductSaver {
+public class ProductFinder {
 
 	private final ProductRepository productRepository;
 
-	@Transactional
-	public Product append(Long userId, String title, Integer price, String description) {
-
-		Product product = Product.create(userId, title, price, description);
-		return productRepository.save(product);
-	}
-
-	@Transactional
-	public Product update(Product product) {
-		return productRepository.save(product);
+	public Product findById(Long productId) {
+		return productRepository.findById(productId)
+			.orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 	}
 }
