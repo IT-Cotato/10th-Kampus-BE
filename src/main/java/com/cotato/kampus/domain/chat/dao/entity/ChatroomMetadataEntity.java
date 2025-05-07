@@ -3,10 +3,13 @@ package com.cotato.kampus.domain.chat.dao.entity;
 import java.time.LocalDateTime;
 
 import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,6 +33,10 @@ public class ChatroomMetadataEntity extends BaseTimeEntity {
 	@Column(name = "chatroom_id", nullable = false)
 	private Long chatroomId;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "chat_type", nullable = false)
+	private ChatType chatType;
+
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
@@ -52,10 +59,11 @@ public class ChatroomMetadataEntity extends BaseTimeEntity {
 	private Long unreadCount;
 
 	@Builder
-	public ChatroomMetadataEntity(Long id, Long chatroomId, Long userId, Long postId, String postTitle,
+	public ChatroomMetadataEntity(Long id, Long chatroomId, ChatType chatType, Long userId, Long postId, String postTitle,
 		Long lastMessageId, String lastMessageContent, LocalDateTime lastChatTime, Long unreadCount) {
 		this.id = id;
 		this.chatroomId = chatroomId;
+		this.chatType = chatType;
 		this.userId = userId;
 		this.postId = postId;
 		this.postTitle = postTitle;
@@ -69,6 +77,7 @@ public class ChatroomMetadataEntity extends BaseTimeEntity {
 		return ChatroomMetadata.builder()
 			.id(chatroomMetadataEntity.getId())
 			.chatroomId(chatroomMetadataEntity.getChatroomId())
+			.chatType(chatroomMetadataEntity.getChatType())
 			.userId(chatroomMetadataEntity.getUserId())
 			.postId(chatroomMetadataEntity.getPostId())
 			.postTitle(chatroomMetadataEntity.getPostTitle())
@@ -83,6 +92,7 @@ public class ChatroomMetadataEntity extends BaseTimeEntity {
 		return ChatroomMetadataEntity.builder()
 			.id(chatroomMetadata.getId())
 			.chatroomId(chatroomMetadata.getChatroomId())
+			.chatType(chatroomMetadata.getChatType())
 			.userId(chatroomMetadata.getUserId())
 			.postId(chatroomMetadata.getPostId())
 			.postTitle(chatroomMetadata.getPostTitle())

@@ -1,10 +1,13 @@
 package com.cotato.kampus.domain.chat.dao.entity;
 
 import com.cotato.kampus.domain.chat.domain.ChatMessage;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,6 +31,10 @@ public class ChatMessageEntity extends BaseTimeEntity {
 	@Column(name = "chatroom_id", nullable = false)
 	private Long chatroomId;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "chat_type", nullable = false)
+	private ChatType chatType;
+
 	@Column(name = "sender_id", nullable = false)
 	private Long senderId;
 
@@ -38,8 +45,9 @@ public class ChatMessageEntity extends BaseTimeEntity {
 	private boolean isImage;
 
 	@Builder
-	public ChatMessageEntity(Long chatroomId, Long senderId, String content, boolean isImage) {
+	public ChatMessageEntity(Long chatroomId, ChatType chatType, Long senderId, String content, boolean isImage) {
 		this.chatroomId = chatroomId;
+		this.chatType = chatType;
 		this.senderId = senderId;
 		this.content = content;
 		this.isImage = isImage;
@@ -48,6 +56,7 @@ public class ChatMessageEntity extends BaseTimeEntity {
 	public static ChatMessageEntity fromDomain(ChatMessage chatMessage) {
 		return ChatMessageEntity.builder()
 			.chatroomId(chatMessage.getChatroomId())
+			.chatType(chatMessage.getChatType())
 			.senderId(chatMessage.getSenderId())
 			.content(chatMessage.getContent())
 			.isImage(chatMessage.isImage())
@@ -58,6 +67,7 @@ public class ChatMessageEntity extends BaseTimeEntity {
 		return ChatMessage.builder()
 			.id(id)
 			.chatroomId(chatroomId)
+			.chatType(chatType)
 			.senderId(senderId)
 			.content(content)
 			.isImage(isImage)
