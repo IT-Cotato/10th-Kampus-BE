@@ -3,6 +3,8 @@ package com.cotato.kampus.domain.product.domain;
 import java.time.LocalDateTime;
 
 import com.cotato.kampus.domain.product.ProductStatus;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -144,5 +146,22 @@ public class Product {
 			.bumpedTime(bumpedTime)
 			.status(status)
 			.build();
+	}
+
+	public void validateDeletable(Long userId) {
+		validateOwner(userId);
+		validateNotDeleted();
+	}
+
+	public void validateOwner(Long userId) {
+		if(!userId.equals(this.userId)) {
+			throw new AppException(ErrorCode.FORBIDDEN_PRODUCT_DELETE);
+		}
+	}
+
+	public void validateNotDeleted() {
+		if(this.status.equals(ProductStatus.DELETED)) {
+			throw new AppException(ErrorCode.ALREADY_DELETED_PRODUCT);
+		}
 	}
 }
