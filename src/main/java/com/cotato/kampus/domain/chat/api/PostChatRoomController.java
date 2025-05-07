@@ -2,6 +2,7 @@ package com.cotato.kampus.domain.chat.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +17,9 @@ import com.cotato.kampus.domain.chat.api.request.ChatroomRequest;
 import com.cotato.kampus.domain.chat.api.response.ChatRoomDetailResponse;
 import com.cotato.kampus.domain.chat.api.response.ChatRoomListResponse;
 import com.cotato.kampus.domain.chat.api.response.ChatroomResponse;
+import com.cotato.kampus.domain.chat.api.validator.ValidChatType;
 import com.cotato.kampus.domain.chat.domain.ChatRoomPreviewList;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,11 +39,14 @@ public class PostChatRoomController {
 	@PostMapping("/post")
 	@Operation(summary = "채팅방 생성", description = "채팅방 생성 요청입니다.")
 	@ResponseBody
-	public ResponseEntity<DataResponse<ChatroomResponse>> createChatroom(@RequestBody @Valid ChatroomRequest request) {
+	public ResponseEntity<DataResponse<ChatroomResponse>> createChatroom(
+		@RequestBody @Valid ChatroomRequest request,
+		@RequestParam(required = true, name = "type") @ValidChatType String chatType
+	) {
 		return ResponseEntity.ok(DataResponse.from(
 				ChatroomResponse.of(
 					chatRoomService.createChatRoom(
-						request.postId()
+						request.referenceId(), ChatType.valueOf(chatType)
 					)
 				)
 			)
