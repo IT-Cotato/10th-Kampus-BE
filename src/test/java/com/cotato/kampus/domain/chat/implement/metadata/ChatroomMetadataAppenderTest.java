@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.chat.implement.metadata.port.ChatroomMetadataRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,15 +26,23 @@ class ChatroomMetadataAppenderTest {
 	public void createMetadataPair() {
 		// given
 		Long chatroomId = 1L;
-		Long postId = 2L;
-		String postTitle = "Test Post";
+		Long referenceId = 2L;
+		ChatType chatType = ChatType.POST;
+		String title = "Test Post";
 		Long senderId = 3L;
 		Long receiverId = 4L;
 
 		doNothing().when(chatroomMetadataRepository).saveAll(anyList());
 
 		// when
-		chatroomMetadataAppender.createMetadataPair(chatroomId, postId, postTitle, senderId, receiverId);
+		chatroomMetadataAppender.createMetadataPair(
+			chatroomId,
+			chatType,
+			referenceId,
+			title,
+			senderId,
+			receiverId
+		);
 
 		// then
 		verify(chatroomMetadataRepository).saveAll(anyList());

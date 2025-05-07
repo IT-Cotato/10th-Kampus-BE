@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.cotato.kampus.domain.chat.enums.ChatType;
+
 class ChatroomMetadataTest {
 
 	@Test
@@ -19,7 +21,7 @@ class ChatroomMetadataTest {
 		String postTitle = "Test Post Title";
 
 		// when
-		ChatroomMetadata metadata = ChatroomMetadata.create(chatroomId, senderId, postId, postTitle);
+		ChatroomMetadata metadata = ChatroomMetadata.create(chatroomId, ChatType.POST, senderId, postId, postTitle);
 
 		// then
 		assertEquals(chatroomId, metadata.getChatroomId());
@@ -41,7 +43,7 @@ class ChatroomMetadataTest {
 		Long senderId = 2L;
 		Long postId = 3L;
 		String postTitle = "Test Post Title";
-		ChatroomMetadata metadata = ChatroomMetadata.create(chatroomId, senderId, postId, postTitle);
+		ChatroomMetadata metadata = ChatroomMetadata.create(chatroomId, ChatType.POST, senderId, postId, postTitle);
 
 		Long messageId = 4L;
 		boolean isImage = true;
@@ -66,7 +68,7 @@ class ChatroomMetadataTest {
 		Long senderId = 2L;
 		Long postId = 3L;
 		String postTitle = "Test Post Title";
-		ChatroomMetadata metadata = ChatroomMetadata.create(chatroomId, senderId, postId, postTitle);
+		ChatroomMetadata metadata = ChatroomMetadata.create(chatroomId, ChatType.POST, senderId, postId, postTitle);
 
 		// when
 		metadata.incrementUnreadCount();
@@ -83,7 +85,7 @@ class ChatroomMetadataTest {
 		Long senderId = 2L;
 		Long postId = 3L;
 		String postTitle = "Test Post Title";
-		ChatroomMetadata metadata = ChatroomMetadata.create(chatroomId, senderId, postId, postTitle);
+		ChatroomMetadata metadata = ChatroomMetadata.create(chatroomId, ChatType.POST, senderId, postId, postTitle);
 
 		// when
 		metadata.incrementUnreadCount();

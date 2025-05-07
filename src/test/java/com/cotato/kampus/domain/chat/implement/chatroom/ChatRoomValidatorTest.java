@@ -30,7 +30,7 @@ class ChatRoomValidatorTest {
 		Long postId = 1L;
 		Long senderId = 2L;
 
-		when(chatRoomFinder.existsByPostIdAndSenderId(postId, senderId))
+		when(chatRoomFinder.existsByReferenceIdAndSenderId(postId, senderId))
 			.thenReturn(false);
 
 		// when & then
@@ -45,7 +45,7 @@ class ChatRoomValidatorTest {
 		Long postId = 1L;
 		Long senderId = 2L;
 
-		when(chatRoomFinder.existsByPostIdAndSenderId(postId, senderId))
+		when(chatRoomFinder.existsByReferenceIdAndSenderId(postId, senderId))
 			.thenReturn(true);
 
 		// when & then

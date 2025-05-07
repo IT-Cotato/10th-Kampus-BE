@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.cotato.kampus.domain.chat.api.port.ChatRoomService;
 import com.cotato.kampus.domain.chat.api.request.ChatroomRequest;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(controllers = PostChatRoomController.class)
@@ -44,11 +45,13 @@ class PostChatRoomControllerTest {
 	void createChatroomTest() throws Exception {
 		// given
 		Long postId = 1L;
+		ChatType chatType = ChatType.POST;
 		ChatroomRequest request = new ChatroomRequest(postId);
 
-		given(chatRoomService.createChatRoom(postId)).willReturn(1L);
+		given(chatRoomService.createChatRoom(postId, chatType)).willReturn(1L);
 
 		mockMvc.perform(post("/v1/api/chats/post")
+				.param("type", String.valueOf("POST"))
 				.content(objectMapper.writeValueAsString(request))
 				.contentType(MediaType.APPLICATION_JSON)
 			)
@@ -65,6 +68,7 @@ class PostChatRoomControllerTest {
 		ChatroomRequest request = new ChatroomRequest(null);
 
 		mockMvc.perform(post("/v1/api/chats/post")
+				.param("type", String.valueOf("POST"))
 				.content(objectMapper.writeValueAsString(request))
 				.contentType(MediaType.APPLICATION_JSON)
 			)

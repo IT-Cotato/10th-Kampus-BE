@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.cotato.kampus.domain.chat.domain.ChatRoom;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.chat.implement.chatroom.port.ChatRoomRepository;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -42,7 +43,7 @@ class ChatRoomAppenderTest {
 			given(chatRoomRepository.save(any(ChatRoom.class))).willReturn(expectedChatRoomId);
 
 			// when
-			Long result = chatRoomAppender.appendChatRoom(postId, senderId, receiverId);
+			Long result = chatRoomAppender.appendChatRoom(postId, ChatType.POST, senderId, receiverId);
 
 			// then
 			assertThat(result).isEqualTo(expectedChatRoomId);
@@ -57,7 +58,7 @@ class ChatRoomAppenderTest {
 
 			// when
 			// then
-			assertThatThrownBy(() -> chatRoomAppender.appendChatRoom(postId, sameUserId, sameUserId))
+			assertThatThrownBy(() -> chatRoomAppender.appendChatRoom(postId, ChatType.POST, sameUserId, sameUserId))
 				.isInstanceOf(AppException.class)
 				.hasMessage(ErrorCode.INVALID_CHATROOM.getMessage());
 		}
