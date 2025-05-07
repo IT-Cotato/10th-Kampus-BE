@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public class ChatRoom {
 	private final Long id;
-	private final Long postId;
+	private final Long referenceId;
 	private final Long initialSenderId;
 	private final Long initialReceiverId;
 	private final Boolean isBlocked;
@@ -25,12 +25,12 @@ public class ChatRoom {
 
 	@Builder
 	// private 생성자
-	private ChatRoom(Long id, Long postId, Long initialSenderId, Long initialReceiverId,
+	private ChatRoom(Long id, Long referenceId, Long initialSenderId, Long initialReceiverId,
 		Boolean isBlocked, InitiatedFrom initiatedFrom,
 		LocalDateTime createdTime, LocalDateTime lastModifiedTime) {
 		validateSender(initialSenderId, initialReceiverId);
 		this.id = id;
-		this.postId = postId;
+		this.referenceId = referenceId;
 		this.initialSenderId = initialSenderId;
 		this.initialReceiverId = initialReceiverId;
 		this.isBlocked = isBlocked != null ? isBlocked : false;
@@ -39,10 +39,10 @@ public class ChatRoom {
 		this.lastModifiedTime = lastModifiedTime;
 	}
 
-	public static ChatRoom create(Long postId, Long initialSenderId, Long initialReceiverId) {
+	public static ChatRoom create(Long referenceId, Long initialSenderId, Long initialReceiverId) {
 		return ChatRoom.builder()
 			.id(null)
-			.postId(postId)
+			.referenceId(referenceId)
 			.initialSenderId(initialSenderId)
 			.initialReceiverId(initialReceiverId)
 			.isBlocked(false)
