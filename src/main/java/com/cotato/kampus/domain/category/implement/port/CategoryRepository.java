@@ -14,4 +14,6 @@ public interface CategoryRepository {
 	Optional<Category> findByCategoryName(String categoryName);
 
 	List<Category> findAll();
+
+	boolean existsByCategoryName(String categoryName);
 }

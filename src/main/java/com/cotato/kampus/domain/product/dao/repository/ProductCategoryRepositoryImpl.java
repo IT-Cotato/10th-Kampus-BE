@@ -21,4 +21,15 @@ public class ProductCategoryRepositoryImpl implements ProductCategoryRepository 
 		return productCategoryJpaRepository.findByCategoryName(categoryName)
 			.map(ProductCategoryEntity::toDomain);
 	}
+
+	@Override
+	public ProductCategory save(ProductCategory productCategory) {
+		ProductCategoryEntity entity = ProductCategoryEntity.fromDomain(productCategory);
+		return productCategoryJpaRepository.save(entity).toDomain();
+	}
+
+	@Override
+	public boolean existsByCategoryName(String categoryName) {
+		return productCategoryJpaRepository.existsByCategoryName(categoryName);
+	}
 }
