@@ -16,6 +16,8 @@ import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingAdapter;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
+import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
+import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapManager;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -41,6 +43,8 @@ public class ProductService {
 	private final ProductCategoryFinder productCategoryFinder;
 	private final ProductCategoryMappingAdapter productCategoryMappingAdapter;
 	private final ProductFinder productFinder;
+	private final ProductScrapFinder productScrapFinder;
+	private final ProductScrapManager productScrapManager;
 
 	@Transactional
 	public Long createProduct(
@@ -85,5 +89,29 @@ public class ProductService {
 		// 2. 상품 상태를 삭제로 업데이트
 		Product updatedProduct = product.withProductStatus(ProductStatus.DELETED);
 		productSaver.update(updatedProduct);
+	}
+
+	@Transactional
+	public void addScrap(Long productId) {
+		// 1. 유저 조회/검증
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		userValidator.validateStudentVerification(user);
+
+		// 2. 상품 조회/검증
+		Product product = productFinder.findById(productId);
+		product.validateNotDeleted();
+
+		// 3. 스크랩 여부 검증
+		boolean isAlreadyScrapped = productScrapFinder.isAlreadyScrapped(productId, user.id());
+		if(isAlreadyScrapped) {
+			throw new AppException(ErrorCode.ALREADY_SCRAPPED_PRODUCT);
+		}
+
+		// 4. 스크랩 추가
+		productScrapManager.append(productId, user.id());
+
+		// 5. 상품 스크랩 수 반영
+		Product scrappedPost = product.increaseScrapCount();
+		productSaver.update(scrappedPost);
 	}
 }

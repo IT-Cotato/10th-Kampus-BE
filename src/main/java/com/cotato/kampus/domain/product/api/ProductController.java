@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "중고거래(Product) API", description = "중고거래 관련 API")
+@Tag(name = "중고거래 상품 관리 API", description = "상품 등록, 조회, 수정, 삭제 및 스크랩 관리 API")
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @RequestMapping("/v1/api/products")
@@ -55,6 +55,15 @@ public class ProductController {
 		@PathVariable Long productId
 	) {
 		productService.deleteProduct(productId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PostMapping("/{productId}/scraps")
+	@Operation(summary = "상품 스크랩 추가")
+	public ResponseEntity<DataResponse<Void>> addScrap(
+		@PathVariable Long productId
+	) {
+		productService.addScrap(productId);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 }
