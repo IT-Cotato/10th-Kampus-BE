@@ -9,4 +9,6 @@ import com.cotato.kampus.domain.product.dao.entity.ProductCategoryEntity;
 public interface ProductCategoryJpaRepository extends JpaRepository<ProductCategoryEntity, Long> {
 
 	Optional<ProductCategoryEntity> findByCategoryName(String categoryName);
+
+	boolean existsByCategoryName(String categoryName);
 }

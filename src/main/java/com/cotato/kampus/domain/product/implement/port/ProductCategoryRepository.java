@@ -8,4 +8,7 @@ public interface ProductCategoryRepository {
 
 	Optional<ProductCategory> findByCategoryName(String categoryName);
 
+	ProductCategory save(ProductCategory productCategory);
+
+	boolean existsByCategoryName(String categoryName);
 }

@@ -21,4 +21,8 @@ public class ProductCategoryFinder {
 		return productCategoryRepository.findByCategoryName(categoryName)
 			.orElseThrow(() -> new AppException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND));
 	}
+
+	public boolean existsByCategoryName(String categoryName) {
+		return productCategoryRepository.existsByCategoryName(categoryName);
+	}
 }
