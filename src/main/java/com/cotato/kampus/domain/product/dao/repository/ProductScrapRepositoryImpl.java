@@ -24,4 +24,9 @@ public class ProductScrapRepositoryImpl implements ProductScrapRepository {
 		ProductScrapEntity entity = ProductScrapEntity.fromDomain(productScrap);
 		productScrapJpaRepository.save(entity);
 	}
+
+	@Override
+	public void deleteByProductIdAndUserId(Long productId, Long userId) {
+		productScrapJpaRepository.deleteByProductIdAndUserId(productId, userId);
+	}
 }

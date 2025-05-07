@@ -24,4 +24,9 @@ public class ProductScrapManager {
 
 		productScrapRepository.save(productScrap);
 	}
+
+	@Transactional
+	public void delete(Long productId, Long userId) {
+		productScrapRepository.deleteByProductIdAndUserId(productId, userId);
+	}
 }

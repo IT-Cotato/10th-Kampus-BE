@@ -8,4 +8,5 @@ public interface ProductScrapJpaRepository extends JpaRepository<ProductScrapEnt
 
 	boolean existsByProductIdAndUserId(Long productId, Long userId);
 
+	void deleteByProductIdAndUserId(Long productId, Long userId);
 }

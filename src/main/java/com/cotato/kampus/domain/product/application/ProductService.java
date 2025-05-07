@@ -111,7 +111,27 @@ public class ProductService {
 		productScrapManager.append(productId, user.id());
 
 		// 5. 상품 스크랩 수 반영
-		Product scrappedPost = product.increaseScrapCount();
-		productSaver.update(scrappedPost);
+		Product scrappedProduct = product.increaseScrapCount();
+		productSaver.update(scrappedProduct);
+	}
+
+	@Transactional
+	public void removeScrap(Long productId) {
+		// 1. 유저, 상품 조회
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		Product product = productFinder.findById(productId);
+
+		// 2. 스크랩 여부 검증
+		boolean isScrapped = productScrapFinder.isScrapped(productId, user.id());
+		if(!isScrapped) {
+			throw new AppException(ErrorCode.PRODUCT_SCRAP_NOT_FOUND);
+		}
+
+		// 3. 스크랩 취소
+		productScrapManager.delete(product.getId(), user.id());
+
+		// 4. 상품 스크랩 수 감소
+		Product unscrappedProduct = product.decreaseScrapCount();
+		productSaver.update(unscrappedProduct);
 	}
 }

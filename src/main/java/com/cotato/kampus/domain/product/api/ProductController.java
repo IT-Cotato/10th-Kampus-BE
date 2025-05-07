@@ -66,4 +66,13 @@ public class ProductController {
 		productService.addScrap(productId);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
+
+	@DeleteMapping("/{productId}/scraps")
+	@Operation(summary = "상품 스크랩 삭제")
+	public ResponseEntity<DataResponse<Void>> removeScrap(
+		@PathVariable Long productId
+	) {
+		productService.removeScrap(productId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
 }

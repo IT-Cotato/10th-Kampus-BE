@@ -7,4 +7,6 @@ public interface ProductScrapRepository {
 	boolean existsByProductIdAndUserId(Long productId, Long userId);
 
 	void save (ProductScrap productScrap);
+
+	void deleteByProductIdAndUserId(Long productId, Long userId);
 }
