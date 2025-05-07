@@ -12,7 +12,7 @@ public class ProductScrapFinder {
 
 	private final ProductScrapRepository productScrapRepository;
 
-	public boolean isAlreadyScrapped(Long productId, Long userId) {
+	public boolean isScrapped(Long productId, Long userId) {
 		return productScrapRepository.existsByProductIdAndUserId(productId, userId);
 	}
 }

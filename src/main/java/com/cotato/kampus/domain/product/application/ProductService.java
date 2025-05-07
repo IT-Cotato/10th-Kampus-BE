@@ -102,8 +102,8 @@ public class ProductService {
 		product.validateNotDeleted();
 
 		// 3. 스크랩 여부 검증
-		boolean isAlreadyScrapped = productScrapFinder.isAlreadyScrapped(productId, user.id());
-		if(isAlreadyScrapped) {
+		boolean isScrapped = productScrapFinder.isScrapped(productId, user.id());
+		if(isScrapped) {
 			throw new AppException(ErrorCode.ALREADY_SCRAPPED_PRODUCT);
 		}
 

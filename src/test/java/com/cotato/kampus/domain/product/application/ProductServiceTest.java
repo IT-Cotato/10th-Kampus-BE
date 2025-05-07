@@ -380,7 +380,7 @@ class ProductServiceTest {
 			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
 			given(userValidator.validateStudentVerification(user)).willReturn(user.universityId());
 			given(productFinder.findById(productId)).willReturn(product);
-			given(productScrapFinder.isAlreadyScrapped(productId, userId)).willReturn(false);
+			given(productScrapFinder.isScrapped(productId, userId)).willReturn(false);
 			given(productSaver.update(any(Product.class))).willReturn(scrappedProduct);
 			willDoNothing().given(productScrapManager).append(productId, userId);
 
@@ -391,7 +391,7 @@ class ProductServiceTest {
 			then(apiUserResolver).should().getCurrentUserDto();
 			then(userValidator).should().validateStudentVerification(user);
 			then(productFinder).should().findById(productId);
-			then(productScrapFinder).should().isAlreadyScrapped(productId, userId);
+			then(productScrapFinder).should().isScrapped(productId, userId);
 			then(productScrapManager).should().append(productId, userId);
 			then(productSaver).should().update(argThat(updatedProduct ->
 				updatedProduct.getScrapCount() == product.getScrapCount() + 1));
@@ -418,7 +418,7 @@ class ProductServiceTest {
 				.isInstanceOf(AppException.class)
 				.hasMessage(ErrorCode.ALREADY_DELETED_PRODUCT.getMessage());
 
-			then(productScrapFinder).should(never()).isAlreadyScrapped(anyLong(), anyLong());
+			then(productScrapFinder).should(never()).isScrapped(anyLong(), anyLong());
 			then(productScrapManager).should(never()).append(anyLong(), anyLong());
 			then(productSaver).should(never()).update(any(Product.class));
 		}
@@ -441,7 +441,7 @@ class ProductServiceTest {
 			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
 			given(userValidator.validateStudentVerification(user)).willReturn(user.universityId());
 			given(productFinder.findById(productId)).willReturn(product);
-			given(productScrapFinder.isAlreadyScrapped(productId, userId)).willReturn(true);
+			given(productScrapFinder.isScrapped(productId, userId)).willReturn(true);
 
 			// When & Then: 예외 발생
 			assertThatThrownBy(() -> productService.addScrap(productId))
