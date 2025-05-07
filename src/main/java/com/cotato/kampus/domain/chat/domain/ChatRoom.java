@@ -2,6 +2,7 @@ package com.cotato.kampus.domain.chat.domain;
 
 import java.time.LocalDateTime;
 
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class ChatRoom {
 	private final Long id;
 	private final Long referenceId;
+	private final ChatType chatType;
 	private final Long initialSenderId;
 	private final Long initialReceiverId;
 	private final Boolean isBlocked;
@@ -25,12 +27,13 @@ public class ChatRoom {
 
 	@Builder
 	// private 생성자
-	private ChatRoom(Long id, Long referenceId, Long initialSenderId, Long initialReceiverId,
+	private ChatRoom(Long id, Long referenceId, ChatType chatType, Long initialSenderId, Long initialReceiverId,
 		Boolean isBlocked, InitiatedFrom initiatedFrom,
 		LocalDateTime createdTime, LocalDateTime lastModifiedTime) {
 		validateSender(initialSenderId, initialReceiverId);
 		this.id = id;
 		this.referenceId = referenceId;
+		this.chatType = chatType;
 		this.initialSenderId = initialSenderId;
 		this.initialReceiverId = initialReceiverId;
 		this.isBlocked = isBlocked != null ? isBlocked : false;
@@ -39,10 +42,11 @@ public class ChatRoom {
 		this.lastModifiedTime = lastModifiedTime;
 	}
 
-	public static ChatRoom create(Long referenceId, Long initialSenderId, Long initialReceiverId) {
+	public static ChatRoom create(Long referenceId, ChatType chatType, Long initialSenderId, Long initialReceiverId) {
 		return ChatRoom.builder()
 			.id(null)
 			.referenceId(referenceId)
+			.chatType(chatType)
 			.initialSenderId(initialSenderId)
 			.initialReceiverId(initialReceiverId)
 			.isBlocked(false)

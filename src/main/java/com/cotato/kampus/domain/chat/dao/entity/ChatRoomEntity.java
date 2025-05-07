@@ -50,9 +50,10 @@ public class ChatRoomEntity extends BaseTimeEntity {
 	private InitiatedFrom initiatedFrom;
 
 	@Builder
-	public ChatRoomEntity(Long referenceId, Long initialSenderId, Long initialReceiverId,
+	public ChatRoomEntity(Long referenceId, ChatType chatType, Long initialSenderId, Long initialReceiverId,
 		Boolean isBlocked, InitiatedFrom initiatedFrom) {
 		this.referenceId = referenceId;
+		this.chatType = chatType;
 		this.initialSenderId = initialSenderId;
 		this.initialReceiverId = initialReceiverId;
 		this.isBlocked = isBlocked;
@@ -63,6 +64,7 @@ public class ChatRoomEntity extends BaseTimeEntity {
 		return ChatRoom.builder()
 			.id(chatRoomEntity.getId())
 			.referenceId(chatRoomEntity.getReferenceId())
+			.chatType(chatRoomEntity.getChatType())
 			.initialSenderId(chatRoomEntity.getInitialSenderId())
 			.initialReceiverId(chatRoomEntity.getInitialReceiverId())
 			.isBlocked(chatRoomEntity.getIsBlocked())
