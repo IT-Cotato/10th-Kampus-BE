@@ -17,7 +17,7 @@ public class ProductPhotoRepositoryImpl implements ProductPhotoRepository {
 	private final ProductPhotoJpaRepository productPhotoJpaRepository;
 
 	@Override
-	public List<ProductPhoto> findByProductId(Long productId) {
+	public List<ProductPhoto> findAllByProductId(Long productId) {
 		return productPhotoJpaRepository.findByProductId(productId).stream()
 			.map(ProductPhotoEntity::toDomain)
 			.toList();
