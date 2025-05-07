@@ -23,8 +23,8 @@ public class ChatRoomFinder {
 	private static final int PAGE_SIZE = 10;
 	private static final String SORT_PROPERTY = "createdTime";
 
-	public boolean existsByPostIdAndSenderId(Long postId, Long senderId) {
-		return chatRoomRepository.existsByPostIdAndInitialSenderId(postId, senderId);
+	public boolean existsByReferenceIdAndSenderId(Long refernceId, Long senderId) {
+		return chatRoomRepository.existsByReferenceIdAndInitialSenderId(refernceId, senderId);
 	}
 
 	public ChatRoom findByChatRoomId(Long chatroomId) {

@@ -18,8 +18,8 @@ public class ChatRoomValidator {
 	private final ChatRoomFinder chatRoomFinder;
 
 	// 채팅방이 이미 존재하는 경우
-	public void validateDuplicateChatRoom(Long postId, Long senderId) {
-		if (chatRoomFinder.existsByPostIdAndSenderId(postId, senderId)) {
+	public void validateDuplicateChatRoom(Long referenceId, Long senderId) {
+		if (chatRoomFinder.existsByReferenceIdAndSenderId(referenceId, senderId)) {
 			throw new AppException(ErrorCode.CHATROOM_DUPLICATED);
 		}
 	}
