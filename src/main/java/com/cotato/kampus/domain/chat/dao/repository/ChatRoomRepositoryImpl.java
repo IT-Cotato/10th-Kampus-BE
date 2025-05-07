@@ -30,8 +30,8 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepository {
 	}
 
 	@Override
-	public boolean existsByPostIdAndInitialSenderId(Long postId, Long senderId) {
-		return chatRoomJpaRepository.existsByPostIdAndInitialSenderId(postId, senderId);
+	public boolean existsByReferenceIdAndInitialSenderId(Long referenceId, Long senderId) {
+		return chatRoomJpaRepository.existsByReferenceIdAndInitialSenderId(referenceId, senderId);
 	}
 
 	@Override

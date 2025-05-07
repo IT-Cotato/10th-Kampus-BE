@@ -10,7 +10,7 @@ import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
 
 public interface ChatRoomJpaRepository extends JpaRepository<ChatRoomEntity, Long> {
 
-	boolean existsByPostIdAndInitialSenderId(Long postId, Long senderId);
+	boolean existsByReferenceIdAndInitialSenderId(Long referenceId, Long senderId);
 
 	@Query("SELECT c FROM ChatRoomEntity c " +
 		"WHERE c.initialSenderId = :userId OR c.initialReceiverId = :userId " +
