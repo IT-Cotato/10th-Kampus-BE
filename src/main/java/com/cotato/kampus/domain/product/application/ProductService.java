@@ -20,6 +20,7 @@ import com.cotato.kampus.domain.product.implement.product.ProductDtoMapper;
 import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingManager;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoManager;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
@@ -34,12 +35,10 @@ import com.cotato.kampus.global.util.s3.S3Uploader;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@Slf4j
 public class ProductService {
 
 	private final ProductManager productManager;
@@ -55,7 +54,7 @@ public class ProductService {
 	private final ProductScrapFinder productScrapFinder;
 	private final ProductScrapManager productScrapManager;
 	private final ProductPhotoFinder productPhotoFinder;
-	private final com.cotato.kampus.domain.product.implement.productCategory.productCategoryMappingFinder productCategoryMappingFinder;
+	private final ProductCategoryMappingFinder productCategoryMappingFinder;
 	private final ProductDtoMapper productDtoMapper;
 
 	@Transactional
