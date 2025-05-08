@@ -10,7 +10,7 @@ public interface ChatRoomService {
 
 	ChatRoomPreviewList findChatRooms(int page, ChatType chatType);
 
-	ChatRoomDetailDto getChatRoomDetail(Long chatroomId);
+	ChatRoomDetailDto getChatRoomDetail(Long chatroomId, ChatType chatType);
 
 	void deleteChatroom(Long chatRoomId);
 }

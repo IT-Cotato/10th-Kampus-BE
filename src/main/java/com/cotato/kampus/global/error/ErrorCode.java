@@ -9,15 +9,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-	//400
+	// 400
 	BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.", "COMMON-001"),
 	INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "요청 파라미터가 잘못 되었습니다.", "COMMON-002"),
 	ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 엔티티를 찾을 수 없습니다.", "COMMON-003"),
 
-	//500
+	// 500
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부에서 에러가 발생하였습니다.", "COMMON-002"),
 
-	//Post
+	// Post
 	POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글을 찾을 수 없습니다.", "POST-001"),
 	POST_NOT_AUTHOR(HttpStatus.FORBIDDEN, "게시글 작성자가 아닙니다.", "POST-002"),
 	POST_SCRAP_FORBIDDEN(HttpStatus.FORBIDDEN, "자신의 게시글을 스크랩 할 수 없습니다.", "POST-005"),
@@ -72,13 +72,13 @@ public enum ErrorCode {
 	CATEGORY_NOT_BELONG_TO_BOARD(HttpStatus.BAD_REQUEST, "카테고리가 해당 게시판에 속하지 않습니다.", "CATEGORY-003"),
 	CATEGORY_DUPLICATED(HttpStatus.BAD_REQUEST, "카테고리가 중복됩니다.", "Category-004"),
 
-	//Image
+	// Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
 	IMAGE_NOT_FOUND(HttpStatus.BAD_REQUEST, "이미지는 필수입니다. 이미지를 첨부해주세요.", "IMAGE-002"),
 	IMAGE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "한 번에 보낼 수 있는 이미지 수를 초과했습니다.", "IMAGE-003"),
 	INVALID_IMAGE_FORMAT(HttpStatus.BAD_REQUEST, "올바르지 않은 이미지 형식입니다.", "IMAGE-004"),
 
-	//Comment
+	// Comment
 	COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 댓글을 찾을 수 없습니다.", "COMMENT-001"),
 	INVALID_PARENT_COMMENT(HttpStatus.BAD_REQUEST, "유효하지 않은 부모 댓글입니다.", "COMMENT-002"),
 	COMMENT_NOT_AUTHOR(HttpStatus.FORBIDDEN, "댓글 작성자가 아니므로 삭제할 수 없습니다.", "COMMENT-002"),
@@ -86,18 +86,18 @@ public enum ErrorCode {
 	ALREADY_LIKED(HttpStatus.BAD_REQUEST, "이미 좋아요를 누른 댓글입니다.", "COMMENT-005"),
 	COMMENT_UNLIKE_FORBIDDEN(HttpStatus.BAD_REQUEST, "댓글 좋아요 취소가 불가능합니다.", "COMMENT-006"),
 
-	//File
+	// File
 	FILE_EXTENSION_FAULT(HttpStatus.BAD_REQUEST, "F-001", "해당 파일 확장자 명이 존재하지 않습니다."),
 	FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "F-002", "파일이 비어있습니다"),
 	FILE_SIZE_TOO_LARGE(HttpStatus.BAD_REQUEST, "F-003", "파일 크기가 너무 큽니다"),
 
-	//S3 에러
+	// S3 에러
 	EMPTY_FILE_EXCEPTION(HttpStatus.BAD_REQUEST, "S3-001", "파일이 비어 있습니다."),
 	IO_EXCEPTION_ON_IMAGE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "S3-002", "이미지 업로드 중 IO 예외 발생"),
 	NO_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3-003", "파일 확장자가 없습니다."),
 	INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3-004", "유효하지 않은 파일 확장자입니다."),
 
-	//User
+	// User
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다.", "USER-001"),
 	USER_UNVERIFIED(HttpStatus.NOT_FOUND, "재학생 인증되지 않은 유저입니다.", "USER-002"),
 	USER_NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다.", "USER-003"),
@@ -107,7 +107,7 @@ public enum ErrorCode {
 	USER_ALREADY_VERIFIED(HttpStatus.BAD_REQUEST, "이미 재학생 인증된 유저입니다.", "USER-007"),
 	USER_ROLE_ALREADY_ASSIGNED(HttpStatus.CONFLICT, "같은 권한으로 변경할 수 없습니다.", "USER-008"),
 
-	//Board
+	// Board
 	BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시판을 찾을 수 없습니다.", "BOARD-001"),
 	BOARD_ALREADY_FAVORITED(HttpStatus.CONFLICT, "이미 즐겨찾기에 추가된 게시판입니다.", "BOARD-002"),
 	BOARD_FAVORITE_NOT_FOUND(HttpStatus.NOT_FOUND, "즐겨찾기 목록에 없는 게시판입니다.", "BOARD-003"),
@@ -139,10 +139,10 @@ public enum ErrorCode {
 	PRODUCT_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "상품 카테고리를 찾을 수 없습니다.", "PRODUCT_CATEGORY-001"),
 	PRODUCT_CATEGORY_DUPLICATED(HttpStatus.BAD_REQUEST, "카테고리가 중복됩니다.", "PRODUCT_CATEGORY-002"),
 
-	//University
+	// University
 	UNIVERSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 대학을 찾을 수 없습니다.", "UNIVERSITY-001"),
 
-	//JWT
+	// JWT
 	TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "헤더에 Access Token을 찾을 수 없습니다.", "JWT-001"),
 	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료 되었습니다.", "JWT-002"),
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.", "JWT-003"),
@@ -159,6 +159,7 @@ public enum ErrorCode {
 	CHATROOM_NOT_ENTERED(HttpStatus.FORBIDDEN, "채팅방에 입장한 유저가 아닙니다.", "CHAT-004"),
 	READ_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 채팅 읽음 상태를 찾을 수 없습니다.", "CHAT-005"),
 	CHATROOM_METADATA_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 채팅방 메타데이터를 찾을 수 없습니다.", "CHAT-006"),
+	CHATROOM_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "채팅방 타입이 일치하지 않습니다.", "CHAT-007"),
 
 	// Verification
 	RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "재학생 인증 요청 기록을 찾을 수 없습니다.", "VERIFICATION-001"),
@@ -185,6 +186,7 @@ public enum ErrorCode {
 	// UnivCert
 	UNIVCERT_ERROR(HttpStatus.BAD_REQUEST, "대학 이메일 인증 중 오류가 발생하였습니다.", "UNIVCERT-001"),
 	;
+
 	private final HttpStatus httpStatus;
 	private final String message;
 	private final String code;
