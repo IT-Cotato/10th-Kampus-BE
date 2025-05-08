@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,18 +17,24 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
+import com.cotato.kampus.domain.product.domain.ProductThumbnail;
+import com.cotato.kampus.domain.product.enums.ProductSortType;
 import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
 import com.cotato.kampus.domain.product.domain.ProductDetails;
 import com.cotato.kampus.domain.product.domain.ProductPhoto;
+import com.cotato.kampus.domain.product.implement.product.ProductDtoMapper;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingManager;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoManager;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
@@ -79,6 +86,12 @@ public class ProductServiceTest {
 
 	@Mock
 	protected ProductScrapFinder productScrapFinder;
+
+	@Mock
+	protected ProductDtoMapper productDtoMapper;
+
+	@Mock
+	private ProductCategoryMappingFinder productCategoryMappingFinder;
 
 	@Nested
 	@DisplayName("상품 생성 성공 테스트")
@@ -457,5 +470,107 @@ public class ProductServiceTest {
 			then(productScrapFinder).should(never()).isScrapped(anyLong(), anyLong());
 			then(productManager).should(never()).update(any(Product.class));
 		}
+	}
+
+	@Nested
+	@DisplayName("상품 목록 조회 테스트")
+	class FindProductsTest {
+
+		private final int page = 1;
+		private final int size = 10;
+		private final ProductSortType sort = ProductSortType.recent;
+
+		private UserDto user;
+		private Product product1;
+		private ProductThumbnail productThumbnail1;
+		private Slice<Product> products;
+		private Slice<ProductThumbnail> thumbnails;
+
+
+		@BeforeEach
+		void setUp() {
+			user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+
+			product1 = Product.fromEntity(
+				1L,
+				user.id(),
+				"빈티지 카메라",          // title
+				10000,                  // price
+				"상태 좋아요!",           // description
+				5,                      // viewCount
+				2,                      // scrapCount
+				1,                      // chatCount
+				0,                      // bumpCount
+				LocalDateTime.now(),    // bumpedTime
+				ProductStatus.DELETED,  // status - 이미 삭제됨
+				LocalDateTime.now(),    // createdTime
+				LocalDateTime.now()     // lastModifiedTime
+			);
+
+			productThumbnail1 = ProductThumbnail.from(
+				product1,
+				"https://example.com/photo.jpg",
+				false
+			);
+
+			products = new SliceImpl<>(List.of(product1));
+			thumbnails = new SliceImpl<>(List.of(productThumbnail1));
+		}
+
+		@Test
+		@DisplayName("카테고리 없이 조회 성공")
+		void findProducts_success() {
+			// Given
+			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+			given(productFinder.findAll(page, size, sort)).willReturn(products);
+			given(productDtoMapper.toProductThumbnails(products, user.id())).willReturn(thumbnails);
+
+			// When
+			Slice<ProductThumbnail> result = productService.findProducts(page, size, sort, null);
+
+			// Then
+			assertThat(result).isEqualTo(thumbnails);
+
+			// categoryName이 null이므로 호출되지 않아야 함
+			verify(productCategoryFinder, never()).find(any());
+			verify(productFinder, never()).findAllByProductIds(anyList(), anyInt(), anyInt(), any());
+
+			// 대신 else 블록의 메서드가 호출되어야 함
+			verify(productFinder).findAll(page, size, sort);
+		}
+
+		@Test
+		@DisplayName("카테고리 있을 때 조회 성공")
+		void findProducts_withCategory_success() {
+			// Given
+			ProductCategory category = ProductCategory.builder()
+				.id(1L)
+				.categoryName("전자기기")
+				.build();
+
+			List<Long> productIds = List.of(product1.getId());
+
+			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+			given(productCategoryFinder.find("전자기기")).willReturn(category);
+			given(productCategoryMappingFinder.getIdsByCategory(category.getId())).willReturn(productIds);
+			given(productFinder.findAllByProductIds(productIds, page, size, sort)).willReturn(products);
+			given(productDtoMapper.toProductThumbnails(products, user.id())).willReturn(thumbnails);
+
+			// When
+			Slice<ProductThumbnail> result = productService.findProducts(page, size, sort, "전자기기");
+
+			// Then
+			assertThat(result).isEqualTo(thumbnails);
+
+			// categoryName이 있으므로 해당 메서드들이 호출되어야 함
+			verify(productCategoryFinder).find("전자기기");
+			verify(productCategoryMappingFinder).getIdsByCategory(1L);
+			verify(productFinder).findAllByProductIds(productIds, page, size, sort);
+
+			// else 블록은 실행되지 않아야 함
+			verify(productFinder, never()).findAll(anyInt(), anyInt(), any());
+
+		}
+
 	}
 }
