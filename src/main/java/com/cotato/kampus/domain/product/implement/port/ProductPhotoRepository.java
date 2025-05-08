@@ -9,4 +9,6 @@ public interface ProductPhotoRepository {
 	List<ProductPhoto> findAllByProductId(Long productId);
 
 	void saveAll(List<ProductPhoto> productPhotos);
+
+	ProductPhoto findByProductIdAndOrder(Long productId, int order);
 }

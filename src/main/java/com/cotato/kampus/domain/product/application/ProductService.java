@@ -2,17 +2,21 @@ package com.cotato.kampus.domain.product.application;
 
 import java.util.List;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
+import com.cotato.kampus.domain.product.ProductSortType;
 import com.cotato.kampus.domain.product.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
 import com.cotato.kampus.domain.product.domain.ProductDetails;
 import com.cotato.kampus.domain.product.domain.ProductPhoto;
+import com.cotato.kampus.domain.product.domain.ProductThumbnail;
+import com.cotato.kampus.domain.product.implement.product.ProductDtoMapper;
 import com.cotato.kampus.domain.product.implement.product.ProductSaver;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
@@ -30,10 +34,12 @@ import com.cotato.kampus.global.util.s3.S3Uploader;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class ProductService {
 
 	private final ProductSaver productSaver;
@@ -49,6 +55,8 @@ public class ProductService {
 	private final ProductScrapFinder productScrapFinder;
 	private final ProductScrapManager productScrapManager;
 	private final ProductPhotoFinder productPhotoFinder;
+	private final com.cotato.kampus.domain.product.implement.productCategory.productCategoryMappingFinder productCategoryMappingFinder;
+	private final ProductDtoMapper productDtoMapper;
 
 	@Transactional
 	public Long createProduct(
@@ -159,5 +167,23 @@ public class ProductService {
 
 		// 4. ProductDetails 변환
 		return ProductDetails.of(viewedProduct, user.nickname(), photos, isAuthor, isScrapped);
+	}
+
+	public Slice<ProductThumbnail> findProducts(int page, int size, ProductSortType sort, String categoryName) {
+		// 1. 유저 조회
+		UserDto user = apiUserResolver.getCurrentUserDto();
+
+		Slice<Product> products;
+
+		// 2. 카테고리 여부에 따른 필터링
+		if(categoryName != null && !categoryName.isEmpty()) {
+			ProductCategory category = productCategoryFinder.find(categoryName);
+			List<Long> productIds = productCategoryMappingFinder.getIdsByCategory(category.getId());
+			products = productFinder.findAllByProductIds(productIds, page, size, sort);
+		} else {
+			products = productFinder.findAll(page, size, sort);
+		}
+
+		return productDtoMapper.toProductThumbnails(products, user.id());
 	}
 }

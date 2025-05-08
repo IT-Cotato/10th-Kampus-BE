@@ -1,6 +1,5 @@
 package com.cotato.kampus.domain.product.api;
 
-
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,16 +8,22 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cotato.kampus.domain.post.api.response.SliceResponse;
+import com.cotato.kampus.domain.product.ProductSortType;
 import com.cotato.kampus.domain.product.api.response.ProductDetailResponse;
 import com.cotato.kampus.domain.product.application.ProductService;
 import com.cotato.kampus.domain.product.api.request.CreateProductRequest;
 import com.cotato.kampus.domain.product.api.response.ProductCreateResponse;
+import com.cotato.kampus.domain.product.domain.ProductThumbnail;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -80,12 +85,40 @@ public class ProductController {
 
 	@GetMapping("/{productId}")
 	@Operation(summary = "상품 상세 조회", description = "중고거래 상품 상세 정보와 유저의 스크랩 여부를 반환")
-	public ResponseEntity<DataResponse<ProductDetailResponse>> getProductDetails(
+	public ResponseEntity<DataResponse<ProductDetailResponse>> findProductDetails(
 		@PathVariable Long productId
 	) {
-			return ResponseEntity.ok(DataResponse.from(
+		return ResponseEntity.ok(DataResponse.from(
 				ProductDetailResponse.from(
 					productService.findProductDetails(productId)
+				)
+			)
+		);
+	}
+
+	@GetMapping("")
+	@Operation(summary = "상품 목록 조회", description = "카테고리로 필터링된 목록 반환")
+	public ResponseEntity<DataResponse<SliceResponse<ProductThumbnail>>> findProducts(
+		@RequestParam(required = false, defaultValue = "1") int page,
+		@Parameter(
+			name="size",
+			description = "한 페이지 표시할 상품 개수"
+		)
+		@RequestParam(required = false, defaultValue = "10") int size,
+		@Parameter(
+			name = "sort",
+			description = "정렬 기준 (recent: 최신순, old: 오래된순, scrapCount: 스크랩순)"
+		)
+		@RequestParam(required = false, defaultValue = "recent") ProductSortType sort,
+		@Parameter(
+			name = "categoryName",
+			description = "카테고리 필터링(전체 조회: 파라미터 미입력, 특정 카테고리 조회: 해당 카테고리명)"
+		)
+		@RequestParam(required = false) String categoryName
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+				SliceResponse.from(
+					productService.findProducts(page, size, sort, categoryName)
 				)
 			)
 		);

@@ -20,4 +20,9 @@ public class ProductPhotoFinder {
 	public List<ProductPhoto> findAll(Long productId) {
 		return productPhotoRepository.findAllByProductId(productId);
 	}
+
+	public String findFirstPhoto(Long productId) {
+		return productPhotoRepository.findByProductIdAndOrder(productId, 0)
+			.getPhotoUrl();
+	}
 }

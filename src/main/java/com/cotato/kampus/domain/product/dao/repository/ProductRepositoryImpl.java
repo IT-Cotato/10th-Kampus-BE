@@ -1,9 +1,13 @@
 package com.cotato.kampus.domain.product.dao.repository;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
+import com.cotato.kampus.domain.product.ProductStatus;
 import com.cotato.kampus.domain.product.dao.entity.ProductEntity;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.implement.port.ProductRepository;
@@ -25,6 +29,18 @@ public class ProductRepositoryImpl implements ProductRepository {
 	@Override
 	public Optional<Product> findById(Long productId) {
 		return productJpaRepository.findById(productId)
+			.map(ProductEntity::toDomain);
+	}
+
+	@Override
+	public Slice<Product> findAllByProductStatusNot(ProductStatus status, Pageable pageable) {
+		return productJpaRepository.findAllByProductStatusNot(status, pageable)
+			.map(ProductEntity::toDomain);
+	}
+
+	@Override
+	public Slice<Product> findAllByIdInAndProductStatusNot(List<Long> productIds, ProductStatus status, Pageable pageable) {
+		return productJpaRepository.findAllByIdInAndProductStatusNot(productIds, status, pageable)
 			.map(ProductEntity::toDomain);
 	}
 }
