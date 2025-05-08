@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.product;
+package com.cotato.kampus.domain.product.enums;
 
 import org.springframework.data.domain.Sort;
 

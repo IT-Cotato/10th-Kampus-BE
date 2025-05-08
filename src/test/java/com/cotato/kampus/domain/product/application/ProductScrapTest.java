@@ -19,7 +19,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.product.ProductStatus;
+import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.product.ProductManager;

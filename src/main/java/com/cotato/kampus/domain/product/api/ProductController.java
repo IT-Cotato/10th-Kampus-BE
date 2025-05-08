@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.post.api.response.SliceResponse;
-import com.cotato.kampus.domain.product.ProductSortType;
+import com.cotato.kampus.domain.product.enums.ProductSortType;
 import com.cotato.kampus.domain.product.api.response.ProductDetailResponse;
 import com.cotato.kampus.domain.product.application.ProductService;
 import com.cotato.kampus.domain.product.api.request.CreateProductRequest;
@@ -23,7 +23,6 @@ import com.cotato.kampus.global.error.exception.ImageException;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;

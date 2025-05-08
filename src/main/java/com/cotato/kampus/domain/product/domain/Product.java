@@ -2,7 +2,7 @@ package com.cotato.kampus.domain.product.domain;
 
 import java.time.LocalDateTime;
 
-import com.cotato.kampus.domain.product.ProductStatus;
+import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
