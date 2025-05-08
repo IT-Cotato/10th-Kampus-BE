@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class productCategoryMappingFinder {
+public class ProductCategoryMappingFinder {
 
 	private final ProductCategoryMappingRepository productCategoryMappingRepository;
 
