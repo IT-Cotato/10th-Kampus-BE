@@ -17,10 +17,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ProductSaverTest {
+class ProductManagerTest {
 
 	@InjectMocks
-	private ProductSaver productSaver;
+	private ProductManager productManager;
 
 	@Mock
 	private ProductRepository productRepository;
@@ -48,7 +48,7 @@ class ProductSaverTest {
 			given(productRepository.save(any(Product.class))).willReturn(expectProduct);
 
 			// When: 상품을 생성하면
-			Product result = productSaver.append(userId, title, price, description);
+			Product result = productManager.append(userId, title, price, description);
 
 			// Then: 정상적으로 상품이 생성된다
 			assertThat(result).isNotNull();

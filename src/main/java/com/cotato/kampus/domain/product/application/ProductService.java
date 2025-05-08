@@ -17,7 +17,7 @@ import com.cotato.kampus.domain.product.domain.ProductDetails;
 import com.cotato.kampus.domain.product.domain.ProductPhoto;
 import com.cotato.kampus.domain.product.domain.ProductThumbnail;
 import com.cotato.kampus.domain.product.implement.product.ProductDtoMapper;
-import com.cotato.kampus.domain.product.implement.product.ProductSaver;
+import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingAdapter;
@@ -42,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ProductService {
 
-	private final ProductSaver productSaver;
+	private final ProductManager productManager;
 	private final ProductPhotoAppender productPhotoAppender;
 	private final S3Uploader s3Uploader;
 	private static final String PRODUCT_IMAGE_FOLDER = "product";
@@ -84,7 +84,7 @@ public class ProductService {
 		List<String> imageUrls = s3Uploader.uploadFiles(images, PRODUCT_IMAGE_FOLDER);
 
 		// 3. Product 추가
-		Product product = productSaver.append(user.id(), title, price, description);
+		Product product = productManager.append(user.id(), title, price, description);
 		productCategoryMappingAdapter.saveAll(product.getId(), categoryIds);
 		productPhotoAppender.appendAll(product.getId(), imageUrls);
 
@@ -100,7 +100,7 @@ public class ProductService {
 
 		// 2. 상품 상태를 삭제로 업데이트
 		Product updatedProduct = product.withProductStatus(ProductStatus.DELETED);
-		productSaver.update(updatedProduct);
+		productManager.update(updatedProduct);
 	}
 
 	@Transactional
@@ -124,7 +124,7 @@ public class ProductService {
 
 		// 5. 상품 스크랩 수 반영
 		Product scrappedProduct = product.increaseScrapCount();
-		productSaver.update(scrappedProduct);
+		productManager.update(scrappedProduct);
 	}
 
 	@Transactional
@@ -144,7 +144,7 @@ public class ProductService {
 
 		// 4. 상품 스크랩 수 감소
 		Product unscrappedProduct = product.decreaseScrapCount();
-		productSaver.update(unscrappedProduct);
+		productManager.update(unscrappedProduct);
 	}
 
 	@Transactional
@@ -163,7 +163,7 @@ public class ProductService {
 
 		// 3. 상품 조회수 증가
 		Product viewedProduct = product.increaseViewCount();
-		productSaver.update(viewedProduct);
+		productManager.update(viewedProduct);
 
 		// 4. ProductDetails 변환
 		return ProductDetails.of(viewedProduct, user.nickname(), photos, isAuthor, isScrapped);

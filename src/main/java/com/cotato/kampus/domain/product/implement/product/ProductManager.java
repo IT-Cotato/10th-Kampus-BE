@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductSaver {
+public class ProductManager {
 
 	private final ProductRepository productRepository;
 
