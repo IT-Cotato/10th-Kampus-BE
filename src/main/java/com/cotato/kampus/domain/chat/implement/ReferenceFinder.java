@@ -25,6 +25,7 @@ public class ReferenceFinder {
 				.referenceId(post.getId())
 				.referenceUserId(post.getUserId())
 				.title(post.getTitle())
+				.boardId(post.getBoardId())
 				.build();
 		} else {
 			// TODO: Handle other chat types

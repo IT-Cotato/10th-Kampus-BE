@@ -28,7 +28,6 @@ import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataFinder;
 import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataMapper;
 import com.cotato.kampus.domain.chat.implement.read.MessageReadStatusDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.post.domain.PostReferenceDto;
 import com.cotato.kampus.domain.post.implement.post.PostFinder;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
@@ -114,16 +113,22 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 			throw new AppException(ErrorCode.CHATROOM_TYPE_MISMATCH);
 		}
 
-		// 3. 게시글 정보 가져옴
-		PostReferenceDto postReference = postFinder.findPostReference(chatRoom.getReferenceId());
+		// 3. 참조 정보 가져옴 (게시글 또는 상품 등)
+		ChatReference reference = referenceFinder.find(chatRoom.getReferenceId(), chatType);
 
-		// 4. 게시글이 삭제된 경우
-		if (postReference.isDeleted()) {
-			return ChatRoomDetailDto.ofDeleted(chatRoom, postReference);
+		// 4. 참조 정보가 없는 경우 (삭제된 경우)
+		if (reference.isDeleted()) {
+			return ChatRoomDetailDto.ofDeleted(chatRoom, reference);
 		}
+
 		// 5. 게시글이 존재하는 경우
-		Board board = boardFinder.findBoard(postReference.boardId());
-		return ChatRoomDetailDto.of(chatRoom, postReference, board);
+		if (chatType == ChatType.POST) {
+			Board board = boardFinder.findBoard(reference.getBoardId());
+			return ChatRoomDetailDto.of(chatRoom, reference, board);
+		}
+
+		// 6. 기타 타입 (product 등) - 현재는 구현 필요 없음
+		return ChatRoomDetailDto.of(chatRoom, reference, null);
 	}
 
 	@Override
