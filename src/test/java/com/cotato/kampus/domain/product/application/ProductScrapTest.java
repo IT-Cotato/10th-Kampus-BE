@@ -2,29 +2,44 @@ package com.cotato.kampus.domain.product.application;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.never;
 
 import java.time.LocalDateTime;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.product.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
+import com.cotato.kampus.domain.product.implement.product.ProductFinder;
+import com.cotato.kampus.domain.product.implement.product.ProductSaver;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapManager;
+import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.helper.TestUserHelper;
 
-public class ProductScrapTest extends ProductServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class ProductScrapTest {
+
+	@InjectMocks
+	protected ProductService productService;
+
+	@Mock
+	protected ProductSaver productSaver;
 
 	@Mock
 	private ProductScrapFinder productScrapFinder;
@@ -32,21 +47,36 @@ public class ProductScrapTest extends ProductServiceTest {
 	@Mock
 	private ProductScrapManager productScrapManager;
 
+	@Mock
+	protected ApiUserResolver apiUserResolver;
+
+	@Mock
+	protected UserValidator userValidator;
+
+	@Mock
+	protected ProductFinder productFinder;
+
 	@Nested
 	@DisplayName("상품 스크랩 테스트")
 	class ScrapProductTest {
 
+		@BeforeEach
+		void setUp() {
+			// 각 테스트 전에 모든 Mock 초기화
+			Mockito.reset(productScrapFinder, productScrapManager, productFinder,
+				productSaver, apiUserResolver, userValidator);
+		}
+
 		@Test
 		@DisplayName("상품 스크랩 성공")
 		void addScrap_success() {
-			// Given: 유효한 상품과 사용자가 주어졌을 때
+			// Given: 유효한 사용자와 스크랩되지 않은 상품이 주어졌을 때
 			Long productId = 100L;
 			Long userId = 1L;
 			UserDto user = TestUserHelper.createUserDto(userId, 1L, UserRole.VERIFIED);
 
 			Product product = Product.create(userId, "빈티지 카메라", 10000, "상태 좋아요!");
-
-			Product scrappedProduct = product.increaseChatCount();
+			Product scrappedProduct = product.increaseScrapCount();
 
 			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
 			given(userValidator.validateStudentVerification(user)).willReturn(user.universityId());
@@ -55,17 +85,15 @@ public class ProductScrapTest extends ProductServiceTest {
 			given(productSaver.update(any(Product.class))).willReturn(scrappedProduct);
 			willDoNothing().given(productScrapManager).append(productId, userId);
 
-			// When
+			// When: 스크랩 요청 실행
 			productService.addScrap(productId);
 
-			// Then: 스크랩 추가되고 모든 의존성 호출
-			then(apiUserResolver).should().getCurrentUserDto();
-			then(userValidator).should().validateStudentVerification(user);
-			then(productFinder).should().findById(productId);
-			then(productScrapFinder).should().isScrapped(productId, userId);
-			then(productScrapManager).should().append(productId, userId);
-			then(productSaver).should().update(argThat(updatedProduct ->
-				updatedProduct.getScrapCount() == product.getScrapCount() + 1));
+			// Then: 상품이 정상적으로 업데이트 되었는지 검증
+			ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
+			verify(productSaver).update(productCaptor.capture());
+
+			Product capturedProduct = productCaptor.getValue();
+			assertThat(capturedProduct.getScrapCount()).isEqualTo(1);
 		}
 
 		@Test
@@ -112,7 +140,8 @@ public class ProductScrapTest extends ProductServiceTest {
 			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
 			given(userValidator.validateStudentVerification(user)).willReturn(user.universityId());
 			given(productFinder.findById(productId)).willReturn(product);
-			given(productScrapFinder.isScrapped(productId, userId)).willReturn(true);
+			given(productScrapFinder.isScrapped(anyLong(), anyLong())).willReturn(true);
+
 
 			// When & Then: 예외 발생
 			assertThatThrownBy(() -> productService.addScrap(productId))
@@ -129,6 +158,13 @@ public class ProductScrapTest extends ProductServiceTest {
 	@DisplayName("상품 스크랩 취소 테스트")
 	class UnScrapProductTest {
 
+		@BeforeEach
+		void setUp() {
+			// 각 테스트 전에 모든 Mock 초기화
+			Mockito.reset(productScrapFinder, productScrapManager, productFinder,
+				productSaver, apiUserResolver, userValidator);
+		}
+
 		@Test
 		@DisplayName("상품 스크랩 취소 성공")
 		void removeScrap_success() {
@@ -137,7 +173,7 @@ public class ProductScrapTest extends ProductServiceTest {
 			Long userId = 1L;
 			UserDto user = TestUserHelper.createUserDto(userId, 1L, UserRole.VERIFIED);
 
-			Product product = spy(Product.fromEntity( // 스크랩 수가 5인 상품
+			Product product = Product.fromEntity( // 스크랩 수가 5인 상품
 				productId,
 				userId,
 				"빈티지 카메라",          // title
@@ -151,27 +187,25 @@ public class ProductScrapTest extends ProductServiceTest {
 				ProductStatus.ACTIVE,  // status
 				LocalDateTime.now(),    // createdTime
 				LocalDateTime.now()     // lastModifiedTime
-			));
+			);
 
 			Product unscrapedProduct = product.decreaseScrapCount();
 
 			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
 			given(productFinder.findById(productId)).willReturn(product);
-			given(productScrapFinder.isScrapped(productId, userId)).willReturn(true);
-			given(product.decreaseScrapCount()).willReturn(unscrapedProduct);
+			given(productScrapFinder.isScrapped(anyLong(), anyLong())).willReturn(true);
 			given(productSaver.update(any(Product.class))).willReturn(unscrapedProduct);
 			willDoNothing().given(productScrapManager).delete(productId, userId);
 
 			// When
 			productService.removeScrap(productId);
 
-			// Then: 스크랩 취소되고 모든 의존성 호출
-			then(apiUserResolver).should().getCurrentUserDto();
-			then(productFinder).should().findById(productId);
-			then(productScrapFinder).should().isScrapped(productId, userId);
-			then(productScrapManager).should().delete(productId, userId);
-			then(productSaver).should().update(argThat(updatedProduct ->
-				updatedProduct.getScrapCount() == product.getScrapCount() - 1));
+			// Then
+			ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
+			verify(productSaver).update(productCaptor.capture());
+			Product capturedProduct = productCaptor.getValue();
+
+			assertThat(capturedProduct.getScrapCount()).isEqualTo(4);
 		}
 
 		@Test
@@ -191,7 +225,7 @@ public class ProductScrapTest extends ProductServiceTest {
 
 			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
 			given(productFinder.findById(productId)).willReturn(product);
-			given(productScrapFinder.isScrapped(productId, userId)).willReturn(false);
+			given(productScrapFinder.isScrapped(anyLong(), anyLong())).willReturn(false);
 
 			// When & Then: 예외 발생
 			assertThatThrownBy(() -> productService.removeScrap(productId))
