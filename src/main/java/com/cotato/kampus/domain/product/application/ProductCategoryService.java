@@ -2,7 +2,7 @@ package com.cotato.kampus.domain.product.application;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryAppender;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryManager;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProductCategoryService {
 
-	private final ProductCategoryAppender productCategoryAppender;
+	private final ProductCategoryManager productCategoryManager;
 	private final ProductCategoryFinder productCategoryFinder;
 	private final UserValidator userValidator;
 
@@ -31,6 +31,6 @@ public class ProductCategoryService {
 		}
 
 		// 3. 카테고리 생성
-		return productCategoryAppender.append(categoryName).getId();
+		return productCategoryManager.append(categoryName).getId();
 	}
 }

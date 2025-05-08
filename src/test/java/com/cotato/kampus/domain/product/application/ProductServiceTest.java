@@ -28,7 +28,7 @@ import com.cotato.kampus.domain.product.domain.ProductPhoto;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
-import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingAdapter;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingManager;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
@@ -69,7 +69,7 @@ public class ProductServiceTest {
 	protected ProductCategoryFinder productCategoryFinder;
 
 	@Mock
-	protected ProductCategoryMappingAdapter productCategoryMappingAdapter;
+	protected ProductCategoryMappingManager productCategoryMappingManager;
 
 	@Mock
 	protected ProductFinder productFinder;
@@ -129,7 +129,7 @@ public class ProductServiceTest {
 			willDoNothing().given(imageValidator).validateProductImages(images);
 			given(s3Uploader.uploadFiles(images, "product")).willReturn(imageUrls);
 			given(productManager.append(1L, title, price, description)).willReturn(createdProduct);
-			willDoNothing().given(productCategoryMappingAdapter).saveAll(100L, Arrays.asList(10L, 20L));
+			willDoNothing().given(productCategoryMappingManager).saveAll(100L, Arrays.asList(10L, 20L));
 			willDoNothing().given(productPhotoAppender).appendAll(100L, imageUrls);
 
 			// When: 상품을 생성하면
@@ -144,7 +144,7 @@ public class ProductServiceTest {
 			then(imageValidator).should().validateProductImages(images);
 			then(s3Uploader).should().uploadFiles(images, "product");
 			then(productManager).should().append(1L, title, price, description);
-			then(productCategoryMappingAdapter).should().saveAll(100L, Arrays.asList(10L, 20L));
+			then(productCategoryMappingManager).should().saveAll(100L, Arrays.asList(10L, 20L));
 			then(productPhotoAppender).should().appendAll(100L, imageUrls);
 
 		}

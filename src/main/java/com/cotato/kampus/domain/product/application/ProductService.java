@@ -20,7 +20,7 @@ import com.cotato.kampus.domain.product.implement.product.ProductDtoMapper;
 import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
-import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingAdapter;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingManager;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
@@ -50,7 +50,7 @@ public class ProductService {
 	private final UserValidator userValidator;
 	private final ImageValidator imageValidator;
 	private final ProductCategoryFinder productCategoryFinder;
-	private final ProductCategoryMappingAdapter productCategoryMappingAdapter;
+	private final ProductCategoryMappingManager productCategoryMappingManager;
 	private final ProductFinder productFinder;
 	private final ProductScrapFinder productScrapFinder;
 	private final ProductScrapManager productScrapManager;
@@ -85,7 +85,7 @@ public class ProductService {
 
 		// 3. Product 추가
 		Product product = productManager.append(user.id(), title, price, description);
-		productCategoryMappingAdapter.saveAll(product.getId(), categoryIds);
+		productCategoryMappingManager.saveAll(product.getId(), categoryIds);
 		productPhotoAppender.appendAll(product.getId(), imageUrls);
 
 		return product.getId();
