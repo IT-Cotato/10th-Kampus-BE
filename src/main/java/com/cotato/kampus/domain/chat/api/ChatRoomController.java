@@ -1,7 +1,6 @@
 package com.cotato.kampus.domain.chat.api;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.chat.api.port.ChatRoomService;
 import com.cotato.kampus.domain.chat.api.request.ChatroomRequest;
@@ -27,15 +27,15 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "게시글 채팅 API", description = "게시글 채팅 API")
-@Controller
+@Tag(name = "채팅방 API", description = "채팅방 생성, 조회, 삭제 관련 API")
+@RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@RequestMapping("/v1/api/chats")
-public class PostChatRoomController {
+@RequestMapping("/v1/api/chats/chatrooms")
+public class ChatRoomController {
 
 	private final ChatRoomService chatRoomService;
 
-	@PostMapping("/post")
+	@PostMapping
 	@Operation(summary = "채팅방 생성", description = "채팅방 생성 요청입니다.")
 	@ResponseBody
 	public ResponseEntity<DataResponse<ChatroomResponse>> createChatroom(@RequestBody @Valid ChatroomRequest request,
@@ -44,7 +44,7 @@ public class PostChatRoomController {
 			ChatroomResponse.of(chatRoomService.createChatRoom(request.referenceId(), ChatType.valueOf(chatType)))));
 	}
 
-	@GetMapping("/chatrooms")
+	@GetMapping
 	@Operation(summary = "내가 속한 채팅방 조회", description = "현재 참여중인 채팅방을 조회합니다.")
 	public ResponseEntity<DataResponse<ChatRoomListResponse>> getChatRooms(
 		@RequestParam(required = false, defaultValue = "1") int page,
@@ -53,15 +53,15 @@ public class PostChatRoomController {
 		return ResponseEntity.ok(DataResponse.from(ChatRoomListResponse.from(chatRooms)));
 	}
 
-	@GetMapping("/chatrooms/{chatroomId}")
+	@GetMapping("/{chatroomId}")
 	@Operation(summary = "채팅방 상세 조회", description = "채팅방의 상세 정보를 조회합니다.")
 	@ResponseBody
 	public ResponseEntity<DataResponse<ChatRoomDetailResponse>> getChatRoomDetail(@PathVariable Long chatroomId) {
-		return ResponseEntity.ok(DataResponse.from(
-			ChatRoomDetailResponse.from(chatRoomService.getChatRoomDetail(chatroomId))));
+		return ResponseEntity.ok(
+			DataResponse.from(ChatRoomDetailResponse.from(chatRoomService.getChatRoomDetail(chatroomId))));
 	}
 
-	@DeleteMapping("/chatrooms/{chatroomId}")
+	@DeleteMapping("/{chatroomId}")
 	@Operation(summary = "채팅방 삭제", description = "채팅방과 관련된 모든 데이터(메시지, 읽음 상태, 메타데이터)를 삭제합니다.")
 	@ResponseBody
 	public ResponseEntity<DataResponse<Void>> deleteChatroom(@PathVariable Long chatroomId) {
