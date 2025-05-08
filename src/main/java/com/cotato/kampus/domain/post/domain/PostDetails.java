@@ -34,9 +34,9 @@ public record PostDetails(
 		return new PostDetails(
 			post.getId(),
 			post.getBoardId(),
+			boardName,
 			post.getTitle(),
 			post.getContent(),
-			boardName,
 			post.getLikeCount(),
 			post.getScrapCount(),
 			post.getCommentCount(),
