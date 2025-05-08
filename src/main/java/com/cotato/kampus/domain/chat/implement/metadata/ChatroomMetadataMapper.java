@@ -19,7 +19,6 @@ public class ChatroomMetadataMapper {
 			metadata.getLastMessageId(),
 			metadata.getLastMessageContent(),
 			metadata.getLastChatTime(),
-			metadata.getUnreadCount()
-		);
+			metadata.getUnreadCount());
 	}
 }

@@ -2,7 +2,6 @@ package com.cotato.kampus.domain.chat.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,45 +38,27 @@ public class PostChatRoomController {
 	@PostMapping("/post")
 	@Operation(summary = "채팅방 생성", description = "채팅방 생성 요청입니다.")
 	@ResponseBody
-	public ResponseEntity<DataResponse<ChatroomResponse>> createChatroom(
-		@RequestBody @Valid ChatroomRequest request,
-		@RequestParam(required = true, name = "type") @ValidChatType String chatType
-	) {
+	public ResponseEntity<DataResponse<ChatroomResponse>> createChatroom(@RequestBody @Valid ChatroomRequest request,
+		@RequestParam(required = true, name = "type") @ValidChatType String chatType) {
 		return ResponseEntity.ok(DataResponse.from(
-				ChatroomResponse.of(
-					chatRoomService.createChatRoom(
-						request.referenceId(), ChatType.valueOf(chatType)
-					)
-				)
-			)
-		);
+			ChatroomResponse.of(chatRoomService.createChatRoom(request.referenceId(), ChatType.valueOf(chatType)))));
 	}
 
 	@GetMapping("/chatrooms")
 	@Operation(summary = "내가 속한 채팅방 조회", description = "현재 참여중인 채팅방을 조회합니다.")
 	public ResponseEntity<DataResponse<ChatRoomListResponse>> getChatRooms(
-		@RequestParam(required = false, defaultValue = "1") int page
-	) {
-		ChatRoomPreviewList chatRooms = chatRoomService.findChatRooms(page);
-		return ResponseEntity.ok(
-			DataResponse.from(
-				ChatRoomListResponse.from(chatRooms)
-			)
-		);
+		@RequestParam(required = false, defaultValue = "1") int page,
+		@RequestParam(required = false, name = "type") @ValidChatType String chatType) {
+		ChatRoomPreviewList chatRooms = chatRoomService.findChatRooms(page, ChatType.valueOf(chatType));
+		return ResponseEntity.ok(DataResponse.from(ChatRoomListResponse.from(chatRooms)));
 	}
 
 	@GetMapping("/chatrooms/{chatroomId}")
 	@Operation(summary = "채팅방 상세 조회", description = "채팅방의 상세 정보를 조회합니다.")
 	@ResponseBody
-	public ResponseEntity<DataResponse<ChatRoomDetailResponse>> getChatRoomDetail(
-		@PathVariable Long chatroomId
-	) {
-		return ResponseEntity.ok(DataResponse.from(
-				ChatRoomDetailResponse.from(
-					chatRoomService.getChatRoomDetail(chatroomId)
-				)
-			)
-		);
+	public ResponseEntity<DataResponse<ChatRoomDetailResponse>> getChatRoomDetail(@PathVariable Long chatroomId) {
+		return ResponseEntity.ok(
+			DataResponse.from(ChatRoomDetailResponse.from(chatRoomService.getChatRoomDetail(chatroomId))));
 	}
 
 	@DeleteMapping("/chatrooms/{chatroomId}")

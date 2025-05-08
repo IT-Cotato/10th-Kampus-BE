@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.chat.implement.metadata.port.ChatroomMetadataRepository;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 
@@ -24,9 +25,14 @@ public class ChatroomMetadataFinder {
 
 	public Slice<ChatroomMetadata> findChatRoomMetadatas(Long userId, int page) {
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-		return chatroomMetadataRepository.findAllByUserIdOrderByLastChatTimeDesc(
-			userId,
-			customPageRequest.of(SORT_PROPERTY)
-		);
+		return chatroomMetadataRepository.findAllByUserIdOrderByLastChatTimeDesc(userId,
+			customPageRequest.of(SORT_PROPERTY));
+	}
+
+	public Slice<ChatroomMetadata> findChatRoomMetadatas(Long userId, int page, ChatType chatType) {
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
+
+		return chatroomMetadataRepository.findAllByUserIdAndChatTypeOrderByLastChatTimeDesc(userId, chatType,
+			customPageRequest.of(SORT_PROPERTY));
 	}
 }

@@ -8,7 +8,7 @@ public interface ChatRoomService {
 
 	Long createChatRoom(Long referenceId, ChatType chatType);
 
-	ChatRoomPreviewList findChatRooms(int page);
+	ChatRoomPreviewList findChatRooms(int page, ChatType chatType);
 
 	ChatRoomDetailDto getChatRoomDetail(Long chatroomId);
 

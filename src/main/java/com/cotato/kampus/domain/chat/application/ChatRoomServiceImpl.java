@@ -78,25 +78,20 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 			chatReference.getReferenceUserId());
 
 		// 5. 채팅방 리스트 조회시 사용되는 뷰 생성
-		chatroomMetadataAppender.createMetadataPair(
-			chatroomId,
-			chatType,
-			referenceId,
-			chatReference.getTitle(),
-			senderId,
-			chatReference.getReferenceUserId()
-		);
+		chatroomMetadataAppender.createMetadataPair(chatroomId, chatType, referenceId, chatReference.getTitle(),
+			senderId, chatReference.getReferenceUserId());
 
 		return chatroomId;
 	}
 
 	@Override
-	public ChatRoomPreviewList findChatRooms(int page) {
+	public ChatRoomPreviewList findChatRooms(int page, ChatType chatType) {
 		// 1. 유저 정보를 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 2. 해당 유저의 채팅방 메타데이터를 lastChatTime 내림차순으로 조회
-		Slice<ChatroomMetadata> chatRoomMetadatas = chatroomMetadataFinder.findChatRoomMetadatas(userId, page);
+		Slice<ChatroomMetadata> chatRoomMetadatas = chatroomMetadataFinder.findChatRoomMetadatas(userId, page,
+			chatType);
 
 		// 3. ChatRoomPreview로 변환
 		List<ChatRoomPreview> previewList = chatRoomMetadatas.getContent()

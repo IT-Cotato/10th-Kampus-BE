@@ -6,23 +6,19 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 public record ChatRoomPreview(
 	Long chatroomId,
-	String postTitle,
+	String title,
 	Long lastMessageId,
 	String lastMessageContent,
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	LocalDateTime lastChatTime,
-	Long unreadCount
-) {
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime lastChatTime,
+	Long unreadCount) {
 	public static ChatRoomPreview of(
 		Long chatroomId,
 		String title,
 		Long lastMessageId,
 		String lastMessageContent,
 		LocalDateTime lastMessageTime,
-		Long unreadCount
-	) {
+		Long unreadCount) {
 		return new ChatRoomPreview(
-			chatroomId, title, lastMessageId, lastMessageContent, lastMessageTime, unreadCount
-		);
+			chatroomId, title, lastMessageId, lastMessageContent, lastMessageTime, unreadCount);
 	}
 }
