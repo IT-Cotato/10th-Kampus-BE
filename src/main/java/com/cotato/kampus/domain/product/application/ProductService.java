@@ -21,7 +21,7 @@ import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingManager;
-import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
+import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoManager;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapManager;
@@ -43,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductService {
 
 	private final ProductManager productManager;
-	private final ProductPhotoAppender productPhotoAppender;
+	private final ProductPhotoManager productPhotoManager;
 	private final S3Uploader s3Uploader;
 	private static final String PRODUCT_IMAGE_FOLDER = "product";
 	private final ApiUserResolver apiUserResolver;
@@ -86,7 +86,7 @@ public class ProductService {
 		// 3. Product 추가
 		Product product = productManager.append(user.id(), title, price, description);
 		productCategoryMappingManager.saveAll(product.getId(), categoryIds);
-		productPhotoAppender.appendAll(product.getId(), imageUrls);
+		productPhotoManager.appendAll(product.getId(), imageUrls);
 
 		return product.getId();
 	}

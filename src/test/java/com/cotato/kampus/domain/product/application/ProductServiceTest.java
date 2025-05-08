@@ -29,7 +29,7 @@ import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingManager;
-import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
+import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoManager;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
@@ -51,7 +51,7 @@ public class ProductServiceTest {
 	protected ProductManager productManager;
 
 	@Mock
-	protected ProductPhotoAppender productPhotoAppender;
+	protected ProductPhotoManager productPhotoManager;
 
 	@Mock
 	protected S3Uploader s3Uploader;
@@ -130,7 +130,7 @@ public class ProductServiceTest {
 			given(s3Uploader.uploadFiles(images, "product")).willReturn(imageUrls);
 			given(productManager.append(1L, title, price, description)).willReturn(createdProduct);
 			willDoNothing().given(productCategoryMappingManager).saveAll(100L, Arrays.asList(10L, 20L));
-			willDoNothing().given(productPhotoAppender).appendAll(100L, imageUrls);
+			willDoNothing().given(productPhotoManager).appendAll(100L, imageUrls);
 
 			// When: 상품을 생성하면
 			Long productId = productService.createProduct(title, price, description, categoryNames, images);
@@ -145,7 +145,7 @@ public class ProductServiceTest {
 			then(s3Uploader).should().uploadFiles(images, "product");
 			then(productManager).should().append(1L, title, price, description);
 			then(productCategoryMappingManager).should().saveAll(100L, Arrays.asList(10L, 20L));
-			then(productPhotoAppender).should().appendAll(100L, imageUrls);
+			then(productPhotoManager).should().appendAll(100L, imageUrls);
 
 		}
 	}
