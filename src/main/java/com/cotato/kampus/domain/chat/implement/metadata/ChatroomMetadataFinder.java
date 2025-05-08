@@ -23,15 +23,8 @@ public class ChatroomMetadataFinder {
 
 	private final ChatroomMetadataRepository chatroomMetadataRepository;
 
-	public Slice<ChatroomMetadata> findChatRoomMetadatas(Long userId, int page) {
-		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-		return chatroomMetadataRepository.findAllByUserIdOrderByLastChatTimeDesc(userId,
-			customPageRequest.of(SORT_PROPERTY));
-	}
-
 	public Slice<ChatroomMetadata> findChatRoomMetadatas(Long userId, int page, ChatType chatType) {
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-
 		return chatroomMetadataRepository.findAllByUserIdAndChatTypeOrderByLastChatTimeDesc(userId, chatType,
 			customPageRequest.of(SORT_PROPERTY));
 	}
