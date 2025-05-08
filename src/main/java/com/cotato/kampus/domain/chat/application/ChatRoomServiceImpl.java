@@ -28,9 +28,6 @@ import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataFinder;
 import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataMapper;
 import com.cotato.kampus.domain.chat.implement.read.MessageReadStatusDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.post.implement.post.PostFinder;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +46,6 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
 	private final ApiUserResolver apiUserResolver;
 
-	private final PostFinder postFinder;
 	private final BoardFinder boardFinder;
 
 	private final ChatMessageDeleter chatMessageDeleter;
@@ -104,14 +100,12 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	}
 
 	@Override
-	public ChatRoomDetailDto getChatRoomDetail(Long chatroomId, ChatType chatType) {
+	public ChatRoomDetailDto getChatRoomDetail(Long chatroomId) {
 		// 1. Find chatroom
 		ChatRoom chatRoom = chatRoomFinder.findByChatRoomId(chatroomId);
 
-		// 2. 채팅방 타입 검증
-		if (!chatRoom.getChatType().equals(chatType)) {
-			throw new AppException(ErrorCode.CHATROOM_TYPE_MISMATCH);
-		}
+		// 2. 채팅방 타입 가져오기
+		ChatType chatType = chatRoom.getChatType();
 
 		// 3. 참조 정보 가져옴 (게시글 또는 상품 등)
 		ChatReference reference = referenceFinder.find(chatRoom.getReferenceId(), chatType);

@@ -56,10 +56,9 @@ public class PostChatRoomController {
 	@GetMapping("/chatrooms/{chatroomId}")
 	@Operation(summary = "채팅방 상세 조회", description = "채팅방의 상세 정보를 조회합니다.")
 	@ResponseBody
-	public ResponseEntity<DataResponse<ChatRoomDetailResponse>> getChatRoomDetail(@PathVariable Long chatroomId,
-		@RequestParam(required = true, name = "type") @ValidChatType String chatType) {
+	public ResponseEntity<DataResponse<ChatRoomDetailResponse>> getChatRoomDetail(@PathVariable Long chatroomId) {
 		return ResponseEntity.ok(DataResponse.from(
-			ChatRoomDetailResponse.from(chatRoomService.getChatRoomDetail(chatroomId, ChatType.valueOf(chatType)))));
+			ChatRoomDetailResponse.from(chatRoomService.getChatRoomDetail(chatroomId))));
 	}
 
 	@DeleteMapping("/chatrooms/{chatroomId}")
