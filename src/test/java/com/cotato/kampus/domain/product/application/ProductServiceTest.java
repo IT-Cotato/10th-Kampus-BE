@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,7 +32,6 @@ import com.cotato.kampus.domain.product.implement.productCategory.ProductCategor
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
-import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapManager;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
@@ -119,7 +119,6 @@ public class ProductServiceTest {
 				LocalDateTime.now(),    // createdTime
 				LocalDateTime.now()     // lastModifiedTime
 			);
-
 
 			List<String> imageUrls = Arrays.asList("url1", "url2");
 
@@ -289,12 +288,13 @@ public class ProductServiceTest {
 			// When: 상품을 삭제하면
 			productService.deleteProduct(productId);
 
-			// Then: 상품 상태가 삭제로 변경되고 모든 의존성 호출됨
-			then(apiUserResolver).should().getCurrentUserDto();
-			then(productFinder).should().findById(productId);
-			then(productSaver).should().update(argThat(updatedProduct ->
-				updatedProduct.getStatus() == ProductStatus.DELETED));
+			// Then: 저장된 상품 객체의 상태가 DELETED로 변경되었는지 검증
+			ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
+			then(productSaver).should().update(productCaptor.capture()); // update() 호출 시 전달된 Product를 캡처
 
+			Product updatedProduct = productCaptor.getValue();
+			assertThat(updatedProduct.getStatus()).isEqualTo(ProductStatus.DELETED); // 삭제 상태로 변경되었는지 확인
+			assertThat(updatedProduct.getId()).isEqualTo(product.getId()); // ID 유지 확인
 		}
 
 		@Test
@@ -384,11 +384,11 @@ public class ProductServiceTest {
 				10000,                  // price
 				"상태 좋아요!",           // description
 				5,                      // viewCount
-				2,                      // scrapCount
-				1,                      // chatCount
+				0,                      // scrapCount
+				0,                      // chatCount
 				0,                      // bumpCount
 				LocalDateTime.now(),    // bumpedTime
-				ProductStatus.ACTIVE,  // status - 이미 삭제됨
+				ProductStatus.ACTIVE,   // status
 				LocalDateTime.now(),    // createdTime
 				LocalDateTime.now()     // lastModifiedTime
 			);
@@ -414,7 +414,7 @@ public class ProductServiceTest {
 			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
 			given(productFinder.findById(productId)).willReturn(product);
 			given(productPhotoFinder.findAll(productId)).willReturn(photos);
-			given(productScrapFinder.isScrapped(productId, userId)).willReturn(isScrapped);
+			given(productScrapFinder.isScrapped(productId, userId)).willReturn(false);
 			given(productSaver.update(any(Product.class))).willReturn(viewedProduct);
 
 			// When
@@ -423,12 +423,11 @@ public class ProductServiceTest {
 			// Then
 			assertThat(result).usingRecursiveComparison().isEqualTo(expectedDetails);
 
-			then(apiUserResolver).should().getCurrentUserDto();
-			then(productFinder).should().findById(productId);
-			then(productPhotoFinder).should().findAll(productId);
-			then(productScrapFinder).should().isScrapped(productId, userId);
-			then(productSaver).should().update(argThat(updatedProduct ->
-				updatedProduct.getViewCount() == product.getViewCount() + 1));
+			// 조회수 증가 확인
+			ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
+			verify(productSaver).update(productCaptor.capture());
+			Product updatedProduct = productCaptor.getValue();
+			assertThat(updatedProduct.getViewCount()).isEqualTo(6);
 		}
 
 		@Test
