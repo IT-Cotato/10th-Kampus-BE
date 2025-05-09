@@ -153,7 +153,7 @@ public class Product {
 		validateNotDeleted();
 	}
 
-	public void validateOwner(Long userId) {
+	private void validateOwner(Long userId) {
 		if(!userId.equals(this.userId)) {
 			throw new AppException(ErrorCode.FORBIDDEN_PRODUCT_DELETE);
 		}
