@@ -3,7 +3,7 @@ package com.cotato.kampus.domain.product.dao.entity;
 import java.time.LocalDateTime;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
-import com.cotato.kampus.domain.product.ProductStatus;
+import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 
 import jakarta.persistence.Column;

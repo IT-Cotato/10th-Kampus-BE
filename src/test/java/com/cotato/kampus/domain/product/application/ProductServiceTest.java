@@ -8,25 +8,37 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
-import com.cotato.kampus.domain.product.ProductStatus;
+import com.cotato.kampus.domain.product.domain.ProductThumbnail;
+import com.cotato.kampus.domain.product.enums.ProductSortType;
+import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
+import com.cotato.kampus.domain.product.domain.ProductDetails;
+import com.cotato.kampus.domain.product.domain.ProductPhoto;
+import com.cotato.kampus.domain.product.implement.product.ProductDtoMapper;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
-import com.cotato.kampus.domain.product.implement.product.ProductSaver;
+import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
-import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingAdapter;
-import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingFinder;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingManager;
+import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoManager;
+import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
+import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
@@ -37,37 +49,49 @@ import com.cotato.kampus.global.util.s3.S3Uploader;
 import com.cotato.kampus.helper.TestUserHelper;
 
 @ExtendWith(MockitoExtension.class)
-class ProductServiceTest {
+public class ProductServiceTest {
 
 	@InjectMocks
-	private ProductService productService;
+	protected ProductService productService;
 
 	@Mock
-	private ProductSaver productSaver;
+	protected ProductManager productManager;
 
 	@Mock
-	private ProductPhotoAppender productPhotoAppender;
+	protected ProductPhotoManager productPhotoManager;
 
 	@Mock
-	private S3Uploader s3Uploader;
+	protected S3Uploader s3Uploader;
 
 	@Mock
-	private ApiUserResolver apiUserResolver;
+	protected ApiUserResolver apiUserResolver;
 
 	@Mock
-	private UserValidator userValidator;
+	protected UserValidator userValidator;
 
 	@Mock
-	private ImageValidator imageValidator;
+	protected ImageValidator imageValidator;
 
 	@Mock
-	private ProductCategoryFinder productCategoryFinder;
+	protected ProductCategoryFinder productCategoryFinder;
 
 	@Mock
-	private ProductCategoryMappingAdapter productCategoryMappingAdapter;
+	protected ProductCategoryMappingManager productCategoryMappingManager;
 
 	@Mock
-	private ProductFinder productFinder;
+	protected ProductFinder productFinder;
+
+	@Mock
+	protected ProductPhotoFinder productPhotoFinder;
+
+	@Mock
+	protected ProductScrapFinder productScrapFinder;
+
+	@Mock
+	protected ProductDtoMapper productDtoMapper;
+
+	@Mock
+	private ProductCategoryMappingFinder productCategoryMappingFinder;
 
 	@Nested
 	@DisplayName("상품 생성 성공 테스트")
@@ -109,7 +133,6 @@ class ProductServiceTest {
 				LocalDateTime.now()     // lastModifiedTime
 			);
 
-
 			List<String> imageUrls = Arrays.asList("url1", "url2");
 
 			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
@@ -118,9 +141,9 @@ class ProductServiceTest {
 			given(productCategoryFinder.find("가전")).willReturn(category2);
 			willDoNothing().given(imageValidator).validateProductImages(images);
 			given(s3Uploader.uploadFiles(images, "product")).willReturn(imageUrls);
-			given(productSaver.append(1L, title, price, description)).willReturn(createdProduct);
-			willDoNothing().given(productCategoryMappingAdapter).saveAll(100L, Arrays.asList(10L, 20L));
-			willDoNothing().given(productPhotoAppender).appendAll(100L, imageUrls);
+			given(productManager.append(1L, title, price, description)).willReturn(createdProduct);
+			willDoNothing().given(productCategoryMappingManager).saveAll(100L, Arrays.asList(10L, 20L));
+			willDoNothing().given(productPhotoManager).appendAll(100L, imageUrls);
 
 			// When: 상품을 생성하면
 			Long productId = productService.createProduct(title, price, description, categoryNames, images);
@@ -133,9 +156,9 @@ class ProductServiceTest {
 			then(productCategoryFinder).should().find("가전");
 			then(imageValidator).should().validateProductImages(images);
 			then(s3Uploader).should().uploadFiles(images, "product");
-			then(productSaver).should().append(1L, title, price, description);
-			then(productCategoryMappingAdapter).should().saveAll(100L, Arrays.asList(10L, 20L));
-			then(productPhotoAppender).should().appendAll(100L, imageUrls);
+			then(productManager).should().append(1L, title, price, description);
+			then(productCategoryMappingManager).should().saveAll(100L, Arrays.asList(10L, 20L));
+			then(productPhotoManager).should().appendAll(100L, imageUrls);
 
 		}
 	}
@@ -188,7 +211,7 @@ class ProductServiceTest {
 				.hasMessage(ErrorCode.PRODUCT_CATEGORY_REQUIRED.getMessage());
 
 			then(productCategoryFinder).should(never()).find(anyString());
-			then(productSaver).should(never()).append(anyLong(), anyString(), any(), anyString());
+			then(productManager).should(never()).append(anyLong(), anyString(), any(), anyString());
 		}
 
 		@Test
@@ -213,7 +236,7 @@ class ProductServiceTest {
 				.isInstanceOf(AppException.class)
 				.hasMessage(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND.getMessage());
 
-			then(productSaver).should(never()).append(anyLong(), anyString(), any(), anyString());
+			then(productManager).should(never()).append(anyLong(), anyString(), any(), anyString());
 		}
 
 		@Test
@@ -245,7 +268,7 @@ class ProductServiceTest {
 				.hasMessage(ErrorCode.PRODUCT_PHOTO_REQUIRED.getMessage());
 
 			then(s3Uploader).should(never()).uploadFiles(anyList(), anyString());
-			then(productSaver).should(never()).append(anyLong(), anyString(), any(), anyString());
+			then(productManager).should(never()).append(anyLong(), anyString(), any(), anyString());
 
 		}
 	}
@@ -273,17 +296,18 @@ class ProductServiceTest {
 
 			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
 			given(productFinder.findById(productId)).willReturn(product);
-			given(productSaver.update(any(Product.class))).willReturn(deletedProduct);
+			given(productManager.update(any(Product.class))).willReturn(deletedProduct);
 
 			// When: 상품을 삭제하면
 			productService.deleteProduct(productId);
 
-			// Then: 상품 상태가 삭제로 변경되고 모든 의존성 호출됨
-			then(apiUserResolver).should().getCurrentUserDto();
-			then(productFinder).should().findById(productId);
-			then(productSaver).should().update(argThat(updatedProduct ->
-				updatedProduct.getStatus() == ProductStatus.DELETED));
+			// Then: 저장된 상품 객체의 상태가 DELETED로 변경되었는지 검증
+			ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
+			then(productManager).should().update(productCaptor.capture()); // update() 호출 시 전달된 Product를 캡처
 
+			Product updatedProduct = productCaptor.getValue();
+			assertThat(updatedProduct.getStatus()).isEqualTo(ProductStatus.DELETED); // 삭제 상태로 변경되었는지 확인
+			assertThat(updatedProduct.getId()).isEqualTo(product.getId()); // ID 유지 확인
 		}
 
 		@Test
@@ -314,7 +338,7 @@ class ProductServiceTest {
 				.isInstanceOf(AppException.class)
 				.hasMessage(ErrorCode.FORBIDDEN_PRODUCT_DELETE.getMessage());
 
-			then(productSaver).should(never()).update(any(Product.class));
+			then(productManager).should(never()).update(any(Product.class));
 		}
 
 		@Test
@@ -349,7 +373,204 @@ class ProductServiceTest {
 				.isInstanceOf(AppException.class)
 				.hasMessage(ErrorCode.ALREADY_DELETED_PRODUCT.getMessage());
 
-			then(productSaver).should(never()).update(any(Product.class));
+			then(productManager).should(never()).update(any(Product.class));
 		}
+	}
+
+	@Nested
+	@DisplayName("상품 상세 조회 테스트")
+	class FindProductDetailsTest {
+
+		@Test
+		@DisplayName("상품 상세 조회 성공")
+		void findProductDetails_success() {
+			// Given
+			Long productId = 100L;
+			Long userId = 2L;
+			String userNickname = "테스트닉네임";
+			UserDto user = TestUserHelper.createUserDto(userId, 1L, UserRole.VERIFIED);
+
+			Product product = Product.fromEntity(
+				productId,
+				userId,
+				"빈티지 카메라",          // title
+				10000,                  // price
+				"상태 좋아요!",           // description
+				5,                      // viewCount
+				0,                      // scrapCount
+				0,                      // chatCount
+				0,                      // bumpCount
+				LocalDateTime.now(),    // bumpedTime
+				ProductStatus.ACTIVE,   // status
+				LocalDateTime.now(),    // createdTime
+				LocalDateTime.now()     // lastModifiedTime
+			);
+
+			Product viewedProduct = product.increaseViewCount();
+
+			List<ProductPhoto> photos = Arrays.asList(
+				new ProductPhoto(1L, productId, "image1.png", 0),
+				new ProductPhoto(2L, productId, "image2.png", 1)
+			);
+
+			boolean isAuthor = true;
+			boolean isScrapped = false;
+
+			ProductDetails expectedDetails = ProductDetails.of(
+				viewedProduct,
+				userNickname,
+				photos,
+				isAuthor,
+				isScrapped
+			);
+
+			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+			given(productFinder.findById(productId)).willReturn(product);
+			given(productPhotoFinder.findAll(productId)).willReturn(photos);
+			given(productScrapFinder.isScrapped(productId, userId)).willReturn(false);
+			given(productManager.update(any(Product.class))).willReturn(viewedProduct);
+
+			// When
+			ProductDetails result = productService.findProductDetails(productId);
+
+			// Then
+			assertThat(result).usingRecursiveComparison().isEqualTo(expectedDetails);
+
+			// 조회수 증가 확인
+			ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
+			verify(productManager).update(productCaptor.capture());
+			Product updatedProduct = productCaptor.getValue();
+			assertThat(updatedProduct.getViewCount()).isEqualTo(6);
+		}
+
+		@Test
+		@DisplayName("삭제된 상품 조회 시 실패")
+		void findProductDetail_fail_deletedProduct() {
+			// Given
+			Long productId = 100L;
+			Long userId = 1L;
+			UserDto user = TestUserHelper.createUserDto(userId, 1L, UserRole.VERIFIED);
+
+			Product deletedProduct = Product.create(
+				userId,
+				"빈티지 카메라",
+				10000,
+				"상태 좋아요!"
+			).withProductStatus(ProductStatus.DELETED);
+
+			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+			given(productFinder.findById(productId)).willReturn(deletedProduct);
+
+			// When & Then: 예외가 발생해야 함
+			assertThatThrownBy(() -> productService.findProductDetails(productId))
+				.isInstanceOf(AppException.class)
+				.hasMessage(ErrorCode.ALREADY_DELETED_PRODUCT.getMessage());
+
+			then(productPhotoFinder).should(never()).findAll(anyLong());
+			then(productScrapFinder).should(never()).isScrapped(anyLong(), anyLong());
+			then(productManager).should(never()).update(any(Product.class));
+		}
+	}
+
+	@Nested
+	@DisplayName("상품 목록 조회 테스트")
+	class FindProductsTest {
+
+		private final int page = 1;
+		private final int size = 10;
+		private final ProductSortType sort = ProductSortType.recent;
+
+		private UserDto user;
+		private Product product1;
+		private ProductThumbnail productThumbnail1;
+		private Slice<Product> products;
+		private Slice<ProductThumbnail> thumbnails;
+
+
+		@BeforeEach
+		void setUp() {
+			user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+
+			product1 = Product.fromEntity(
+				1L,
+				user.id(),
+				"빈티지 카메라",          // title
+				10000,                  // price
+				"상태 좋아요!",           // description
+				5,                      // viewCount
+				2,                      // scrapCount
+				1,                      // chatCount
+				0,                      // bumpCount
+				LocalDateTime.now(),    // bumpedTime
+				ProductStatus.DELETED,  // status - 이미 삭제됨
+				LocalDateTime.now(),    // createdTime
+				LocalDateTime.now()     // lastModifiedTime
+			);
+
+			productThumbnail1 = ProductThumbnail.from(
+				product1,
+				"https://example.com/photo.jpg",
+				false
+			);
+
+			products = new SliceImpl<>(List.of(product1));
+			thumbnails = new SliceImpl<>(List.of(productThumbnail1));
+		}
+
+		@Test
+		@DisplayName("카테고리 없이 조회 성공")
+		void findProducts_success() {
+			// Given
+			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+			given(productFinder.findAll(page, size, sort)).willReturn(products);
+			given(productDtoMapper.toProductThumbnails(products, user.id())).willReturn(thumbnails);
+
+			// When
+			Slice<ProductThumbnail> result = productService.findProducts(page, size, sort, null);
+
+			// Then
+			assertThat(result).isEqualTo(thumbnails);
+
+			// categoryName이 null이므로 호출되지 않아야 함
+			verify(productCategoryFinder, never()).find(any());
+			verify(productFinder, never()).findAllByProductIds(anyList(), anyInt(), anyInt(), any());
+
+			// 대신 else 블록의 메서드가 호출되어야 함
+			verify(productFinder).findAll(page, size, sort);
+		}
+
+		@Test
+		@DisplayName("카테고리 있을 때 조회 성공")
+		void findProducts_withCategory_success() {
+			// Given
+			ProductCategory category = ProductCategory.builder()
+				.id(1L)
+				.categoryName("전자기기")
+				.build();
+
+			List<Long> productIds = List.of(product1.getId());
+
+			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+			given(productCategoryFinder.find("전자기기")).willReturn(category);
+			given(productCategoryMappingFinder.getIdsByCategory(category.getId())).willReturn(productIds);
+			given(productFinder.findAllByProductIds(productIds, page, size, sort)).willReturn(products);
+			given(productDtoMapper.toProductThumbnails(products, user.id())).willReturn(thumbnails);
+
+			// When
+			Slice<ProductThumbnail> result = productService.findProducts(page, size, sort, "전자기기");
+
+			// Then
+			assertThat(result).isEqualTo(thumbnails);
+
+			// categoryName이 있으므로 해당 메서드들이 호출되어야 함
+			verify(productCategoryFinder).find("전자기기");
+			verify(productCategoryMappingFinder).getIdsByCategory(1L);
+			verify(productFinder).findAllByProductIds(productIds, page, size, sort);
+
+			// else 블록은 실행되지 않아야 함
+			verify(productFinder, never()).findAll(anyInt(), anyInt(), any());
+
+		}
+
 	}
 }

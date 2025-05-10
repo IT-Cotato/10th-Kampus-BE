@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.product.dao.repository;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.product.dao.entity.ProductCategoryMappingEntity;
@@ -18,5 +20,10 @@ public class ProductCategoryMappingRepositoryImpl implements ProductCategoryMapp
 	public ProductCategoryMapping save(ProductCategoryMapping productCategoryMapping) {
 		ProductCategoryMappingEntity entity = ProductCategoryMappingEntity.fromDomain(productCategoryMapping);
 		return productCategoryMappingJpaRepository.save(entity).toDomain();
+	}
+
+	@Override
+	public List<Long> findAllProductIdsByCategoryId(Long productCategoryId) {
+		return productCategoryMappingJpaRepository.findAllProductIdsByCategoryId(productCategoryId);
 	}
 }

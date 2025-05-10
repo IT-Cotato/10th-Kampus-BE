@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 @Transactional
-public class ProductCategoryAppender {
+public class ProductCategoryManager {
 
 	private final ProductCategoryRepository productCategoryRepository;
 

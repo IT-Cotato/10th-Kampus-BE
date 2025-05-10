@@ -1,7 +1,6 @@
 package com.cotato.kampus.domain.product.implement.productCategory;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.Arrays;
@@ -19,10 +18,10 @@ import com.cotato.kampus.domain.product.domain.ProductCategoryMapping;
 import com.cotato.kampus.domain.product.implement.port.ProductCategoryMappingRepository;
 
 @ExtendWith(MockitoExtension.class)
-class ProductCategoryMappingAdapterTest {
+class ProductCategoryMappingManagerTest {
 
 	@InjectMocks
-	private ProductCategoryMappingAdapter productCategoryMappingAdapter;
+	private ProductCategoryMappingManager productCategoryMappingManager;
 
 	@Mock
 	private ProductCategoryMappingRepository productCategoryMappingRepository;
@@ -35,7 +34,7 @@ class ProductCategoryMappingAdapterTest {
 		List<Long> categoryIds = Arrays.asList(1L, 2L, 3L);
 
 		// When: 카테고리 매핑을 저장하면
-		productCategoryMappingAdapter.saveAll(productId, categoryIds);
+		productCategoryMappingManager.saveAll(productId, categoryIds);
 
 		// Then: 각 카테고리별로 매핑이 저장됨
 		ArgumentCaptor<ProductCategoryMapping> productCategoryMappingCaptor = ArgumentCaptor.captor();
