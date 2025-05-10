@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.chat.api.port.ChatRoomService;
@@ -37,7 +36,6 @@ public class ChatRoomController {
 
 	@PostMapping
 	@Operation(summary = "채팅방 생성", description = "채팅방 생성 요청입니다.")
-	@ResponseBody
 	public ResponseEntity<DataResponse<ChatroomResponse>> createChatroom(@RequestBody @Valid ChatroomRequest request,
 		@RequestParam(required = true, name = "type") @ValidChatType String chatType) {
 		return ResponseEntity.ok(DataResponse.from(
@@ -55,7 +53,6 @@ public class ChatRoomController {
 
 	@GetMapping("/{chatroomId}")
 	@Operation(summary = "채팅방 상세 조회", description = "채팅방의 상세 정보를 조회합니다.")
-	@ResponseBody
 	public ResponseEntity<DataResponse<ChatRoomDetailResponse>> getChatRoomDetail(@PathVariable Long chatroomId) {
 		return ResponseEntity.ok(
 			DataResponse.from(ChatRoomDetailResponse.from(chatRoomService.getChatRoomDetail(chatroomId))));
@@ -63,7 +60,6 @@ public class ChatRoomController {
 
 	@DeleteMapping("/{chatroomId}")
 	@Operation(summary = "채팅방 삭제", description = "채팅방과 관련된 모든 데이터(메시지, 읽음 상태, 메타데이터)를 삭제합니다.")
-	@ResponseBody
 	public ResponseEntity<DataResponse<Void>> deleteChatroom(@PathVariable Long chatroomId) {
 		chatRoomService.deleteChatroom(chatroomId);
 		return ResponseEntity.ok(DataResponse.ok());
