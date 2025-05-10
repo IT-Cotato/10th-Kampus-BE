@@ -22,7 +22,8 @@ import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.product.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
-import com.cotato.kampus.domain.product.implement.product.ProductAppender;
+import com.cotato.kampus.domain.product.implement.product.ProductFinder;
+import com.cotato.kampus.domain.product.implement.product.ProductSaver;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingAdapter;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
@@ -42,7 +43,7 @@ class ProductServiceTest {
 	private ProductService productService;
 
 	@Mock
-	private ProductAppender productAppender;
+	private ProductSaver productSaver;
 
 	@Mock
 	private ProductPhotoAppender productPhotoAppender;
@@ -64,6 +65,9 @@ class ProductServiceTest {
 
 	@Mock
 	private ProductCategoryMappingAdapter productCategoryMappingAdapter;
+
+	@Mock
+	private ProductFinder productFinder;
 
 	@Nested
 	@DisplayName("상품 생성 성공 테스트")
@@ -114,7 +118,7 @@ class ProductServiceTest {
 			given(productCategoryFinder.find("가전")).willReturn(category2);
 			willDoNothing().given(imageValidator).validateProductImages(images);
 			given(s3Uploader.uploadFiles(images, "product")).willReturn(imageUrls);
-			given(productAppender.append(1L, title, price, description)).willReturn(createdProduct);
+			given(productSaver.append(1L, title, price, description)).willReturn(createdProduct);
 			willDoNothing().given(productCategoryMappingAdapter).saveAll(100L, Arrays.asList(10L, 20L));
 			willDoNothing().given(productPhotoAppender).appendAll(100L, imageUrls);
 
@@ -129,7 +133,7 @@ class ProductServiceTest {
 			then(productCategoryFinder).should().find("가전");
 			then(imageValidator).should().validateProductImages(images);
 			then(s3Uploader).should().uploadFiles(images, "product");
-			then(productAppender).should().append(1L, title, price, description);
+			then(productSaver).should().append(1L, title, price, description);
 			then(productCategoryMappingAdapter).should().saveAll(100L, Arrays.asList(10L, 20L));
 			then(productPhotoAppender).should().appendAll(100L, imageUrls);
 
@@ -184,7 +188,7 @@ class ProductServiceTest {
 				.hasMessage(ErrorCode.PRODUCT_CATEGORY_REQUIRED.getMessage());
 
 			then(productCategoryFinder).should(never()).find(anyString());
-			then(productAppender).should(never()).append(anyLong(), anyString(), any(), anyString());
+			then(productSaver).should(never()).append(anyLong(), anyString(), any(), anyString());
 		}
 
 		@Test
@@ -209,7 +213,7 @@ class ProductServiceTest {
 				.isInstanceOf(AppException.class)
 				.hasMessage(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND.getMessage());
 
-			then(productAppender).should(never()).append(anyLong(), anyString(), any(), anyString());
+			then(productSaver).should(never()).append(anyLong(), anyString(), any(), anyString());
 		}
 
 		@Test
@@ -241,8 +245,111 @@ class ProductServiceTest {
 				.hasMessage(ErrorCode.PRODUCT_PHOTO_REQUIRED.getMessage());
 
 			then(s3Uploader).should(never()).uploadFiles(anyList(), anyString());
-			then(productAppender).should(never()).append(anyLong(), anyString(), any(), anyString());
+			then(productSaver).should(never()).append(anyLong(), anyString(), any(), anyString());
 
+		}
+	}
+
+	@Nested
+	@DisplayName("상품 삭제 테스트")
+	class DeleteProductTest {
+
+		@Test
+		@DisplayName("상품 삭제 성공")
+		void delete_success() {
+			// Given: 유효한 상품과 사용자가 주어졌을 때
+			Long productId = 100L;
+			Long userId = 1L;
+			UserDto user = TestUserHelper.createUserDto(userId, 1L, UserRole.VERIFIED);
+
+			Product product = Product.create(
+				userId,
+				"빈티지 카메라",
+				10000,
+				"상태 좋아요!"
+			);
+
+			Product deletedProduct = product.withProductStatus(ProductStatus.DELETED);
+
+			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+			given(productFinder.findById(productId)).willReturn(product);
+			given(productSaver.update(any(Product.class))).willReturn(deletedProduct);
+
+			// When: 상품을 삭제하면
+			productService.deleteProduct(productId);
+
+			// Then: 상품 상태가 삭제로 변경되고 모든 의존성 호출됨
+			then(apiUserResolver).should().getCurrentUserDto();
+			then(productFinder).should().findById(productId);
+			then(productSaver).should().update(argThat(updatedProduct ->
+				updatedProduct.getStatus() == ProductStatus.DELETED));
+
+		}
+
+		@Test
+		@DisplayName("삭제 권한이 없는 경우 실패")
+		void delete_fail_unauthorized() {
+			// Given: 상품 소유자가 아닐 때
+			Long productId = 100L;
+			Long productOwnerId = 1L;
+			Long otherUserId = 2L;
+			UserDto otherUser = TestUserHelper.createUserDto(otherUserId, 1L, UserRole.VERIFIED);
+
+			// Product.validateDeletable() 메서드를 호출하기 위해 spy() 메서드로 실제 객체 생성
+			Product product = spy(Product.create(
+				productOwnerId,
+				"빈티지 카메라",
+				10000,
+				"상태 좋아요!"
+			));
+
+			doThrow(new AppException(ErrorCode.FORBIDDEN_PRODUCT_DELETE))
+				.when(product).validateDeletable(otherUserId);
+
+			given(apiUserResolver.getCurrentUserDto()).willReturn(otherUser);
+			given(productFinder.findById(productId)).willReturn(product);
+
+			// When & Then: 예외 발생
+			assertThatThrownBy(() -> productService.deleteProduct(productId))
+				.isInstanceOf(AppException.class)
+				.hasMessage(ErrorCode.FORBIDDEN_PRODUCT_DELETE.getMessage());
+
+			then(productSaver).should(never()).update(any(Product.class));
+		}
+
+		@Test
+		@DisplayName("이미 삭제된 상품 삭제 실패")
+		void delete_fail_alreadyDeleted() {
+			// Given
+			Long productId = 100L;
+			Long userId = 1L;
+			UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+
+			Product deletedProduct = Product.fromEntity(
+				productId,
+				userId,
+				"빈티지 카메라",          // title
+				10000,                  // price
+				"상태 좋아요!",           // description
+				5,                      // viewCount
+				2,                      // scrapCount
+				1,                      // chatCount
+				0,                      // bumpCount
+				LocalDateTime.now(),    // bumpedTime
+				ProductStatus.DELETED,  // status - 이미 삭제됨
+				LocalDateTime.now(),    // createdTime
+				LocalDateTime.now()     // lastModifiedTime
+			);
+
+			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+			given(productFinder.findById(productId)).willReturn(deletedProduct);
+
+			// When & Then
+			assertThatThrownBy(() -> productService.deleteProduct(productId))
+				.isInstanceOf(AppException.class)
+				.hasMessage(ErrorCode.ALREADY_DELETED_PRODUCT.getMessage());
+
+			then(productSaver).should(never()).update(any(Product.class));
 		}
 	}
 }
