@@ -101,27 +101,33 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
 	@Override
 	public ChatRoomDetailDto getChatRoomDetail(Long chatroomId) {
-		// 1. Find chatroom
+		// 1. 현재 사용자 ID 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		// 2. 채팅방 멤버 검증
+		chatRoomValidator.validateEnteredUser(userId, chatroomId);
+
+		// 3. Find chatroom
 		ChatRoom chatRoom = chatRoomFinder.findByChatRoomId(chatroomId);
 
-		// 2. 채팅방 타입 가져오기
+		// 4. 채팅방 타입 가져오기
 		ChatType chatType = chatRoom.getChatType();
 
-		// 3. 참조 정보 가져옴 (게시글 또는 상품 등)
+		// 5. 참조 정보 가져옴 (게시글 또는 상품 등)
 		ChatReference reference = referenceFinder.find(chatRoom.getReferenceId(), chatType);
 
-		// 4. 참조 정보가 없는 경우 (삭제된 경우)
+		// 6. 참조 정보가 없는 경우 (삭제된 경우)
 		if (reference.isDeleted()) {
 			return ChatRoomDetailDto.ofDeleted(chatRoom, reference);
 		}
 
-		// 5. 게시글이 존재하는 경우
+		// 7. 게시글이 존재하는 경우
 		if (chatType == ChatType.POST) {
 			Board board = boardFinder.findBoard(reference.getBoardId());
 			return ChatRoomDetailDto.of(chatRoom, reference, board);
 		}
 
-		// 6. 기타 타입 (product 등) - 현재는 구현 필요 없음
+		// 8. 기타 타입 (product 등) - 현재는 구현 필요 없음
 		return ChatRoomDetailDto.of(chatRoom, reference, null);
 	}
 
