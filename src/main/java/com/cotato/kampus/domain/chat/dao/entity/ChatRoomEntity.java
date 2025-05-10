@@ -77,6 +77,7 @@ public class ChatRoomEntity extends BaseTimeEntity {
 	public static ChatRoomEntity fromDomain(ChatRoom chatRoom) {
 		return ChatRoomEntity.builder()
 			.referenceId(chatRoom.getReferenceId())
+			.chatType(chatRoom.getChatType())
 			.initialSenderId(chatRoom.getInitialSenderId())
 			.initialReceiverId(chatRoom.getInitialReceiverId())
 			.isBlocked(chatRoom.getIsBlocked())
