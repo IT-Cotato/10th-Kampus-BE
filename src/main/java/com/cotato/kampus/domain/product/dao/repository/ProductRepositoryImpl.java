@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.product.dao.repository;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.product.dao.entity.ProductEntity;
@@ -18,5 +20,11 @@ public class ProductRepositoryImpl implements ProductRepository {
 	public Product save(Product product) {
 		ProductEntity entity = ProductEntity.fromDomain(product);
 		return productJpaRepository.save(entity).toDomain();
+	}
+
+	@Override
+	public Optional<Product> findById(Long productId) {
+		return productJpaRepository.findById(productId)
+			.map(ProductEntity::toDomain);
 	}
 }

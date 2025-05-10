@@ -18,13 +18,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.cotato.kampus.domain.category.api.request.CreateCategoryRequest;
 import com.cotato.kampus.domain.category.application.CategoryService;
 import com.cotato.kampus.domain.category.domain.Category;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryControllerTest {
 
 	private MockMvc mockMvc;
+	private ObjectMapper objectMapper; // Java 객체를 문자열로 변환
 
 	@Mock
 	private CategoryService categoryService;
@@ -35,6 +38,7 @@ class CategoryControllerTest {
 	@BeforeEach
 	void setUp() {
 		mockMvc = MockMvcBuilders.standaloneSetup(categoryController).build();
+		objectMapper = new ObjectMapper();
 	}
 
 	@Test
@@ -43,13 +47,14 @@ class CategoryControllerTest {
 		// given
 		String categoryName = "새 카테고리";
 		Long categoryId = 1L;
+		CreateCategoryRequest request = new CreateCategoryRequest(categoryName);
 		when(categoryService.createCategory(categoryName)).thenReturn(categoryId);
 
 
 		// when & then
 		mockMvc.perform(post("/v1/api/categories")
-				.param("categoryName", categoryName)
-				.contentType(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data").value(categoryId));
 
