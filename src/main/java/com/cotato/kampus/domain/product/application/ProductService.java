@@ -11,11 +11,16 @@ import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.product.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
+import com.cotato.kampus.domain.product.domain.ProductDetails;
+import com.cotato.kampus.domain.product.domain.ProductPhoto;
 import com.cotato.kampus.domain.product.implement.product.ProductSaver;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingAdapter;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
+import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
+import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
+import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapManager;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -41,6 +46,9 @@ public class ProductService {
 	private final ProductCategoryFinder productCategoryFinder;
 	private final ProductCategoryMappingAdapter productCategoryMappingAdapter;
 	private final ProductFinder productFinder;
+	private final ProductScrapFinder productScrapFinder;
+	private final ProductScrapManager productScrapManager;
+	private final ProductPhotoFinder productPhotoFinder;
 
 	@Transactional
 	public Long createProduct(
@@ -85,5 +93,71 @@ public class ProductService {
 		// 2. 상품 상태를 삭제로 업데이트
 		Product updatedProduct = product.withProductStatus(ProductStatus.DELETED);
 		productSaver.update(updatedProduct);
+	}
+
+	@Transactional
+	public void addScrap(Long productId) {
+		// 1. 유저 조회/검증
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		userValidator.validateStudentVerification(user);
+
+		// 2. 상품 조회/검증
+		Product product = productFinder.findById(productId);
+		product.validateNotDeleted();
+
+		// 3. 스크랩 여부 검증
+		boolean isScrapped = productScrapFinder.isScrapped(productId, user.id());
+		if(isScrapped) {
+			throw new AppException(ErrorCode.ALREADY_SCRAPPED_PRODUCT);
+		}
+
+		// 4. 스크랩 추가
+		productScrapManager.append(productId, user.id());
+
+		// 5. 상품 스크랩 수 반영
+		Product scrappedProduct = product.increaseScrapCount();
+		productSaver.update(scrappedProduct);
+	}
+
+	@Transactional
+	public void removeScrap(Long productId) {
+		// 1. 유저, 상품 조회
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		Product product = productFinder.findById(productId);
+
+		// 2. 스크랩 여부 검증
+		boolean isScrapped = productScrapFinder.isScrapped(productId, user.id());
+		if(!isScrapped) {
+			throw new AppException(ErrorCode.PRODUCT_SCRAP_NOT_FOUND);
+		}
+
+		// 3. 스크랩 취소
+		productScrapManager.delete(product.getId(), user.id());
+
+		// 4. 상품 스크랩 수 감소
+		Product unscrappedProduct = product.decreaseScrapCount();
+		productSaver.update(unscrappedProduct);
+	}
+
+	@Transactional
+	public ProductDetails findProductDetails(Long productId) {
+		// 1. 유저 조회
+		UserDto user = apiUserResolver.getCurrentUserDto();
+
+		// 2. 상품 조회/검증
+		Product product = productFinder.findById(productId);
+		product.validateNotDeleted();
+
+		// 2. 관련 데이터 조회
+		List<ProductPhoto> photos = productPhotoFinder.findAll(productId);
+		boolean isAuthor = product.getUserId().equals(user.id());
+		boolean isScrapped = productScrapFinder.isScrapped(productId, user.id());
+
+		// 3. 상품 조회수 증가
+		Product viewedProduct = product.increaseViewCount();
+		productSaver.update(viewedProduct);
+
+		// 4. ProductDetails 변환
+		return ProductDetails.of(viewedProduct, user.nickname(), photos, isAuthor, isScrapped);
 	}
 }

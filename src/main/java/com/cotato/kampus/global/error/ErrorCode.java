@@ -135,6 +135,8 @@ public enum ErrorCode {
 	PRODUCT_CATEGORY_REQUIRED(HttpStatus.BAD_REQUEST, "상품 카테고리는 필수입니다.", "PRODUCT-002"),
 	FORBIDDEN_PRODUCT_DELETE(HttpStatus.FORBIDDEN, "상품을 삭제할 권한이 없습니다.", "PRODUCT-003"),
 	ALREADY_DELETED_PRODUCT(HttpStatus.BAD_REQUEST, "이미 삭제된 상품입니다.", "PRODUCT-004"),
+	ALREADY_SCRAPPED_PRODUCT(HttpStatus.BAD_REQUEST, "이미 스크랩한 상품입니다.", "PRODUCT-005"),
+	PRODUCT_SCRAP_NOT_FOUND(HttpStatus.FORBIDDEN, "상품 스크랩 내역을 찾을 수 없습니다.", "PRODUCT-006"),
 
 	// ProductPhoto
 	PRODUCT_PHOTO_REQUIRED(HttpStatus.BAD_REQUEST, "상품의 사진은 필수입니다.", "PRODUCT_PHOTO_001"),
