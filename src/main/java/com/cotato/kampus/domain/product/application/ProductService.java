@@ -2,22 +2,27 @@ package com.cotato.kampus.domain.product.application;
 
 import java.util.List;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
-import com.cotato.kampus.domain.product.ProductStatus;
+import com.cotato.kampus.domain.product.enums.ProductSortType;
+import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
 import com.cotato.kampus.domain.product.domain.ProductDetails;
 import com.cotato.kampus.domain.product.domain.ProductPhoto;
-import com.cotato.kampus.domain.product.implement.product.ProductSaver;
+import com.cotato.kampus.domain.product.domain.ProductThumbnail;
+import com.cotato.kampus.domain.product.implement.product.ProductDtoMapper;
+import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
-import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingAdapter;
-import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingFinder;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingManager;
+import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoManager;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapManager;
@@ -36,19 +41,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProductService {
 
-	private final ProductSaver productSaver;
-	private final ProductPhotoAppender productPhotoAppender;
+	private final ProductManager productManager;
+	private final ProductPhotoManager productPhotoManager;
 	private final S3Uploader s3Uploader;
 	private static final String PRODUCT_IMAGE_FOLDER = "product";
 	private final ApiUserResolver apiUserResolver;
 	private final UserValidator userValidator;
 	private final ImageValidator imageValidator;
 	private final ProductCategoryFinder productCategoryFinder;
-	private final ProductCategoryMappingAdapter productCategoryMappingAdapter;
+	private final ProductCategoryMappingManager productCategoryMappingManager;
 	private final ProductFinder productFinder;
 	private final ProductScrapFinder productScrapFinder;
 	private final ProductScrapManager productScrapManager;
 	private final ProductPhotoFinder productPhotoFinder;
+	private final ProductCategoryMappingFinder productCategoryMappingFinder;
+	private final ProductDtoMapper productDtoMapper;
 
 	@Transactional
 	public Long createProduct(
@@ -76,9 +83,9 @@ public class ProductService {
 		List<String> imageUrls = s3Uploader.uploadFiles(images, PRODUCT_IMAGE_FOLDER);
 
 		// 3. Product 추가
-		Product product = productSaver.append(user.id(), title, price, description);
-		productCategoryMappingAdapter.saveAll(product.getId(), categoryIds);
-		productPhotoAppender.appendAll(product.getId(), imageUrls);
+		Product product = productManager.append(user.id(), title, price, description);
+		productCategoryMappingManager.saveAll(product.getId(), categoryIds);
+		productPhotoManager.appendAll(product.getId(), imageUrls);
 
 		return product.getId();
 	}
@@ -92,7 +99,7 @@ public class ProductService {
 
 		// 2. 상품 상태를 삭제로 업데이트
 		Product updatedProduct = product.withProductStatus(ProductStatus.DELETED);
-		productSaver.update(updatedProduct);
+		productManager.update(updatedProduct);
 	}
 
 	@Transactional
@@ -116,7 +123,7 @@ public class ProductService {
 
 		// 5. 상품 스크랩 수 반영
 		Product scrappedProduct = product.increaseScrapCount();
-		productSaver.update(scrappedProduct);
+		productManager.update(scrappedProduct);
 	}
 
 	@Transactional
@@ -136,7 +143,7 @@ public class ProductService {
 
 		// 4. 상품 스크랩 수 감소
 		Product unscrappedProduct = product.decreaseScrapCount();
-		productSaver.update(unscrappedProduct);
+		productManager.update(unscrappedProduct);
 	}
 
 	@Transactional
@@ -155,9 +162,27 @@ public class ProductService {
 
 		// 3. 상품 조회수 증가
 		Product viewedProduct = product.increaseViewCount();
-		productSaver.update(viewedProduct);
+		productManager.update(viewedProduct);
 
 		// 4. ProductDetails 변환
 		return ProductDetails.of(viewedProduct, user.nickname(), photos, isAuthor, isScrapped);
+	}
+
+	public Slice<ProductThumbnail> findProducts(int page, int size, ProductSortType sort, String categoryName) {
+		// 1. 유저 조회
+		UserDto user = apiUserResolver.getCurrentUserDto();
+
+		Slice<Product> products;
+
+		// 2. 카테고리 여부에 따른 필터링
+		if(categoryName != null && !categoryName.isEmpty()) {
+			ProductCategory category = productCategoryFinder.find(categoryName);
+			List<Long> productIds = productCategoryMappingFinder.getIdsByCategory(category.getId());
+			products = productFinder.findAllByProductIds(productIds, page, size, sort);
+		} else {
+			products = productFinder.findAll(page, size, sort);
+		}
+
+		return productDtoMapper.toProductThumbnails(products, user.id());
 	}
 }

@@ -22,12 +22,13 @@ public class ProductCategoryMappingEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue
+	@Column(name = "product_category_mapping_id")
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(name = "product_id", nullable = false)
 	private Long productId;
 
-	@Column(nullable = false)
+	@Column(name = "product_category_id", nullable = false)
 	private Long categoryId;
 
 	public static ProductCategoryMappingEntity fromDomain(ProductCategoryMapping productCategoryMapping) {

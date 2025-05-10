@@ -30,4 +30,10 @@ public class ProductPhotoRepositoryImpl implements ProductPhotoRepository {
 			.toList();
 		productPhotoJpaRepository.saveAll(entities);
 	}
+
+	@Override
+	public ProductPhoto findByProductIdAndOrder(Long productId, int order) {
+		return productPhotoJpaRepository.findByProductIdAndOrder(productId, order)
+			.toDomain();
+	}
 }

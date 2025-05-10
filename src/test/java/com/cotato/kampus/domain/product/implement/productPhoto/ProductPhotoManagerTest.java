@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
-class ProductPhotoAppenderTest {
+class ProductPhotoManagerTest {
 
 	@InjectMocks
-	private ProductPhotoAppender productPhotoAppender;
+	private ProductPhotoManager productPhotoManager;
 
 	@Mock
 	private ProductPhotoRepository productPhotoRepository;
@@ -38,7 +38,7 @@ class ProductPhotoAppenderTest {
 		);
 
 		// When
-		productPhotoAppender.appendAll(productId, photoUrls);
+		productPhotoManager.appendAll(productId, photoUrls);
 
 		// Then: 올바른 순서로 ProductPhoto가 생성되어 저장된다
 		ArgumentCaptor<List<ProductPhoto>> photoCaptor = ArgumentCaptor.forClass(List.class);

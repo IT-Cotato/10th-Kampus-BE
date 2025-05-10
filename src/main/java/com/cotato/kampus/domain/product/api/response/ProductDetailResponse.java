@@ -3,7 +3,7 @@ package com.cotato.kampus.domain.product.api.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.cotato.kampus.domain.product.ProductStatus;
+import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.domain.ProductDetails;
 import com.cotato.kampus.domain.product.domain.ProductPhotoInfo;
 import com.fasterxml.jackson.annotation.JsonFormat;

@@ -19,10 +19,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.product.ProductStatus;
+import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
-import com.cotato.kampus.domain.product.implement.product.ProductSaver;
+import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapManager;
 import com.cotato.kampus.domain.user.application.UserValidator;
@@ -39,7 +39,7 @@ public class ProductScrapTest {
 	protected ProductService productService;
 
 	@Mock
-	protected ProductSaver productSaver;
+	protected ProductManager productManager;
 
 	@Mock
 	private ProductScrapFinder productScrapFinder;
@@ -64,7 +64,7 @@ public class ProductScrapTest {
 		void setUp() {
 			// 각 테스트 전에 모든 Mock 초기화
 			Mockito.reset(productScrapFinder, productScrapManager, productFinder,
-				productSaver, apiUserResolver, userValidator);
+				productManager, apiUserResolver, userValidator);
 		}
 
 		@Test
@@ -82,7 +82,7 @@ public class ProductScrapTest {
 			given(userValidator.validateStudentVerification(user)).willReturn(user.universityId());
 			given(productFinder.findById(productId)).willReturn(product);
 			given(productScrapFinder.isScrapped(productId, userId)).willReturn(false);
-			given(productSaver.update(any(Product.class))).willReturn(scrappedProduct);
+			given(productManager.update(any(Product.class))).willReturn(scrappedProduct);
 			willDoNothing().given(productScrapManager).append(productId, userId);
 
 			// When: 스크랩 요청 실행
@@ -90,7 +90,7 @@ public class ProductScrapTest {
 
 			// Then: 상품이 정상적으로 업데이트 되었는지 검증
 			ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
-			verify(productSaver).update(productCaptor.capture());
+			verify(productManager).update(productCaptor.capture());
 
 			Product capturedProduct = productCaptor.getValue();
 			assertThat(capturedProduct.getScrapCount()).isEqualTo(1);
@@ -119,7 +119,7 @@ public class ProductScrapTest {
 
 			then(productScrapFinder).should(never()).isScrapped(anyLong(), anyLong());
 			then(productScrapManager).should(never()).append(anyLong(), anyLong());
-			then(productSaver).should(never()).update(any(Product.class));
+			then(productManager).should(never()).update(any(Product.class));
 		}
 
 		@Test
@@ -149,7 +149,7 @@ public class ProductScrapTest {
 				.hasMessage(ErrorCode.ALREADY_SCRAPPED_PRODUCT.getMessage());
 
 			then(productScrapManager).should(never()).append(anyLong(), anyLong());
-			then(productSaver).should(never()).update(any(Product.class));
+			then(productManager).should(never()).update(any(Product.class));
 		}
 
 	}
@@ -162,7 +162,7 @@ public class ProductScrapTest {
 		void setUp() {
 			// 각 테스트 전에 모든 Mock 초기화
 			Mockito.reset(productScrapFinder, productScrapManager, productFinder,
-				productSaver, apiUserResolver, userValidator);
+				productManager, apiUserResolver, userValidator);
 		}
 
 		@Test
@@ -194,7 +194,7 @@ public class ProductScrapTest {
 			given(apiUserResolver.getCurrentUserDto()).willReturn(user);
 			given(productFinder.findById(productId)).willReturn(product);
 			given(productScrapFinder.isScrapped(anyLong(), anyLong())).willReturn(true);
-			given(productSaver.update(any(Product.class))).willReturn(unscrapedProduct);
+			given(productManager.update(any(Product.class))).willReturn(unscrapedProduct);
 			willDoNothing().given(productScrapManager).delete(productId, userId);
 
 			// When
@@ -202,7 +202,7 @@ public class ProductScrapTest {
 
 			// Then
 			ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
-			verify(productSaver).update(productCaptor.capture());
+			verify(productManager).update(productCaptor.capture());
 			Product capturedProduct = productCaptor.getValue();
 
 			assertThat(capturedProduct.getScrapCount()).isEqualTo(4);
@@ -233,7 +233,7 @@ public class ProductScrapTest {
 				.hasMessage(ErrorCode.PRODUCT_SCRAP_NOT_FOUND.getMessage());
 
 			then(productScrapManager).should(never()).delete(anyLong(), anyLong());
-			then(productSaver).should(never()).update(any(Product.class));
+			then(productManager).should(never()).update(any(Product.class));
 		}
 	}
 }
