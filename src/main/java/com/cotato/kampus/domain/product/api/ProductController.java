@@ -4,12 +4,14 @@ package com.cotato.kampus.domain.product.api;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cotato.kampus.domain.product.api.response.ProductDetailResponse;
 import com.cotato.kampus.domain.product.application.ProductService;
 import com.cotato.kampus.domain.product.api.request.CreateProductRequest;
 import com.cotato.kampus.domain.product.api.response.ProductCreateResponse;
@@ -33,8 +35,8 @@ public class ProductController {
 	@PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "상품 등록")
 	public ResponseEntity<DataResponse<ProductCreateResponse>> createProduct(
-		@Valid @ModelAttribute CreateProductRequest request) throws ImageException {
-
+		@Valid @ModelAttribute CreateProductRequest request
+	) throws ImageException {
 		return ResponseEntity.ok(DataResponse.from(
 				ProductCreateResponse.of(
 					productService.createProduct(
@@ -74,5 +76,18 @@ public class ProductController {
 	) {
 		productService.removeScrap(productId);
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@GetMapping("/{productId}")
+	@Operation(summary = "상품 상세 조회", description = "중고거래 상품 상세 정보와 유저의 스크랩 여부를 반환")
+	public ResponseEntity<DataResponse<ProductDetailResponse>> getProductDetails(
+		@PathVariable Long productId
+	) {
+			return ResponseEntity.ok(DataResponse.from(
+				ProductDetailResponse.from(
+					productService.findProductDetails(productId)
+				)
+			)
+		);
 	}
 }

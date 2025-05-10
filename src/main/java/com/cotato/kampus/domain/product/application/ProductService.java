@@ -11,11 +11,14 @@ import com.cotato.kampus.domain.common.application.ImageValidator;
 import com.cotato.kampus.domain.product.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
+import com.cotato.kampus.domain.product.domain.ProductDetails;
+import com.cotato.kampus.domain.product.domain.ProductPhoto;
 import com.cotato.kampus.domain.product.implement.product.ProductSaver;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingAdapter;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoAppender;
+import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapManager;
 import com.cotato.kampus.domain.user.application.UserValidator;
@@ -45,6 +48,7 @@ public class ProductService {
 	private final ProductFinder productFinder;
 	private final ProductScrapFinder productScrapFinder;
 	private final ProductScrapManager productScrapManager;
+	private final ProductPhotoFinder productPhotoFinder;
 
 	@Transactional
 	public Long createProduct(
@@ -133,5 +137,27 @@ public class ProductService {
 		// 4. 상품 스크랩 수 감소
 		Product unscrappedProduct = product.decreaseScrapCount();
 		productSaver.update(unscrappedProduct);
+	}
+
+	@Transactional
+	public ProductDetails findProductDetails(Long productId) {
+		// 1. 유저 조회
+		UserDto user = apiUserResolver.getCurrentUserDto();
+
+		// 2. 상품 조회/검증
+		Product product = productFinder.findById(productId);
+		product.validateNotDeleted();
+
+		// 2. 관련 데이터 조회
+		List<ProductPhoto> photos = productPhotoFinder.findAll(productId);
+		boolean isAuthor = product.getUserId().equals(user.id());
+		boolean isScrapped = productScrapFinder.isScrapped(productId, user.id());
+
+		// 3. 상품 조회수 증가
+		Product viewedProduct = product.increaseViewCount();
+		productSaver.update(viewedProduct);
+
+		// 4. ProductDetails 변환
+		return ProductDetails.of(viewedProduct, user.nickname(), photos, isAuthor, isScrapped);
 	}
 }
