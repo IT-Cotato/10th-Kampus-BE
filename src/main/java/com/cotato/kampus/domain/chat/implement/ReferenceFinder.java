@@ -7,6 +7,8 @@ import com.cotato.kampus.domain.chat.domain.ChatReference;
 import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.implement.post.PostFinder;
+import com.cotato.kampus.domain.product.domain.Product;
+import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class ReferenceFinder {
 
 	private final PostFinder postFinder;
+	private final ProductFinder productFinder;
 
 	public ChatReference find(final Long referenceId, ChatType chatType) {
 		if (chatType == ChatType.POST) {
@@ -28,11 +31,13 @@ public class ReferenceFinder {
 				.boardId(post.getBoardId())
 				.build();
 		} else {
-			// TODO: Handle other chat types
+			// POST가 아닌 경우 모두 Product 채팅 타입으로 처리
+			Product product = productFinder.findById(referenceId);
 			return ChatReference.builder()
-				.referenceId(referenceId)
-				.referenceUserId(null)
-				.title(null)
+				.referenceId(product.getId())
+				.referenceUserId(product.getUserId())
+				.title(product.getTitle())
+				.boardId(null)
 				.build();
 		}
 	}
