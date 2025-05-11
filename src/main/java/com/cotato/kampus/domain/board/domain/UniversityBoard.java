@@ -27,7 +27,6 @@ public class UniversityBoard extends Board {
 	) {
 		super(id, boardName, description, usesCategories, boardStatus, BoardType.UNIVERSITY, deletionScheduledAt);
 		this.universityId = universityId;
-		validate();
 		validateUniversityId();
 	}
 

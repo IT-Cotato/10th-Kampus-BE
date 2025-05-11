@@ -78,7 +78,7 @@ public class TemporaryPostService {
 		// 1. 유저 및 게시판 조회/검증
 		UserDto user = apiUserResolver.getCurrentUserDto();
 		Board board = boardFinder.findBoard(boardId);
-		board.validateBoardIsActive();
+		board.validateActive();
 		boardValidator.validatePostCreationAccess(user, board);
 
 		// 2. 카테고리 검증

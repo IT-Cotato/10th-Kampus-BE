@@ -22,7 +22,6 @@ public class NormalBoard extends Board {
 		LocalDateTime deletionScheduledAt
 	) {
 		super(id, boardName, description, usesCategories, boardStatus, boardType, deletionScheduledAt);
-		validate();
 	}
 
 	@Override
