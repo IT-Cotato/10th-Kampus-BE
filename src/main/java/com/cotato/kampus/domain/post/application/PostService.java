@@ -135,7 +135,7 @@ public class PostService {
 
 		// Board 조회, 유효성 검사
 		Board board = boardFinder.findBoard(boardId);
-		board.validateBoardIsActive();
+		board.validateActive();
 		boardValidator.validateUniversityAccess(user, board);
 
 		Slice<Post> posts;
