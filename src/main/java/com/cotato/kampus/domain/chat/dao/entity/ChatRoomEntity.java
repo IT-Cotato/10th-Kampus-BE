@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.chat.dao.entity;
 
 import com.cotato.kampus.domain.chat.domain.ChatRoom;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
@@ -28,8 +29,12 @@ public class ChatRoomEntity extends BaseTimeEntity {
 	@Column(name = "chatroom_id")
 	private Long id;
 
-	@Column(name = "post_id", nullable = false)
-	private Long postId;
+	@Column(name = "reference_id", nullable = false)
+	private Long referenceId;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "chat_type", nullable = false)
+	private ChatType chatType;
 
 	@Column(name = "initial_sender_id", nullable = false)
 	private Long initialSenderId;
@@ -45,9 +50,10 @@ public class ChatRoomEntity extends BaseTimeEntity {
 	private InitiatedFrom initiatedFrom;
 
 	@Builder
-	public ChatRoomEntity(Long postId, Long initialSenderId, Long initialReceiverId,
+	public ChatRoomEntity(Long referenceId, ChatType chatType, Long initialSenderId, Long initialReceiverId,
 		Boolean isBlocked, InitiatedFrom initiatedFrom) {
-		this.postId = postId;
+		this.referenceId = referenceId;
+		this.chatType = chatType;
 		this.initialSenderId = initialSenderId;
 		this.initialReceiverId = initialReceiverId;
 		this.isBlocked = isBlocked;
@@ -57,7 +63,8 @@ public class ChatRoomEntity extends BaseTimeEntity {
 	public static ChatRoom toDomain(ChatRoomEntity chatRoomEntity) {
 		return ChatRoom.builder()
 			.id(chatRoomEntity.getId())
-			.postId(chatRoomEntity.getPostId())
+			.referenceId(chatRoomEntity.getReferenceId())
+			.chatType(chatRoomEntity.getChatType())
 			.initialSenderId(chatRoomEntity.getInitialSenderId())
 			.initialReceiverId(chatRoomEntity.getInitialReceiverId())
 			.isBlocked(chatRoomEntity.getIsBlocked())
@@ -69,7 +76,8 @@ public class ChatRoomEntity extends BaseTimeEntity {
 
 	public static ChatRoomEntity fromDomain(ChatRoom chatRoom) {
 		return ChatRoomEntity.builder()
-			.postId(chatRoom.getPostId())
+			.referenceId(chatRoom.getReferenceId())
+			.chatType(chatRoom.getChatType())
 			.initialSenderId(chatRoom.getInitialSenderId())
 			.initialReceiverId(chatRoom.getInitialReceiverId())
 			.isBlocked(chatRoom.getIsBlocked())

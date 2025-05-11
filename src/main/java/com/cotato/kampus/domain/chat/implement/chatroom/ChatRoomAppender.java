@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.chat.domain.ChatRoom;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.chat.implement.chatroom.port.ChatRoomRepository;
 
 import lombok.AccessLevel;
@@ -17,7 +18,7 @@ public class ChatRoomAppender {
 	private final ChatRoomRepository chatRoomRepository;
 
 	@Transactional
-	public Long appendChatRoom(Long postId, Long senderId, Long receiverId) {
-		return chatRoomRepository.save(ChatRoom.create(postId, senderId, receiverId));
+	public Long appendChatRoom(Long referenceId, ChatType chatType, Long senderId, Long receiverId) {
+		return chatRoomRepository.save(ChatRoom.create(referenceId, chatType, senderId, receiverId));
 	}
 }

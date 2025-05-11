@@ -1,38 +1,37 @@
 package com.cotato.kampus.domain.chat.domain;
 
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.post.domain.PostReferenceDto;
 
 public record ChatRoomDetailDto(
 	Long chatroomId,
-	Long postId,
-	String postTitle,
+	Long referenceId,
+	String title,
 	Long boardId,
 	String boardName,
 	Long initialSenderId,
-	Long initialReceiverId
-) {
-	public static ChatRoomDetailDto of(ChatRoom chatRoom, PostReferenceDto post, Board board) {
+	Long initialReceiverId,
+	boolean isDeleted) {
+	public static ChatRoomDetailDto of(ChatRoom chatRoom, ChatReference reference, Board board) {
 		return new ChatRoomDetailDto(
 			chatRoom.getId(),
-			post.postId(),
-			post.title(),
-			board.getId(),
-			board.getBoardName(),
+			reference.getReferenceId(),
+			reference.getTitle(),
+			board != null ? board.getId() : -1L,
+			board != null ? board.getBoardName() : "",
 			chatRoom.getInitialSenderId(),
-			chatRoom.getInitialReceiverId()
-		);
+			chatRoom.getInitialReceiverId(),
+			false);
 	}
 
-	public static ChatRoomDetailDto ofDeleted(ChatRoom chatRoom, PostReferenceDto post) {
+	public static ChatRoomDetailDto ofDeleted(ChatRoom chatRoom, ChatReference reference) {
 		return new ChatRoomDetailDto(
 			chatRoom.getId(),
-			post.postId(),
-			post.title(),
+			reference.getReferenceId(),
+			reference.getTitle(),
 			-1L,
 			"",
 			chatRoom.getInitialSenderId(),
-			chatRoom.getInitialReceiverId()
-		);
+			chatRoom.getInitialReceiverId(),
+			true);
 	}
 }

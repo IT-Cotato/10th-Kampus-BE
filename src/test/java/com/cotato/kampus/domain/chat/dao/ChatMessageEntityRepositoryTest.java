@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.cotato.kampus.domain.chat.dao.repository.ChatMessageJpaRepository;
 import com.cotato.kampus.domain.chat.dao.entity.ChatMessageEntity;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.config.JpaAuditingConfig;
 
@@ -34,6 +35,7 @@ class ChatMessageEntityRepositoryTest {
 		// given
 		ChatMessageEntity chatMessageEntity1 = ChatMessageEntity.builder()
 			.chatroomId(1L)
+			.chatType(ChatType.POST)
 			.senderId(1L)
 			.content("첫 번째 메시지")
 			.build();
@@ -41,6 +43,7 @@ class ChatMessageEntityRepositoryTest {
 
 		ChatMessageEntity chatMessageEntity2 = ChatMessageEntity.builder()
 			.chatroomId(1L)
+			.chatType(ChatType.POST)
 			.senderId(1L)
 			.content("두 번째 메시지")
 			.build();
@@ -48,6 +51,7 @@ class ChatMessageEntityRepositoryTest {
 
 		ChatMessageEntity chatMessageEntity3 = ChatMessageEntity.builder()
 			.chatroomId(1L)
+			.chatType(ChatType.POST)
 			.senderId(1L)
 			.content("세 번째 메시지")
 			.build();

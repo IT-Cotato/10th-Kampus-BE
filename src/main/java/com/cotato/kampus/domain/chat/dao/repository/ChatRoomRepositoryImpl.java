@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
 import com.cotato.kampus.domain.chat.domain.ChatRoom;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.chat.implement.chatroom.port.ChatRoomRepository;
 
 import lombok.AccessLevel;
@@ -28,10 +29,10 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepository {
 	public Optional<ChatRoom> findById(Long chatroomId) {
 		return chatRoomJpaRepository.findById(chatroomId).map(ChatRoomEntity::toDomain);
 	}
-
+	
 	@Override
-	public boolean existsByPostIdAndInitialSenderId(Long postId, Long senderId) {
-		return chatRoomJpaRepository.existsByPostIdAndInitialSenderId(postId, senderId);
+	public boolean existsByReferenceIdAndInitialSenderIdAndChatType(Long referenceId, Long senderId, ChatType chatType) {
+		return chatRoomJpaRepository.existsByReferenceIdAndInitialSenderIdAndChatType(referenceId, senderId, chatType);
 	}
 
 	@Override

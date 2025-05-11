@@ -6,13 +6,13 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.error.exception.ImageValidationException;
-import com.cotato.kampus.global.error.exception.JwtException;
 import com.cotato.kampus.global.error.exception.UnivCertException;
 import com.cotato.kampus.global.error.response.ErrorResponse;
 import com.deepl.api.DeepLException;
@@ -59,16 +59,6 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
 	}
 
-	@ExceptionHandler(JwtException.class)
-	public ResponseEntity<ErrorResponse> handleJwtException(JwtException e,
-		HttpServletRequest request) {
-		log.error("엑세스 토큰 만료 Exception 발생: {}", e.getMessage());
-		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
-		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode(), request);
-		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-			.body(errorResponse);
-	}
-
 	@ExceptionHandler(DeepLException.class)
 	public ResponseEntity<ErrorResponse> handleDeepLException(DeepLException e,
 		HttpServletRequest request) {
@@ -106,6 +96,21 @@ public class GlobalExceptionHandler {
 		String errorMessage = e.getBindingResult().getFieldErrors().stream()
 			.findFirst()
 			.map(error -> error.getField() + ": " + error.getDefaultMessage())
+			.orElse("잘못된 요청입니다.");
+
+		ErrorResponse errorResponse = ErrorResponse.of(request, ErrorCode.INVALID_PARAMETER, errorMessage);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+
+	@ExceptionHandler(HandlerMethodValidationException.class)
+	public ResponseEntity<ErrorResponse> handleHandlerMethodValidationException(HandlerMethodValidationException e,
+		HttpServletRequest request) {
+
+		// 파라미터 유효성 검증 결과에서 오류 메시지 추출
+		String errorMessage = e.getParameterValidationResults().stream()
+			.flatMap(result -> result.getResolvableErrors().stream())
+			.map(error -> error.getDefaultMessage())
+			.findFirst()
 			.orElse("잘못된 요청입니다.");
 
 		ErrorResponse errorResponse = ErrorResponse.of(request, ErrorCode.INVALID_PARAMETER, errorMessage);

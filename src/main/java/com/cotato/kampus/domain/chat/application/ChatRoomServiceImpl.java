@@ -1,7 +1,5 @@
 package com.cotato.kampus.domain.chat.application;
 
-import java.util.List;
-
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,11 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.chat.api.port.ChatRoomService;
+import com.cotato.kampus.domain.chat.domain.ChatReference;
 import com.cotato.kampus.domain.chat.domain.ChatRoom;
 import com.cotato.kampus.domain.chat.domain.ChatRoomDetailDto;
 import com.cotato.kampus.domain.chat.domain.ChatRoomPreview;
 import com.cotato.kampus.domain.chat.domain.ChatRoomPreviewList;
-import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
+import com.cotato.kampus.domain.chat.enums.ChatType;
+import com.cotato.kampus.domain.chat.implement.ReferenceFinder;
 import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomAppender;
 import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomDeleter;
 import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomFinder;
@@ -25,9 +25,6 @@ import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataFinder;
 import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataMapper;
 import com.cotato.kampus.domain.chat.implement.read.MessageReadStatusDeleter;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.post.domain.Post;
-import com.cotato.kampus.domain.post.implement.post.PostFinder;
-import com.cotato.kampus.domain.post.domain.PostReferenceDto;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +43,6 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
 	private final ApiUserResolver apiUserResolver;
 
-	private final PostFinder postFinder;
 	private final BoardFinder boardFinder;
 
 	private final ChatMessageDeleter chatMessageDeleter;
@@ -57,66 +53,73 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 	private final ChatroomMetadataMapper chatroomMetadataMapper;
 	private final ChatroomMetadataDeleter chatroomMetadataDeleter;
 
+	private final ReferenceFinder referenceFinder;
+
 	@Override
 	@Transactional
-	public Long createChatRoom(Long postId) {
-		// 1. 게시글 정보 조회
-		Post post = postFinder.find(postId);
-		Long receiverId = post.getUserId();
-		String postTitle = post.getTitle();
+	public Long createChatRoom(Long referenceId, ChatType chatType) {
+
+		ChatReference chatReference = referenceFinder.find(referenceId, chatType);
 
 		// 2. 채팅을 건 유저를 조회
 		Long senderId = apiUserResolver.getCurrentUserId();
 
 		// 3. 채팅방 중복 검증(이미 있는 채팅방)
-		chatRoomValidator.validateDuplicateChatRoom(postId, senderId);
+		chatRoomValidator.validateDuplicateChatRoom(chatReference.getReferenceId(), senderId, chatType);
 
 		// 4. 채팅방 생성(생성 시 검증 이루어짐(sender != receiver))
-		Long chatroomId = chatRoomAppender.appendChatRoom(postId, senderId, receiverId);
+		Long chatroomId = chatRoomAppender.appendChatRoom(chatReference.getReferenceUserId(), chatType, senderId,
+			chatReference.getReferenceUserId());
 
 		// 5. 채팅방 리스트 조회시 사용되는 뷰 생성
-		chatroomMetadataAppender.createMetadataPair(
-			chatroomId,
-			postId,
-			postTitle,
-			senderId,
-			receiverId
-		);
+		chatroomMetadataAppender.createMetadataPair(chatroomId, chatType, referenceId, chatReference.getTitle(),
+			senderId, chatReference.getReferenceUserId());
 
 		return chatroomId;
 	}
 
 	@Override
-	public ChatRoomPreviewList findChatRooms(int page) {
+	public ChatRoomPreviewList findChatRooms(int page, ChatType chatType) {
 		// 1. 유저 정보를 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
-		// 2. 해당 유저의 채팅방 메타데이터를 lastChatTime 내림차순으로 조회
-		Slice<ChatroomMetadata> chatRoomMetadatas = chatroomMetadataFinder.findChatRoomMetadatas(userId, page);
+		// 2. 해당 유저의 채팅방 메타데이터를 조회하고 ChatRoomPreview로 바로 변환
+		Slice<ChatRoomPreview> previewSlice = chatroomMetadataFinder.findChatRoomMetadatas(userId, page, chatType)
+			.map(chatroomMetadataMapper::toChatRoomPreview);
 
-		// 3. ChatRoomPreview로 변환
-		List<ChatRoomPreview> previewList = chatRoomMetadatas.getContent()
-			.stream()
-			.map(chatroomMetadataMapper::toChatRoomPreview)
-			.toList();
-
-		return ChatRoomPreviewList.from(previewList, chatRoomMetadatas.hasNext());
+		return ChatRoomPreviewList.from(previewSlice.getContent(), previewSlice.hasNext());
 	}
 
 	@Override
 	public ChatRoomDetailDto getChatRoomDetail(Long chatroomId) {
-		// 1. Find chatroom
-		ChatRoom chatRoom = chatRoomFinder.findByChatRoomId(chatroomId);
-		// 2. 게시글 정보 가져옴
-		PostReferenceDto postReference = postFinder.findPostReference(chatRoom.getPostId());
+		// 1. 현재 사용자 ID 조회
+		Long userId = apiUserResolver.getCurrentUserId();
 
-		// 3. 게시글이 삭제된 경우
-		if (postReference.isDeleted()) {
-			return ChatRoomDetailDto.ofDeleted(chatRoom, postReference);
+		// 2. 채팅방 멤버 검증
+		chatRoomValidator.validateEnteredUser(userId, chatroomId);
+
+		// 3. Find chatroom
+		ChatRoom chatRoom = chatRoomFinder.findByChatRoomId(chatroomId);
+
+		// 4. 채팅방 타입 가져오기
+		ChatType chatType = chatRoom.getChatType();
+
+		// 5. 참조 정보 가져옴 (게시글 또는 상품 등)
+		ChatReference reference = referenceFinder.find(chatRoom.getReferenceId(), chatType);
+
+		// 6. 참조 정보가 없는 경우 (삭제된 경우)
+		if (reference.isDeleted()) {
+			return ChatRoomDetailDto.ofDeleted(chatRoom, reference);
 		}
-		// 4. 게시글이 존재하는 경우
-		Board board = boardFinder.findBoard(postReference.boardId());
-		return ChatRoomDetailDto.of(chatRoom, postReference, board);
+
+		// 7. 게시글이 존재하는 경우
+		if (chatType == ChatType.POST) {
+			Board board = boardFinder.findBoard(reference.getBoardId());
+			return ChatRoomDetailDto.of(chatRoom, reference, board);
+		}
+
+		// 8. 기타 타입 (product 등) - 현재는 구현 필요 없음
+		return ChatRoomDetailDto.of(chatRoom, reference, null);
 	}
 
 	@Override

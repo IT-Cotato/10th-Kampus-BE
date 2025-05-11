@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.cotato.kampus.domain.chat.dao.repository.ChatRoomJpaRepository;
 import com.cotato.kampus.domain.chat.dao.entity.ChatRoomEntity;
+import com.cotato.kampus.domain.chat.dao.repository.ChatRoomJpaRepository;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.chat.enums.InitiatedFrom;
 
 @DataJpaTest
@@ -21,7 +22,8 @@ class ChatRoomJpaRepositoryTest {
 	@Test
 	public void 채팅방_생성() {
 		ChatRoomEntity chatRoomEntity = ChatRoomEntity.builder()
-			.postId(1L)
+			.referenceId(1L)
+			.chatType(ChatType.POST)
 			.initialSenderId(1L)
 			.initialReceiverId(2L)
 			.isBlocked(false)
@@ -37,7 +39,8 @@ class ChatRoomJpaRepositoryTest {
 	@Test
 	public void PostId와_InitialSenderId로_채팅방_존재_여부_확인() {
 		ChatRoomEntity chatRoomEntity = ChatRoomEntity.builder()
-			.postId(1L)
+			.referenceId(1L)
+			.chatType(ChatType.POST)
 			.initialSenderId(1L)
 			.initialReceiverId(2L)
 			.isBlocked(false)
@@ -46,7 +49,7 @@ class ChatRoomJpaRepositoryTest {
 
 		chatRoomJpaRepository.save(chatRoomEntity);
 
-		boolean exists = chatRoomJpaRepository.existsByPostIdAndInitialSenderId(1L, 1L);
+		boolean exists = chatRoomJpaRepository.existsByReferenceIdAndInitialSenderIdAndChatType(1L, 1L, ChatType.POST);
 
 		assertThat(exists).isTrue();
 	}
@@ -54,7 +57,8 @@ class ChatRoomJpaRepositoryTest {
 	@Test
 	public void chatroomId로_채팅방_조회() {
 		ChatRoomEntity chatRoomEntity = ChatRoomEntity.builder()
-			.postId(1L)
+			.referenceId(1L)
+			.chatType(ChatType.POST)
 			.initialSenderId(1L)
 			.initialReceiverId(2L)
 			.isBlocked(false)

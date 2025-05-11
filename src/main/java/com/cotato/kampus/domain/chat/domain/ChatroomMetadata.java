@@ -2,6 +2,8 @@ package com.cotato.kampus.domain.chat.domain;
 
 import java.time.LocalDateTime;
 
+import com.cotato.kampus.domain.chat.enums.ChatType;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,9 +15,10 @@ public class ChatroomMetadata {
 
 	private Long id;
 	private Long chatroomId;
+	private ChatType chatType;
 	private Long userId;
-	private Long postId;
-	private String postTitle;
+	private Long referenceId;
+	private String title;
 	private Long lastMessageId;
 	private boolean isLastMessageImage;
 	private String lastMessageContent;
@@ -23,14 +26,15 @@ public class ChatroomMetadata {
 	private Long unreadCount;
 
 	@Builder
-	private ChatroomMetadata(Long id, Long chatroomId, Long userId, Long postId,
-		String postTitle, boolean isLastMessageImage, Long lastMessageId, String lastMessageContent,
+	private ChatroomMetadata(Long id, Long chatroomId, ChatType chatType, Long userId, Long referenceId,
+		String title, boolean isLastMessageImage, Long lastMessageId, String lastMessageContent,
 		LocalDateTime lastChatTime, Long unreadCount) {
 		this.id = id;
 		this.chatroomId = chatroomId;
+		this.chatType = chatType;
 		this.userId = userId;
-		this.postId = postId;
-		this.postTitle = postTitle;
+		this.referenceId = referenceId;
+		this.title = title;
 		this.lastMessageId = lastMessageId;
 		this.isLastMessageImage = isLastMessageImage;
 		this.lastMessageContent = lastMessageContent;
@@ -38,13 +42,14 @@ public class ChatroomMetadata {
 		this.unreadCount = unreadCount != null ? unreadCount : 0L;
 	}
 
-	public static ChatroomMetadata create(Long chatroomId, Long userId, Long postId,
-		String postTitle) {
+	public static ChatroomMetadata create(Long chatroomId, ChatType chatType, Long userId, Long referenceId,
+		String title) {
 		return ChatroomMetadata.builder()
 			.chatroomId(chatroomId)
+			.chatType(chatType)
 			.userId(userId)
-			.postId(postId)
-			.postTitle(postTitle)
+			.referenceId(referenceId)
+			.title(title)
 			.lastMessageId(0L)
 			.isLastMessageImage(false)
 			.lastMessageContent("")

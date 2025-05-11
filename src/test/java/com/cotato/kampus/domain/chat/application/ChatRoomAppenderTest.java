@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.cotato.kampus.domain.chat.domain.ChatRoom;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomAppender;
 import com.cotato.kampus.domain.chat.implement.chatroom.port.ChatRoomRepository;
 
@@ -28,14 +29,14 @@ class ChatRoomAppenderTest {
 	@DisplayName("채팅방 생성 성공")
 	public void 채팅방_생성() {
 		// given
-		ChatRoom chatRoom = ChatRoom.create(1L, 1L, 2L);
+		ChatRoom chatRoom = ChatRoom.create(1L, ChatType.POST, 1L, 2L);
 
 		// private 변수에 접근할 수 있음
 		ReflectionTestUtils.setField(chatRoom, "id", 123L);
 
 		// when
 		given(chatRoomRepository.save(any(ChatRoom.class))).willReturn(123L);
-		Long id = target.appendChatRoom(1L, 1L, 2L);
+		Long id = target.appendChatRoom(1L, ChatType.POST, 1L, 2L);
 
 		// then
 		Assertions.assertThat(id).isNotNull();

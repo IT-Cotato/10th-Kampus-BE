@@ -4,24 +4,22 @@ import com.cotato.kampus.domain.chat.domain.ChatRoomDetailDto;
 
 public record ChatRoomDetailResponse(
 	Long chatroomId,
-	Long postId,
-	String postTitle,
+	Long referenceId,
+	String title,
 	Long boardId,
 	String boardName,
 	Long initialSenderId,
 	Long initialReceiverId,
-	boolean isPostDeleted
-) {
+	boolean isReferenceDeleted) {
 	public static ChatRoomDetailResponse from(ChatRoomDetailDto dto) {
 		return new ChatRoomDetailResponse(
 			dto.chatroomId(),
-			dto.postId(),
-			dto.postTitle(),
+			dto.referenceId(),
+			dto.title(),
 			dto.boardId(),
 			dto.boardName(),
 			dto.initialSenderId(),
 			dto.initialReceiverId(),
-			dto.postId() == -1L
-		);
+			dto.isDeleted());
 	}
 }

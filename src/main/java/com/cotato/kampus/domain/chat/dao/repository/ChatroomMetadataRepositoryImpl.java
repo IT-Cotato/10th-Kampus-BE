@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadataEntity;
 import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.chat.implement.metadata.port.ChatroomMetadataRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -33,11 +34,11 @@ public class ChatroomMetadataRepositoryImpl implements ChatroomMetadataRepositor
 	}
 
 	@Override
-	public Slice<ChatroomMetadata> findAllByUserIdOrderByLastChatTimeDesc(Long userId, Pageable pageable) {
-		Slice<ChatroomMetadataEntity> entitySlice = chatroomMetadataJpaRepository.findAllByUserIdOrderByLastChatTimeDesc(
-			userId, pageable);
-		List<ChatroomMetadata> list = entitySlice.getContent().stream().map(ChatroomMetadataEntity::toDomain).toList();
-		return new SliceImpl<>(list, entitySlice.getPageable(), entitySlice.hasNext());
+	public Slice<ChatroomMetadata> findAllByUserIdAndChatTypeOrderByLastChatTimeDesc(Long userId, ChatType chatType,
+		Pageable pageable) {
+		Slice<ChatroomMetadataEntity> entitySlice = chatroomMetadataJpaRepository.findAllByUserIdAndChatTypeOrderByLastChatTimeDesc(
+			userId, chatType, pageable);
+		return entitySlice.map(ChatroomMetadataEntity::toDomain);
 	}
 
 	@Override

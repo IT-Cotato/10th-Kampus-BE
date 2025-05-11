@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.chat.domain.ChatRoom;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.chat.implement.chatroom.port.ChatRoomRepository;
 import com.cotato.kampus.global.common.dto.CustomPageRequest;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -22,9 +23,9 @@ public class ChatRoomFinder {
 	private final ChatRoomRepository chatRoomRepository;
 	private static final int PAGE_SIZE = 10;
 	private static final String SORT_PROPERTY = "createdTime";
-
-	public boolean existsByPostIdAndSenderId(Long postId, Long senderId) {
-		return chatRoomRepository.existsByPostIdAndInitialSenderId(postId, senderId);
+	
+	public boolean existsByReferenceIdAndSenderIdAndChatType(Long referenceId, Long senderId, ChatType chatType) {
+		return chatRoomRepository.existsByReferenceIdAndInitialSenderIdAndChatType(referenceId, senderId, chatType);
 	}
 
 	public ChatRoom findByChatRoomId(Long chatroomId) {

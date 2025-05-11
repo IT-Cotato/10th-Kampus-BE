@@ -41,3 +41,6 @@ out/
 
 ### FCM secret key ###
 *.json
+
+### Cursor rules ###
+.cursorrules

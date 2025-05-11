@@ -15,11 +15,10 @@ public class ChatroomMetadataMapper {
 	public ChatRoomPreview toChatRoomPreview(ChatroomMetadata metadata) {
 		return ChatRoomPreview.of(
 			metadata.getChatroomId(),
-			metadata.getPostTitle(),
+			metadata.getTitle(),
 			metadata.getLastMessageId(),
 			metadata.getLastMessageContent(),
 			metadata.getLastChatTime(),
-			metadata.getUnreadCount()
-		);
+			metadata.getUnreadCount());
 	}
 }

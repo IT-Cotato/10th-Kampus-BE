@@ -9,12 +9,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.JwtException;
-
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 
 @Component
 public class JwtUtil {
@@ -64,21 +59,6 @@ public class JwtUtil {
 			.parseSignedClaims(token)
 			.getPayload()
 			.get("category", String.class);
-	}
-
-	public void validateToken(String token) {
-		try {
-			Jwts.parser()
-				.verifyWith(secretKey)
-				.build()
-				.parseSignedClaims(token);
-		} catch (ExpiredJwtException e) {
-			throw new JwtException(ErrorCode.TOKEN_EXPIRED);
-		} catch (MalformedJwtException e) {
-			throw new JwtException(ErrorCode.MALFORMED_TOKEN);
-		} catch (Exception e) {
-			throw new JwtException(ErrorCode.INVALID_TOKEN);
-		}
 	}
 
 	public String createJwt(String category, String uniqueId, String username, String role, Long expiredMs) {

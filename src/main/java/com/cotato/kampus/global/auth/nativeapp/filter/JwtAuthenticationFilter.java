@@ -15,7 +15,7 @@ import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.global.auth.nativeapp.AppUserDetails;
 import com.cotato.kampus.global.auth.nativeapp.AppUserDetailsRequest;
 import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.JwtException;
+import com.cotato.kampus.global.error.exception.JwtAuthenticationException;
 import com.cotato.kampus.global.util.JwtUtil;
 
 import jakarta.servlet.FilterChain;
@@ -37,12 +37,18 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 		throws AuthenticationException {
-		// 토큰 추출
-		String token = extractToken(request.getHeader(HttpHeaders.AUTHORIZATION));
-		log.info("Token extracted from header: {}", token);
 
-		// 토큰 검증
-		jwtUtil.validateToken(token);
+		// 요청 헤더에서 Authorization 값 추출
+		String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+			log.error("Authorization header is missing or does not start with Bearer");
+			throw new JwtAuthenticationException(ErrorCode.INVALID_TOKEN);
+		}
+
+		// "Bearer " 이후의 토큰 값만 추출
+		String token = authorizationHeader.substring(7).trim();
+		log.info("Token extracted from header: {}", token);
 
 		// 사용자 정보 추출 및 인증 객체 생성
 		AppUserDetailsRequest detailsRequest = createPrincipalDetailsRequest(token);
@@ -67,13 +73,6 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 		SecurityContextHolder.clearContext();
 		log.error("Authentication not successful: {}", authenticationException.getMessage());
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authenticationException.getMessage());
-	}
-
-	private String extractToken(String authorizationHeader) {
-		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-			throw new JwtException(ErrorCode.TOKEN_NOT_FOUND);
-		}
-		return authorizationHeader.substring(7).trim(); // Bearer 제거
 	}
 
 	private AppUserDetailsRequest createPrincipalDetailsRequest(String token) {
