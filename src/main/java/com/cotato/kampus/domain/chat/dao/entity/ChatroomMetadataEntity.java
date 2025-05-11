@@ -40,11 +40,11 @@ public class ChatroomMetadataEntity extends BaseTimeEntity {
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
-	@Column(name = "post_id", nullable = false)
-	private Long postId;
+	@Column(name = "reference_id", nullable = false)
+	private Long referenceId;
 
-	@Column(name = "post_title", nullable = false)
-	private String postTitle;
+	@Column(name = "title", nullable = false)
+	private String title;
 
 	@Column(name = "last_message_id", nullable = false)
 	private Long lastMessageId;
@@ -59,14 +59,14 @@ public class ChatroomMetadataEntity extends BaseTimeEntity {
 	private Long unreadCount;
 
 	@Builder
-	public ChatroomMetadataEntity(Long id, Long chatroomId, ChatType chatType, Long userId, Long postId, String postTitle,
+	public ChatroomMetadataEntity(Long id, Long chatroomId, ChatType chatType, Long userId, Long referenceId, String title,
 		Long lastMessageId, String lastMessageContent, LocalDateTime lastChatTime, Long unreadCount) {
 		this.id = id;
 		this.chatroomId = chatroomId;
 		this.chatType = chatType;
 		this.userId = userId;
-		this.postId = postId;
-		this.postTitle = postTitle;
+		this.referenceId = referenceId;
+		this.title = title;
 		this.lastMessageId = lastMessageId;
 		this.lastMessageContent = lastMessageContent;
 		this.lastChatTime = lastChatTime;
@@ -79,8 +79,8 @@ public class ChatroomMetadataEntity extends BaseTimeEntity {
 			.chatroomId(chatroomMetadataEntity.getChatroomId())
 			.chatType(chatroomMetadataEntity.getChatType())
 			.userId(chatroomMetadataEntity.getUserId())
-			.postId(chatroomMetadataEntity.getPostId())
-			.postTitle(chatroomMetadataEntity.getPostTitle())
+			.referenceId(chatroomMetadataEntity.getReferenceId())
+			.title(chatroomMetadataEntity.getTitle())
 			.lastMessageId(chatroomMetadataEntity.getLastMessageId())
 			.lastMessageContent(chatroomMetadataEntity.getLastMessageContent())
 			.lastChatTime(chatroomMetadataEntity.getLastChatTime())
@@ -94,8 +94,8 @@ public class ChatroomMetadataEntity extends BaseTimeEntity {
 			.chatroomId(chatroomMetadata.getChatroomId())
 			.chatType(chatroomMetadata.getChatType())
 			.userId(chatroomMetadata.getUserId())
-			.postId(chatroomMetadata.getPostId())
-			.postTitle(chatroomMetadata.getPostTitle())
+			.referenceId(chatroomMetadata.getReferenceId())
+			.title(chatroomMetadata.getTitle())
 			.lastMessageId(chatroomMetadata.getLastMessageId())
 			.lastMessageContent(chatroomMetadata.getLastMessageContent())
 			.lastChatTime(chatroomMetadata.getLastChatTime())
