@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.chat.domain.ChatRoom;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -18,8 +19,8 @@ public class ChatRoomValidator {
 	private final ChatRoomFinder chatRoomFinder;
 
 	// 채팅방이 이미 존재하는 경우
-	public void validateDuplicateChatRoom(Long referenceId, Long senderId) {
-		if (chatRoomFinder.existsByReferenceIdAndSenderId(referenceId, senderId)) {
+	public void validateDuplicateChatRoom(Long referenceId, Long senderId, ChatType chatType) {
+		if (chatRoomFinder.existsByReferenceIdAndSenderIdAndChatType(referenceId, senderId, chatType)) {
 			throw new AppException(ErrorCode.CHATROOM_DUPLICATED);
 		}
 	}

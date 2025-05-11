@@ -68,7 +68,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		Long senderId = apiUserResolver.getCurrentUserId();
 
 		// 3. 채팅방 중복 검증(이미 있는 채팅방)
-		chatRoomValidator.validateDuplicateChatRoom(chatReference.getReferenceId(), senderId);
+		chatRoomValidator.validateDuplicateChatRoom(chatReference.getReferenceId(), senderId, chatType);
 
 		// 4. 채팅방 생성(생성 시 검증 이루어짐(sender != receiver))
 		Long chatroomId = chatRoomAppender.appendChatRoom(chatReference.getReferenceUserId(), chatType, senderId,
