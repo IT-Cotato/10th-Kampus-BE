@@ -53,7 +53,7 @@ class ChatRoomServiceTest {
 
 		when(referenceFinder.find(1L, ChatType.POST)).thenReturn(chatReference);
 		when(apiUserResolver.getCurrentUserId()).thenReturn(1L);
-		doNothing().when(chatRoomValidator).validateDuplicateChatRoom(1L, 1L);
+		doNothing().when(chatRoomValidator).validateDuplicateChatRoom(1L, 1L, ChatType.POST);
 		when(chatRoomAppender.appendChatRoom(2L, ChatType.POST, 1L, 2L)).thenReturn(123L);
 		doNothing().when(chatroomMetadataAppender)
 			.createMetadataPair(123L, ChatType.POST, chatReference.getReferenceId(),

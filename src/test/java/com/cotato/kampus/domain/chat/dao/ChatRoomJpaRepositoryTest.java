@@ -49,7 +49,7 @@ class ChatRoomJpaRepositoryTest {
 
 		chatRoomJpaRepository.save(chatRoomEntity);
 
-		boolean exists = chatRoomJpaRepository.existsByReferenceIdAndInitialSenderId(1L, 1L);
+		boolean exists = chatRoomJpaRepository.existsByReferenceIdAndInitialSenderIdAndChatType(1L, 1L, ChatType.POST);
 
 		assertThat(exists).isTrue();
 	}

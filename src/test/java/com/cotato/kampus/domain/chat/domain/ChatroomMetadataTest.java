@@ -26,8 +26,8 @@ class ChatroomMetadataTest {
 		// then
 		assertEquals(chatroomId, metadata.getChatroomId());
 		assertEquals(senderId, metadata.getUserId());
-		assertEquals(postId, metadata.getPostId());
-		assertEquals(postTitle, metadata.getPostTitle());
+		assertEquals(postId, metadata.getReferenceId());
+		assertEquals(postTitle, metadata.getTitle());
 		assertEquals(0L, metadata.getLastMessageId());
 		assertFalse(metadata.isLastMessageImage());
 		assertEquals("", metadata.getLastMessageContent());
