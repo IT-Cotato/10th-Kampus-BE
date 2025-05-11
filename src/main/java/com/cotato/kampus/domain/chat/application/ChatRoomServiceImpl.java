@@ -1,7 +1,5 @@
 package com.cotato.kampus.domain.chat.application;
 
-import java.util.List;
-
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +12,6 @@ import com.cotato.kampus.domain.chat.domain.ChatRoom;
 import com.cotato.kampus.domain.chat.domain.ChatRoomDetailDto;
 import com.cotato.kampus.domain.chat.domain.ChatRoomPreview;
 import com.cotato.kampus.domain.chat.domain.ChatRoomPreviewList;
-import com.cotato.kampus.domain.chat.domain.ChatroomMetadata;
 import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.chat.implement.ReferenceFinder;
 import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomAppender;
@@ -86,17 +83,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		// 1. 유저 정보를 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
-		// 2. 해당 유저의 채팅방 메타데이터를 lastChatTime 내림차순으로 조회
-		Slice<ChatroomMetadata> chatRoomMetadatas = chatroomMetadataFinder.findChatRoomMetadatas(userId, page,
-			chatType);
+		// 2. 해당 유저의 채팅방 메타데이터를 조회하고 ChatRoomPreview로 바로 변환
+		Slice<ChatRoomPreview> previewSlice = chatroomMetadataFinder.findChatRoomMetadatas(userId, page, chatType)
+			.map(chatroomMetadataMapper::toChatRoomPreview);
 
-		// 3. ChatRoomPreview로 변환
-		List<ChatRoomPreview> previewList = chatRoomMetadatas.getContent()
-			.stream()
-			.map(chatroomMetadataMapper::toChatRoomPreview)
-			.toList();
-
-		return ChatRoomPreviewList.from(previewList, chatRoomMetadatas.hasNext());
+		return ChatRoomPreviewList.from(previewSlice.getContent(), previewSlice.hasNext());
 	}
 
 	@Override

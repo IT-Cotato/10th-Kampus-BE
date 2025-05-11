@@ -38,8 +38,7 @@ public class ChatroomMetadataRepositoryImpl implements ChatroomMetadataRepositor
 		Pageable pageable) {
 		Slice<ChatroomMetadataEntity> entitySlice = chatroomMetadataJpaRepository.findAllByUserIdAndChatTypeOrderByLastChatTimeDesc(
 			userId, chatType, pageable);
-		List<ChatroomMetadata> list = entitySlice.getContent().stream().map(ChatroomMetadataEntity::toDomain).toList();
-		return new SliceImpl<>(list, entitySlice.getPageable(), entitySlice.hasNext());
+		return entitySlice.map(ChatroomMetadataEntity::toDomain);
 	}
 
 	@Override
