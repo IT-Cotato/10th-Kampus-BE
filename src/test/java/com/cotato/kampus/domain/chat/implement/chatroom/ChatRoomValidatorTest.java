@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.cotato.kampus.domain.chat.domain.ChatRoom;
+import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -27,14 +28,15 @@ class ChatRoomValidatorTest {
 	@DisplayName("채팅방 중복 검증 성공 - 채팅방이 존재하지 않음")
 	void validateDuplicateChatRoom_Success() {
 		// given
-		Long postId = 1L;
+		Long referenceId = 1L;
 		Long senderId = 2L;
+		ChatType chatType = ChatType.POST;
 
-		when(chatRoomFinder.existsByReferenceIdAndSenderId(postId, senderId))
+		when(chatRoomFinder.existsByReferenceIdAndSenderIdAndChatType(referenceId, senderId, chatType))
 			.thenReturn(false);
 
 		// when & then
-		assertThatCode(() -> target.validateDuplicateChatRoom(postId, senderId))
+		assertThatCode(() -> target.validateDuplicateChatRoom(referenceId, senderId, chatType))
 			.doesNotThrowAnyException();
 	}
 
@@ -42,16 +44,53 @@ class ChatRoomValidatorTest {
 	@DisplayName("채팅방 중복 검증 실패 - 채팅방이 이미 존재함")
 	void validateDuplicateChatRoom_Failure() {
 		// given
-		Long postId = 1L;
+		Long referenceId = 1L;
 		Long senderId = 2L;
+		ChatType chatType = ChatType.POST;
 
-		when(chatRoomFinder.existsByReferenceIdAndSenderId(postId, senderId))
+		when(chatRoomFinder.existsByReferenceIdAndSenderIdAndChatType(referenceId, senderId, chatType))
 			.thenReturn(true);
 
 		// when & then
-		assertThatThrownBy(() -> target.validateDuplicateChatRoom(postId, senderId))
+		assertThatThrownBy(() -> target.validateDuplicateChatRoom(referenceId, senderId, chatType))
 			.isInstanceOf(AppException.class)
 			.hasMessage(ErrorCode.CHATROOM_DUPLICATED.getMessage());
+	}
+
+	@Test
+	@DisplayName("채팅방 중복 검증 성공 - 같은 referenceId지만 다른 chatType인 경우")
+	void validateDuplicateChatRoom_Success_DifferentChatType() {
+		// given
+		Long referenceId = 1L;
+		Long senderId = 2L;
+		ChatType existingChatType = ChatType.POST;
+		ChatType newChatType = ChatType.PRODUCT;
+
+		// chatType.PRODUCT로만 테스트하기 때문에 existingChatType에 대한 stubbing 제거
+		when(chatRoomFinder.existsByReferenceIdAndSenderIdAndChatType(referenceId, senderId, newChatType))
+			.thenReturn(false);
+
+		// POST 타입으로 이미 채팅방이 있더라도 PRODUCT 타입으로는 새로 생성 가능
+		assertThatCode(() -> target.validateDuplicateChatRoom(referenceId, senderId, newChatType))
+			.doesNotThrowAnyException();
+	}
+
+	@Test
+	@DisplayName("채팅방 중복 검증 성공 - 같은 chatType이지만 다른 referenceId인 경우")
+	void validateDuplicateChatRoom_Success_DifferentReferenceId() {
+		// given
+		Long referenceId1 = 1L;
+		Long referenceId2 = 2L;
+		Long senderId = 3L;
+		ChatType chatType = ChatType.POST;
+
+		// referenceId2로만 테스트하기 때문에 referenceId1에 대한 stubbing 제거
+		when(chatRoomFinder.existsByReferenceIdAndSenderIdAndChatType(referenceId2, senderId, chatType))
+			.thenReturn(false);
+
+		// when & then
+		assertThatCode(() -> target.validateDuplicateChatRoom(referenceId2, senderId, chatType))
+			.doesNotThrowAnyException();
 	}
 
 	@Test
