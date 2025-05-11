@@ -45,12 +45,21 @@ public class UserUpdater {
 	public Long updateVerificationStatus(Long userId, Long universityId) {
 		User user = userFinder.findById(userId);
 
-		// 관리자가 아닌 경우만 UserRole VERIFIED로 변경
-		if(!user.getUserRole().equals(UserRole.ADMIN)) {
+		// 관리자인 경우 역할은 변경하지 않고 대학만 변경
+		if (user.getUserRole().equals(UserRole.ADMIN)) {
+			user.setUniversityId(universityId);
+			return user.getId();
+		}
+
+		// UNVERIFIED인 경우에만 VERIFIED로 업데이트
+		if (user.getUserRole().equals(UserRole.UNVERIFIED)) {
 			user.updateRole(UserRole.VERIFIED);
 		}
 
+		// 대학 정보 업데이트
 		user.setUniversityId(universityId);
+
+		log.info("사용자 ID: {}, 대학 ID: {}로 변경 완료", userId, universityId);
 		return user.getId();
 	}
 
