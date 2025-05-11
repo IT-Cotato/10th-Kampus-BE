@@ -6,6 +6,7 @@ on:
 
 env:
   BASE_RESOURCE_PATH: ./src/main/resources/application-prod.yml
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
 permissions: write-all
 
