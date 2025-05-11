@@ -79,6 +79,9 @@ public class UserService {
 		// 유저 조회
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
+		// 이미 재학생 인증 되었는지 확인
+		userValidator.validateDuplicateStudentVerification(userDto);
+
 		// 코드 인증
 		Map<String, Object> response = univEmailVerifier.verifyCode(email, universityCode, code);
 
