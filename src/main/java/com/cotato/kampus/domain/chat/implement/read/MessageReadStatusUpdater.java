@@ -21,11 +21,7 @@ public class MessageReadStatusUpdater {
 		// 읽음 상태가 없으면 새로 생성, 있으면 업데이트
 		MessageReadStatus messageReadStatus = messageReadStatusRepository
 			.findByChatroomIdAndUserId(chatroomId, userId)
-			.orElse(MessageReadStatus.builder()
-				.chatroomId(chatroomId)
-				.userId(userId)
-				.lastReadMessageId(latestMessageId)
-				.build());
+			.orElse(MessageReadStatus.create(chatroomId, userId, latestMessageId));
 
 		messageReadStatus.updateLastReadMessage(latestMessageId);
 

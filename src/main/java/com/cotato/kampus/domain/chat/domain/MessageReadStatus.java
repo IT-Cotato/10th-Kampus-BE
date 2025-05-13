@@ -2,8 +2,6 @@ package com.cotato.kampus.domain.chat.domain;
 
 import java.time.LocalDateTime;
 
-import com.cotato.kampus.domain.chat.enums.ChatType;
-
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,7 +11,6 @@ public class MessageReadStatus {
 
 	private Long id;
 	private Long chatroomId;
-	private ChatType chatType;
 	private Long userId;
 	private Long lastReadMessageId;
 	private LocalDateTime createdTime;
@@ -21,5 +18,13 @@ public class MessageReadStatus {
 
 	public void updateLastReadMessage(Long messageId) {
 		this.lastReadMessageId = messageId;
+	}
+	
+	public static MessageReadStatus create(Long chatroomId, Long userId, Long lastReadMessageId) {
+		return MessageReadStatus.builder()
+			.chatroomId(chatroomId)
+			.userId(userId)
+			.lastReadMessageId(lastReadMessageId)
+			.build();
 	}
 }

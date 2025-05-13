@@ -1,13 +1,10 @@
 package com.cotato.kampus.domain.chat.dao.entity;
 
 import com.cotato.kampus.domain.chat.domain.MessageReadStatus;
-import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,10 +27,6 @@ public class MessageReadStatusEntity extends BaseTimeEntity {
 	@Column(name = "chatroom_id", nullable = false)
 	private Long chatroomId;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "chat_type", nullable = false)
-	private ChatType chatType;
-
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
@@ -41,10 +34,9 @@ public class MessageReadStatusEntity extends BaseTimeEntity {
 	private Long lastReadMessageId;
 
 	@Builder
-	public MessageReadStatusEntity(Long id, Long chatroomId, ChatType chatType, Long userId, Long lastReadMessageId) {
+	public MessageReadStatusEntity(Long id, Long chatroomId, Long userId, Long lastReadMessageId) {
 		this.id = id;
 		this.chatroomId = chatroomId;
-		this.chatType = chatType;
 		this.userId = userId;
 		this.lastReadMessageId = lastReadMessageId;
 	}
@@ -53,7 +45,6 @@ public class MessageReadStatusEntity extends BaseTimeEntity {
 		return MessageReadStatus.builder()
 			.id(entity.getId())
 			.chatroomId(entity.getChatroomId())
-			.chatType(entity.getChatType())
 			.userId(entity.getUserId())
 			.lastReadMessageId(entity.getLastReadMessageId())
 			.createdTime(entity.getCreatedTime())
@@ -65,7 +56,6 @@ public class MessageReadStatusEntity extends BaseTimeEntity {
 		return MessageReadStatusEntity.builder()
 			.id(messageReadStatus.getId())
 			.chatroomId(messageReadStatus.getChatroomId())
-			.chatType(messageReadStatus.getChatType())
 			.userId(messageReadStatus.getUserId())
 			.lastReadMessageId(messageReadStatus.getLastReadMessageId())
 			.build();
