@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.product.dao.entity;
 
+import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 import com.cotato.kampus.domain.product.domain.ProductPhoto;
 
 import jakarta.persistence.Column;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "product_photo")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProductPhotoEntity {
+public class ProductPhotoEntity extends BaseTimeEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
