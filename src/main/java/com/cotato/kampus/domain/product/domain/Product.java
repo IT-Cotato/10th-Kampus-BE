@@ -148,7 +148,7 @@ public class Product {
 			.build();
 	}
 
-	public void validateDeletable(Long userId) {
+	public void validateEditable(Long userId) {
 		validateOwner(userId);
 		validateNotDeleted();
 	}

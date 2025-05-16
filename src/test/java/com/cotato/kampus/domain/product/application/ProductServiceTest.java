@@ -328,7 +328,7 @@ public class ProductServiceTest {
 			));
 
 			doThrow(new AppException(ErrorCode.FORBIDDEN_PRODUCT_DELETE))
-				.when(product).validateDeletable(otherUserId);
+				.when(product).validateEditable(otherUserId);
 
 			given(apiUserResolver.getCurrentUserDto()).willReturn(otherUser);
 			given(productFinder.findById(productId)).willReturn(product);
