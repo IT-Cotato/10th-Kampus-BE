@@ -24,6 +24,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.global.auth.nativeapp.AppUserDetails;
 import com.cotato.kampus.global.auth.nativeapp.AppUserDetailsRequest;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.JwtAuthenticationException;
 import com.cotato.kampus.global.util.JwtUtil;
 
 import lombok.AccessLevel;
@@ -77,9 +79,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 				StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 				if (StompCommand.CONNECT.equals(accessor.getCommand())) {
 					// JWT 인증 헤더 확인
-					String authHeader = accessor.getFirstNativeHeader("Authorization");
+					String authorizationHeader = accessor.getFirstNativeHeader(HttpHeaders.AUTHORIZATION);
+					log.info("Authorization header: {}", authorizationHeader);
 
-					String token = HttpHeaders.AUTHORIZATION.substring(7).trim();
+					if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+						log.error("Authorization header is missing or does not start with Bearer");
+						throw new JwtAuthenticationException(ErrorCode.INVALID_TOKEN);
+					}
+
+					// "Bearer " 이후의 토큰 값만 추출
+					String token = authorizationHeader.substring(7).trim();
+					log.info("Token extracted from header: {}", token);
 
 					// 사용자 정보 추출 및 인증 객체 생성
 					AppUserDetailsRequest detailsRequest = createPrincipalDetailsRequest(token);
