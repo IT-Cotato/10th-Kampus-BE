@@ -95,12 +95,57 @@ public class ProductService {
 		// 1. 유저, 상품 조회/검증
 		UserDto user = apiUserResolver.getCurrentUserDto();
 		Product product = productFinder.findById(productId);
-		product.validateDeletable(user.id());
+		product.validateEditable(user.id());
 
 		// 2. 상품 상태를 삭제로 업데이트
 		Product updatedProduct = product.withProductStatus(ProductStatus.DELETED);
 		productManager.update(updatedProduct);
 	}
+
+	@Transactional
+	public void updateProduct(
+		Long productId,
+		String title,
+		Integer price,
+		String description,
+		List<String> categoryNames,
+		List<MultipartFile> images
+	) throws ImageException {
+		// 1. 유저, 상품 조회/검증
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		Product product = productFinder.findById(productId);
+		product.validateEditable(user.id());
+
+		// 2. 카테고리 조회/검증
+		if (categoryNames == null || categoryNames.isEmpty()) {
+			throw new AppException(ErrorCode.PRODUCT_CATEGORY_REQUIRED);
+		}
+		List<Long> categoryIds = categoryNames.stream()
+			.map(productCategoryFinder::find)
+			.map(ProductCategory::getId)
+			.toList();
+
+		// 3. 유효한 이미지 필터링 & S3 업로드
+		imageValidator.validateProductImages(images);
+		List<String> imageUrls = s3Uploader.uploadFiles(images, PRODUCT_IMAGE_FOLDER);
+
+		// 4. 기존 이미지 S3 제거
+		List<String> deleteImageUrls = productPhotoFinder.findAll(productId).stream()
+			.map(ProductPhoto::getPhotoUrl)
+			.toList();
+		s3Uploader.deleteFiles(deleteImageUrls);
+
+		// 5. 기존 데이터 제거
+		productPhotoManager.deleteAll(productId);
+		productCategoryMappingManager.deleteAll(productId);
+
+		// 6. 상품 정보 업데이트
+		product = product.withUpdateInfo(title, price, description);
+		productManager.update(product);
+		productCategoryMappingManager.saveAll(productId, categoryIds);
+		productPhotoManager.appendAll(product.getId(), imageUrls);
+	}
+
 
 	@Transactional
 	public void addScrap(Long productId) {

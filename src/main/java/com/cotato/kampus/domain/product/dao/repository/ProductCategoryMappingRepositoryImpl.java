@@ -26,4 +26,9 @@ public class ProductCategoryMappingRepositoryImpl implements ProductCategoryMapp
 	public List<Long> findAllProductIdsByCategoryId(Long productCategoryId) {
 		return productCategoryMappingJpaRepository.findAllProductIdsByCategoryId(productCategoryId);
 	}
+
+	@Override
+	public void deleteAllByProductId(Long productId) {
+		productCategoryMappingJpaRepository.deleteAllByProductId(productId);
+	}
 }

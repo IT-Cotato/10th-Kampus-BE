@@ -11,4 +11,6 @@ public interface ProductCategoryMappingJpaRepository extends JpaRepository<Produ
 
 	@Query("SELECT p.productId FROM ProductCategoryMappingEntity p WHERE p.categoryId = :categoryId")
 	List<Long> findAllProductIdsByCategoryId(Long categoryId);
+
+	void deleteAllByProductId(Long productId);
 }
