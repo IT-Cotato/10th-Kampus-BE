@@ -86,24 +86,6 @@ public class ProductController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-	@PostMapping("/{productId}/scraps")
-	@Operation(summary = "상품 스크랩 추가")
-	public ResponseEntity<DataResponse<Void>> addScrap(
-		@PathVariable Long productId
-	) {
-		productService.addScrap(productId);
-		return ResponseEntity.ok(DataResponse.ok());
-	}
-
-	@DeleteMapping("/{productId}/scraps")
-	@Operation(summary = "상품 스크랩 삭제")
-	public ResponseEntity<DataResponse<Void>> removeScrap(
-		@PathVariable Long productId
-	) {
-		productService.removeScrap(productId);
-		return ResponseEntity.ok(DataResponse.ok());
-	}
-
 	@GetMapping("/{productId}")
 	@Operation(summary = "상품 상세 조회", description = "중고거래 상품 상세 정보와 유저의 스크랩 여부를 반환")
 	public ResponseEntity<DataResponse<ProductDetailResponse>> findProductDetails(

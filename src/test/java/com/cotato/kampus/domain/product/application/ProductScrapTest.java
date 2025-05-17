@@ -36,7 +36,7 @@ import com.cotato.kampus.helper.TestUserHelper;
 public class ProductScrapTest {
 
 	@InjectMocks
-	protected ProductService productService;
+	protected ProductScrapService productScrapService;
 
 	@Mock
 	protected ProductManager productManager;
@@ -86,7 +86,7 @@ public class ProductScrapTest {
 			willDoNothing().given(productScrapManager).append(productId, userId);
 
 			// When: 스크랩 요청 실행
-			productService.addScrap(productId);
+			productScrapService.addScrap(productId);
 
 			// Then: 상품이 정상적으로 업데이트 되었는지 검증
 			ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
@@ -113,7 +113,7 @@ public class ProductScrapTest {
 			given(productFinder.findById(productId)).willReturn(deletedProduct);
 
 			// When & Then
-			assertThatThrownBy(() -> productService.addScrap(productId))
+			assertThatThrownBy(() -> productScrapService.addScrap(productId))
 				.isInstanceOf(AppException.class)
 				.hasMessage(ErrorCode.ALREADY_DELETED_PRODUCT.getMessage());
 
@@ -144,7 +144,7 @@ public class ProductScrapTest {
 
 
 			// When & Then: 예외 발생
-			assertThatThrownBy(() -> productService.addScrap(productId))
+			assertThatThrownBy(() -> productScrapService.addScrap(productId))
 				.isInstanceOf(AppException.class)
 				.hasMessage(ErrorCode.ALREADY_SCRAPPED_PRODUCT.getMessage());
 
@@ -198,7 +198,7 @@ public class ProductScrapTest {
 			willDoNothing().given(productScrapManager).delete(productId, userId);
 
 			// When
-			productService.removeScrap(productId);
+			productScrapService.removeScrap(productId);
 
 			// Then
 			ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
@@ -228,7 +228,7 @@ public class ProductScrapTest {
 			given(productScrapFinder.isScrapped(anyLong(), anyLong())).willReturn(false);
 
 			// When & Then: 예외 발생
-			assertThatThrownBy(() -> productService.removeScrap(productId))
+			assertThatThrownBy(() -> productScrapService.removeScrap(productId))
 				.isInstanceOf(AppException.class)
 				.hasMessage(ErrorCode.PRODUCT_SCRAP_NOT_FOUND.getMessage());
 
