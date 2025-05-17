@@ -155,7 +155,7 @@ public class Product {
 
 	private void validateOwner(Long userId) {
 		if(!userId.equals(this.userId)) {
-			throw new AppException(ErrorCode.FORBIDDEN_PRODUCT_DELETE);
+			throw new AppException(ErrorCode.FORBIDDEN_PRODUCT_EDIT);
 		}
 	}
 

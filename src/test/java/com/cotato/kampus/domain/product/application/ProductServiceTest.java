@@ -328,7 +328,7 @@ public class ProductServiceTest {
 				"상태 좋아요!"
 			));
 
-			doThrow(new AppException(ErrorCode.FORBIDDEN_PRODUCT_DELETE))
+			doThrow(new AppException(ErrorCode.FORBIDDEN_PRODUCT_EDIT))
 				.when(product).validateEditable(otherUserId);
 
 			given(apiUserResolver.getCurrentUserDto()).willReturn(otherUser);
@@ -337,7 +337,7 @@ public class ProductServiceTest {
 			// When & Then: 예외 발생
 			assertThatThrownBy(() -> productService.deleteProduct(productId))
 				.isInstanceOf(AppException.class)
-				.hasMessage(ErrorCode.FORBIDDEN_PRODUCT_DELETE.getMessage());
+				.hasMessage(ErrorCode.FORBIDDEN_PRODUCT_EDIT.getMessage());
 
 			then(productManager).should(never()).update(any(Product.class));
 		}
