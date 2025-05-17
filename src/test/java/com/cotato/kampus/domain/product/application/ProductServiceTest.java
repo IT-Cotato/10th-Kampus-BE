@@ -650,4 +650,63 @@ public class ProductServiceTest {
 			verify(productCategoryMappingManager).deleteAll(productId);
 		}
 	}
+
+	@Nested
+	@DisplayName("상품 상태 변경 테스트")
+	class UpdateProductStatusTest {
+		private final Long userId = 1L;
+		private final Long productId = 100L;
+
+		@Test
+		@DisplayName("상품 상태 변경 성공")
+		void updateStatus_success() {
+			// Given
+			Product product = Product.fromEntity(
+				productId, userId, "빈티지 카메라", 10000,
+				"상태 좋아요!",
+				5, 2, 1, 0,
+				LocalDateTime.now(), ProductStatus.ACTIVE,
+				LocalDateTime.now(), LocalDateTime.now()
+			);
+			ProductStatus newStatus = ProductStatus.SOLD;
+
+			given(apiUserResolver.getCurrentUserId()).willReturn(userId);
+			given(productFinder.findById(productId)).willReturn(product);
+
+			// When
+			productService.updateStatus(productId, newStatus);
+
+			// Then
+			ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
+			verify(productManager).update(productCaptor.capture());
+
+			Product updatedProduct = productCaptor.getValue();
+			assertThat(updatedProduct.getStatus()).isEqualTo(newStatus);
+			assertThat(updatedProduct.getId()).isEqualTo(productId);
+		}
+
+		@Test
+		@DisplayName("상태 변경 실패 - 이미 삭제된 상품")
+		void updateStatus_fail_deleted_product() {
+			// Given
+			Product deletedProduct = Product.fromEntity(
+				productId, userId, "빈티지 카메라", 10000,
+				"상태 좋아요!",
+				5, 2, 1, 0,
+				LocalDateTime.now(), ProductStatus.DELETED,
+				LocalDateTime.now(), LocalDateTime.now()
+			);
+			ProductStatus newStatus = ProductStatus.SOLD;
+
+			given(apiUserResolver.getCurrentUserId()).willReturn(userId);
+			given(productFinder.findById(productId)).willReturn(deletedProduct);
+
+			// When & Then
+			assertThatThrownBy(() -> productService.updateStatus(productId, newStatus))
+				.isInstanceOf(AppException.class)
+				.hasMessage(ErrorCode.ALREADY_DELETED_PRODUCT.getMessage());
+
+			then(productManager).should(never()).update(any(Product.class));
+		}
+	}
 }
