@@ -112,9 +112,9 @@ public class ProductService {
 		List<MultipartFile> images
 	) throws ImageException {
 		// 1. 유저, 상품 조회/검증
-		UserDto user = apiUserResolver.getCurrentUserDto();
+		Long userId = apiUserResolver.getCurrentUserId();
 		Product product = productFinder.findById(productId);
-		product.validateEditable(user.id());
+		product.validateEditable(userId);
 
 		// 2. 카테고리 조회/검증
 		if (categoryNames == null || categoryNames.isEmpty()) {
