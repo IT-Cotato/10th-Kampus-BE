@@ -69,9 +69,6 @@ public class ProductService {
 		userValidator.validateStudentVerification(user);
 
 		// 2. 카테고리 검증/조회
-		if (categoryNames == null || categoryNames.isEmpty()) {
-			throw new AppException(ErrorCode.PRODUCT_CATEGORY_REQUIRED);
-		}
 		List<Long> categoryIds = categoryNames.stream()
 			.map(productCategoryFinder::find)
 			.map(ProductCategory::getId)
@@ -116,9 +113,6 @@ public class ProductService {
 		product.validateEditable(userId);
 
 		// 2. 카테고리 조회/검증
-		if (categoryNames == null || categoryNames.isEmpty()) {
-			throw new AppException(ErrorCode.PRODUCT_CATEGORY_REQUIRED);
-		}
 		List<Long> categoryIds = categoryNames.stream()
 			.map(productCategoryFinder::find)
 			.map(ProductCategory::getId)
