@@ -1,10 +1,16 @@
 package com.cotato.kampus.domain.product.application;
 
+import java.util.List;
+
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.product.domain.Product;
+import com.cotato.kampus.domain.product.domain.ProductScrap;
+import com.cotato.kampus.domain.product.domain.ProductThumbnail;
+import com.cotato.kampus.domain.product.implement.product.ProductDtoMapper;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
@@ -28,6 +34,7 @@ public class ProductScrapService {
 	private final ProductManager productManager;
 	private final ProductScrapFinder productScrapFinder;
 	private final ProductScrapManager productScrapManager;
+	private final ProductDtoMapper productDtoMapper;
 
 	@Transactional
 	public void addScrap(Long productId) {
@@ -71,6 +78,23 @@ public class ProductScrapService {
 		// 4. 상품 스크랩 수 감소
 		Product unscrappedProduct = product.decreaseScrapCount();
 		productManager.update(unscrappedProduct);
+	}
+
+	public Slice<ProductThumbnail> findScrapProducts(int page, int size) {
+		// 1. 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		// 2. 스크랩 최신순 조회
+		Slice<ProductScrap> productScraps = productScrapFinder.getScrappedProducts(userId, page, size);
+		List<Long> productIds = productScraps.getContent().stream()
+			.map(ProductScrap::getProductId)
+			.toList();
+
+		// 3. 상품 조회
+		List<Product> products = productFinder.findAllByProductIds(productIds);
+
+		// 4. DTO 매핑
+		return productDtoMapper.toScrapProductThumbnails(productScraps, products);
 	}
 
 }

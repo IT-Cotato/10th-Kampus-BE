@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.product.dao.repository;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.product.dao.entity.ProductScrapEntity;
@@ -28,5 +30,11 @@ public class ProductScrapRepositoryImpl implements ProductScrapRepository {
 	@Override
 	public void deleteByProductIdAndUserId(Long productId, Long userId) {
 		productScrapJpaRepository.deleteByProductIdAndUserId(productId, userId);
+	}
+
+	@Override
+	public Slice<ProductScrap> findAllByUserId(Long userId, Pageable pageable) {
+		return productScrapJpaRepository.findAllByUserId(userId, pageable)
+			.map(ProductScrapEntity::toDomain);
 	}
 }
