@@ -3,7 +3,6 @@ package com.cotato.kampus.domain.product.application;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 import static org.mockito.BDDMockito.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -20,13 +19,16 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
+import com.cotato.kampus.domain.product.domain.ProductCategoryMapping;
 import com.cotato.kampus.domain.product.domain.ProductPhoto;
 import com.cotato.kampus.domain.product.domain.ProductThumbnail;
+import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.implement.port.ProductCategoryMappingRepository;
 import com.cotato.kampus.domain.product.implement.port.ProductCategoryRepository;
 import com.cotato.kampus.domain.product.implement.port.ProductPhotoRepository;
 import com.cotato.kampus.domain.product.implement.port.ProductRepository;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
+import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -62,6 +64,8 @@ public class ProductServiceIntegrationTest {
 
 	@Autowired
 	private ProductFinder productFinder;
+	@Autowired
+	private ProductManager productManager;
 
 	@Test
 	@DisplayName("상품 등록 테스트 - 성공")
@@ -155,6 +159,59 @@ public class ProductServiceIntegrationTest {
 		assertThatThrownBy(() -> productService.createProduct("상품1", 10000, "설명1", categoryNames, images))
 			.isInstanceOf(AppException.class)
 			.hasMessage(ErrorCode.INVALID_IMAGE_FORMAT.getMessage());
+	}
+
+	@Test
+	@DisplayName("상품 삭제 테스트 - 성공")
+	void delete_success() {
+		// Given
+		UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+
+		Product product = productRepository.save(Product.create(1L, "상품1", 10000, "설명1"));
+
+		// When
+		productService.deleteProduct(product.getId());
+
+		// Then
+		Product deletedProduct = productFinder.findById(product.getId());
+		assertThat(deletedProduct.getStatus()).isEqualTo(ProductStatus.DELETED);
+	}
+
+	@Test
+	@DisplayName("상품 삭제 테스트 - 권한이 없는 유저 예외")
+	void delete_unauthorized() {
+		// Given
+		UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+
+		// 다른 유저의 상품
+		Product product = productRepository.save(Product.create(2L, "상품1", 10000, "설명1"));
+
+		// When & Then
+		assertThatThrownBy(() -> productService.deleteProduct(product.getId()))
+			.isInstanceOf(AppException.class)
+			.hasMessage(ErrorCode.FORBIDDEN_PRODUCT_EDIT.getMessage());
+
+		Product unchangedProduct = productFinder.findById(product.getId());
+		assertThat(unchangedProduct.getStatus()).isNotEqualTo(ProductStatus.DELETED);
+	}
+
+	@Test
+	@DisplayName("상품 삭제 테스트 - 이미 삭제된 상품 예외")
+	void delete_alreadyDeleted() {
+		// Given
+		UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+
+		// 이미 삭제된 상품
+		Product product = productRepository.save(Product.create(1L, "상품1", 10000, "설명1"));
+		productManager.update(product.withProductStatus(ProductStatus.DELETED));
+
+		// When & Then
+		assertThatThrownBy(() -> productService.deleteProduct(product.getId()))
+			.isInstanceOf(AppException.class)
+			.hasMessage(ErrorCode.ALREADY_DELETED_PRODUCT.getMessage());
 	}
 
 	@Test
