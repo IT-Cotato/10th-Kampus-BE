@@ -20,4 +20,7 @@ public interface ProductRepository {
 	Slice<Product> findAllByIdInAndProductStatusNot(List<Long> productIds, ProductStatus status, Pageable pageable);
 
 	List<Product> findAllByIdInAndProductStatusNot(List<Long> productIds, ProductStatus status);
+
+	Slice<Product> findAllByUserIdAndProductStatusNot(Long userId, ProductStatus status, Pageable pageable);
+
 }

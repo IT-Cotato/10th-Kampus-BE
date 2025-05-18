@@ -104,7 +104,7 @@ public class ProductController {
 	public ResponseEntity<DataResponse<SliceResponse<ProductThumbnail>>> findProducts(
 		@RequestParam(required = false, defaultValue = "1") int page,
 		@Parameter(
-			name="size",
+			name = "size",
 			description = "한 페이지 표시할 상품 개수"
 		)
 		@RequestParam(required = false, defaultValue = "10") int size,
@@ -138,5 +138,18 @@ public class ProductController {
 			ProductStatus.valueOf(productStatus.name())
 		);
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@GetMapping("/my")
+	@Operation(summary = "사용자가 등록한 중고거래 상품 목록 조회")
+	public ResponseEntity<DataResponse<SliceResponse<ProductThumbnail>>> findMyProducts(
+		@RequestParam(required = false, defaultValue = "1") int page,
+		@Parameter(name = "size", description = "한 페이지 표시할 상품 개수")
+		@RequestParam(required = false, defaultValue = "10") int size
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+				SliceResponse.from(productService.findMyProducts(page, size))
+			)
+		);
 	}
 }

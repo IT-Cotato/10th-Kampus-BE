@@ -50,4 +50,10 @@ public class ProductRepositoryImpl implements ProductRepository {
 			.map(ProductEntity::toDomain)
 			.toList();
 	}
+
+	@Override
+	public Slice<Product> findAllByUserIdAndProductStatusNot(Long userId, ProductStatus status, Pageable pageable) {
+		return productJpaRepository.findAllByUserIdAndProductStatusNot(userId, status, pageable)
+			.map(ProductEntity::toDomain);
+	}
 }

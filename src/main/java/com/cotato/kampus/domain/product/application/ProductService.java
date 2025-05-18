@@ -195,4 +195,14 @@ public class ProductService {
 		Product updatedProduct = product.withProductStatus(status);
 		productManager.update(updatedProduct);
 	}
+
+	public Slice<ProductThumbnail> findMyProducts(int page, int size) {
+		// 1. 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		// 2. 상품 조회
+		Slice<Product> products = productFinder.findAllByUserId(userId, page, size);
+
+		return productDtoMapper.toProductThumbnails(products, userId);
+	}
 }

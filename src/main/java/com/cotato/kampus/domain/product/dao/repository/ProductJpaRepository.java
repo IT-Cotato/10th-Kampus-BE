@@ -16,4 +16,6 @@ public interface ProductJpaRepository extends JpaRepository<ProductEntity, Long>
 	Slice<ProductEntity> findAllByIdInAndProductStatusNot(List<Long> productIds, ProductStatus status, Pageable pageable);
 
 	List<ProductEntity> findAllByIdInAndProductStatusNot(List<Long> productIds, ProductStatus status);
+
+	Slice<ProductEntity> findAllByUserIdAndProductStatusNot(Long userId, ProductStatus status, Pageable pageable);
 }

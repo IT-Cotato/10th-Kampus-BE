@@ -3,6 +3,7 @@ package com.cotato.kampus.domain.product.implement.product;
 import java.util.List;
 
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,5 +43,10 @@ public class ProductFinder {
 
 	public List<Product> findAllByProductIds(List<Long> productIds) {
 		return productRepository.findAllByIdInAndProductStatusNot(productIds, ProductStatus.DELETED);
+	}
+
+	public Slice<Product> findAllByUserId(Long userId, int page, int size) {
+		CustomPageRequest customPageRequest = new CustomPageRequest(page, size, Sort.Direction.DESC);
+		return productRepository.findAllByUserIdAndProductStatusNot(userId, ProductStatus.DELETED, customPageRequest.of("bumpedTime"));
 	}
 }
