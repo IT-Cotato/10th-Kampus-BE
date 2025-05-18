@@ -159,12 +159,17 @@ public class ProductService {
 		boolean isAuthor = product.getUserId().equals(user.id());
 		boolean isScrapped = productScrapFinder.isScrapped(productId, user.id());
 
+		List<Long> categoryIds = productCategoryMappingFinder.getCategoryIdsByProductId(productId);
+		List<String> categoryNames = productCategoryFinder.findAllByIds(categoryIds).stream()
+			.map(productCategory -> productCategory.getCategoryName())
+			.toList();
+
 		// 3. 상품 조회수 증가
 		Product viewedProduct = product.increaseViewCount();
 		productManager.update(viewedProduct);
 
 		// 4. ProductDetails 변환
-		return ProductDetails.of(viewedProduct, user.nickname(), photos, isAuthor, isScrapped);
+		return ProductDetails.of(viewedProduct, user.nickname(), photos, isAuthor, isScrapped, categoryNames);
 	}
 
 	public Slice<ProductThumbnail> findProducts(int page, int size, ProductSortType sort, String categoryName) {
