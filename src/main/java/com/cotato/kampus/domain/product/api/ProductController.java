@@ -33,7 +33,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "중고거래 상품 관리 API", description = "상품 등록, 조회, 수정, 삭제 및 스크랩 관리 API")
+@Tag(name = "중고거래 상품 관리 API", description = "상품 등록, 조회, 수정, 삭제 관리 API")
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @RequestMapping("/v1/api/products")
