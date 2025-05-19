@@ -20,6 +20,7 @@ import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
 import com.cotato.kampus.domain.product.domain.ProductCategoryMapping;
+import com.cotato.kampus.domain.product.domain.ProductDetails;
 import com.cotato.kampus.domain.product.domain.ProductPhoto;
 import com.cotato.kampus.domain.product.domain.ProductThumbnail;
 import com.cotato.kampus.domain.product.enums.ProductStatus;
@@ -29,6 +30,8 @@ import com.cotato.kampus.domain.product.implement.port.ProductPhotoRepository;
 import com.cotato.kampus.domain.product.implement.port.ProductRepository;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.product.ProductManager;
+import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
+import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapManager;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -64,8 +67,12 @@ public class ProductServiceIntegrationTest {
 
 	@Autowired
 	private ProductFinder productFinder;
+
 	@Autowired
 	private ProductManager productManager;
+
+	@Autowired
+	private ProductScrapManager productScrapManager;
 
 	@Test
 	@DisplayName("상품 등록 테스트 - 성공")
@@ -281,6 +288,60 @@ public class ProductServiceIntegrationTest {
 
 		Product unchangedProduct = productFinder.findById(product.getId());
 		assertThat(unchangedProduct.getTitle()).isEqualTo("상품1");
+	}
+
+	@Test
+	@DisplayName("상품 상세 조회 - 성공")
+	void findProductDetails_success() {
+		// Given
+		UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+
+		ProductCategory category = productCategoryRepository.save(ProductCategory.builder().categoryName("전자제품").build());
+
+		Product product = productRepository.save(Product.create(user.id(), "노트북", 100000, "노트북입니다."));
+		productCategoryMappingRepository.save(ProductCategoryMapping.builder()
+			.categoryId(category.getId())
+			.productId(product.getId())
+			.build());
+
+		productPhotoRepository.saveAll(List.of(ProductPhoto.builder()
+			.productId(product.getId())
+			.photoUrl("https://bucket/image1.jpg")
+			.order(0)
+			.build()));
+
+		productScrapManager.append(product.getId(), user.id());
+
+		// When
+		ProductDetails result = productService.findProductDetails(product.getId());
+
+		// Then
+		assertThat(result.title()).isEqualTo("노트북");
+		assertThat(result.photos().get(0).photoUrl()).isEqualTo("https://bucket/image1.jpg");
+		assertThat(result.categories().get(0)).isEqualTo("전자제품");
+		assertThat(result.isScrapped()).isTrue();
+		assertThat(result.isAuthor()).isTrue();
+		assertThat(result.viewCount()).isEqualTo(1);
+	}
+
+	@Test
+	@DisplayName("상품 상세 조회 - 삭제된 상품 예외")
+	void findProductDetail_deletedProduct() {
+		// Given
+		UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+
+		Product product = productRepository.save(Product.create(user.id(), "노트북", 100000, "노트북입니다."));
+		productManager.update(product.withProductStatus(ProductStatus.DELETED));
+
+		// When & Then
+		assertThatThrownBy(() -> productService.findProductDetails(product.getId()))
+			.isInstanceOf(AppException.class)
+			.hasMessage(ErrorCode.ALREADY_DELETED_PRODUCT.getMessage());
+
+		assertThat(product.getViewCount()).isEqualTo(0);
+
 	}
 
 	@Test
