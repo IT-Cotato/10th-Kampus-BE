@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
+import com.cotato.kampus.domain.product.api.request.ProductStatusUpdatable;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
 import com.cotato.kampus.domain.product.domain.ProductCategoryMapping;
@@ -409,6 +410,59 @@ public class ProductServiceIntegrationTest {
 		// Then
 		assertThat(result.getContent()).hasSize(3);
 		assertThat(result.getContent().get(0).photoUrl()).isEqualTo("image2.jpg");
+	}
+
+	@Test
+	@DisplayName("상품 상태 변경 테스트 - 성공")
+	void updateStatus_success() {
+		// Given
+		Long userId = 1L;
+		given(apiUserResolver.getCurrentUserId()).willReturn(userId);
+		Product product = productRepository.save(Product.create(userId, "상품1", 10000, "설명1"));
+
+		// When
+		productService.updateStatus(product.getId(), ProductStatus.SOLD);
+
+		// Then
+		Product updatedProduct = productFinder.findById(product.getId());
+		assertThat(updatedProduct.getStatus()).isEqualTo(ProductStatus.SOLD);
+	}
+
+	@Test
+	@DisplayName("상품 상태 변경 테스트 - 권한이 없는 유저 예외")
+	void updateStatus_unauthorized() {
+		// Given
+		Long userId = 1L;
+		given(apiUserResolver.getCurrentUserId()).willReturn(userId);
+
+		// 다른 유저의 상품
+		Product product = productRepository.save(Product.create(2L, "상품1", 10000, "설명1"));
+
+		// When & Then
+		assertThatThrownBy(() -> productService.updateStatus(product.getId(), ProductStatus.SOLD))
+			.isInstanceOf(AppException.class)
+			.hasMessage(ErrorCode.FORBIDDEN_PRODUCT_EDIT.getMessage());
+
+		Product result = productFinder.findById(product.getId());
+		assertThat(result.getStatus()).isNotEqualTo(ProductStatus.SOLD);
+	}
+
+	@Test
+	@DisplayName("상품 상태 변경 테스트 - 삭제된 상품 예외")
+	void updateStatus_deletedProduct() {
+		// Given
+		Long userId = 1L;
+		given(apiUserResolver.getCurrentUserId()).willReturn(userId);
+		Product product = productRepository.save(Product.create(userId, "상품1", 10000, "설명1"));
+		productManager.update(product.withProductStatus(ProductStatus.DELETED));
+
+		// When & Then
+		assertThatThrownBy(() -> productService.updateStatus(product.getId(), ProductStatus.SOLD))
+			.isInstanceOf(AppException.class)
+			.hasMessage(ErrorCode.ALREADY_DELETED_PRODUCT.getMessage());
+
+		Product result = productFinder.findById(product.getId());
+		assertThat(result.getStatus()).isNotEqualTo(ProductStatus.SOLD);
 	}
 
 	@Test
