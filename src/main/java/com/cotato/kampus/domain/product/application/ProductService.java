@@ -230,4 +230,15 @@ public class ProductService {
 
 		return productDtoMapper.toProductThumbnails(products, user.id());
 	}
+
+	@Transactional
+	public void updateStatus(Long productId, ProductStatus status) {
+		// 1. 유저, 상품 조회/검증
+		Long userId = apiUserResolver.getCurrentUserId();
+		Product product = productFinder.findById(productId);
+		product.validateEditable(userId);
+
+		Product updatedProduct = product.withProductStatus(status);
+		productManager.update(updatedProduct);
+	}
 }
