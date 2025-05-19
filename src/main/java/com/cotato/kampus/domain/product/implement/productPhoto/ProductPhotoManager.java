@@ -31,5 +31,10 @@ public class ProductPhotoManager {
 
 		productPhotoRepository.saveAll(productPhotoPhotos);
 	}
+
+	@Transactional
+	public void deleteAll(Long productId) {
+		productPhotoRepository.deleteAllByProductId(productId);
+	}
 }
 

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -328,7 +329,7 @@ public class ProductServiceTest {
 			));
 
 			doThrow(new AppException(ErrorCode.FORBIDDEN_PRODUCT_DELETE))
-				.when(product).validateDeletable(otherUserId);
+				.when(product).validateEditable(otherUserId);
 
 			given(apiUserResolver.getCurrentUserDto()).willReturn(otherUser);
 			given(productFinder.findById(productId)).willReturn(product);
@@ -486,7 +487,6 @@ public class ProductServiceTest {
 		private Slice<Product> products;
 		private Slice<ProductThumbnail> thumbnails;
 
-
 		@BeforeEach
 		void setUp() {
 			user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
@@ -572,5 +572,82 @@ public class ProductServiceTest {
 
 		}
 
+	}
+
+	@Nested
+	@DisplayName("상품 수정 테스트")
+	class UpdateProductsTest {
+
+		private Long userId = 1L;
+		private Long productId = 100L;
+		private Product originalProduct;
+
+		@BeforeEach
+		void setUp() throws ImageException{
+			given(apiUserResolver.getCurrentUserId()).willReturn(userId);
+
+			originalProduct = Product.fromEntity(
+				100L, userId, "빈티지 카메라", 10000,
+				"상태 좋아요!",
+				5, 2, 1, 0,
+				LocalDateTime.now(), ProductStatus.ACTIVE,
+				LocalDateTime.now(), LocalDateTime.now()
+			);
+			given(productFinder.findById(productId)).willReturn(originalProduct);
+
+			ProductCategory category1 = new ProductCategory(1L, "전자제품");
+			given(productCategoryFinder.find("전자제품")).willReturn(category1);
+
+			List<ProductPhoto> oldPhotos = Arrays.asList(
+				new ProductPhoto(1L, productId, "old-photo-1.png", 0),
+				new ProductPhoto(2L, productId, "old-photo-2.png", 1)
+			);
+			given(productPhotoFinder.findAll(productId)).willReturn(oldPhotos);
+		}
+
+		@Test
+		void update_success() throws ImageException {
+			// Given
+			MultipartFile photo1 = mock(MultipartFile.class);
+			MultipartFile photo2 = mock(MultipartFile.class);
+			List<MultipartFile> newPhotos = List.of(photo1, photo2);
+			List<String> newUrls = Arrays.asList("new-photo-1.png", "new-photo-2.png");
+			List<String> categoryNames = Arrays.asList("전자제품");
+
+			willDoNothing().given(imageValidator).validateProductImages(newPhotos);
+			given(s3Uploader.uploadFiles(anyList(), eq("product"))).willReturn(newUrls);
+
+			// When
+			productService.updateProduct(productId, "수정 타이틀", 5000, "수정 설명", categoryNames, newPhotos);
+
+			// Then
+			// 1. 상품 정보 검증
+			ArgumentCaptor<Product> productCaptor = ArgumentCaptor.forClass(Product.class);
+			verify(productManager).update(productCaptor.capture());
+
+			Product updatedProduct = productCaptor.getValue();
+			assertThat(updatedProduct.getId()).isEqualTo(productId);
+			assertThat(updatedProduct.getTitle()).isEqualTo("수정 타이틀");
+			assertThat(updatedProduct.getPrice()).isEqualTo(5000);
+			assertThat(updatedProduct.getDescription()).isEqualTo("수정 설명");
+
+			// 2. 카테고리 업데이트 검증
+			ArgumentCaptor<List<Long>> categoryCaptor = ArgumentCaptor.forClass(List.class);
+			verify(productCategoryMappingManager).saveAll(eq(productId), categoryCaptor.capture());
+
+			List<Long> savedCategoryIds = categoryCaptor.getValue();
+			Assertions.assertThat(savedCategoryIds).containsExactly(1L);
+
+			// 3. 이미지 업데이트 검증
+			ArgumentCaptor<List<String>> imageUrkCaptor = ArgumentCaptor.forClass(List.class);
+			verify(productPhotoManager).appendAll(eq(productId), imageUrkCaptor.capture());
+
+			List<String> savedImageUrls = imageUrkCaptor.getValue();
+			Assertions.assertThat(savedImageUrls).containsExactlyElementsOf(newUrls);
+
+			// 4. 삭제 메서드 호출 검증
+			verify(productPhotoManager).deleteAll(productId);
+			verify(productCategoryMappingManager).deleteAll(productId);
+		}
 	}
 }

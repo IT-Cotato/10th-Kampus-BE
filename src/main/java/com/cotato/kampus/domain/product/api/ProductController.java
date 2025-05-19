@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.product.api;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -7,11 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.post.api.response.SliceResponse;
+import com.cotato.kampus.domain.product.api.request.UpdateProductRequest;
 import com.cotato.kampus.domain.product.enums.ProductSortType;
 import com.cotato.kampus.domain.product.api.response.ProductDetailResponse;
 import com.cotato.kampus.domain.product.application.ProductService;
@@ -19,10 +22,15 @@ import com.cotato.kampus.domain.product.api.request.CreateProductRequest;
 import com.cotato.kampus.domain.product.api.response.ProductCreateResponse;
 import com.cotato.kampus.domain.product.domain.ProductThumbnail;
 import com.cotato.kampus.global.common.dto.DataResponse;
+import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.ImageException;
+import com.cotato.kampus.global.error.response.ErrorResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -61,6 +69,23 @@ public class ProductController {
 		@PathVariable Long productId
 	) {
 		productService.deleteProduct(productId);
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PutMapping(value = "/{productId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@Operation(summary = "상품 수정")
+	public ResponseEntity<DataResponse<Void>> updateProduct(
+		@PathVariable Long productId,
+		@Valid @ModelAttribute UpdateProductRequest request
+	) throws ImageException {
+		productService.updateProduct(
+			productId,
+			request.title(),
+			request.price(),
+			request.description(),
+			request.categoryNames(),
+			request.images()
+		);
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 

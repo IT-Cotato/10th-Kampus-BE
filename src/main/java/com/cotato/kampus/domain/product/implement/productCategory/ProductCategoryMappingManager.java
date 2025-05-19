@@ -26,4 +26,9 @@ public class ProductCategoryMappingManager {
 			productCategoryMappingRepository.save(productCategoryMapping);
 		});
 	}
+
+	@Transactional
+	public void deleteAll(Long productId) {
+		productCategoryMappingRepository.deleteAllByProductId(productId);
+	}
 }

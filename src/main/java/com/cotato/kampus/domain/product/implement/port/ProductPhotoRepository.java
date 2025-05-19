@@ -11,4 +11,7 @@ public interface ProductPhotoRepository {
 	void saveAll(List<ProductPhoto> productPhotos);
 
 	ProductPhoto findByProductIdAndOrder(Long productId, int order);
+
+	void deleteAllByProductId(Long productId);
+
 }

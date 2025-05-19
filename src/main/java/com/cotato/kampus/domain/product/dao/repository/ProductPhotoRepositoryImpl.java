@@ -36,4 +36,9 @@ public class ProductPhotoRepositoryImpl implements ProductPhotoRepository {
 		return productPhotoJpaRepository.findByProductIdAndOrder(productId, order)
 			.toDomain();
 	}
+
+	@Override
+	public void deleteAllByProductId(Long productId) {
+		productPhotoJpaRepository.deleteAllByProductId(productId);
+	}
 }

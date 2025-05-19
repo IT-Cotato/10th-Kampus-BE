@@ -10,4 +10,5 @@ public interface ProductCategoryMappingRepository {
 
 	List<Long> findAllProductIdsByCategoryId(Long productCategoryId);
 
+	void deleteAllByProductId(Long productId);
 }
