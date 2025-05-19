@@ -215,6 +215,75 @@ public class ProductServiceIntegrationTest {
 	}
 
 	@Test
+	@DisplayName("상품 수정 테스트 - 성공")
+	void update_success() throws ImageException {
+		// Given
+		UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+		given(apiUserResolver.getCurrentUserId()).willReturn(user.id());
+
+		// 초기 카테고리 & 상품 저장
+		ProductCategory category1 = productCategoryRepository.save(ProductCategory.builder().categoryName("전자제품").build());
+		ProductCategory category2 =productCategoryRepository.save(ProductCategory.builder().categoryName("의류").build());
+
+		Product product = productRepository.save(Product.create(user.id(), "상품1", 10000, "설명1"));
+		productCategoryMappingRepository.save(ProductCategoryMapping.builder().categoryId(category1.getId()).productId(product.getId()).build());
+		productPhotoRepository.saveAll(List.of(ProductPhoto.builder().productId(product.getId()).photoUrl("image1.jpg").order(0).build()));
+
+		// 새로운 카테고리
+		List<String> newCategoryNames = List.of("의류");
+
+		// 새 이미지
+		List<MultipartFile> newImages = List.of(
+			new MockMultipartFile("image2", "image2.jpg", "image/jpeg", "image-content".getBytes())
+		);
+		List<String> newImageUrls = List.of("https://s3.bucket/new-image2.jpg");
+		given(s3Uploader.uploadFiles(anyList(), anyString())).willReturn(newImageUrls);
+
+		// When
+		productService.updateProduct(product.getId(), "상품수정", 20000, "수정된 설명", newCategoryNames, newImages);
+
+		// Then
+		Product updatedProduct = productFinder.findById(product.getId());
+		assertThat(updatedProduct.getTitle()).isEqualTo("상품수정");
+		assertThat(updatedProduct.getPrice()).isEqualTo(20000);
+		assertThat(updatedProduct.getDescription()).isEqualTo("수정된 설명");
+
+		List<Long> updatedCategoryIds = productCategoryMappingRepository.findAllCategoryIdByProductId(product.getId());
+		assertThat(updatedCategoryIds).containsExactly(category2.getId());
+
+		List<ProductPhoto> updatedPhotos = productPhotoRepository.findAllByProductId(product.getId());
+		assertThat(updatedPhotos).hasSize(1);
+		assertThat(updatedPhotos.get(0).getPhotoUrl()).isEqualTo("https://s3.bucket/new-image2.jpg");
+
+	}
+
+	@Test
+	@DisplayName("상품 수정 테스트 - 권한 없는 유저 예외")
+	void update_unauthorized() {
+		// Given
+		UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+		given(apiUserResolver.getCurrentUserId()).willReturn(user.id());
+
+		// 다른 유저의 상품
+		Product product = productRepository.save(Product.create(2L, "상품1", 10000, "설명1"));
+
+		// 새로운 카테고리 & 이미지
+		List<String> newCategoryNames = List.of("의류");
+		List<MultipartFile> newImages = List.of(
+			new MockMultipartFile("image2", "image2.jpg", "image/jpeg", "image-content".getBytes())
+		);
+
+		// When & Then
+		assertThatThrownBy(
+			() -> productService.updateProduct(product.getId(), "상품수정", 20000, "수정된 설명", newCategoryNames, newImages))
+			.isInstanceOf(AppException.class)
+			.hasMessage(ErrorCode.FORBIDDEN_PRODUCT_EDIT.getMessage());
+
+		Product unchangedProduct = productFinder.findById(product.getId());
+		assertThat(unchangedProduct.getTitle()).isEqualTo("상품1");
+	}
+
+	@Test
 	@DisplayName("사용자가 등록한 상품 목록 조회 테스트 - 성공")
 	void findMyProducts_success() {
 		// Given
