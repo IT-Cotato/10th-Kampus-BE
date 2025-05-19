@@ -23,6 +23,7 @@ import com.cotato.kampus.domain.product.domain.ProductCategoryMapping;
 import com.cotato.kampus.domain.product.domain.ProductDetails;
 import com.cotato.kampus.domain.product.domain.ProductPhoto;
 import com.cotato.kampus.domain.product.domain.ProductThumbnail;
+import com.cotato.kampus.domain.product.enums.ProductSortType;
 import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.implement.port.ProductCategoryMappingRepository;
 import com.cotato.kampus.domain.product.implement.port.ProductCategoryRepository;
@@ -342,6 +343,72 @@ public class ProductServiceIntegrationTest {
 
 		assertThat(product.getViewCount()).isEqualTo(0);
 
+	}
+
+	@Test
+	@DisplayName("상품 목록 조회 - 성공 (카테고리 X)")
+	void findProducts_success() {
+		// Given
+		UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+
+		for(int i = 0; i < 10; i++) {
+			Product product = productRepository.save(Product.create(user.id(), "상품" + i, 10000, "설명" + i));
+			productPhotoRepository.saveAll(List.of(ProductPhoto.builder()
+				.productId(product.getId())
+				.photoUrl("image" + i + ".jpg")
+				.order(0)
+				.build()));
+		}
+
+		int page = 1;
+		int size = 5;
+
+		// When
+		Slice<ProductThumbnail> result = productService.findProducts(page, size, ProductSortType.recent, null);
+
+		// Then
+		assertThat(result.getContent()).hasSize(5);
+		assertThat(result.getContent().get(0).photoUrl()).isEqualTo("image9.jpg"); // 가장 최신 상품의 사진
+	}
+
+	@Test
+	@DisplayName("상품 목록 조회 - 성공 (카테고리 O)")
+	void findProducts_success_withCategory() {
+		// Given
+		UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+
+		ProductCategory category1 = productCategoryRepository.save(ProductCategory.builder().categoryName("전자제품").build());
+		ProductCategory category2 = productCategoryRepository.save(ProductCategory.builder().categoryName("의류").build());
+
+		// 0 ~ 2번 상품은 전자제품, 3 ~ 9번 상품은 의류
+		for(int i = 0; i < 10; i++) {
+			Product product = productRepository.save(Product.create(user.id(), "상품" + i, 10000, "설명" + i));
+			productPhotoRepository.saveAll(List.of(ProductPhoto.builder()
+				.productId(product.getId())
+				.photoUrl("image" + i + ".jpg")
+				.order(0)
+				.build()));
+
+			if(i < 3) {
+				productCategoryMappingRepository.save(ProductCategoryMapping.builder()
+					.productId(product.getId()).categoryId(category1.getId()).build());
+			} else {
+				productCategoryMappingRepository.save(ProductCategoryMapping.builder()
+					.productId(product.getId()).categoryId(category2.getId()).build());
+			}
+		}
+
+		int page = 1;
+		int size = 5;
+
+		// When
+		Slice<ProductThumbnail> result = productService.findProducts(page, size, ProductSortType.recent, "전자제품");
+
+		// Then
+		assertThat(result.getContent()).hasSize(3);
+		assertThat(result.getContent().get(0).photoUrl()).isEqualTo("image2.jpg");
 	}
 
 	@Test
