@@ -3,8 +3,7 @@ package com.cotato.kampus.domain.board.application;
 import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteAppender;
-import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteDeleter;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteManager;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.board.implement.board.BoardValidator;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -19,8 +18,7 @@ public class BoardFavoriteService {
 	private final BoardFinder boardFinder;
 	private final BoardValidator boardValidator;
 
-	private final BoardFavoriteAppender boardFavoriteAppender;
-	private final BoardFavoriteDeleter boardFavoriteDeleter;
+	private final BoardFavoriteManager boardFavoriteManager;
 	private final ApiUserResolver apiUserResolver;
 
 	public Long addFavoriteBoard(Long boardId) {
@@ -33,11 +31,11 @@ public class BoardFavoriteService {
 		boardValidator.validateUniversityAccess(user, board);
 
 		// 즐겨찾기 추가
-		return boardFavoriteAppender.appendFavoriteBoard(board.getId());
+		return boardFavoriteManager.appendFavoriteBoard(board.getId());
 	}
 
 	public Long removeFavoriteBoard(Long boardId) {
-		boardFavoriteDeleter.deleteFavoriteBoard(boardId);
+		boardFavoriteManager.deleteFavoriteBoard(boardId);
 		return boardId;
 	}
 }

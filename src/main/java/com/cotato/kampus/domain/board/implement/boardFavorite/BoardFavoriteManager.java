@@ -15,9 +15,26 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardFavoriteDeleter {
+public class BoardFavoriteManager {
 	private final BoardFavoriteRepository boardFavoriteRepository;
 	private final ApiUserResolver apiUserResolver;
+
+	@Transactional
+	public Long appendFavoriteBoard(Long boardId) {
+		// 즐겨찾기 여부 중복 체크
+		boolean exists = boardFavoriteRepository.existsByUserIdAndBoardId(apiUserResolver.getCurrentUserId(), boardId);
+		if(exists){
+			throw new AppException(ErrorCode.BOARD_ALREADY_FAVORITED);
+		}
+
+		// 즐겨찾기 추가
+		BoardFavorite boardFavorite = BoardFavorite.builder()
+			.boardId(boardId)
+			.userId(apiUserResolver.getCurrentUserId())
+			.build();
+
+		return boardFavoriteRepository.save(boardFavorite).getBoardId();
+	}
 
 	@Transactional
 	public void deleteFavoriteBoard(Long boardId) {
