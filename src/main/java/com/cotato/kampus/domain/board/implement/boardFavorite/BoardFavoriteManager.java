@@ -5,8 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.BoardFavorite;
 import com.cotato.kampus.domain.board.implement.port.BoardFavoriteRepository;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +17,6 @@ public class BoardFavoriteManager {
 
 	@Transactional
 	public Long appendFavoriteBoard(Long userId, Long boardId) {
-		// 즐겨찾기 여부 중복 체크
-		boolean exists = boardFavoriteRepository.existsByUserIdAndBoardId(userId, boardId);
-		if(exists){
-			throw new AppException(ErrorCode.BOARD_ALREADY_FAVORITED);
-		}
-
-		// 즐겨찾기 추가
 		BoardFavorite boardFavorite = BoardFavorite.builder()
 			.boardId(boardId)
 			.userId(userId)

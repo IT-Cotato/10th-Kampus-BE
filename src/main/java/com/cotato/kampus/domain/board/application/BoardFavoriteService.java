@@ -10,6 +10,8 @@ import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.board.implement.board.BoardValidator;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.user.dto.UserDto;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +34,12 @@ public class BoardFavoriteService {
 		// 게시판 검증
 		boardValidator.validateBoardIsActive(board);
 		boardValidator.validateUniversityAccess(user, board);
+
+		// 즐겨찾기 중복 검증
+		boolean isFavorite = boardFavoriteFinder.existsByUserIdAndBoardId(user.id(), boardId);
+		if(isFavorite){
+			throw new AppException(ErrorCode.BOARD_ALREADY_FAVORITED);
+		}
 
 		// 즐겨찾기 추가
 		return boardFavoriteManager.appendFavoriteBoard(user.id(), board.getId());
