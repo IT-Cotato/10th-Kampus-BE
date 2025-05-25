@@ -24,4 +24,8 @@ public class BoardFavoriteFinder {
 			.map(BoardFavorite::getBoardId)
 			.toList();
 	}
+
+	public boolean existsByUserIdAndBoardId(Long userId, Long boardId) {
+		return boardFavoriteRepository.existsByUserIdAndBoardId(userId, boardId);
+	}
 }
