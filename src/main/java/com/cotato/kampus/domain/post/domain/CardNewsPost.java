@@ -30,7 +30,6 @@ public class CardNewsPost extends Post {
 	) {
 		super(id, boardId, userId, title, content, postStatus, anonymity, likeCount, commentCount, scrapCount,
 			anonymousCount, createdTime, lastModifiedTime);
-		validate();
 	}
 
 	public static CardNewsPost create(Long boardId, Long userId, String title, String content, PostStatus postStatus,

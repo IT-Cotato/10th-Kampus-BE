@@ -30,7 +30,6 @@ public class NormalPost extends Post {
 	) {
 		super(id, boardId, userId, title, content, postStatus, anonymity, likeCount, commentCount, scrapCount,
 			anonymousCount, createdTime, lastModifiedTime);
-		validate();
 	}
 
 	public static NormalPost create(Long boardId, Long userId, String title, String content, PostStatus postStatus,
