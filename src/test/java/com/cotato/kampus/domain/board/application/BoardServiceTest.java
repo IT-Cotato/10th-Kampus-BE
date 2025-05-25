@@ -27,8 +27,11 @@ import com.cotato.kampus.domain.board.implement.port.BoardRepository;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.enums.Anonymity;
 import com.cotato.kampus.domain.post.domain.NormalPost;
+import com.cotato.kampus.domain.post.domain.Post;
+import com.cotato.kampus.domain.post.domain.TrendingPost;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 import com.cotato.kampus.domain.post.implement.port.PostRepository;
+import com.cotato.kampus.domain.post.implement.port.TrendingPostRepository;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -54,11 +57,20 @@ class BoardServiceTest {
 	@Autowired
 	private PostRepository postRepository;
 
+	@Autowired
+	private TrendingPostRepository trendingPostRepository;
+
 	private Board savedBoard1;
 	private Board savedBoard2;
 	private Board savedBoard3;
 	private Board savedBoard4;
 	private Board savedBoard5;
+
+	private Post post1;
+	private Post post2;
+	private Post post3;
+	private Post post4;
+	private Post post5;
 
 	@BeforeEach
 	void setUp() {
@@ -73,19 +85,19 @@ class BoardServiceTest {
 		savedBoard5 = boardRepository.save(UniversityBoard.create("홍익대학교", "홍대생 전용 게시판입니다", false,
 			BoardStatus.ACTIVE, BoardType.UNIVERSITY, 401L));
 
-		postRepository.save(
+		post1 = postRepository.save(
 			NormalPost.create(savedBoard1.getId(), 1L, "일반게시판 게시글", "내용1", PostStatus.PUBLISHED, Anonymity.ANONYMOUS)
 		);
-		postRepository.save(
+		post2 = postRepository.save(
 			NormalPost.create(savedBoard2.getId(), 2L, "카드뉴스게시판 게시글", "내용2", PostStatus.PUBLISHED, Anonymity.ANONYMOUS)
 		);
-		postRepository.save(
+		post3 = postRepository.save(
 			NormalPost.create(savedBoard3.getId(), 3L, "고정게시판 게시글", "내용3", PostStatus.PUBLISHED, Anonymity.ANONYMOUS)
 		);
-		postRepository.save(
+		post4 = postRepository.save(
 			NormalPost.create(savedBoard4.getId(), 4L, "트렌딩게시판 게시글", "내용4", PostStatus.PUBLISHED, Anonymity.ANONYMOUS)
 		);
-		postRepository.save(
+		post5 = postRepository.save(
 			NormalPost.create(savedBoard5.getId(), 5L, "홍익대학교 게시글", "내용5", PostStatus.PUBLISHED, Anonymity.ANONYMOUS)
 		);
 	}
@@ -114,7 +126,7 @@ class BoardServiceTest {
 	}
 
 	@Test
-	@DisplayName("즐겨찾기 게시판 미리보기 테스트 - 성공")
+	@DisplayName("즐겨찾기 게시판 미리보기 - 성공")
 	void getFavoriteBoardPreview_success() {
 		// Given
 		Long userId = TestUserHelper.createUserDto(1L, null, UserRole.UNVERIFIED).id();
@@ -184,4 +196,26 @@ class BoardServiceTest {
 		assertThat(result.isFavorite()).isEqualTo(true);
 	}
 
+	@Test
+	@DisplayName("트렌딩 게시판 미리보기")
+	void getTrendingPreview_success() {
+		// Given
+		// 재학 인증 안된 유저
+		UserDto user = TestUserHelper.createUserDto(1L, null, UserRole.UNVERIFIED);
+		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+
+		trendingPostRepository.save(TrendingPost.builder().postId(post1.getId()).build());
+		trendingPostRepository.save(TrendingPost.builder().postId(post2.getId()).build());
+		trendingPostRepository.save(TrendingPost.builder().postId(post4.getId()).build());
+		// 홍익대학교 게시글
+		trendingPostRepository.save(TrendingPost.builder().postId(post5.getId()).build());
+
+		// When
+		List<HomePostThumbnail> result = boardService.getTrendingPreview();
+
+		// Then
+		// 타대학 게시판은 제외하고 최신순으로 조회된다
+		assertThat(result.size()).isEqualTo(3);
+		assertThat(result.get(0).postId()).isEqualTo(post4.getId());
+	}
 }
