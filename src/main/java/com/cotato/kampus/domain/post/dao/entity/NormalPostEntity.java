@@ -19,21 +19,9 @@ public class NormalPostEntity extends PostEntity {
 
 	@Override
 	public Post toDomain() {
-		return NormalPost.builder()
-			.id(id)
-			.boardId(boardId)
-			.userId(userId)
-			.title(title)
-			.content(content)
-			.postStatus(postStatus)
-			.anonymity(anonymity)
-			.likeCount(likeCount)
-			.commentCount(commentCount)
-			.scrapCount(scrapCount)
-			.anonymousCount(anonymousCount)
-			.createdTime(getCreatedTime())
-			.lastModifiedTime(getLastModifiedTime())
-			.build();
+		return NormalPost.fromEntity(id, boardId, userId, title, content, postStatus, anonymity,
+				likeCount, commentCount, scrapCount, anonymousCount,
+				getCreatedTime(), getLastModifiedTime());
 	}
 
 	public static NormalPostEntity fromDomain(NormalPost normalPost) {
