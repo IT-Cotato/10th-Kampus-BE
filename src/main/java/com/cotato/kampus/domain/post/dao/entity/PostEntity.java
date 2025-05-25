@@ -40,7 +40,7 @@ public abstract class PostEntity extends BaseTimeEntity {
 	@Column(name = "title", nullable = false)
 	protected String title;
 
-	@Column(name = "content", nullable = false)
+	@Column(name = "content", nullable = false, length = 1000)
 	protected String content;
 
 	@Enumerated(EnumType.STRING)
