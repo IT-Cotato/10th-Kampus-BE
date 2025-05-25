@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.admin.dto.AdminBoardDetail;
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.implement.port.BoardFavoriteRepository;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteFinder;
 import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
-import com.cotato.kampus.domain.post.implement.port.PostRepository;
+import com.cotato.kampus.domain.post.implement.post.PostFinder;
 import com.cotato.kampus.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;
@@ -21,16 +21,15 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardDtoEnhancer {
+public class BoardDtoMapper {
 
-	private final PostRepository postRepository;
-	private final BoardFavoriteRepository boardFavoriteRepository;
+	private final PostFinder postFinder;
+	private final BoardFavoriteFinder boardFavoriteFinder;
 
 	public BoardWithFavoriteStatus mapToBoardWithFavoriteStatus(Board board, UserDto userDto) {
-		Boolean isFavorite = boardFavoriteRepository.existsByUserIdAndBoardId(userDto.id(), board.getId());
+		Boolean isFavorite = boardFavoriteFinder.existsByUserIdAndBoardId(userDto.id(), board.getId());
 
 		return BoardWithFavoriteStatus.from(board, isFavorite);
-
 	}
 
 	public List<BoardWithFavoriteStatus> updateFavoriteStatus(List<Board> boards, List<Long> favoriteBoardIds) {
@@ -46,7 +45,7 @@ public class BoardDtoEnhancer {
 		return boards.stream()
 			.map(board -> {
 				// 게시글 수
-				Long postCount = postRepository.countByBoardId(board.getId());
+				Long postCount = postFinder.countByBoardId(board.getId());
 
 				// 삭제 대기인 게시글은 삭제 날짜 카운트 반환
 				if (board.getBoardStatus().equals(BoardStatus.PENDING_DELETION)) {
@@ -58,5 +57,4 @@ public class BoardDtoEnhancer {
 				return AdminBoardDetail.of(board, postCount, null);
 			}).toList();
 	}
-
 }

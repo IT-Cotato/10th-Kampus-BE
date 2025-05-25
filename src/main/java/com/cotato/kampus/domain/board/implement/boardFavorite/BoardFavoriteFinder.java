@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.BoardFavorite;
 import com.cotato.kampus.domain.board.implement.port.BoardFavoriteRepository;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardFavoriteReader {
+public class BoardFavoriteFinder {
 
 	private final BoardFavoriteRepository boardFavoriteRepository;
 
@@ -23,5 +25,14 @@ public class BoardFavoriteReader {
 			.stream()
 			.map(BoardFavorite::getBoardId)
 			.toList();
+	}
+
+	public boolean existsByUserIdAndBoardId(Long userId, Long boardId) {
+		return boardFavoriteRepository.existsByUserIdAndBoardId(userId, boardId);
+	}
+
+	public BoardFavorite findByUserIdAndBoardId(Long userId, Long boardId) {
+		return boardFavoriteRepository.findByUserIdAndBoardId(userId, boardId)
+			.orElseThrow(() -> new AppException(ErrorCode.BOARD_FAVORITE_NOT_FOUND));
 	}
 }

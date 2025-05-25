@@ -27,23 +27,11 @@ public class BoardAppender {
 		boardValidator.validateBoardTypeAndUniversityId(boardType, universityId);
 
 		Board board;
-
-		if(boardType == BoardType.UNIVERSITY) {
-			board = UniversityBoard.builder()
-				.boardName(boardName)
-				.description(description)
-				.usesCategories(usesCategories)
-				.boardStatus(BoardStatus.ACTIVE)
-				.universityId(universityId)
-				.build();
+		if (boardType == BoardType.UNIVERSITY) {
+			board = UniversityBoard.create(boardName, description, usesCategories, BoardStatus.ACTIVE, boardType,
+				universityId);
 		} else {
-			board = NormalBoard.builder()
-				.boardName(boardName)
-				.description(description)
-				.usesCategories(usesCategories)
-				.boardStatus(BoardStatus.ACTIVE)
-				.boardType(boardType)
-				.build();
+			board = NormalBoard.create(boardName, description, usesCategories, BoardStatus.ACTIVE, boardType);
 		}
 
 		return boardRepository.save(board);

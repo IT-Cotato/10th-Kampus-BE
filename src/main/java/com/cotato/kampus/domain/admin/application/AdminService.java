@@ -19,7 +19,7 @@ import com.cotato.kampus.domain.admin.dto.BoardDetails;
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.domain.UniversityBoard;
 import com.cotato.kampus.domain.board.implement.board.BoardAppender;
-import com.cotato.kampus.domain.board.implement.board.BoardDtoEnhancer;
+import com.cotato.kampus.domain.board.implement.board.BoardDtoMapper;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.board.implement.board.BoardUpdater;
 import com.cotato.kampus.domain.board.implement.board.BoardValidator;
@@ -67,7 +67,7 @@ public class AdminService {
 	private final BoardUpdater boardUpdater;
 	private final BoardValidator boardValidator;
 	private final BoardFinder boardFinder;
-	private final BoardDtoEnhancer boardDtoEnhancer;
+	private final BoardDtoMapper boardDtoMapper;
 	private final VerificationRecordFinder verificationRecordFinder;
 	private final VerificationRecordUpdater verificationRecordUpdater;
 	private final VerificationPhotoFinder verificationPhotoFinder;
@@ -176,7 +176,7 @@ public class AdminService {
 		List<Board> boards = boardFinder.findAllBoards(boardStatus);
 
 		// 게시판 게시글 수, 삭제까지 남은 날짜 수 매핑
-		return boardDtoEnhancer.mapToAdminBoardDetail(boards);
+		return boardDtoMapper.mapToAdminBoardDetail(boards);
 	}
 
 	public BoardDetails getBoard(Long boardId) {

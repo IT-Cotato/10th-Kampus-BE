@@ -25,15 +25,7 @@ public class PostAppender {
 		String title,
 		String content
 	) {
-		Post post = NormalPost.builder()
-			.userId(userId)
-			.boardId(boardId)
-			.title(title)
-			.content(content)
-			.postStatus(PostStatus.PUBLISHED)
-			.anonymity(Anonymity.ANONYMOUS)
-			.build();
-
+		Post post = NormalPost.create(boardId, userId, title, content, PostStatus.PUBLISHED, Anonymity.ANONYMOUS);
 		return postRepository.save(post);
 	}
 
@@ -43,15 +35,7 @@ public class PostAppender {
 		String title,
 		String content
 	) {
-		Post post = CardNewsPost.builder()
-			.userId(userId)
-			.boardId(boardId)
-			.title(title)
-			.content(content)
-			.postStatus(PostStatus.PUBLISHED)
-			.anonymity(Anonymity.ANONYMOUS)
-			.build();
-
+		Post post = CardNewsPost.create(boardId, userId, title, content, PostStatus.PUBLISHED, Anonymity.ANONYMOUS);
 		return postRepository.save(post);
 	}
 }

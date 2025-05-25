@@ -28,54 +28,6 @@ public abstract class Post {
 	private final LocalDateTime createdTime;
 	private final LocalDateTime lastModifiedTime;
 
-	protected void validate() {
-		validateBoardId();
-		validateUserId();
-		validateTitle();
-		validateContent();
-		validatePostStatus();
-		validateAnonymous();
-	}
-
-	protected void validateBoardId() {
-		if (boardId == null) {
-			throw new AppException(ErrorCode.POST_BOARD_ID_REQUIRED);
-		}
-	}
-
-	protected void validateUserId() {
-		if (userId == null) {
-			throw new AppException(ErrorCode.POST_AUTHOR_ID_REQUIRED);
-		}
-	}
-
-	protected void validateTitle() {
-		if (title == null || title.trim().isEmpty()) {
-			throw new AppException(ErrorCode.POST_TITLE_EMPTY);
-		}
-	}
-
-	protected void validateContent() {
-		if (getContent() == null || getContent().trim().isEmpty()) {
-			throw new AppException(ErrorCode.POST_CONTENT_EMPTY);
-		}
-		if (getContent().length() > 1000) {
-			throw new AppException(ErrorCode.POST_CONTENT_TOO_LONG);
-		}
-	}
-
-	protected void validateAnonymous() {
-		if (anonymity == null) {
-			throw new AppException(ErrorCode.POST_ANONYMOUS_EMPTY);
-		}
-	}
-
-	protected void validatePostStatus() {
-		if (postStatus == null) {
-			throw new AppException(ErrorCode.POST_STATUS_EMPTY);
-		}
-	}
-
 	protected abstract Post createCopy(String title, String content, Anonymity anonymity, PostStatus postStatus,
 		int likeCount, int commentCount, int scrapCount, int anonymousCount);
 

@@ -19,21 +19,9 @@ public class CardNewsPostEntity extends PostEntity {
 
 	@Override
 	public Post toDomain() {
-		return CardNewsPost.builder()
-			.id(id)
-			.boardId(boardId)
-			.userId(userId)
-			.title(title)
-			.content(content)
-			.postStatus(postStatus)
-			.anonymity(anonymity)
-			.likeCount(likeCount)
-			.commentCount(commentCount)
-			.scrapCount(scrapCount)
-			.anonymousCount(anonymousCount)
-			.createdTime(getCreatedTime())
-			.lastModifiedTime(getLastModifiedTime())
-			.build();
+		return CardNewsPost.fromEntity(id, boardId, userId, title, content, postStatus, anonymity,
+			likeCount, commentCount, scrapCount, anonymousCount,
+			getCreatedTime(), getLastModifiedTime());
 	}
 
 	public static CardNewsPostEntity fromDomain(CardNewsPost cardNewsPost) {

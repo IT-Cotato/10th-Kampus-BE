@@ -90,4 +90,8 @@ public class PostFinder {
 		// 한 번의 JOIN 쿼리로 게시글 정보 조회
 		return postRepository.findPostsByUserComments(userId, customPageRequest.of(SORT_PROPERTY));
 	}
+
+	public Long countByBoardId(Long boardId) {
+		return postRepository.countByBoardId(boardId);
+	}
 }
