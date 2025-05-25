@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
 import com.cotato.kampus.domain.board.domain.HomePostThumbnail;
-import com.cotato.kampus.domain.board.implement.board.BoardDtoEnhancer;
+import com.cotato.kampus.domain.board.implement.board.BoardDtoMapper;
 import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteFinder;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
 	private final BoardFinder boardFinder;
-	private final BoardDtoEnhancer boardDtoEnhancer;
+	private final BoardDtoMapper boardDtoMapper;
 	private final BoardFavoriteFinder boardFavoriteFinder;
 	private final UserValidator userValidator;
 	private final ApiUserResolver apiUserResolver;
@@ -47,7 +47,7 @@ public class BoardService {
 
 		// 즐겨찾기 여부 매핑
 		List<BoardWithFavoriteStatus> boardWithFavorites = new ArrayList<>(
-			boardDtoEnhancer.updateFavoriteStatus(boards, favoriteBoardIds));
+			boardDtoMapper.updateFavoriteStatus(boards, favoriteBoardIds));
 
 		// 즐겨찾기 게시판이 위로 오도록 정렬
 		boardWithFavorites.sort(Comparator.comparing(BoardWithFavoriteStatus::isFavorite).reversed());
@@ -75,7 +75,7 @@ public class BoardService {
 		// 2. 대학교 게시판 조회
 		Board universityBoard = boardFinder.findUserUniversityBoard(user.universityId());
 
-		return boardDtoEnhancer.mapToBoardWithFavoriteStatus(universityBoard, user);
+		return boardDtoMapper.mapToBoardWithFavoriteStatus(universityBoard, user);
 	}
 
 	public BoardWithFavoriteStatus getBoard(Long boardId) {
@@ -84,7 +84,7 @@ public class BoardService {
 
 		Board board = boardFinder.findBoard(boardId);
 
-		return boardDtoEnhancer.mapToBoardWithFavoriteStatus(board, userDto);
+		return boardDtoMapper.mapToBoardWithFavoriteStatus(board, userDto);
 	}
 
 	public List<HomePostThumbnail> getTrendingPreview() {

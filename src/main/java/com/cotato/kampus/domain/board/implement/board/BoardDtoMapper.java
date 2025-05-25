@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardDtoEnhancer {
+public class BoardDtoMapper {
 
 	private final PostFinder postFinder;
 	private final BoardFavoriteFinder boardFavoriteFinder;
