@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.product.api.request.ProductStatusUpdatable;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
 import com.cotato.kampus.domain.product.domain.ProductCategoryMapping;
@@ -32,7 +31,6 @@ import com.cotato.kampus.domain.product.implement.port.ProductPhotoRepository;
 import com.cotato.kampus.domain.product.implement.port.ProductRepository;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.product.implement.product.ProductManager;
-import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapManager;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
@@ -45,7 +43,7 @@ import com.cotato.kampus.helper.TestUserHelper;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
-public class ProductServiceIntegrationTest {
+public class ProductServiceTest {
 	@Autowired
 	private ProductService productService;
 
