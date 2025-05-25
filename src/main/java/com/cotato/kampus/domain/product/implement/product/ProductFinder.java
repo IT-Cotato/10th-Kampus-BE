@@ -40,4 +40,7 @@ public class ProductFinder {
 		return productRepository.findAllByIdInAndProductStatusNot(productIds, ProductStatus.DELETED, customPageRequest.of(sortType.getProperty()));
 	}
 
+	public List<Product> findAllByProductIds(List<Long> productIds) {
+		return productRepository.findAllByIdInAndProductStatusNot(productIds, ProductStatus.DELETED);
+	}
 }

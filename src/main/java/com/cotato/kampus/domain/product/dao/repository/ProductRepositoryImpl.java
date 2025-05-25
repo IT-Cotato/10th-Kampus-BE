@@ -43,4 +43,11 @@ public class ProductRepositoryImpl implements ProductRepository {
 		return productJpaRepository.findAllByIdInAndProductStatusNot(productIds, status, pageable)
 			.map(ProductEntity::toDomain);
 	}
+
+	@Override
+	public List<Product> findAllByIdInAndProductStatusNot(List<Long> productIds, ProductStatus status) {
+		return productJpaRepository.findAllByIdInAndProductStatusNot(productIds, status).stream()
+			.map(ProductEntity::toDomain)
+			.toList();
+	}
 }

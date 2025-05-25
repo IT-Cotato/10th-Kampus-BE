@@ -27,6 +27,14 @@ public class ProductScrapEntity {
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
 
+	public ProductScrap toDomain() {
+		return ProductScrap.builder()
+			.id(getId())
+			.productId(getProductId())
+			.userId(getUserId())
+			.build();
+	}
+
 	public static ProductScrapEntity fromDomain(ProductScrap productScrap) {
 		ProductScrapEntity entity = new ProductScrapEntity();
 		entity.id = productScrap.getId();
