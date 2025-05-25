@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardFavoriteReader {
+public class BoardFavoriteFinder {
 
 	private final BoardFavoriteRepository boardFavoriteRepository;
 

@@ -10,7 +10,7 @@ import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
 import com.cotato.kampus.domain.board.domain.HomePostThumbnail;
 import com.cotato.kampus.domain.board.implement.board.BoardDtoEnhancer;
-import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteReader;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteFinder;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.domain.Post;
@@ -28,7 +28,7 @@ public class BoardService {
 
 	private final BoardFinder boardFinder;
 	private final BoardDtoEnhancer boardDtoEnhancer;
-	private final BoardFavoriteReader boardFavoriteReader;
+	private final BoardFavoriteFinder boardFavoriteFinder;
 	private final UserValidator userValidator;
 	private final ApiUserResolver apiUserResolver;
 	private final PostDtoMapper postDtoMapper;
@@ -40,7 +40,7 @@ public class BoardService {
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 즐겨찾는 게시판 조회
-		List<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
+		List<Long> favoriteBoardIds = boardFavoriteFinder.findFavoriteBoardIds(userId);
 
 		// 공용 게시판 조회
 		List<Board> boards = boardFinder.findPublicBoards();
@@ -60,7 +60,7 @@ public class BoardService {
 		Long userId = apiUserResolver.getCurrentUserId();
 
 		// 즐겨찾는 게시판 조회
-		List<Long> favoriteBoardIds = boardFavoriteReader.findFavoriteBoardIds(userId);
+		List<Long> favoriteBoardIds = boardFavoriteFinder.findFavoriteBoardIds(userId);
 
 		List<Post> latestPosts = postFinder.findTopPosts(favoriteBoardIds);
 
