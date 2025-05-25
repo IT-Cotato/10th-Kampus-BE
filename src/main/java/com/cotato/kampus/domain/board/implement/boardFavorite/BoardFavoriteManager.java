@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.BoardFavorite;
 import com.cotato.kampus.domain.board.implement.port.BoardFavoriteRepository;
-import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -17,12 +16,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardFavoriteManager {
 	private final BoardFavoriteRepository boardFavoriteRepository;
-	private final ApiUserResolver apiUserResolver;
 
 	@Transactional
-	public Long appendFavoriteBoard(Long boardId) {
+	public Long appendFavoriteBoard(Long userId, Long boardId) {
 		// 즐겨찾기 여부 중복 체크
-		boolean exists = boardFavoriteRepository.existsByUserIdAndBoardId(apiUserResolver.getCurrentUserId(), boardId);
+		boolean exists = boardFavoriteRepository.existsByUserIdAndBoardId(userId, boardId);
 		if(exists){
 			throw new AppException(ErrorCode.BOARD_ALREADY_FAVORITED);
 		}
@@ -30,18 +28,14 @@ public class BoardFavoriteManager {
 		// 즐겨찾기 추가
 		BoardFavorite boardFavorite = BoardFavorite.builder()
 			.boardId(boardId)
-			.userId(apiUserResolver.getCurrentUserId())
+			.userId(userId)
 			.build();
 
 		return boardFavoriteRepository.save(boardFavorite).getBoardId();
 	}
 
 	@Transactional
-	public void deleteFavoriteBoard(Long boardId) {
-		// 즐겨찾기 여부 체크
-		BoardFavorite boardFavorite = boardFavoriteRepository.findByUserIdAndBoardId(apiUserResolver.getCurrentUserId(), boardId)
-			.orElseThrow(() -> new AppException(ErrorCode.BOARD_FAVORITE_NOT_FOUND));
-
+	public void deleteFavoriteBoard(BoardFavorite boardFavorite) {
 		boardFavoriteRepository.delete(boardFavorite);
 	}
 }

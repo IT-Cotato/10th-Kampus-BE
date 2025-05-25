@@ -3,6 +3,8 @@ package com.cotato.kampus.domain.board.application;
 import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardFavorite;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteFinder;
 import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteManager;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.board.implement.board.BoardValidator;
@@ -20,6 +22,7 @@ public class BoardFavoriteService {
 
 	private final BoardFavoriteManager boardFavoriteManager;
 	private final ApiUserResolver apiUserResolver;
+	private final BoardFavoriteFinder boardFavoriteFinder;
 
 	public Long addFavoriteBoard(Long boardId) {
 		// 유저. 게시판 조회
@@ -31,11 +34,17 @@ public class BoardFavoriteService {
 		boardValidator.validateUniversityAccess(user, board);
 
 		// 즐겨찾기 추가
-		return boardFavoriteManager.appendFavoriteBoard(board.getId());
+		return boardFavoriteManager.appendFavoriteBoard(user.id(), board.getId());
 	}
 
 	public Long removeFavoriteBoard(Long boardId) {
-		boardFavoriteManager.deleteFavoriteBoard(boardId);
+		// 유저 조회
+		UserDto user = apiUserResolver.getCurrentUserDto();
+
+		// 즐겨찾기 조회/삭제
+		BoardFavorite boardFavorite = boardFavoriteFinder.findByUserIdAndBoardId(user.id(), boardId);
+		boardFavoriteManager.deleteFavoriteBoard(boardFavorite);
+
 		return boardId;
 	}
 }
