@@ -75,26 +75,12 @@ public class BoardEntity extends BaseTimeEntity {
 	public Board toDomain() {
 		switch (boardType) {
 			case NORMAL, CARDNEWS, FIXED, TRENDING:
-				return NormalBoard.builder()
-					.id(this.id)
-					.boardName(this.boardName)
-					.description(this.description)
-					.usesCategories(this.usesCategories)
-					.boardStatus(this.boardStatus)
-					.boardType(this.boardType)
-					.deletionScheduledAt(this.deletionScheduledAt)
-					.build();
+				return NormalBoard.fromEntity(id, boardName, description, usesCategories, boardStatus, boardType,
+					deletionScheduledAt);
 
 			case UNIVERSITY:
-				return UniversityBoard.builder()
-					.id(this.id)
-					.boardName(this.boardName)
-					.description(this.description)
-					.usesCategories(this.usesCategories)
-					.boardStatus(this.boardStatus)
-					.universityId(this.universityId)
-					.deletionScheduledAt(this.deletionScheduledAt)
-					.build();
+				return UniversityBoard.fromEntity(id, boardName, description, usesCategories, boardStatus, boardType,
+					universityId, deletionScheduledAt);
 
 			default:
 				throw new AppException(ErrorCode.INVALID_BOARD_TYPE);

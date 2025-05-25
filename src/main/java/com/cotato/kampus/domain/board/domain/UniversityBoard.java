@@ -7,6 +7,7 @@ import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,19 +16,46 @@ public class UniversityBoard extends Board {
 
 	private final Long universityId;
 
-	@Builder
-	public UniversityBoard(
+	@Builder(access = AccessLevel.PRIVATE)
+	private UniversityBoard(
 		Long id,
 		String boardName,
 		String description,
 		Boolean usesCategories,
 		BoardStatus boardStatus,
+		BoardType boardType,
 		Long universityId,
 		LocalDateTime deletionScheduledAt
 	) {
-		super(id, boardName, description, usesCategories, boardStatus, BoardType.UNIVERSITY, deletionScheduledAt);
+		super(id, boardName, description, usesCategories, boardStatus, boardType, deletionScheduledAt);
 		this.universityId = universityId;
 		validateUniversityId();
+	}
+
+	public static UniversityBoard create(String boardName, String description, Boolean usesCategories,
+		BoardStatus boardStatus, BoardType boardType, Long universityId) {
+		return UniversityBoard.builder()
+			.boardName(boardName)
+			.description(description)
+			.usesCategories(usesCategories)
+			.boardStatus(boardStatus)
+			.boardType(boardType)
+			.universityId(universityId)
+			.build();
+	}
+
+	public static UniversityBoard fromEntity(Long id, String boardName, String description, Boolean usesCategories,
+		BoardStatus boardStatus, BoardType boardType, Long universityId, LocalDateTime deletionScheduledAt) {
+		return UniversityBoard.builder()
+			.id(id)
+			.boardName(boardName)
+			.description(description)
+			.usesCategories(usesCategories)
+			.boardStatus(boardStatus)
+			.boardType(boardType)
+			.universityId(universityId)
+			.deletionScheduledAt(deletionScheduledAt)
+			.build();
 	}
 
 	@Override
@@ -74,5 +102,4 @@ public class UniversityBoard extends Board {
 			throw new AppException(ErrorCode.BOARD_UNIVERSITY_ID_REQUIRED);
 		}
 	}
-
 }

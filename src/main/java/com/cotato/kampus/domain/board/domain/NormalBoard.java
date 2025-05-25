@@ -5,14 +5,15 @@ import java.time.LocalDateTime;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class NormalBoard extends Board {
 
-	@Builder
-	public NormalBoard(
+	@Builder(access = AccessLevel.PRIVATE)
+	private NormalBoard(
 		Long id,
 		String boardName,
 		String description,
@@ -22,6 +23,30 @@ public class NormalBoard extends Board {
 		LocalDateTime deletionScheduledAt
 	) {
 		super(id, boardName, description, usesCategories, boardStatus, boardType, deletionScheduledAt);
+	}
+
+	public static NormalBoard create(String boardName, String description, Boolean usesCategories,
+		BoardStatus boardStatus, BoardType boardType) {
+		return NormalBoard.builder()
+			.boardName(boardName)
+			.description(description)
+			.usesCategories(usesCategories)
+			.boardStatus(boardStatus)
+			.boardType(boardType)
+			.build();
+	}
+
+	public static NormalBoard fromEntity(Long id, String boardName, String description, Boolean usesCategories,
+		BoardStatus boardStatus, BoardType boardType, LocalDateTime deletionScheduledAt) {
+		return NormalBoard.builder()
+			.id(id)
+			.boardName(boardName)
+			.description(description)
+			.usesCategories(usesCategories)
+			.boardStatus(boardStatus)
+			.boardType(boardType)
+			.deletionScheduledAt(deletionScheduledAt)
+			.build();
 	}
 
 	@Override
