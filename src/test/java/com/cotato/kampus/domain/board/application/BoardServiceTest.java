@@ -163,4 +163,25 @@ class BoardServiceTest {
 			.hasMessage(ErrorCode.USER_UNVERIFIED.getMessage());
 	}
 
+	@Test
+	@DisplayName("특정 게시판 조회 - 성공")
+	void getBoard_success() {
+		// Given
+		UserDto user = TestUserHelper.createUserDto(1L, null, UserRole.UNVERIFIED);
+		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+
+		// 고정 게시판 즐겨찾기
+		boardFavoriteRepository.save(BoardFavorite.builder()
+			.userId(user.id())
+			.boardId(savedBoard3.getId())
+			.build());
+
+		// When
+		BoardWithFavoriteStatus result = boardService.getBoard(3L);
+
+		// Then
+		assertThat(result.boardId()).isEqualTo(3L);
+		assertThat(result.isFavorite()).isEqualTo(true);
+	}
+
 }
