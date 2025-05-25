@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.product.implement.productCategory;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,10 @@ public class ProductCategoryFinder {
 	public ProductCategory find(String categoryName) {
 		return productCategoryRepository.findByCategoryName(categoryName)
 			.orElseThrow(() -> new AppException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND));
+	}
+
+	public List<ProductCategory> findAllByIds(List<Long> categoryIds) {
+		return productCategoryRepository.findAllByIdIn(categoryIds);
 	}
 
 	public boolean existsByCategoryName(String categoryName) {

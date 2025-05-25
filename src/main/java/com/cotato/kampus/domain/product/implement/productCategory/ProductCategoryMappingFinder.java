@@ -19,4 +19,8 @@ public class ProductCategoryMappingFinder {
 	public List<Long> getIdsByCategory(Long categoryId) {
 		return productCategoryMappingRepository.findAllProductIdsByCategoryId(categoryId);
 	}
+
+	public List<Long> getCategoryIdsByProductId(Long productId) {
+		return productCategoryMappingRepository.findAllCategoryIdByProductId(productId);
+	}
 }

@@ -69,9 +69,6 @@ public class ProductService {
 		userValidator.validateStudentVerification(user);
 
 		// 2. 카테고리 검증/조회
-		if (categoryNames == null || categoryNames.isEmpty()) {
-			throw new AppException(ErrorCode.PRODUCT_CATEGORY_REQUIRED);
-		}
 		List<Long> categoryIds = categoryNames.stream()
 			.map(productCategoryFinder::find)
 			.map(ProductCategory::getId)
@@ -116,9 +113,6 @@ public class ProductService {
 		product.validateEditable(userId);
 
 		// 2. 카테고리 조회/검증
-		if (categoryNames == null || categoryNames.isEmpty()) {
-			throw new AppException(ErrorCode.PRODUCT_CATEGORY_REQUIRED);
-		}
 		List<Long> categoryIds = categoryNames.stream()
 			.map(productCategoryFinder::find)
 			.map(ProductCategory::getId)
@@ -159,12 +153,17 @@ public class ProductService {
 		boolean isAuthor = product.getUserId().equals(user.id());
 		boolean isScrapped = productScrapFinder.isScrapped(productId, user.id());
 
+		List<Long> categoryIds = productCategoryMappingFinder.getCategoryIdsByProductId(productId);
+		List<String> categoryNames = productCategoryFinder.findAllByIds(categoryIds).stream()
+			.map(productCategory -> productCategory.getCategoryName())
+			.toList();
+
 		// 3. 상품 조회수 증가
 		Product viewedProduct = product.increaseViewCount();
 		productManager.update(viewedProduct);
 
 		// 4. ProductDetails 변환
-		return ProductDetails.of(viewedProduct, user.nickname(), photos, isAuthor, isScrapped);
+		return ProductDetails.of(viewedProduct, user.nickname(), photos, isAuthor, isScrapped, categoryNames);
 	}
 
 	public Slice<ProductThumbnail> findProducts(int page, int size, ProductSortType sort, String categoryName) {
@@ -194,5 +193,15 @@ public class ProductService {
 
 		Product updatedProduct = product.withProductStatus(status);
 		productManager.update(updatedProduct);
+	}
+
+	public Slice<ProductThumbnail> findMyProducts(int page, int size) {
+		// 1. 유저 조회
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		// 2. 상품 조회
+		Slice<Product> products = productFinder.findAllByUserId(userId, page, size);
+
+		return productDtoMapper.toProductThumbnails(products, userId);
 	}
 }

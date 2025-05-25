@@ -11,6 +11,7 @@ public record ProductDetails(
 	String sellerName,
 	String title,
 	int price,
+	List<String> categories,
 	String description,
 	List<ProductPhotoInfo> photos,
 	int viewCount,
@@ -28,7 +29,8 @@ public record ProductDetails(
 		String sellerName,
 		List<ProductPhoto> productPhotos,
 		boolean isAuthor,
-		boolean isScrapped
+		boolean isScrapped,
+		List<String> categories
 	) {
 		return new ProductDetails(
 			product.getId(),
@@ -36,6 +38,7 @@ public record ProductDetails(
 			sellerName,
 			product.getTitle(),
 			product.getPrice(),
+			categories,
 			product.getDescription(),
 			productPhotos.stream()
 					.map(ProductPhotoInfo::from)

@@ -33,7 +33,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-@Tag(name = "중고거래 상품 관리 API", description = "상품 등록, 조회, 수정, 삭제 및 스크랩 관리 API")
+@Tag(name = "중고거래 상품 관리 API", description = "상품 등록, 조회, 수정, 삭제 관리 API")
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @RequestMapping("/v1/api/products")
@@ -104,7 +104,7 @@ public class ProductController {
 	public ResponseEntity<DataResponse<SliceResponse<ProductThumbnail>>> findProducts(
 		@RequestParam(required = false, defaultValue = "1") int page,
 		@Parameter(
-			name="size",
+			name = "size",
 			description = "한 페이지 표시할 상품 개수"
 		)
 		@RequestParam(required = false, defaultValue = "10") int size,
@@ -138,5 +138,18 @@ public class ProductController {
 			ProductStatus.valueOf(productStatus.name())
 		);
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@GetMapping("/my")
+	@Operation(summary = "사용자가 등록한 중고거래 상품 목록 조회")
+	public ResponseEntity<DataResponse<SliceResponse<ProductThumbnail>>> findMyProducts(
+		@RequestParam(required = false, defaultValue = "1") int page,
+		@Parameter(name = "size", description = "한 페이지 표시할 상품 개수")
+		@RequestParam(required = false, defaultValue = "10") int size
+	) {
+		return ResponseEntity.ok(DataResponse.from(
+				SliceResponse.from(productService.findMyProducts(page, size))
+			)
+		);
 	}
 }
