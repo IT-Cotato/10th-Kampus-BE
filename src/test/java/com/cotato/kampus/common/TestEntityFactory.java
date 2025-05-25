@@ -10,19 +10,10 @@ import static org.mockito.Mockito.*;
 public class TestEntityFactory {
 
 	public static Post createPost(Long id, Long userId, String title, Long boardId) {
-		return NormalPost.builder()
-			.id(id)
-			.userId(userId)
-			.title(title)
-			.boardId(boardId)
-			.content("test content")
-			.postStatus(PostStatus.PUBLISHED)
-			.anonymity(Anonymity.IDENTIFIED)
-			.likeCount(0)
-			.commentCount(0)
-			.scrapCount(0)
-			.anonymousCount(0)
-			.build();
+		Post realPost = NormalPost.create(boardId, userId, title, "test content", PostStatus.PUBLISHED, Anonymity.IDENTIFIED);
+		Post spyPost = spy(realPost);
+		when(spyPost.getId()).thenReturn(id);
+		return spyPost;
 	}
 
 	public static Product createProduct(Long id, Long userId, String title) {
