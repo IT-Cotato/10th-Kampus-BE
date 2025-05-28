@@ -1,7 +1,12 @@
 package com.cotato.kampus.domain.product.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.cotato.kampus.domain.product.domain.ProductCategory;
+import com.cotato.kampus.domain.product.domain.ProductCategoryInfo;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryManager;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
@@ -32,5 +37,11 @@ public class ProductCategoryService {
 
 		// 3. 카테고리 생성
 		return productCategoryManager.append(categoryName).getId();
+	}
+
+	public List<ProductCategoryInfo> findAllCategories() {
+		List<ProductCategory> categories = productCategoryFinder.findAll();
+
+		return categories.stream().map(ProductCategoryInfo::from).toList();
 	}
 }

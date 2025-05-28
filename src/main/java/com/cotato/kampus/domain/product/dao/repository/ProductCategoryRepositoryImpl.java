@@ -40,4 +40,11 @@ public class ProductCategoryRepositoryImpl implements ProductCategoryRepository 
 			.map(ProductCategoryEntity::toDomain)
 			.toList();
 	}
+
+	@Override
+	public List<ProductCategory> findAll() {
+		return productCategoryJpaRepository.findAll().stream()
+			.map(ProductCategoryEntity::toDomain)
+			.toList();
+	}
 }
