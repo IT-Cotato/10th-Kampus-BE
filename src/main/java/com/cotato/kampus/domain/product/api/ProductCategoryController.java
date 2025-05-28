@@ -1,12 +1,14 @@
 package com.cotato.kampus.domain.product.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.product.api.request.CreateProductCategoryRequest;
+import com.cotato.kampus.domain.product.api.response.ProductCategoryFindResponse;
 import com.cotato.kampus.domain.product.application.ProductCategoryService;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
@@ -31,6 +33,17 @@ public class ProductCategoryController {
 			return ResponseEntity.ok(DataResponse.from(
 				productCategoryService.createCategory(
 					request.categoryName()
+				)
+			)
+		);
+	}
+
+	@GetMapping(value = "")
+	@Operation(summary = "중고거래 카테고리 조회", description = "중고거래 상품에 적용 가능한 카테고리 전체 조회")
+	public ResponseEntity<DataResponse<ProductCategoryFindResponse>> findAllCategories() {
+			return ResponseEntity.ok(DataResponse.from(
+				ProductCategoryFindResponse.from(
+					productCategoryService.findAllCategories()
 				)
 			)
 		);

@@ -31,4 +31,8 @@ public class ProductCategoryFinder {
 	public boolean existsByCategoryName(String categoryName) {
 		return productCategoryRepository.existsByCategoryName(categoryName);
 	}
+
+	public List<ProductCategory> findAll() {
+		return productCategoryRepository.findAll();
+	}
 }

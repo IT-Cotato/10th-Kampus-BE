@@ -14,4 +14,6 @@ public interface ProductCategoryRepository {
 	boolean existsByCategoryName(String categoryName);
 
 	List<ProductCategory> findAllByIdIn(List<Long> categoryIds);
+
+	List<ProductCategory> findAll();
 }
