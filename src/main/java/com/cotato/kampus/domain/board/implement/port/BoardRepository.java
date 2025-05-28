@@ -33,4 +33,6 @@ public interface BoardRepository{
 	List<Board> findByDeletionScheduledAtBefore(LocalDateTime now);
 
 	List<Board> findAllByBoardStatus(BoardStatus boardStatus);
+
+	boolean existsByBoardType(BoardType boardType);
 }

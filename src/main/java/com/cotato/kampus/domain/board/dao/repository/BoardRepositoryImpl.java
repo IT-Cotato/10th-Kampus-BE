@@ -99,4 +99,9 @@ public class BoardRepositoryImpl implements BoardRepository {
 			.map(BoardEntity::toDomain)
 			.toList();
 	}
+
+	@Override
+	public boolean existsByBoardType(BoardType boardType) {
+		return boardJpaRepository.existsByBoardType(boardType);
+	}
 }

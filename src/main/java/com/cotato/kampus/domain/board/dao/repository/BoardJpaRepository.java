@@ -28,4 +28,5 @@ public interface BoardJpaRepository extends JpaRepository<BoardEntity, Long> {
 
 	List<BoardEntity> findAllByBoardStatus(BoardStatus boardStatus);
 
+	boolean existsByBoardType(BoardType boardType);
 }

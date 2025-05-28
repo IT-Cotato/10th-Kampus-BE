@@ -121,6 +121,7 @@ public enum ErrorCode {
 	INVALID_BOARD_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 BoardType 입니다.", "BOARD-011"),
 	BOARD_NOT_ACTIVE(HttpStatus.FORBIDDEN, "게시판이 활성화되지 않았습니다.", "BOARD-012"),
 	BOARD_UNIVERSITY_ID_REQUIRED(HttpStatus.BAD_REQUEST, "대학 게시판은 대학 ID가 필수입니다.", "BOARD-013"),
+	DUPLICATED_UNIQUE_BOARD_TYPE(HttpStatus.BAD_REQUEST, "중복 생성이 허용되지 않는 게시판 타입입니다.", "BOARD-014"),
 
 	// Product
 	PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상품을 찾을 수 없습니다.", "PRODUCT-001"),
