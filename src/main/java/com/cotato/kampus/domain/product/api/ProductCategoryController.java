@@ -25,7 +25,7 @@ public class ProductCategoryController {
 
 	private final ProductCategoryService productCategoryService;
 
-	@PostMapping(value = "")
+	@PostMapping
 	@Operation(summary = "중고거래 카테고리 생성", description = "중고거래에서 사용할 카테고리를 생성합니다. (중복 허용 X)")
 	public ResponseEntity<DataResponse<Long>> createCategory(
 		@RequestBody CreateProductCategoryRequest request
@@ -38,7 +38,7 @@ public class ProductCategoryController {
 		);
 	}
 
-	@GetMapping(value = "")
+	@GetMapping
 	@Operation(summary = "중고거래 카테고리 조회", description = "중고거래 상품에 적용 가능한 카테고리 전체 조회")
 	public ResponseEntity<DataResponse<ProductCategoryFindResponse>> findAllCategories() {
 			return ResponseEntity.ok(DataResponse.from(
