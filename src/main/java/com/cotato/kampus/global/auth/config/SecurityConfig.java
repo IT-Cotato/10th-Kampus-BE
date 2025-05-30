@@ -46,13 +46,15 @@ public class SecurityConfig {
 		"/websocket/**",
 		"/v1/api/chats/**",
 		"/swagger-ui/**",
-		"/v3/api-docs/**"
+		"/v3/api-docs/**",
+		"/v1/api/auth/reissue"
 	};
 
 	// jwtAuthenticationFilter에서 스킵하는 url
 	private static final String[] JWT_SKIP_URL = {
 		"/v1/api/auth/login",
-		"/v1/api/auth/signup"
+		"/v1/api/auth/signup",
+		"/v1/api/auth/reissue"
 	};
 
 	// nativeAppLoginFilter > nativeAppAuthFilter
