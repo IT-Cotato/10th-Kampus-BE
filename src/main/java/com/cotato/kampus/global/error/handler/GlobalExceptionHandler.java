@@ -1,5 +1,7 @@
 package com.cotato.kampus.global.error.handler;
 
+import java.security.SignatureException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -17,6 +19,8 @@ import com.cotato.kampus.global.error.exception.UnivCertException;
 import com.cotato.kampus.global.error.response.ErrorResponse;
 import com.deepl.api.DeepLException;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
@@ -159,5 +163,31 @@ public class GlobalExceptionHandler {
 		ErrorResponse errorResponse = ErrorResponse.of(request, e.getErrorCode(), e.getDetailMessage());
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
 			.body(errorResponse);
+	}
+
+	// JWT 관련 예외 처리
+	@ExceptionHandler(MalformedJwtException.class)
+	public ResponseEntity<ErrorResponse> handleMalformedJwtException(MalformedJwtException e,
+		HttpServletRequest request) {
+		log.error("잘못된 형식의 JWT 토큰: {}", e.getMessage());
+		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
+		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.MALFORMED_TOKEN, request);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+
+	@ExceptionHandler(ExpiredJwtException.class)
+	public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException e, HttpServletRequest request) {
+		log.error("만료된 JWT 토큰: {}", e.getMessage());
+		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
+		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.TOKEN_EXPIRED, request);
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+	}
+
+	@ExceptionHandler(SignatureException.class)
+	public ResponseEntity<ErrorResponse> handleSignatureException(SignatureException e, HttpServletRequest request) {
+		log.error("JWT 서명 검증 실패: {}", e.getMessage());
+		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
+		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.MALFORMED_TOKEN, request);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 }
