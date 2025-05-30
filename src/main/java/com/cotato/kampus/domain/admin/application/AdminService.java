@@ -95,8 +95,9 @@ public class AdminService {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
-		// 게시판 이름 중복 검사
+		// 게시판 이름/타입 유효성 검사
 		boardValidator.validateUniqueName(boardName);
+		boardValidator.validateUniqueType(boardType);
 
 		Long universityId = null;
 		if (universityCode != null) {

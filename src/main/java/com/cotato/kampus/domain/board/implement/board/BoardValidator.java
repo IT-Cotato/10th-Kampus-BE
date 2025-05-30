@@ -80,4 +80,12 @@ public class BoardValidator {
 			throw new AppException(ErrorCode.INVALID_BOARD_TYPE);
 		}
 	}
+
+	public void validateUniqueType(BoardType boardType) {
+		if(boardType == BoardType.CARDNEWS || boardType == BoardType.TRENDING) {
+			if(boardRepository.existsByBoardType(boardType)) {
+				throw new AppException(ErrorCode.DUPLICATED_UNIQUE_BOARD_TYPE);
+			}
+		}
+	}
 }
