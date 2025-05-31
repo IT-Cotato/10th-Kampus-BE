@@ -70,7 +70,7 @@ public class ChatRoomController {
 		}
 	)
 	public ResponseEntity<DataResponse<ChatroomResponse>> createChatroom(@RequestBody @Valid ChatroomRequest request,
-		@RequestParam(required = false, name = "type") @ValidChatType String chatType) {
+		@RequestParam(required = true, name = "type") @ValidChatType String chatType) {
 		return ResponseEntity.ok(DataResponse.from(
 			ChatroomResponse.of(chatRoomService.createChatRoom(request.referenceId(), ChatType.valueOf(chatType)))));
 	}
