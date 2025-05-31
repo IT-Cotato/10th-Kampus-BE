@@ -70,7 +70,7 @@ public class ChatRoomController {
 		}
 	)
 	public ResponseEntity<DataResponse<ChatroomResponse>> createChatroom(@RequestBody @Valid ChatroomRequest request,
-		@RequestParam(required = true, name = "type") @ValidChatType String chatType) {
+		@RequestParam(required = false, name = "type") @ValidChatType String chatType) {
 		return ResponseEntity.ok(DataResponse.from(
 			ChatroomResponse.of(chatRoomService.createChatRoom(request.referenceId(), ChatType.valueOf(chatType)))));
 	}
@@ -78,7 +78,7 @@ public class ChatRoomController {
 	@GetMapping
 	@Operation(
 		summary = "내가 속한 채팅방 조회",
-		description = "현재 참여중인 채팅방을 조회합니다.",
+		description = "현재 참여중인 채팅방을 조회합니다. type 파라미터가 없으면 전체 채팅방을 조회합니다.",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -103,7 +103,7 @@ public class ChatRoomController {
 	)
 	public ResponseEntity<DataResponse<ChatRoomListResponse>> getChatRooms(
 		@RequestParam(required = false, defaultValue = "1") int page,
-		@RequestParam(required = false, name = "type") @ValidChatType String chatType) {
+		@RequestParam(required = false, name = "type", defaultValue = "ALL") @ValidChatType String chatType) {
 		ChatRoomPreviewList chatRooms = chatRoomService.findChatRooms(page, ChatType.valueOf(chatType));
 		return ResponseEntity.ok(DataResponse.from(ChatRoomListResponse.from(chatRooms)));
 	}

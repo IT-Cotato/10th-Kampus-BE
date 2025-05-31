@@ -18,6 +18,8 @@ public interface ChatroomMetadataRepository {
 	Slice<ChatroomMetadata> findAllByUserIdAndChatTypeOrderByLastChatTimeDesc(Long userId, ChatType chatType,
 		Pageable pageable);
 
+	Slice<ChatroomMetadata> findAllByUserIdOrderByLastChatTimeDesc(Long userId, Pageable pageable);
+
 	Optional<ChatroomMetadata> findByChatroomIdAndUserId(Long chatroomId, Long senderId);
 
 	void deleteAllByChatroomId(Long chatroomId);

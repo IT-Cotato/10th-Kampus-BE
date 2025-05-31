@@ -1,5 +1,5 @@
 package com.cotato.kampus.domain.chat.enums;
 
 public enum ChatType {
-	POST, PRODUCT
+	POST, PRODUCT, ALL
 }
