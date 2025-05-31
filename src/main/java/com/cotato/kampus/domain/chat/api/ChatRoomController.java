@@ -19,6 +19,8 @@ import com.cotato.kampus.domain.chat.api.validator.ValidChatType;
 import com.cotato.kampus.domain.chat.domain.ChatRoomPreviewList;
 import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.global.common.dto.DataResponse;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.response.ErrorResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,6 +73,10 @@ public class ChatRoomController {
 	)
 	public ResponseEntity<DataResponse<ChatroomResponse>> createChatroom(@RequestBody @Valid ChatroomRequest request,
 		@RequestParam(required = true, name = "type") @ValidChatType String chatType) {
+		// 비즈니스 검증: chattype=ALL은 생성 API에서 허용하지 않음
+		if (ChatType.ALL.name().equals(chatType)) {
+			throw new AppException(ErrorCode.CHATROOM_ALL_TYPE_NOT_ALLOWED);
+		}
 		return ResponseEntity.ok(DataResponse.from(
 			ChatroomResponse.of(chatRoomService.createChatRoom(request.referenceId(), ChatType.valueOf(chatType)))));
 	}
