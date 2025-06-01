@@ -5,20 +5,26 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "refresh_entity")
+@Table(name = "refresh_entity", indexes = {
+	@Index(name = "idx_unique_id", columnList = "unique_id")
+})
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RefreshEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "unique_id", nullable = false)
+	@Column(name = "unique_id", nullable = false, unique = true)
 	private String uniqueId;
 
 	@Column(name = "username", nullable = false)

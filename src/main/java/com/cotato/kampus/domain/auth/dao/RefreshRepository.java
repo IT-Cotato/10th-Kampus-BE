@@ -6,5 +6,7 @@ import com.cotato.kampus.domain.auth.domain.RefreshEntity;
 
 public interface RefreshRepository extends JpaRepository<RefreshEntity, Long> {
 
-	void deleteByRefresh(String refresh);
+	boolean existsByUniqueId(String uniqueId);
+
+	void deleteByUniqueId(String uniqueId);
 }
