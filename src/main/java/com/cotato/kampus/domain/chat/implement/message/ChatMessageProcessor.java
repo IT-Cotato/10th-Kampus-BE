@@ -35,6 +35,7 @@ public class ChatMessageProcessor {
 				chatMessage.getChatroomId(),
 				chatMessage.getSenderId(),
 				chatMessage.getContent(),
+				chatMessage.isImage(),
 				readStatus.filter(messageReadStatusDto -> determineReadStatus(chatMessage, messageReadStatusDto))
 					.isPresent(),
 				chatMessage.getSenderId().equals(userId)

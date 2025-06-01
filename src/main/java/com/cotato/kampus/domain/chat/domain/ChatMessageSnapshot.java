@@ -5,6 +5,7 @@ public record ChatMessageSnapshot(
 	Long chatroomId,
 	Long senderId,
 	String content,
+	boolean isImage,
 	boolean isRead,
 	boolean isMine
 ) {
