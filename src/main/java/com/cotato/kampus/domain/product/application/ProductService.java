@@ -26,6 +26,7 @@ import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoManag
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapManager;
+import com.cotato.kampus.domain.user.application.UserFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -55,6 +56,7 @@ public class ProductService {
 	private final ProductPhotoFinder productPhotoFinder;
 	private final ProductCategoryMappingFinder productCategoryMappingFinder;
 	private final ProductDtoMapper productDtoMapper;
+	private final UserFinder userFinder;
 
 	@Transactional
 	public Long createProduct(
@@ -149,6 +151,7 @@ public class ProductService {
 		product.validateNotDeleted();
 
 		// 2. 관련 데이터 조회
+		String sellerName = userFinder.findNicknameById(product.getUserId());
 		List<ProductPhoto> photos = productPhotoFinder.findAll(productId);
 		boolean isAuthor = product.getUserId().equals(user.id());
 		boolean isScrapped = productScrapFinder.isScrapped(productId, user.id());
@@ -163,7 +166,7 @@ public class ProductService {
 		productManager.update(viewedProduct);
 
 		// 4. ProductDetails 변환
-		return ProductDetails.of(viewedProduct, user.nickname(), photos, isAuthor, isScrapped, categoryNames);
+		return ProductDetails.of(viewedProduct, sellerName, photos, isAuthor, isScrapped, categoryNames);
 	}
 
 	public Slice<ProductThumbnail> findProducts(int page, int size, ProductSortType sort, String categoryName) {

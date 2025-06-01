@@ -35,4 +35,8 @@ public class UserFinder {
 	public Boolean existsByNickname(String nickname) {
 		return userRepository.existsByNickname(nickname);
 	}
+
+	public String findNicknameById(Long userId) {
+		return userRepository.findNicknameById(userId);
+	}
 }
