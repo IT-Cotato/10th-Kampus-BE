@@ -20,8 +20,16 @@ public class RequestWrapperFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws
 		IOException,
 		ServletException {
-		if (request instanceof HttpServletRequest) {
-			HttpServletRequest httpRequest = (HttpServletRequest)request;
+		if (request instanceof HttpServletRequest httpRequest) {
+
+			String contentType = httpRequest.getContentType();
+
+			// multipart/form-data는 감싸지 않고 그대로 넘김
+			if (contentType != null && contentType.startsWith("multipart/")) {
+				chain.doFilter(httpRequest, response);
+				return;
+			}
+
 			CustomHttpRequestWrapper requestWrapper = new CustomHttpRequestWrapper(httpRequest);
 			chain.doFilter(requestWrapper, response);  // CustomHttpRequestWrapper로 감싼 후 체인 진행
 		} else {
