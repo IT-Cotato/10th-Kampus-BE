@@ -11,10 +11,10 @@ import com.cotato.kampus.domain.chat.enums.ChatType;
 
 public interface ChatroomMetadataJpaRepository extends JpaRepository<ChatroomMetadataEntity, Long> {
 
-	Slice<ChatroomMetadataEntity> findAllByUserIdAndChatTypeOrderByLastChatTimeDesc(Long userId, ChatType chatType,
+	Slice<ChatroomMetadataEntity> findAllByUserIdAndChatType(Long userId, ChatType chatType,
 		Pageable pageable);
 
-	Slice<ChatroomMetadataEntity> findAllByUserIdOrderByLastChatTimeDesc(Long userId, Pageable pageable);
+	Slice<ChatroomMetadataEntity> findAllByUserId(Long userId, Pageable pageable);
 
 	Optional<ChatroomMetadataEntity> findByChatroomIdAndUserId(Long chatroomId, Long senderId);
 

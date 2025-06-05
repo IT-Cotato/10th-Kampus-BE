@@ -33,9 +33,9 @@ public class ChatroomMetadataRepositoryImpl implements ChatroomMetadataRepositor
 	}
 
 	@Override
-	public Slice<ChatroomMetadata> findAllByUserIdAndChatTypeOrderByLastChatTimeDesc(Long userId, ChatType chatType,
+	public Slice<ChatroomMetadata> findAllByUserIdAndChatType(Long userId, ChatType chatType,
 		Pageable pageable) {
-		Slice<ChatroomMetadataEntity> entitySlice = chatroomMetadataJpaRepository.findAllByUserIdAndChatTypeOrderByLastChatTimeDesc(
+		Slice<ChatroomMetadataEntity> entitySlice = chatroomMetadataJpaRepository.findAllByUserIdAndChatType(
 			userId, chatType, pageable);
 		return entitySlice.map(ChatroomMetadataEntity::toDomain);
 	}
@@ -52,8 +52,8 @@ public class ChatroomMetadataRepositoryImpl implements ChatroomMetadataRepositor
 	}
 
 	@Override
-	public Slice<ChatroomMetadata> findAllByUserIdOrderByLastChatTimeDesc(Long userId, Pageable pageable) {
-		Slice<ChatroomMetadataEntity> entitySlice = chatroomMetadataJpaRepository.findAllByUserIdOrderByLastChatTimeDesc(
+	public Slice<ChatroomMetadata> findAllByUserId(Long userId, Pageable pageable) {
+		Slice<ChatroomMetadataEntity> entitySlice = chatroomMetadataJpaRepository.findAllByUserId(
 			userId, pageable);
 		return entitySlice.map(ChatroomMetadataEntity::toDomain);
 	}
