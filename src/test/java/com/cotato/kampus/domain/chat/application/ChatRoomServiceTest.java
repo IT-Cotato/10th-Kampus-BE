@@ -95,15 +95,15 @@ class ChatRoomServiceTest {
 			.title("test")
 			.build();
 
-		when(referenceFinder.find(1L, ChatType.ALL)).thenReturn(chatReference);
+		when(referenceFinder.find(1L, null)).thenReturn(chatReference);
 		when(apiUserResolver.getCurrentUserId()).thenReturn(1L);
-		doNothing().when(chatRoomValidator).validateDuplicateChatRoom(1L, 1L, ChatType.ALL);
-		when(chatRoomAppender.appendChatRoom(2L, ChatType.ALL, 1L, 2L)).thenReturn(123L);
+		doNothing().when(chatRoomValidator).validateDuplicateChatRoom(1L, 1L, null);
+		when(chatRoomAppender.appendChatRoom(2L, null, 1L, 2L)).thenReturn(123L);
 		doNothing().when(chatroomMetadataAppender)
-			.createMetadataPair(123L, ChatType.ALL, chatReference.getReferenceId(),
+			.createMetadataPair(123L, null, chatReference.getReferenceId(),
 				chatReference.getTitle(), 1L, 2L);
 
-		Long id = target.createChatRoom(chatReference.getReferenceId(), ChatType.ALL);
+		Long id = target.createChatRoom(chatReference.getReferenceId(), null);
 		assertThat(id).isEqualTo(123L);
 	}
 
@@ -129,11 +129,11 @@ class ChatRoomServiceTest {
 		when(apiUserResolver.getCurrentUserId()).thenReturn(1L);
 		List<ChatroomMetadata> metaList = ChatroomMetadataFactory.createList(types.toArray(new ChatType[0]));
 		Slice<ChatroomMetadata> metaSlice = new SliceImpl<>(metaList);
-		when(chatroomMetadataFinder.findChatRoomMetadatas(1L, 1, ChatType.ALL)).thenReturn(metaSlice);
+		when(chatroomMetadataFinder.findChatRoomMetadatas(1L, 1, null)).thenReturn(metaSlice);
 		var preview = mock(ChatRoomPreview.class);
 		when(chatroomMetadataMapper.toChatRoomPreview(any())).thenReturn(preview);
 
-		var result = target.findChatRooms(1, ChatType.ALL);
+		var result = target.findChatRooms(1, null);
 		assertThat(result.chatRoomPreviewList()).hasSize(types.size());
 	}
 
@@ -150,9 +150,9 @@ class ChatRoomServiceTest {
 	void findChatRooms_empty() {
 		when(apiUserResolver.getCurrentUserId()).thenReturn(1L);
 		Slice<ChatroomMetadata> metaSlice = new SliceImpl<>(List.of());
-		when(chatroomMetadataFinder.findChatRoomMetadatas(1L, 1, ChatType.ALL)).thenReturn(metaSlice);
+		when(chatroomMetadataFinder.findChatRoomMetadatas(1L, 1, null)).thenReturn(metaSlice);
 
-		var result = target.findChatRooms(1, ChatType.ALL);
+		var result = target.findChatRooms(1, null);
 		assertThat(result.chatRoomPreviewList()).isEmpty();
 	}
 }
