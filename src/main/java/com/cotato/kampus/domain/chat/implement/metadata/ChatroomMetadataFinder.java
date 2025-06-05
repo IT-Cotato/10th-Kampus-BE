@@ -25,7 +25,7 @@ public class ChatroomMetadataFinder {
 
 	public Slice<ChatroomMetadata> findChatRoomMetadatas(Long userId, int page, ChatType chatType) {
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-		if (chatType == ChatType.ALL) {
+		if (chatType == null) {
 			return chatroomMetadataRepository.findAllByUserId(userId,
 				customPageRequest.of(SORT_PROPERTY));
 		}

@@ -15,12 +15,12 @@ import com.cotato.kampus.domain.chat.api.request.ChatroomRequest;
 import com.cotato.kampus.domain.chat.api.response.ChatRoomDetailResponse;
 import com.cotato.kampus.domain.chat.api.response.ChatRoomListResponse;
 import com.cotato.kampus.domain.chat.api.response.ChatroomResponse;
+import com.cotato.kampus.domain.chat.api.validator.ValidChatSearchType;
 import com.cotato.kampus.domain.chat.api.validator.ValidChatType;
 import com.cotato.kampus.domain.chat.domain.ChatRoomPreviewList;
+import com.cotato.kampus.domain.chat.enums.ChatSearchType;
 import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.global.common.dto.DataResponse;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.response.ErrorResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -73,10 +73,6 @@ public class ChatRoomController {
 	)
 	public ResponseEntity<DataResponse<ChatroomResponse>> createChatroom(@RequestBody @Valid ChatroomRequest request,
 		@RequestParam(required = true, name = "type") @ValidChatType String chatType) {
-		// 비즈니스 검증: chattype=ALL은 생성 API에서 허용하지 않음
-		if (ChatType.ALL.name().equals(chatType)) {
-			throw new AppException(ErrorCode.CHATROOM_ALL_TYPE_NOT_ALLOWED);
-		}
 		return ResponseEntity.ok(DataResponse.from(
 			ChatroomResponse.of(chatRoomService.createChatRoom(request.referenceId(), ChatType.valueOf(chatType)))));
 	}
@@ -109,8 +105,14 @@ public class ChatRoomController {
 	)
 	public ResponseEntity<DataResponse<ChatRoomListResponse>> getChatRooms(
 		@RequestParam(required = false, defaultValue = "1") int page,
-		@RequestParam(required = false, name = "type", defaultValue = "ALL") @ValidChatType String chatType) {
-		ChatRoomPreviewList chatRooms = chatRoomService.findChatRooms(page, ChatType.valueOf(chatType));
+		@RequestParam(required = false, name = "type", defaultValue = "ALL") @ValidChatSearchType String chatSearchType) {
+		ChatRoomPreviewList chatRooms;
+		if (ChatSearchType.ALL.name().equals(chatSearchType)) {
+			chatRooms = chatRoomService.findChatRooms(page, null);
+		} else {
+			chatRooms = chatRoomService.findChatRooms(page, ChatType.valueOf(chatSearchType));
+		}
+
 		return ResponseEntity.ok(DataResponse.from(ChatRoomListResponse.from(chatRooms)));
 	}
 
