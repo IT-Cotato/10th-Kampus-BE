@@ -15,8 +15,10 @@ import com.cotato.kampus.domain.chat.api.request.ChatroomRequest;
 import com.cotato.kampus.domain.chat.api.response.ChatRoomDetailResponse;
 import com.cotato.kampus.domain.chat.api.response.ChatRoomListResponse;
 import com.cotato.kampus.domain.chat.api.response.ChatroomResponse;
+import com.cotato.kampus.domain.chat.api.validator.ValidChatSearchType;
 import com.cotato.kampus.domain.chat.api.validator.ValidChatType;
 import com.cotato.kampus.domain.chat.domain.ChatRoomPreviewList;
+import com.cotato.kampus.domain.chat.enums.ChatSearchType;
 import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.response.ErrorResponse;
@@ -78,7 +80,7 @@ public class ChatRoomController {
 	@GetMapping
 	@Operation(
 		summary = "내가 속한 채팅방 조회",
-		description = "현재 참여중인 채팅방을 조회합니다.",
+		description = "현재 참여중인 채팅방을 조회합니다. type 파라미터가 없으면 전체 채팅방을 조회합니다.",
 		responses = {
 			@ApiResponse(
 				responseCode = "200",
@@ -103,8 +105,14 @@ public class ChatRoomController {
 	)
 	public ResponseEntity<DataResponse<ChatRoomListResponse>> getChatRooms(
 		@RequestParam(required = false, defaultValue = "1") int page,
-		@RequestParam(required = false, name = "type") @ValidChatType String chatType) {
-		ChatRoomPreviewList chatRooms = chatRoomService.findChatRooms(page, ChatType.valueOf(chatType));
+		@RequestParam(required = false, name = "type", defaultValue = "ALL") @ValidChatSearchType String chatSearchType) {
+		ChatRoomPreviewList chatRooms;
+		if (ChatSearchType.ALL.name().equals(chatSearchType)) {
+			chatRooms = chatRoomService.findChatRooms(page, null);
+		} else {
+			chatRooms = chatRoomService.findChatRooms(page, ChatType.valueOf(chatSearchType));
+		}
+
 		return ResponseEntity.ok(DataResponse.from(ChatRoomListResponse.from(chatRooms)));
 	}
 

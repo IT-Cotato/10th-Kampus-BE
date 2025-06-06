@@ -32,10 +32,12 @@ import com.cotato.kampus.domain.chat.domain.ChatRoomPreview;
 import com.cotato.kampus.domain.chat.domain.ChatRoomPreviewList;
 import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.cotato.kampus.domain.chat.api.validator.ValidChatSearchTypeValidator;
 
 @WebMvcTest(controllers = ChatRoomController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
+@org.springframework.context.annotation.Import(ValidChatSearchTypeValidator.class)
 class ChatRoomControllerTest {
 
 	@Autowired
@@ -104,6 +106,7 @@ class ChatRoomControllerTest {
 		// given
 		int page = 1;
 		given(chatRoomService.findChatRooms(page, chatType)).willReturn(mockChatRoomPreviewList);
+		given(chatRoomService.findChatRooms(page, null)).willReturn(mockChatRoomPreviewList);
 
 		// when & then
 		mockMvc.perform(get("/v1/api/chats/chatrooms")
@@ -114,6 +117,14 @@ class ChatRoomControllerTest {
 			.andExpect(jsonPath("$.status").value("OK"))
 			.andExpect(jsonPath("$.data.chatRoomPreviewList").isArray())
 			.andExpect(jsonPath("$.data.chatRoomPreviewList.length()").value(2));
+	}
+
+	// ParameterizedTest를 위한 메서드 소스
+	private static Stream<Arguments> chatTypeProvider() {
+		return Stream.of(
+			Arguments.of("POST", ChatType.POST),
+			Arguments.of("PRODUCT", ChatType.PRODUCT),
+			Arguments.of("ALL", null));
 	}
 
 	@Test
@@ -146,10 +157,25 @@ class ChatRoomControllerTest {
 			.andExpect(jsonPath("$.status").value("OK"));
 	}
 
-	// ParameterizedTest를 위한 메서드 소스
-	private static Stream<Arguments> chatTypeProvider() {
-		return Stream.of(
-			Arguments.of("POST", ChatType.POST),
-			Arguments.of("PRODUCT", ChatType.PRODUCT));
+	@Test
+	@DisplayName("채팅방 리스트 조회시 유효하지 않은 타입을 요청하면 BadRequest를 반환한다.")
+	void getChatRooms_InvalidType_BadRequest() throws Exception {
+		mockMvc.perform(get("/v1/api/chats/chatrooms")
+				.param("type", "INVALID"))
+			.andDo(print())
+			.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	@DisplayName("채팅방 생성시 ALL 타입을 요청하면 BadRequest를 반환한다.")
+	void createChatroom_InvalidType_BadRequest() throws Exception {
+		ChatroomRequest request = new ChatroomRequest(1L);
+
+		mockMvc.perform(post("/v1/api/chats/chatrooms")
+				.param("type", "ALL")
+				.content(objectMapper.writeValueAsString(request))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest());
 	}
 }

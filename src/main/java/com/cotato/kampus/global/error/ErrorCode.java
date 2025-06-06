@@ -158,6 +158,7 @@ public enum ErrorCode {
 	READ_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 채팅 읽음 상태를 찾을 수 없습니다.", "CHAT-005"),
 	CHATROOM_METADATA_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 채팅방 메타데이터를 찾을 수 없습니다.", "CHAT-006"),
 	CHATROOM_TYPE_MISMATCH(HttpStatus.BAD_REQUEST, "채팅방 타입이 일치하지 않습니다.", "CHAT-007"),
+	CHATROOM_ALL_TYPE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "채팅방 생성 시 ALL 타입은 허용되지 않습니다.", "CHAT-008"),
 
 	// Verification
 	RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "재학생 인증 요청 기록을 찾을 수 없습니다.", "VERIFICATION-001"),

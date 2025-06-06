@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.chat.dao.entity.ChatroomMetadataEntity;
@@ -34,9 +33,9 @@ public class ChatroomMetadataRepositoryImpl implements ChatroomMetadataRepositor
 	}
 
 	@Override
-	public Slice<ChatroomMetadata> findAllByUserIdAndChatTypeOrderByLastChatTimeDesc(Long userId, ChatType chatType,
+	public Slice<ChatroomMetadata> findAllByUserIdAndChatType(Long userId, ChatType chatType,
 		Pageable pageable) {
-		Slice<ChatroomMetadataEntity> entitySlice = chatroomMetadataJpaRepository.findAllByUserIdAndChatTypeOrderByLastChatTimeDesc(
+		Slice<ChatroomMetadataEntity> entitySlice = chatroomMetadataJpaRepository.findAllByUserIdAndChatType(
 			userId, chatType, pageable);
 		return entitySlice.map(ChatroomMetadataEntity::toDomain);
 	}
@@ -50,5 +49,12 @@ public class ChatroomMetadataRepositoryImpl implements ChatroomMetadataRepositor
 	@Override
 	public void deleteAllByChatroomId(Long chatroomId) {
 		chatroomMetadataJpaRepository.deleteAllByChatroomId(chatroomId);
+	}
+
+	@Override
+	public Slice<ChatroomMetadata> findAllByUserId(Long userId, Pageable pageable) {
+		Slice<ChatroomMetadataEntity> entitySlice = chatroomMetadataJpaRepository.findAllByUserId(
+			userId, pageable);
+		return entitySlice.map(ChatroomMetadataEntity::toDomain);
 	}
 }

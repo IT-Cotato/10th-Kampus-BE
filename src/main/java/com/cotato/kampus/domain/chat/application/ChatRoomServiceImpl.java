@@ -80,10 +80,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
 	@Override
 	public ChatRoomPreviewList findChatRooms(int page, ChatType chatType) {
-		// 1. 유저 정보를 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
-		// 2. 해당 유저의 채팅방 메타데이터를 조회하고 ChatRoomPreview로 바로 변환
 		Slice<ChatRoomPreview> previewSlice = chatroomMetadataFinder.findChatRoomMetadatas(userId, page, chatType)
 			.map(chatroomMetadataMapper::toChatRoomPreview);
 

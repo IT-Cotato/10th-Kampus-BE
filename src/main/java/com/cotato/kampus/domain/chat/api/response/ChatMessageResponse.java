@@ -7,6 +7,7 @@ public record ChatMessageResponse(
 	Long chatroomId,
 	Long senderId,
 	String content,
+	boolean isImage,
 	boolean isRead,
 	boolean isMine
 ) {
@@ -16,6 +17,7 @@ public record ChatMessageResponse(
 			snapshot.chatroomId(),
 			snapshot.senderId(),
 			snapshot.content(),
+			snapshot.isImage(),
 			snapshot.isRead(),
 			snapshot.isMine()
 		);

@@ -15,8 +15,10 @@ public interface ChatroomMetadataRepository {
 
 	void saveAll(List<ChatroomMetadata> chatroomMetadata);
 
-	Slice<ChatroomMetadata> findAllByUserIdAndChatTypeOrderByLastChatTimeDesc(Long userId, ChatType chatType,
+	Slice<ChatroomMetadata> findAllByUserIdAndChatType(Long userId, ChatType chatType,
 		Pageable pageable);
+
+	Slice<ChatroomMetadata> findAllByUserId(Long userId, Pageable pageable);
 
 	Optional<ChatroomMetadata> findByChatroomIdAndUserId(Long chatroomId, Long senderId);
 
