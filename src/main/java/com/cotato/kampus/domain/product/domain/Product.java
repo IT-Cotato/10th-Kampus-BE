@@ -145,6 +145,8 @@ public class Product {
 			.bumpCount(bumpCount)
 			.bumpedTime(bumpedTime)
 			.status(status)
+			.createdTime(createdTime)
+			.lastModifiedTime(LocalDateTime.now())
 			.build();
 	}
 
