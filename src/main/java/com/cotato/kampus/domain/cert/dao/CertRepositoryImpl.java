@@ -1,0 +1,24 @@
+package com.cotato.kampus.domain.cert.dao;
+
+import java.util.Optional;
+
+import org.springframework.stereotype.Repository;
+
+import com.cotato.kampus.domain.cert.domain.Cert;
+import com.cotato.kampus.domain.cert.domain.CertEntity;
+import com.cotato.kampus.domain.cert.implement.port.CertRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor
+public class CertRepositoryImpl implements CertRepository {
+
+	private final CertJpaRepository certJpaRepository;
+
+	@Override
+	public Optional<Cert> findByEmail(String email) {
+		return certJpaRepository.findByEmail(email)
+			.map(CertEntity::toDomain);
+	}
+}
