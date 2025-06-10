@@ -28,7 +28,7 @@ public class TranslationController {
 
 	private final TranslationService translationService;
 
-	@PostMapping("{postId}")
+	@PostMapping("/posts/{postId}")
 	@Operation(summary = "게시글 번역", description = "게시글 id를 통해 게시글을 번역합니다.")
 	public ResponseEntity<DataResponse<PostTranslationResponse>> translatePost(@PathVariable Long postId) {
 		return ResponseEntity.ok(DataResponse.from(
