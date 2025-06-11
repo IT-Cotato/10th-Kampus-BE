@@ -152,4 +152,11 @@ public enum UnivMail {
 		if(!isExist)
 			throw new AppException(ErrorCode.UNIVERSITY_EMAIL_NOT_SUPPORTED);
 	}
+
+	public static List<String> getDomains(String univCode) {
+		List<UnivMail> list = UNIV_MAIL_MAP.get(univCode);
+		return list.stream()
+			.map(UnivMail::getDomain)
+			.toList();
+	}
 }
