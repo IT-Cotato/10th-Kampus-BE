@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.cert.domain;
 
+import java.time.LocalDateTime;
+
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -38,8 +40,11 @@ public class CertEntity extends BaseTimeEntity {
 	@Column(name = "userId")
 	private Long userId;
 
+	@Column(name = "expiration_time")
+	private LocalDateTime expirationTime;
+
 	public Cert toDomain() {
-		return Cert.fromEntity(id, email, univName, code, certified, userId);
+		return Cert.fromEntity(id, email, univName, code, certified, userId, expirationTime);
 	}
 
 	public static CertEntity fromDomain(Cert cert) {
@@ -50,6 +55,7 @@ public class CertEntity extends BaseTimeEntity {
 		certEntity.code = cert.getCode();
 		certEntity.certified = cert.isCertified();
 		certEntity.userId = cert.getUserId();
+		certEntity.expirationTime = cert.getExpirationTime();
 		return certEntity;
 	}
 }
