@@ -1,8 +1,8 @@
 package com.cotato.kampus.domain.cert.enums;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -135,15 +135,21 @@ public enum UnivMail {
 	POSTECH("POSTECH (Pohang University of Science and Technology)","postech"),
 	UNIST("UNIST (Ulsan National Institute of Science and Technology)","unist");
 
-	private static final Map<String, UnivMail> UNIV_MAIL_MAP = Collections.unmodifiableMap(Stream.of(values())
-		.collect(Collectors.toMap(UnivMail::getName, Function.identity())));
-	private final String name;
+	private static final Map<String, List<UnivMail>> UNIV_MAIL_MAP = Collections.unmodifiableMap(
+		Stream.of(values())
+			.collect(Collectors.groupingBy(UnivMail::getUnivCode))
+	);
+
+	private final String univCode;
 	private final String domain;
 
-	public static String getDomain(String univName) {
-		if(UNIV_MAIL_MAP.containsKey(univName)) {
-			return UNIV_MAIL_MAP.get(univName).domain;
-		}
-		throw new AppException(ErrorCode.UNIVERSITY_NOT_FOUND);
+	public static boolean exists(String univCode) {
+		return UNIV_MAIL_MAP.containsKey(univCode);
+	}
+
+	public static void validateUnivCode(String univCode) {
+		boolean isExist = exists(univCode);
+		if(!isExist)
+			throw new AppException(ErrorCode.UNIVERSITY_EMAIL_NOT_SUPPORTED);
 	}
 }

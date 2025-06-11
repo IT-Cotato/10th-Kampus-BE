@@ -2,6 +2,8 @@ package com.cotato.kampus.global.error;
 
 import org.springframework.http.HttpStatus;
 
+import com.google.api.Http;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -163,6 +165,11 @@ public enum ErrorCode {
 	// Verification
 	RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "재학생 인증 요청 기록을 찾을 수 없습니다.", "VERIFICATION-001"),
 	VERIFICATION_PHOTO_NOT_FOUND(HttpStatus.NOT_FOUND, "재학생 인증 사진을 찾을 수 없습니다.", "VERIFICATION-002"),
+
+	// Cert
+	UNIVERSITY_EMAIL_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "해당 대학의 이메일 인증을 지원하지 않습니다", "CERT-001"),
+	VERIFICATION_CODE_EXPIRED(HttpStatus.BAD_REQUEST, "인증 코드가 만료되었습니다. 새로운 코드를 요청해주세요.", "CERT-002"),
+	ALREADY_VERIFIED(HttpStatus.BAD_REQUEST, "이미 인증된 이메일입니다.", "CERT-003"),
 
 	// fcm
 	GOOGLE_REQUEST_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "google request token error", "FCM-001"),
