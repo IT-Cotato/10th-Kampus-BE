@@ -24,7 +24,7 @@ public class CertController {
 
 	private final CertService certService;
 
-	@GetMapping("/checkuniv")
+	@GetMapping("/universites/check")
 	@Operation(summary = "대학명이 서버에 존재하는 학교인지 체크", description = "영문 대학명을 입력해주세요")
 	public ResponseEntity<DataResponse<Boolean>> checkUnivCode(
 		@RequestParam String universityCode
@@ -34,4 +34,5 @@ public class CertController {
 			)
 		);
 	}
+
 }
