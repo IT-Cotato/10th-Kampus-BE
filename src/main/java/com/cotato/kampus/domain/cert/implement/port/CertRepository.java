@@ -7,4 +7,6 @@ import com.cotato.kampus.domain.cert.domain.Cert;
 public interface CertRepository {
 
 	Optional<Cert> findByEmail(String email);
+
+	Cert save(Cert cert);
 }

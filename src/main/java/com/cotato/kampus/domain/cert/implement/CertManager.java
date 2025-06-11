@@ -12,12 +12,19 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class CertFinder {
+public class CertManager {
 
 	private final CertRepository certRepository;
 
-	public Cert findOptionalByEmail(String email) {
-		return certRepository.findByEmail(email)
-			.orElse(null);
+	@Transactional
+	public Cert append(String email, String univName, String code, Long userId) {
+		Cert cert = Cert.create(email, univName, code, false, userId);
+		return certRepository.save(cert);
+	}
+
+	@Transactional
+	public void updateCodeAndExpiration(Cert cert, String code) {
+		Cert updatedCert = cert.updateCode(code);
+		certRepository.save(updatedCert);
 	}
 }

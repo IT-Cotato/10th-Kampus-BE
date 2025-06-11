@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cotato.kampus.domain.cert.api.request.CertifyRequest;
 import com.cotato.kampus.domain.cert.application.CertService;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
@@ -35,4 +36,12 @@ public class CertController {
 		);
 	}
 
+	@PostMapping("/email/send")
+	@Operation(summary = "대학 이메일 인증 메일 발송")
+	public ResponseEntity<DataResponse<Void>> sendEmail(
+		@RequestBody CertifyRequest request
+	) {
+		certService.sendMail(request.univCode(), request.email());
+		return ResponseEntity.ok(DataResponse.ok());
+	}
 }

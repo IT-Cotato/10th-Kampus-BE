@@ -21,4 +21,10 @@ public class CertRepositoryImpl implements CertRepository {
 		return certJpaRepository.findByEmail(email)
 			.map(CertEntity::toDomain);
 	}
+
+	@Override
+	public Cert save(Cert cert) {
+		CertEntity entity = CertEntity.fromDomain(cert);
+		return certJpaRepository.save(entity).toDomain();
+	}
 }
