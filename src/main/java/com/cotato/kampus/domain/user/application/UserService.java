@@ -1,7 +1,5 @@
 package com.cotato.kampus.domain.user.application;
 
-import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -9,17 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.university.application.UnivEmailVerifier;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.dto.UserDetailsDto;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
-import com.cotato.kampus.domain.user.enums.VerificationStatus;
 import com.cotato.kampus.domain.verification.application.VerificationPhotoAppender;
 import com.cotato.kampus.domain.verification.application.VerificationRecordManager;
-import com.cotato.kampus.domain.verification.application.VerificationRecordFinder;
-import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -36,13 +30,11 @@ public class UserService {
 	private final AgreementAppender agreementAppender;
 	private final VerificationRecordManager verificationRecordManager;
 
-	private final UnivEmailVerifier univEmailVerifier;
 	private final UnivFinder univFinder;
 	private final S3Uploader s3Uploader;
 	private final VerificationPhotoAppender verificationPhotoAppender;
 
 	private static final String STUDENT_CERT_IMAGE_FOLDER = "student_cert";
-	private final VerificationRecordFinder verificationRecordFinder;
 
 	public UserDetailsDto getUserDetails() {
 		UserDto user = apiUserResolver.getCurrentUserDto();
@@ -67,32 +59,6 @@ public class UserService {
 		agreementAppender.appendAgreement(userId, personalInfoAgreement, privacyPolicyAgreement,
 			termsOfServiceAgreement, marketingAgreement);
 		return userId;
-	}
-
-	@Transactional
-	public Map<String, Object> sendMail(String email, String universityCode) throws IOException {
-		return univEmailVerifier.sendMail(email, universityCode);
-	}
-
-	@Transactional
-	public Map<String, Object> verifyEmailCode(String email, String universityCode, int code) throws IOException {
-		// 유저 조회
-		UserDto userDto = apiUserResolver.getCurrentUserDto();
-
-		// 이미 재학생 인증 되었는지 확인
-		userValidator.validateDuplicateStudentVerification(userDto);
-
-		// 코드 인증
-		Map<String, Object> response = univEmailVerifier.verifyCode(email, universityCode, code);
-
-		// VerificationRecord 추가
-		Long universityId = univFinder.findIdByCode(universityCode);
-		verificationRecordManager.appendEmailType(userDto.id(), universityId);
-
-		// 유저 상태 변경, 학교 할당
-		userUpdater.updateVerificationStatus(userDto.id(), universityId);
-
-		return response;
 	}
 
 	@Transactional
@@ -126,13 +92,4 @@ public class UserService {
 		return userUpdater.updateDetails(nickname, preferredLanguage);
 	}
 
-	public VerificationStatus findVerifyStatus() {
-		// 유저 조회
-		UserDto userDto = apiUserResolver.getCurrentUserDto();
-
-		// 재학생 인증 기록 조회
-		VerificationRecordDto record = verificationRecordFinder.findByUserId(userDto.id());
-
-		return record.verificationStatus();
-	}
 }
