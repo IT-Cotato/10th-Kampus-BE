@@ -149,6 +149,7 @@ public enum ErrorCode {
 	// DeepL
 	INVALID_DEEPL_AUTH_KEY(HttpStatus.INTERNAL_SERVER_ERROR, "DeepL 인증키가 유효하지 않습니다.", "DEEPL-001"),
 	INVALID_DEEPL_CONTENT(HttpStatus.BAD_REQUEST, "번역 요청 내용이 올바르지 않습니다.", "DEEPL-002"),
+	DEEPL_TRANSLATION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "DeepL 번역 중 오류가 발생하였습니다.", "DEEPL-003"),
 
 	// Chat
 	INVALID_CHATROOM(HttpStatus.FORBIDDEN, "자신에게 채팅을 할 수 없습니다.", "CHAT-001"),

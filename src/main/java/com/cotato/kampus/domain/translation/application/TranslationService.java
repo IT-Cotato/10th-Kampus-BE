@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.implement.post.PostFinder;
+import com.cotato.kampus.domain.product.domain.Product;
+import com.cotato.kampus.domain.product.implement.product.ProductFinder;
 import com.cotato.kampus.domain.translation.dto.TranslatedPost;
 import com.cotato.kampus.domain.translation.dto.TranslatedText;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
@@ -23,8 +25,9 @@ public class TranslationService {
 	private final PostFinder postFinder;
 	private final ApiUserResolver apiUserResolver;
 	private final TranslationValidator translationValidator;
+	private final ProductFinder productFinder;
 
-	public TranslatedPost translatePost(Long postId) throws DeepLException, InterruptedException {
+	public TranslatedPost translatePost(Long postId) {
 		// 1. 게시글 조회
 		Post post = postFinder.find(postId);
 
@@ -35,8 +38,7 @@ public class TranslationService {
 		return postTranslator.translatePost(post.getTitle(), post.getContent(), preferredLanguage.getCode());
 	}
 
-	public TranslatedPost translatePost(String title, String content, String targetLanguageCode) throws
-		DeepLException, InterruptedException {
+	public TranslatedPost translatePost(String title, String content, String targetLanguageCode) {
 		// 1. 번역할 게시글 검증
 		translationValidator.validatePost(title, content);
 
@@ -53,5 +55,11 @@ public class TranslationService {
 
 		// 3. 번역
 		return postTranslator.translateText(content, preferredLanguage.getCode());
+	}
+
+	public TranslatedPost translateProduct(Long productId) {
+		Product product = productFinder.findById(productId);
+		PreferredLanguage preferredLanguage = apiUserResolver.getCurrentUser().getPreferredLanguage();
+		return postTranslator.translatePost(product.getTitle(), product.getDescription(), preferredLanguage.getCode());
 	}
 }

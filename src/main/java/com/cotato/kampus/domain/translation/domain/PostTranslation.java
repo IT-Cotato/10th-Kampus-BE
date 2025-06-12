@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.translation.domain;
 
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 import com.deepl.api.DeepLException;
 import com.deepl.api.Translator;
 
@@ -22,9 +24,13 @@ public class PostTranslation {
 		this.targetLanguageCode = targetLanguageCode;
 	}
 
-	public PostTranslation translate(Translator translator) throws DeepLException, InterruptedException {
-		translatedTitle = translator.translateText(title, null, targetLanguageCode).getText();
-		translatedContent = translator.translateText(content, null, targetLanguageCode).getText();
+	public PostTranslation translate(Translator translator) {
+		try {
+			translatedTitle = translator.translateText(title, null, targetLanguageCode).getText();
+			translatedContent = translator.translateText(content, null, targetLanguageCode).getText();
+		} catch (DeepLException | InterruptedException e) {
+			throw new AppException(ErrorCode.DEEPL_TRANSLATION_ERROR);
+		}
 		return this;
 	}
 }
