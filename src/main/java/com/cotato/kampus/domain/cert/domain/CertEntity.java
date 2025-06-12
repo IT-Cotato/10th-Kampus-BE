@@ -28,8 +28,8 @@ public class CertEntity extends BaseTimeEntity {
 	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 
-	@Column(name = "univName", nullable = false)
-	private String univName;
+	@Column(name = "univ_code", nullable = false)
+	private String univCode;
 
 	@Column(name = "code")
 	private String code;
@@ -44,14 +44,14 @@ public class CertEntity extends BaseTimeEntity {
 	private LocalDateTime expirationTime;
 
 	public Cert toDomain() {
-		return Cert.fromEntity(id, email, univName, code, certified, userId, expirationTime);
+		return Cert.fromEntity(id, email, univCode, code, certified, userId, expirationTime);
 	}
 
 	public static CertEntity fromDomain(Cert cert) {
 		CertEntity certEntity = new CertEntity();
 		certEntity.id = cert.getId();
 		certEntity.email = cert.getEmail();
-		certEntity.univName = cert.getUnivName();
+		certEntity.univCode = cert.getUnivCode();
 		certEntity.code = cert.getCode();
 		certEntity.certified = cert.isCertified();
 		certEntity.userId = cert.getUserId();

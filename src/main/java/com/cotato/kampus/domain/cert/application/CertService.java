@@ -10,6 +10,7 @@ import com.cotato.kampus.domain.cert.implement.CertMailSender;
 import com.cotato.kampus.domain.cert.implement.CertManager;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.university.application.UnivFinder;
+import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -25,6 +26,7 @@ public class CertService {
 	private final UnivFinder univFinder;
 	private final CertManager certManager;
 	private final CertMailSender certMailSender;
+	private final UserUpdater userUpdater;
 
 	public boolean checkUnivCode(String univCode) {
 		return UnivMail.exists(univCode);
@@ -52,8 +54,7 @@ public class CertService {
 		} else {
 			// 기존 인증 정보가 없으면 새로 생성
 			Long userId = apiUserResolver.getCurrentUserId();
-			String univName = univFinder.findNameByCode(univCode);
-			certManager.append(email, univName, code, userId);
+			certManager.append(email, univCode, code, userId);
 		}
 
 		// 메일 발송

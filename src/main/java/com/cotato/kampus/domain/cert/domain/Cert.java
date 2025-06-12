@@ -13,17 +13,17 @@ import lombok.Getter;
 public class Cert {
 	private final Long id;
 	private final String email;
-	private final String univName;
+	private final String univCode;
 	private final String code;
 	private final boolean certified;
 	private final Long userId;
 	private final LocalDateTime expirationTime;
 
 	@Builder(access = AccessLevel.PRIVATE)
-	private Cert(Long id, String email, String univName, String code, boolean certified, Long userId, LocalDateTime expirationTime) {
+	private Cert(Long id, String email, String univCode, String code, boolean certified, Long userId, LocalDateTime expirationTime) {
 		this.id = id;
 		this.email = email;
-		this.univName = univName;
+		this.univCode = univCode;
 		this.code = code;
 		this.certified = certified;
 		this.userId = userId;
@@ -33,7 +33,7 @@ public class Cert {
 	public static Cert create(String email, String univName, String code, boolean certified, Long userId) {
 		return Cert.builder()
 			.email(email)
-			.univName(univName)
+			.univCode(univName)
 			.code(code)
 			.certified(certified)
 			.userId(userId)
@@ -45,7 +45,7 @@ public class Cert {
 		return Cert.builder()
 			.id(id)
 			.email(email)
-			.univName(univName)
+			.univCode(univName)
 			.code(code)
 			.certified(certified)
 			.userId(userId)
@@ -57,7 +57,7 @@ public class Cert {
 		return Cert.builder()
 			.id(id)
 			.email(email)
-			.univName(univName)
+			.univCode(univName)
 			.code(code)
 			.certified(certified)
 			.userId(userId)
@@ -66,11 +66,11 @@ public class Cert {
 	}
 
 	public Cert updateCode(String code) {
-		return createCopy(this.id, this.email, this.univName, code, this.certified, this.userId, LocalDateTime.now().plusMinutes(10));
+		return createCopy(this.id, this.email, this.univCode, code, this.certified, this.userId, LocalDateTime.now().plusMinutes(10));
 	}
 
 	public Cert setCertified() {
-		return createCopy(this.id, this.email, this.univName, this.code, true, this.userId, this.expirationTime);
+		return createCopy(this.id, this.email, this.univCode, this.code, true, this.userId, this.expirationTime);
 	}
 
 	public void validateExpired() {

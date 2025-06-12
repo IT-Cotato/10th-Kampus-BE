@@ -17,8 +17,8 @@ public class CertManager {
 	private final CertRepository certRepository;
 
 	@Transactional
-	public Cert append(String email, String univName, String code, Long userId) {
-		Cert cert = Cert.create(email, univName, code, false, userId);
+	public Cert append(String email, String univCode, String code, Long userId) {
+		Cert cert = Cert.create(email, univCode, code, false, userId);
 		return certRepository.save(cert);
 	}
 
