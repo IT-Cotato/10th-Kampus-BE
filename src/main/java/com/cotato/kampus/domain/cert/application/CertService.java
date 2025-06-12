@@ -14,6 +14,7 @@ import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
+import com.cotato.kampus.domain.verification.application.VerificationRecordAppender;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -31,6 +32,7 @@ public class CertService {
 	private final CertMailSender certMailSender;
 	private final UserUpdater userUpdater;
 	private final UserValidator userValidator;
+	private final VerificationRecordAppender verificationRecordAppender;
 
 	public boolean checkUnivCode(String univCode) {
 		return UnivMail.exists(univCode);
@@ -84,6 +86,9 @@ public class CertService {
 		// 유저 대학 정보 업데이트
 		Long universityId = univFinder.findUniversityId(cert.getUnivCode());
 		userUpdater.updateVerificationStatus(user.id(), universityId);
+
+		// 인증 기록 추가
+		verificationRecordAppender.appendEmailType(user.id(), universityId);
 	}
 
 	@Transactional
