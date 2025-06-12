@@ -47,6 +47,7 @@ import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
+import com.cotato.kampus.domain.user.enums.VerificationType;
 import com.cotato.kampus.domain.verification.application.VerificationRecordFinder;
 import com.cotato.kampus.domain.verification.application.VerificationRecordUpdater;
 import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
@@ -209,9 +210,14 @@ public class AdminService {
 	public VerificationWithPhoto getVerification(Long verificationRecordId) {
 		userValidator.validateAdminAccess();
 		VerificationRecordDto verificationRecordDto = verificationRecordFinder.findDto(verificationRecordId);
-		String universityName = univFinder.findUniversityName(verificationRecordDto.universityId());
+		String universityCode = univFinder.findUniversityCode(verificationRecordDto.universityId());
+
+		if(verificationRecordDto.verificationType() == VerificationType.EMAIL) {
+			return VerificationWithPhoto.of(verificationRecordDto, universityCode, null);
+		}
+
 		VerificationPhotoDto verificationPhotoDto = verificationPhotoFinder.findByRecordId(verificationRecordId);
-		return VerificationWithPhoto.of(verificationRecordDto, universityName, verificationPhotoDto);
+		return VerificationWithPhoto.of(verificationRecordDto, universityCode, verificationPhotoDto);
 	}
 
 	@Transactional

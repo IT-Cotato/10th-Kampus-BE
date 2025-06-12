@@ -6,7 +6,7 @@ import com.cotato.kampus.domain.user.enums.VerificationStatus;
 public record StudentVerificationResponse(
 	Long verificationRecordId,
 	Long universityId,
-	String univName,
+	String universityCode,
 	VerificationStatus verificationStatus,
 	String imageUrl
 ) {
@@ -14,7 +14,7 @@ public record StudentVerificationResponse(
 		return new StudentVerificationResponse(
 			verification.verificationRecordId(),
 			verification.universityId(),
-			verification.universityName(),
+			verification.universityCode(),
 			verification.verificationStatus(),
 			verification.imageUrl()
 		);

@@ -5,11 +5,12 @@ import com.cotato.kampus.domain.user.enums.VerificationType;
 import com.cotato.kampus.domain.verification.domain.VerificationRecord;
 
 public record VerificationRecordDto(
-	Long id,
+	Long verificationRecordId,
 	Long userId,
 	Long universityId,
 	VerificationType verificationType,
-	VerificationStatus verificationStatus
+	VerificationStatus verificationStatus,
+	String rejectReason
 ) {
 	public static VerificationRecordDto from(VerificationRecord verificationRecord) {
 		return new VerificationRecordDto(
@@ -17,7 +18,8 @@ public record VerificationRecordDto(
 			verificationRecord.getUserId(),
 			verificationRecord.getUniversityId(),
 			verificationRecord.getVerificationType(),
-			verificationRecord.getVerificationStatus()
+			verificationRecord.getVerificationStatus(),
+			verificationRecord.getRejectionReason()
 		);
 	}
 }
