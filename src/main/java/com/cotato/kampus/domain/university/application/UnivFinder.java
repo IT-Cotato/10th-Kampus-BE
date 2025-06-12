@@ -50,4 +50,8 @@ public class UnivFinder {
 		return university.getId();
 	}
 
+	public String findUniversityCode(Long universityId) {
+		return findUniversity(universityId).getUniversityCode();
+	}
+
 }

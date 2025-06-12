@@ -3,6 +3,7 @@ package com.cotato.kampus.domain.cert.application;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
 import com.cotato.kampus.domain.cert.domain.Cert;
 import com.cotato.kampus.domain.cert.enums.UnivMail;
 import com.cotato.kampus.domain.cert.implement.CertFinder;
@@ -14,7 +15,9 @@ import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
+import com.cotato.kampus.domain.verification.application.VerificationRecordFinder;
 import com.cotato.kampus.domain.verification.application.VerificationRecordManager;
+import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -33,6 +36,7 @@ public class CertService {
 	private final UserUpdater userUpdater;
 	private final UserValidator userValidator;
 	private final VerificationRecordManager verificationRecordManager;
+	private final VerificationRecordFinder verificationRecordFinder;
 
 	public boolean checkUnivCode(String univCode) {
 		return UnivMail.exists(univCode);
@@ -94,9 +98,20 @@ public class CertService {
 	@Transactional
 	public void clear() {
 		UserDto user = apiUserResolver.getCurrentUserDto();
+
 		certManager.deleteAllByUserId(user.id());
 		verificationRecordManager.deleteAllByUserId(user.id());
+
 		userUpdater.updateRole(user.id(), UserRole.UNVERIFIED);
+	}
+
+	public VerificationWithPhoto getCertStatus() {
+		Long userId = apiUserResolver.getCurrentUserId();
+
+		VerificationRecordDto verificationRecord = verificationRecordFinder.findByUserId(userId);
+		String universityCode = univFinder.findUniversityCode(verificationRecord.universityId());
+
+		return VerificationWithPhoto.of(verificationRecord, universityCode, null);
 	}
 }
 

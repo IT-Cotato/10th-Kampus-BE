@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.cert.api.request.EmailSendRequest;
 import com.cotato.kampus.domain.cert.api.request.EmailVerifyRequest;
+import com.cotato.kampus.domain.cert.api.response.CertStatusResponse;
 import com.cotato.kampus.domain.cert.application.CertService;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
@@ -60,5 +61,16 @@ public class CertController {
 	public ResponseEntity<DataResponse<Void>> clear() {
 		certService.clear();
 		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@GetMapping("/status")
+	@Operation(summary = "인증 상태 조회", description = "인증 상태와 (반려일 경우) 반려 사유 조회")
+	public ResponseEntity<DataResponse<CertStatusResponse>> getCertStatus() {
+			return ResponseEntity.ok(DataResponse.from(
+				CertStatusResponse.from(
+					certService.getCertStatus()
+				)
+			)
+		);
 	}
 }
