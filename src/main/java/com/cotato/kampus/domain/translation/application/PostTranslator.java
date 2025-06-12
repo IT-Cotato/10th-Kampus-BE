@@ -21,8 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class PostTranslator {
 	private final Translator translator;
 
-	public TranslatedPost translatePost(String title, String content, String languageCode) throws
-		DeepLException, InterruptedException {
+	public TranslatedPost translatePost(String title, String content, String languageCode) {
 		PostTranslation postTranslation = PostTranslation.builder()
 			.title(title)
 			.content(content)

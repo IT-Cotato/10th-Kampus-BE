@@ -28,11 +28,9 @@ public class TranslationController {
 
 	private final TranslationService translationService;
 
-	@PostMapping("{postId}")
+	@PostMapping("/posts/{postId}")
 	@Operation(summary = "게시글 번역", description = "게시글 id를 통해 게시글을 번역합니다.")
-	public ResponseEntity<DataResponse<PostTranslationResponse>> translatePost(@PathVariable Long postId) throws
-		DeepLException,
-		InterruptedException {
+	public ResponseEntity<DataResponse<PostTranslationResponse>> translatePost(@PathVariable Long postId) {
 		return ResponseEntity.ok(DataResponse.from(
 				PostTranslationResponse.from(
 					translationService.translatePost(postId)
@@ -41,12 +39,21 @@ public class TranslationController {
 		);
 	}
 
+	@PostMapping("/products/{productId}")
+	@Operation(summary = "중고거래 게시글 번역", description = "중고거래 id를 통해 중고거래 게시글을 번역합니다.")
+	public ResponseEntity<DataResponse<PostTranslationResponse>> translateProduct(@PathVariable Long productId) {
+		return ResponseEntity.ok(DataResponse.from(
+				PostTranslationResponse.from(
+					translationService.translateProduct(productId)
+				)
+			)
+		);
+	}
+
 	@PostMapping("/posts")
 	@Operation(summary = "작성 게시글 번역", description = "작성중인 게시글을 번역합니다.")
 	public ResponseEntity<DataResponse<PostTranslationResponse>> translateWritingPost(
-		@RequestBody PostTranslationRequest request) throws
-		DeepLException,
-		InterruptedException {
+		@RequestBody PostTranslationRequest request) {
 		return ResponseEntity.ok(DataResponse.from(
 				PostTranslationResponse.from(
 					translationService.translatePost(request.title(), request.content(), request.targetLanguageCode())
