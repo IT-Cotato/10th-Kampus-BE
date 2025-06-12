@@ -27,4 +27,9 @@ public class CertRepositoryImpl implements CertRepository {
 		CertEntity entity = CertEntity.fromDomain(cert);
 		return certJpaRepository.save(entity).toDomain();
 	}
+
+	@Override
+	public void deleteAllByUserId(Long userId) {
+		certJpaRepository.deleteAllByUserId(userId);
+	}
 }

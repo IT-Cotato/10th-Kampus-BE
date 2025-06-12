@@ -54,4 +54,11 @@ public class CertController {
 		certService.verifyEmailCode(request.email(), request.code());
 		return ResponseEntity.ok(DataResponse.ok());
 	}
+
+	@PostMapping("/clear")
+	@Operation(summary = "[테스트용] 본인 메일 인증 초기화", description = "[테스트용] 메일 인증 기록을 삭제하고 UserRole.UNVERIFIED 적용")
+	public ResponseEntity<DataResponse<Void>> clear() {
+		certService.clear();
+		return ResponseEntity.ok(DataResponse.ok());
+	}
 }

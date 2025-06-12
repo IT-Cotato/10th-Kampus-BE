@@ -9,4 +9,6 @@ import com.cotato.kampus.domain.cert.domain.CertEntity;
 public interface CertJpaRepository extends JpaRepository<CertEntity, Long> {
 
 	Optional<CertEntity> findByEmail(String email);
+
+	void deleteAllByUserId(Long userId);
 }

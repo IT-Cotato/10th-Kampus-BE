@@ -13,6 +13,7 @@ import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
+import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -83,6 +84,13 @@ public class CertService {
 		// 유저 대학 정보 업데이트
 		Long universityId = univFinder.findUniversityId(cert.getUnivCode());
 		userUpdater.updateVerificationStatus(user.id(), universityId);
+	}
+
+	@Transactional
+	public void clear() {
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		certManager.deleteAllByUserId(user.id());
+		userUpdater.updateRole(user.id(), UserRole.UNVERIFIED);
 	}
 }
 

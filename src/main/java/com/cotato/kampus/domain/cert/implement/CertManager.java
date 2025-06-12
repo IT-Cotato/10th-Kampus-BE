@@ -33,4 +33,9 @@ public class CertManager {
 		Cert updatedCert = cert.setCertified();
 		certRepository.save(updatedCert);
 	}
+
+	@Transactional
+	public void deleteAllByUserId(Long userId) {
+		certRepository.deleteAllByUserId(userId);
+	}
 }

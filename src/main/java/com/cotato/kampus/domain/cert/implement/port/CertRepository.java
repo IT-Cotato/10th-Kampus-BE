@@ -9,4 +9,6 @@ public interface CertRepository {
 	Optional<Cert> findByEmail(String email);
 
 	Cert save(Cert cert);
+
+	void deleteAllByUserId(Long userId);
 }
