@@ -1,7 +1,8 @@
-package com.cotato.kampus.domain.cert.domain;
+package com.cotato.kampus.domain.cert.dao.entity;
 
 import java.time.LocalDateTime;
 
+import com.cotato.kampus.domain.cert.domain.Cert;
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
 
 import jakarta.persistence.Column;

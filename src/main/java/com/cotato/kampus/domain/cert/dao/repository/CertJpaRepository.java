@@ -1,10 +1,10 @@
-package com.cotato.kampus.domain.cert.dao;
+package com.cotato.kampus.domain.cert.dao.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.cotato.kampus.domain.cert.domain.CertEntity;
+import com.cotato.kampus.domain.cert.dao.entity.CertEntity;
 
 public interface CertJpaRepository extends JpaRepository<CertEntity, Long> {
 

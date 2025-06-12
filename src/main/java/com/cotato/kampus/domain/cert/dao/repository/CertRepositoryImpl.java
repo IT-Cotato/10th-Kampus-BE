@@ -1,11 +1,11 @@
-package com.cotato.kampus.domain.cert.dao;
+package com.cotato.kampus.domain.cert.dao.repository;
 
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.cert.domain.Cert;
-import com.cotato.kampus.domain.cert.domain.CertEntity;
+import com.cotato.kampus.domain.cert.dao.entity.CertEntity;
 import com.cotato.kampus.domain.cert.implement.port.CertRepository;
 
 import lombok.RequiredArgsConstructor;
