@@ -13,4 +13,6 @@ public interface VerificationRecordRepository extends JpaRepository<Verification
 	Slice<VerificationRecord> findAllByOrderByCreatedTimeDesc(Pageable pageable);
 
 	Optional<VerificationRecord> findByUserId(Long userId);
+
+	void deleteAllByUserId(Long userId);
 }

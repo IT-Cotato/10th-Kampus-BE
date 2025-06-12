@@ -17,7 +17,7 @@ import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.domain.user.enums.VerificationStatus;
 import com.cotato.kampus.domain.verification.application.VerificationPhotoAppender;
-import com.cotato.kampus.domain.verification.application.VerificationRecordAppender;
+import com.cotato.kampus.domain.verification.application.VerificationRecordManager;
 import com.cotato.kampus.domain.verification.application.VerificationRecordFinder;
 import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -34,7 +34,7 @@ public class UserService {
 	private final UserValidator userValidator;
 	private final ApiUserResolver apiUserResolver;
 	private final AgreementAppender agreementAppender;
-	private final VerificationRecordAppender verificationRecordAppender;
+	private final VerificationRecordManager verificationRecordManager;
 
 	private final UnivEmailVerifier univEmailVerifier;
 	private final UnivFinder univFinder;
@@ -87,7 +87,7 @@ public class UserService {
 
 		// VerificationRecord 추가
 		Long universityId = univFinder.findIdByCode(universityCode);
-		verificationRecordAppender.appendEmailType(userDto.id(), universityId);
+		verificationRecordManager.appendEmailType(userDto.id(), universityId);
 
 		// 유저 상태 변경, 학교 할당
 		userUpdater.updateVerificationStatus(userDto.id(), universityId);
@@ -107,7 +107,7 @@ public class UserService {
 
 		// VerificationRecord 추가
 		Long universityId = univFinder.findUniversityId(universityCode);
-		Long verificationRecordId = verificationRecordAppender.appendPhotoType(userDto.id(), universityId);
+		Long verificationRecordId = verificationRecordManager.appendPhotoType(userDto.id(), universityId);
 
 		// 인증서 이미지 추가
 		verificationPhotoAppender.append(verificationRecordId, imageUrl);
