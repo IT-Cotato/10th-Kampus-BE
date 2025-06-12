@@ -84,4 +84,10 @@ public class Cert {
 			throw new AppException(ErrorCode.ALREADY_VERIFIED);
 		}
 	}
+
+	public void validateCode(String code) {
+		if(!this.code.equals(code)) {
+			throw new AppException(ErrorCode.INVALID_VERIFICATION_CODE);
+		}
+	}
 }

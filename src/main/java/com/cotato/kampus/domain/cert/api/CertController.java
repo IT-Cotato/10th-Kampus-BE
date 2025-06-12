@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.cert.api.request.EmailSendRequest;
+import com.cotato.kampus.domain.cert.api.request.EmailVerifyRequest;
 import com.cotato.kampus.domain.cert.application.CertService;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
@@ -42,6 +43,15 @@ public class CertController {
 		@RequestBody EmailSendRequest request
 	) {
 		certService.sendMail(request.univCode(), request.email());
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
+	@PostMapping("/email/verify")
+	@Operation(summary = "이메일 인증 코드 확인", description = "4자리 코드를 입력해주세요")
+	public ResponseEntity<DataResponse<Void>> verifyEmailCode(
+		@RequestBody EmailVerifyRequest request
+	) {
+		certService.verifyEmailCode(request.email(), request.code());
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 }

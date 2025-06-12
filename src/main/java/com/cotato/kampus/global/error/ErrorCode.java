@@ -171,6 +171,8 @@ public enum ErrorCode {
 	VERIFICATION_CODE_EXPIRED(HttpStatus.BAD_REQUEST, "인증 코드가 만료되었습니다. 새로운 코드를 요청해주세요.", "CERT-002"),
 	ALREADY_VERIFIED(HttpStatus.BAD_REQUEST, "이미 인증된 이메일입니다.", "CERT-003"),
 	INVALID_UNIVERSITY_EMAIL_DOMAIN(HttpStatus.BAD_REQUEST, "이메일이 해당 대학 도메인과 일치하지 않습니다.", "CERT-004"),
+	CERT_NOT_FOUND(HttpStatus.NOT_FOUND, "인증 요청 내역이 없습니다", "CERT-005"),
+	INVALID_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "인증 코드가 유효하지 않습니다.", "CERT-006"),
 
 	// fcm
 	GOOGLE_REQUEST_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "google request token error", "FCM-001"),

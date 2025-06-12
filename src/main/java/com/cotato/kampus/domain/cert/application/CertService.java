@@ -11,6 +11,8 @@ import com.cotato.kampus.domain.cert.implement.CertManager;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.user.application.UserUpdater;
+import com.cotato.kampus.domain.user.application.UserValidator;
+import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -27,6 +29,7 @@ public class CertService {
 	private final CertManager certManager;
 	private final CertMailSender certMailSender;
 	private final UserUpdater userUpdater;
+	private final UserValidator userValidator;
 
 	public boolean checkUnivCode(String univCode) {
 		return UnivMail.exists(univCode);
@@ -34,6 +37,10 @@ public class CertService {
 
 	@Transactional
 	public void sendMail(String univCode, String email) {
+		// 유저 조회 및 검증
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		userValidator.validateDuplicateStudentVerification(user);
+
 		// 대학 이름 유효성 검사 및 도메인 검증
 		UnivMail.validateUnivCode(univCode);
 		boolean domainMatched = UnivMail.getDomains(univCode).stream()
@@ -45,19 +52,37 @@ public class CertService {
 		// 인증 코드 생성
 		String code = String.format("%04d", (int)(Math.random() * 10000));
 
-		// 기존 인증 여부 확인 후 처리
+		// 해당 이메일로 인증 요청 여부 확인 후 처리
 		Cert cert = certFinder.findOptionalByEmail(email);
 		if(cert != null) {
-			// 기존 인증 정보가 있으면 상태 확인 + 코드 갱신
+			// 인증 요청 정보가 있으면 상태 확인 + 코드 갱신
 			cert.validateNotCertified();
 			certManager.updateCodeAndExpiration(cert, code);
 		} else {
-			// 기존 인증 정보가 없으면 새로 생성
-			Long userId = apiUserResolver.getCurrentUserId();
-			certManager.append(email, univCode, code, userId);
+			// 인증 요청 정보가 없으면 새로 생성
+			certManager.append(email, univCode, code, user.id());
 		}
 
 		// 메일 발송
 		certMailSender.sendVerificationMail(email, code);
 	}
+
+	@Transactional
+	public void verifyEmailCode(String email, String code) {
+		// 유저 조회 및 검증
+		UserDto user = apiUserResolver.getCurrentUserDto();
+		userValidator.validateDuplicateStudentVerification(user);
+
+		// 해당 이메일로 인증 요청 조회/검증 + 업데이트
+		Cert cert = certFinder.findByEmail(email);
+		cert.validateNotCertified();
+		cert.validateExpired();
+		cert.validateCode(code);
+		certManager.certify(cert);
+
+		// 유저 대학 정보 업데이트
+		Long universityId = univFinder.findUniversityId(cert.getUnivCode());
+		userUpdater.updateVerificationStatus(user.id(), universityId);
+	}
 }
+

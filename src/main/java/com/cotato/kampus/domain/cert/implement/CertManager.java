@@ -27,4 +27,10 @@ public class CertManager {
 		Cert updatedCert = cert.updateCode(code);
 		certRepository.save(updatedCert);
 	}
+
+	@Transactional
+	public void certify(Cert cert) {
+		Cert updatedCert = cert.setCertified();
+		certRepository.save(updatedCert);
+	}
 }
