@@ -23,4 +23,5 @@ public interface ProductRepository {
 
 	Slice<Product> findAllByUserIdAndProductStatusNot(Long userId, ProductStatus status, Pageable pageable);
 
+	Slice<Product> searchAll(String keyword, Pageable pageable);
 }
