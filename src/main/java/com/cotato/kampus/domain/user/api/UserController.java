@@ -111,36 +111,6 @@ public class UserController {
 		);
 	}
 
-	@PostMapping("/verify/email/send")
-	@Operation(summary = "대학 이메일 인증 메일 발송", description = "대학 이메일로 인증 코드를 발송합니다.")
-	public ResponseEntity<DataResponse<Void>> sendVerificationCode(
-		@RequestBody SendMailRequest request
-	) throws IOException {
-		UnivCertResponse response = UnivCertResponse.from(
-			userService.sendMail(
-				request.email(),
-				request.universityCode())
-		);
-
-		return ResponseEntity.ok(DataResponse.ok());
-	}
-
-	@PostMapping("/verify/mail/confirm")
-	@Operation(summary = "이메일 인증 코드 확인", description = "이메일로 받은 인증 코드를 확인합니다. 일치하는 경우 재학생 자격으로 변경됩니다.")
-	public ResponseEntity<DataResponse<UnivCertResponse>> verifyEmailCode(
-		@RequestBody ConfirmMailRequest request
-	) throws IOException {
-		return ResponseEntity.ok(DataResponse.from(
-				UnivCertResponse.from(
-					userService.verifyEmailCode(
-						request.email(),
-						request.universityCode(),
-						request.code())
-				)
-			)
-		);
-	}
-
 	@PostMapping(value = "/verify/document", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Operation(summary = "재학생 서류 사진 제출", description = "재학생 인증 서류 사진을 제출합니다.")
 	public ResponseEntity<DataResponse<Void>> uploadCert(
@@ -158,14 +128,4 @@ public class UserController {
 		return ResponseEntity.ok(DataResponse.ok());
 	}
 
-	@GetMapping("/verify/status")
-	@Operation(summary = "유저 재학생 인증 상태 조회", description = "유저의 재학생 인증 상태를 확인합니다. (인증 요청 전, 인증 대기 중, 인증 완료, 반려)")
-	public ResponseEntity<DataResponse<VerifyStatusResponse>> findVerifyStatus() {
-		return ResponseEntity.ok(DataResponse.from(
-				VerifyStatusResponse.from(
-					userService.findVerifyStatus()
-				)
-			)
-		);
-	}
 }

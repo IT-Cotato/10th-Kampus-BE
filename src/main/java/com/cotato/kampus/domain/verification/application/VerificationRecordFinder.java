@@ -56,9 +56,7 @@ public class VerificationRecordFinder {
 	public VerificationRecordDto findByUserId(Long userId) {
 		return verificationRecordRepository.findByUserId(userId)
 			.map(VerificationRecordDto::from)
-			.orElseGet(() -> VerificationRecordDto.from(
-				new VerificationRecord(null, userId, null, VerificationStatus.NOT_REQUESTED)
-			));
+			.orElseThrow(() -> new AppException(ErrorCode.RECORD_NOT_FOUND));
 	}
 
 }

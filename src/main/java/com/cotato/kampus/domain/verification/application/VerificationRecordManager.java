@@ -3,9 +3,7 @@ package com.cotato.kampus.domain.verification.application;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.verification.dao.VerificationRecordRepository;
-import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.domain.verification.domain.VerificationRecord;
 import com.cotato.kampus.domain.user.enums.VerificationStatus;
 import com.cotato.kampus.domain.user.enums.VerificationType;
@@ -16,9 +14,8 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional(readOnly = true)
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public class VerificationRecordAppender {
+public class VerificationRecordManager {
 
-	private final ApiUserResolver apiUserResolver;
 	private final VerificationRecordRepository verificationRecordRepository;
 
 
@@ -42,5 +39,10 @@ public class VerificationRecordAppender {
 			.verificationType(VerificationType.PHOTO).build();
 
 		return verificationRecordRepository.save(verificationRecord).getId();
+	}
+
+	@Transactional
+	public void deleteAllByUserId(Long userId) {
+		verificationRecordRepository.deleteAllByUserId(userId);
 	}
 }
