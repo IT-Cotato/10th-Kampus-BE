@@ -185,6 +185,9 @@ public enum ErrorCode {
 
 	// UnivCert
 	UNIVCERT_ERROR(HttpStatus.BAD_REQUEST, "대학 이메일 인증 중 오류가 발생하였습니다.", "UNIVCERT-001"),
+
+	// Cookie
+	COOKIE_NOT_FOUND(HttpStatus.BAD_REQUEST, "요청에 쿠키가 존재하지 않습니다.", "COOKIE-001"),
 	;
 
 	private final HttpStatus httpStatus;
