@@ -15,13 +15,13 @@ import com.cotato.kampus.domain.category.domain.Category;
 import com.cotato.kampus.domain.category.implement.port.CategoryRepository;
 
 @ExtendWith(MockitoExtension.class)
-class CategoryAppenderTest {
+class CategoryManagerTest {
 
 	@Mock
 	private CategoryRepository categoryRepository;
 
 	@InjectMocks
-	private CategoryAppender categoryAppender;
+	private CategoryManager categoryManager;
 
 	@Test
 	@DisplayName("카테고리 추가 성공 테스트")
@@ -37,7 +37,7 @@ class CategoryAppenderTest {
 		when(categoryRepository.save(any(Category.class))).thenReturn(savedCategory);
 
 		// when
-		Category result = categoryAppender.append(categoryName);
+		Category result = categoryManager.append(categoryName);
 
 		// then
 		assertThat(result).isNotNull();

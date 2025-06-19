@@ -24,4 +24,11 @@ public class Category {
 			throw new AppException(ErrorCode.TRENDING_POST_ID_REQUIRED);
 		}
 	}
+
+	public Category withUpdateInfo(String categoryName) {
+		return Category.builder()
+			.id(this.id)
+			.categoryName(categoryName)
+			.build();
+	}
 }

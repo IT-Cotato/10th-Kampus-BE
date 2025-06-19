@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional
 @RequiredArgsConstructor
-public class CategoryAppender {
+public class CategoryManager {
 
 	private final CategoryRepository categoryRepository;
 
@@ -20,6 +20,10 @@ public class CategoryAppender {
 			.categoryName(categoryName)
 			.build();
 
+		return categoryRepository.save(category);
+	}
+
+	public Category update(Category category) {
 		return categoryRepository.save(category);
 	}
 }

@@ -15,15 +15,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.cotato.kampus.domain.category.domain.Category;
-import com.cotato.kampus.domain.category.implement.CategoryAppender;
+import com.cotato.kampus.domain.category.implement.CategoryManager;
 import com.cotato.kampus.domain.category.implement.CategoryFinder;
-import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
-import com.cotato.kampus.domain.user.enums.Nationality;
-import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.domain.user.enums.UserRole;
-import com.cotato.kampus.domain.user.enums.UserStatus;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.helper.TestUserHelper;
@@ -32,7 +28,7 @@ import com.cotato.kampus.helper.TestUserHelper;
 class CategoryServiceTest {
 
 	@Mock
-	private CategoryAppender categoryAppender;
+	private CategoryManager categoryManager;
 
 	@Mock
 	private UserValidator userValidator;
@@ -66,7 +62,7 @@ class CategoryServiceTest {
 
 		doNothing().when(userValidator).validateAdminAccess();
 		when(categoryFinder.existsByCategoryName(categoryName)).thenReturn(false);
-		when(categoryAppender.append(categoryName)).thenReturn(newCategory);
+		when(categoryManager.append(categoryName)).thenReturn(newCategory);
 
 		// when
 		Long categoryId = categoryService.createCategory(categoryName);
@@ -75,7 +71,7 @@ class CategoryServiceTest {
 		assertThat(categoryId).isEqualTo(1L);
 		verify(userValidator).validateAdminAccess();
 		verify(categoryFinder).existsByCategoryName(categoryName);
-		verify(categoryAppender).append(categoryName);
+		verify(categoryManager).append(categoryName);
 	}
 
 	@Test
@@ -94,7 +90,7 @@ class CategoryServiceTest {
 
 		verify(userValidator).validateAdminAccess();
 		verify(categoryFinder, never()).existsByCategoryName(anyString());
-		verify(categoryAppender, never()).append(anyString());
+		verify(categoryManager, never()).append(anyString());
 	}
 
 	@Test
@@ -114,7 +110,7 @@ class CategoryServiceTest {
 
 		verify(userValidator).validateAdminAccess();
 		verify(categoryFinder).existsByCategoryName(categoryName);
-		verify(categoryAppender, never()).append(anyString());
+		verify(categoryManager, never()).append(anyString());
 	}
 
 	@Test
