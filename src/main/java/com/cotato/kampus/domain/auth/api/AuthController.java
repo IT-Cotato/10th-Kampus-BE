@@ -14,12 +14,14 @@ import com.cotato.kampus.domain.auth.application.RefreshService;
 import com.cotato.kampus.domain.auth.domain.ReissuedToken;
 import com.cotato.kampus.domain.auth.dto.request.SignupRequest;
 import com.cotato.kampus.domain.auth.dto.response.SignupResponse;
+import com.cotato.kampus.global.auth.util.CookieUtil;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
@@ -51,10 +53,17 @@ public class AuthController {
 	@Operation(summary = "토큰 재발급", description = "리프레시 토큰을 통해 토큰 재발급하는 API")
 	public ResponseEntity<DataResponse<Void>> reissueAccessToken(final HttpServletRequest request,
 		final HttpServletResponse response) {
+
+		// 리프레시 토큰을 쿠키에서 추출하여 재발급
 		ReissuedToken reissuedToken = refreshService.reissueRefreshToken(
-			request.getHeader(REFRESH_TOKEN_HEADER));
+			CookieUtil.extractRefreshToken(request)
+		);
+
+		// 재발급된 토큰을 응답 헤더와 쿠키에 추가
 		response.addHeader(ACCESS_TOKEN_HEADER, reissuedToken.accessToken());
-		response.addHeader(REFRESH_TOKEN_HEADER, reissuedToken.refreshToken());
+		Cookie refreshCookie = CookieUtil.createRefreshCookie(reissuedToken.refreshToken());
+		response.addCookie(refreshCookie);
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(DataResponse.created());
 	}
 
