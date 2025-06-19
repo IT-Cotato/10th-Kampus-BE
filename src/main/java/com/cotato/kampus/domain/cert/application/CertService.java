@@ -3,6 +3,8 @@ package com.cotato.kampus.domain.cert.application;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.admin.application.VerificationPhotoFinder;
+import com.cotato.kampus.domain.admin.dto.VerificationPhotoDto;
 import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
 import com.cotato.kampus.domain.cert.domain.Cert;
 import com.cotato.kampus.domain.cert.enums.UnivMail;
@@ -37,6 +39,7 @@ public class CertService {
 	private final UserValidator userValidator;
 	private final VerificationRecordManager verificationRecordManager;
 	private final VerificationRecordFinder verificationRecordFinder;
+	private final VerificationPhotoFinder verificationPhotoFinder;
 
 	public boolean checkUnivCode(String univCode) {
 		return UnivMail.exists(univCode);
@@ -112,6 +115,18 @@ public class CertService {
 		String universityCode = univFinder.findUniversityCode(verificationRecord.universityId());
 
 		return VerificationWithPhoto.of(verificationRecord, universityCode, null);
+	}
+
+	public VerificationWithPhoto getRejectReason() {
+		UserDto user = apiUserResolver.getCurrentUserDto();
+
+		userValidator.validateDuplicateStudentVerification(user);
+		VerificationRecordDto verificationRecordDto = verificationRecordFinder.findRecentPhotoRecord(user.id());
+
+		String universityCode = univFinder.findUniversityCode(verificationRecordDto.universityId());
+		VerificationPhotoDto verificationPhotoDto = verificationPhotoFinder.findByRecordId(verificationRecordDto.verificationRecordId());
+
+		return VerificationWithPhoto.of(verificationRecordDto, universityCode, verificationPhotoDto);
 	}
 }
 
