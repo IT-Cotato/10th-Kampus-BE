@@ -47,4 +47,10 @@ public class ProductCategoryRepositoryImpl implements ProductCategoryRepository 
 			.map(ProductCategoryEntity::toDomain)
 			.toList();
 	}
+
+	@Override
+	public Optional<ProductCategory> findById(Long categoryId) {
+		return productCategoryJpaRepository.findById(categoryId)
+			.map(ProductCategoryEntity::toDomain);
+	}
 }

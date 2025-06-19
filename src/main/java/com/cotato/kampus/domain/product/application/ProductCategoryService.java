@@ -44,4 +44,13 @@ public class ProductCategoryService {
 
 		return categories.stream().map(ProductCategoryInfo::from).toList();
 	}
+
+	@Transactional
+	public void updateCategory(Long categoryId, String categoryName) {
+		userValidator.validateAdminAccess();
+
+		ProductCategory category = productCategoryFinder.find(categoryId);
+		ProductCategory updatedCategory = category.withUpdateInfo(categoryName);
+		productCategoryManager.update(updatedCategory);
+	}
 }

@@ -22,4 +22,8 @@ public class ProductCategoryManager {
 
 		return productCategoryRepository.save(category);
 	}
+
+	public ProductCategory update(ProductCategory category) {
+		return productCategoryRepository.save(category);
+	}
 }
