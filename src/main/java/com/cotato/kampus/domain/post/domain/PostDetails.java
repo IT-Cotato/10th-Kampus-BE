@@ -3,6 +3,9 @@ package com.cotato.kampus.domain.post.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.enums.BoardType;
+import com.cotato.kampus.domain.category.domain.Category;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -10,6 +13,7 @@ public record PostDetails(
 	Long postId,
 	Long boardId,
 	String boardName,
+	BoardType boardType,
 	String title,
 	String content,
 	int likeCount,
@@ -21,11 +25,13 @@ public record PostDetails(
 	LocalDateTime createdTime,
 	boolean isAuthor,
 	boolean isLiked,
-	boolean isScrapped
+	boolean isScrapped,
+	List<String> categoryNames
 ) {
 	public static PostDetails of(
 		Post post,
-		String boardName,
+		Board board,
+		List<Category> categories,
 		List<PostPhoto> postPhotos,
 		boolean isAuthor,
 		boolean isLiked,
@@ -34,20 +40,32 @@ public record PostDetails(
 		return new PostDetails(
 			post.getId(),
 			post.getBoardId(),
-			boardName,
+			board.getBoardName(),
+			board.getBoardType(),
 			post.getTitle(),
 			post.getContent(),
 			post.getLikeCount(),
 			post.getScrapCount(),
 			post.getCommentCount(),
 			post.getPostStatus(),
-			postPhotos.stream()
-				.map(PostPhotoInfo::from)
-				.toList(),
+			toPostPhotoInfos(postPhotos),
 			post.getCreatedTime(),
 			isAuthor,
 			isLiked,
-			isScrapped
+			isScrapped,
+			toCategoryNames(categories)
 		);
+	}
+
+	private static List<PostPhotoInfo> toPostPhotoInfos(List<PostPhoto> postPhotos) {
+		return postPhotos.stream()
+			.map(PostPhotoInfo::from)
+			.toList();
+	}
+
+	private static List<String> toCategoryNames(List<Category> categories) {
+		return categories.stream()
+			.map(Category::getCategoryName)
+			.toList();
 	}
 }

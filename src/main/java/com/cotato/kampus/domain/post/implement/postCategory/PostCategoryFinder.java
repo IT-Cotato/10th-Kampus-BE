@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.post.domain.PostCategory;
 import com.cotato.kampus.domain.post.implement.port.PostCategoryRepository;
 
 import lombok.AccessLevel;
@@ -19,5 +20,11 @@ public class PostCategoryFinder {
 
 	public List<Long> findAllPostIdsByCategoryId(Long categoryId) {
 		return postCategoryRepository.findPostIdsByCategoryId(categoryId);
+	}
+
+	public List<Long> findCategoryIdsByPostId(Long postId) {
+		return postCategoryRepository.findByPostId(postId).stream()
+			.map(PostCategory::getCategoryId)
+			.toList();
 	}
 }

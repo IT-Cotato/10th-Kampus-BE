@@ -208,10 +208,13 @@ public class PostService {
 		// PostPhoto 조회
 		List<PostPhoto> postPhotos = postPhotoFinder.findPostPhotos(postId);
 
+		List<Long> categoryIds = postCategoryFinder.findCategoryIdsByPostId(post.getId());
+		List<Category> categories = categoryFinder.findAllByIds(categoryIds);
+
 		boolean isAuthor = post.getUserId().equals(userId);
 		boolean isLiked = postLikeFinder.hasUserLikedPost(userId, postId);
 		boolean isScrapped = postScrapFinder.isPostScrappedByUser(userId, postId);
-		return PostDetails.of(post, board.getBoardName(), postPhotos, isAuthor, isLiked, isScrapped);
+		return PostDetails.of(post, board, categories, postPhotos, isAuthor, isLiked, isScrapped);
 	}
 
 	@Transactional

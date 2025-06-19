@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.category.dao.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,6 @@ public interface CategoryJpaRepository extends JpaRepository<CategoryEntity, Lon
 	Optional<CategoryEntity> findByCategoryName(String categoryName);
 
 	boolean existsByCategoryName(String categoryName);
+
+	List<CategoryEntity> findAllByIdIn(List<Long> categoryIds);
 }

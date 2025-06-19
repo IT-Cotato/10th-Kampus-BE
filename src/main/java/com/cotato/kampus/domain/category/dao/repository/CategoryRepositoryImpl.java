@@ -46,4 +46,11 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 	public boolean existsByCategoryName(String categoryName) {
 		return categoryJpaRepository.existsByCategoryName(categoryName);
 	}
+
+	@Override
+	public List<Category> findAllByIdIn(List<Long> categoryIds) {
+		return categoryJpaRepository.findAllByIdIn(categoryIds).stream()
+			.map(CategoryEntity::toDomain)
+			.toList();
+	}
 }
