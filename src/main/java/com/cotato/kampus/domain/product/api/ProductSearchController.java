@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.post.api.response.SliceResponse;
 import com.cotato.kampus.domain.post.application.ProductSearchService;
-import com.cotato.kampus.domain.product.api.response.ProductThumbnailResponse;
 import com.cotato.kampus.domain.product.domain.ProductThumbnail;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
@@ -29,7 +28,7 @@ public class ProductSearchController {
 	private final ProductSearchService productSearchService;
 
 	@GetMapping("/search")
-	@Operation(summary = "전체 중고거래 게시글 검색")
+	@Operation(summary = "전체 중고거래 게시글 검색", description = "ACTIVE, RESERVED, SOLD 순으로 최신순 정렬")
 	public ResponseEntity<DataResponse<SliceResponse<ProductThumbnail>>> searchProducts(
 		@RequestParam @NotBlank @Length(min = 2, max = 10, message = "keyword는 2자 이상 10자 이하로 구성해야 합니다.") String keyword,
 		@RequestParam(required = false, defaultValue = "1") int page

@@ -63,4 +63,10 @@ public class ProductRepositoryImpl implements ProductRepository {
 		return productJpaRepository.searchAll(keyword, pageable)
 			.map(ProductEntity::toDomain);
 	}
+
+	@Override
+	public Slice<Product> findByKeywordWithStatusPriority(String keyword, Pageable pageable) {
+		return productJpaRepository.findByKeywordWithStatusPriority(keyword, pageable)
+			.map(ProductEntity::toDomain);
+	}
 }

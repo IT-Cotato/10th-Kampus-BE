@@ -57,6 +57,6 @@ public class ProductFinder {
 
 	public Slice<Product> searchProducts(String keyword, int page) {
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
-		return productRepository.searchAll(keyword, customPageRequest.of(SORT_PROPERTY));
+		return productRepository.findByKeywordWithStatusPriority(keyword, customPageRequest.of(SORT_PROPERTY));
 	}
 }
