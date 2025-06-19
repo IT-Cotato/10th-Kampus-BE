@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.product.application;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,6 +19,8 @@ import com.cotato.kampus.domain.product.domain.ProductCategoryInfo;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryManager;
 import com.cotato.kampus.domain.user.application.UserValidator;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 @ExtendWith(MockitoExtension.class)
 public class ProductCategoryServiceTest {
@@ -53,5 +57,53 @@ public class ProductCategoryServiceTest {
 		assertThat(result.get(1).categoryName()).isEqualTo("카테고리2");
 
 		verify(productCategoryFinder).findAll();
+	}
+
+	@Test
+	@DisplayName("카테고리 수정 테스트 - 성공")
+	void updateCategories_success() {
+		// given
+		Long categoryId = 1L;
+		String categoryName = "카테고리";
+		String newCategoryName = "변경된 카테고리";
+
+		ProductCategory category = ProductCategory.builder()
+			.id(categoryId)
+			.categoryName(categoryName)
+			.build();
+
+		doNothing().when(userValidator).validateAdminAccess();
+		when(productCategoryFinder.find(categoryId)).thenReturn(category);
+
+		// when
+		productCategoryService.updateCategory(categoryId, newCategoryName);
+
+		// then
+		ArgumentCaptor<ProductCategory> captor = ArgumentCaptor.forClass(ProductCategory.class);
+		verify(productCategoryManager).update(captor.capture());
+
+		ProductCategory updatedCategory = captor.getValue();
+		assertThat(newCategoryName).isEqualTo(updatedCategory.getCategoryName());
+
+		verify(userValidator).validateAdminAccess();
+		verify(productCategoryFinder).find(categoryId);
+	}
+
+	@Test
+	@DisplayName("카테고리 수정 테스트 - 관리자 권한 없음 실패")
+	void updateCategories_fail_notAdmin() {
+		// given
+		Long categoryId = 1L;
+		String newCategoryName = "변경된 카테고리";
+
+		doThrow(new AppException(ErrorCode.USER_NOT_ADMIN))
+			.when(userValidator).validateAdminAccess();
+
+		// when & then
+		assertThrows(AppException.class,
+			() -> productCategoryService.updateCategory(categoryId, newCategoryName));
+
+		verify(userValidator).validateAdminAccess();
+		verifyNoMoreInteractions(productCategoryFinder);
 	}
 }
