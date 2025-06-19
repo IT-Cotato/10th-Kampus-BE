@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.product.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -100,8 +101,12 @@ public class ProductCategoryServiceTest {
 			.when(userValidator).validateAdminAccess();
 
 		// when & then
-		assertThrows(AppException.class,
+		AppException exception = assertThrows(AppException.class,
 			() -> productCategoryService.updateCategory(categoryId, newCategoryName));
+
+		assertThat(exception)
+			.extracting(AppException::getErrorCode)
+			.isEqualTo(ErrorCode.USER_NOT_ADMIN);
 
 		verify(userValidator).validateAdminAccess();
 		verifyNoMoreInteractions(productCategoryFinder);

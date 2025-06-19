@@ -179,8 +179,12 @@ class CategoryServiceTest {
 			.when(userValidator).validateAdminAccess();
 
 		// when & then
-		assertThrows(AppException.class,
+		AppException exception = assertThrows(AppException.class,
 			() -> categoryService.updateCategory(categoryId, newCategoryName));
+
+		assertThat(exception)
+			.extracting(AppException::getErrorCode)
+			.isEqualTo(ErrorCode.USER_NOT_ADMIN);
 
 		verify(userValidator).validateAdminAccess();
 		verifyNoInteractions(categoryFinder);
