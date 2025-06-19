@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryValidator;
 import com.cotato.kampus.domain.category.domain.Category;
 import com.cotato.kampus.domain.category.implement.CategoryManager;
 import com.cotato.kampus.domain.category.implement.CategoryFinder;
@@ -22,6 +23,7 @@ public class CategoryService {
 	private final CategoryManager categoryManager;
 	private final UserValidator userValidator;
 	private final CategoryFinder categoryFinder;
+	private final BoardCategoryValidator boardCategoryValidator;
 
 	@Transactional
 	public Long createCategory(String categoryName) {
@@ -45,6 +47,11 @@ public class CategoryService {
 	@Transactional
 	public void updateCategory(Long categoryId, String categoryName) {
 		userValidator.validateAdminAccess();
+
+		boolean isDuplicate = categoryFinder.existsByCategoryName(categoryName);
+		if(isDuplicate) {
+			throw new AppException(ErrorCode.CATEGORY_DUPLICATED);
+		}
 
 		Category category = categoryFinder.find(categoryId);
 		Category updatedCategory = category.withUpdateInfo(categoryName);

@@ -49,6 +49,11 @@ public class ProductCategoryService {
 	public void updateCategory(Long categoryId, String categoryName) {
 		userValidator.validateAdminAccess();
 
+		boolean isDuplicate = productCategoryFinder.existsByCategoryName(categoryName);
+		if(isDuplicate) {
+			throw new AppException(ErrorCode.PRODUCT_CATEGORY_DUPLICATED);
+		}
+
 		ProductCategory category = productCategoryFinder.find(categoryId);
 		ProductCategory updatedCategory = category.withUpdateInfo(categoryName);
 		productCategoryManager.update(updatedCategory);
