@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.category.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -47,7 +49,7 @@ class CategoryServiceTest {
 	void setUp() {
 		// 각 테스트 실행 전에 사용자 객체 초기화
 		adminUser = TestUserHelper.createUserDto(1L,  null, UserRole.ADMIN);
-		normalUser = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
+		normalUser = TestUserHelper.createUserDto(2L, 2L, UserRole.VERIFIED);
 	}
 
 	@Test
@@ -134,4 +136,54 @@ class CategoryServiceTest {
 		assertThat(results).isEqualTo(expectedCategories);
 		verify(categoryFinder).findAll();
 	}
+
+	@Test
+	@DisplayName("카테고리 수정 테스트 - 성공")
+	void updateCategory_Success() {
+		// given
+		Long categoryId = 1L;
+		String categoryName = "카테고리";
+		String newCategoryName = "변경된 카테고리";
+
+		Category category = Category.builder()
+			.id(categoryId)
+			.categoryName(categoryName)
+			.build();
+
+
+		doNothing().when(userValidator).validateAdminAccess();
+		when(categoryFinder.find(categoryId)).thenReturn(category);
+
+		// when
+		categoryService.updateCategory(categoryId, newCategoryName);
+
+		// then
+		ArgumentCaptor<Category> captor = ArgumentCaptor.forClass(Category.class);
+		verify(categoryManager).update(captor.capture());
+
+		Category updatedCategory = captor.getValue();
+		assertEquals(newCategoryName, updatedCategory.getCategoryName());
+
+		verify(userValidator).validateAdminAccess();
+		verify(categoryFinder).find(categoryId);
+	}
+
+	@Test
+	@DisplayName("카테고리 수정 테스트 - 관리자 권한 없음 실패")
+	void updateCategory_Failure_NotAdmin() {
+		// given
+		Long categoryId = 1L;
+		String newCategoryName = "변경된 카테고리";
+
+		doThrow(new AppException(ErrorCode.USER_NOT_ADMIN))
+			.when(userValidator).validateAdminAccess();
+
+		// when & then
+		assertThrows(AppException.class,
+			() -> categoryService.updateCategory(categoryId, newCategoryName));
+
+		verify(userValidator).validateAdminAccess();
+		verifyNoInteractions(categoryFinder);
+	}
+
 }
