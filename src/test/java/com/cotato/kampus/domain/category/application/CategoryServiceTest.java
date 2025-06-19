@@ -190,4 +190,26 @@ class CategoryServiceTest {
 		verifyNoInteractions(categoryFinder);
 	}
 
+	@Test
+	@DisplayName("카테고리 수정 테스트 - 중복 카테고리 존재 실패")
+	void updateCategory_Failure_DuplicateName() {
+		// given
+		Long categoryId = 1L;
+		String newCategoryName = "변경된 카테고리";
+
+		when(categoryFinder.existsByCategoryName(newCategoryName)).thenReturn(true);
+		doNothing().when(userValidator).validateAdminAccess();
+
+		// when & then
+		AppException exception = assertThrows(AppException.class,
+			() -> categoryService.updateCategory(categoryId, newCategoryName));
+
+		assertThat(exception)
+			.extracting(AppException::getErrorCode)
+			.isEqualTo(ErrorCode.CATEGORY_DUPLICATED);
+
+		verify(userValidator).validateAdminAccess();
+		verify(categoryFinder).existsByCategoryName(newCategoryName);
+		verify(categoryFinder, never()).find(categoryId);
+	}
 }

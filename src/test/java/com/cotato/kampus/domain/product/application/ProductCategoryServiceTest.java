@@ -40,7 +40,7 @@ public class ProductCategoryServiceTest {
 
 	@Test
 	@DisplayName("카테고리 조회 테스트 - 성공")
-	void findAllCategories_success() {
+	void findAllCategories_Success() {
 		// Given
 		ProductCategory category1 = ProductCategory.builder().categoryName("카테고리1").build();
 		ProductCategory category2 = ProductCategory.builder().categoryName("카테고리2").build();
@@ -62,7 +62,7 @@ public class ProductCategoryServiceTest {
 
 	@Test
 	@DisplayName("카테고리 수정 테스트 - 성공")
-	void updateCategories_success() {
+	void updateCategories_Success() {
 		// given
 		Long categoryId = 1L;
 		String categoryName = "카테고리";
@@ -92,7 +92,7 @@ public class ProductCategoryServiceTest {
 
 	@Test
 	@DisplayName("카테고리 수정 테스트 - 관리자 권한 없음 실패")
-	void updateCategories_fail_notAdmin() {
+	void updateCategories_Fail_NotAdmin() {
 		// given
 		Long categoryId = 1L;
 		String newCategoryName = "변경된 카테고리";
@@ -111,4 +111,28 @@ public class ProductCategoryServiceTest {
 		verify(userValidator).validateAdminAccess();
 		verifyNoMoreInteractions(productCategoryFinder);
 	}
+
+	@Test
+	@DisplayName("카테고리 수정 테스트 - 중복 카테고리 존재 실패")
+	void updateCategory_Fail_DuplicateName() {
+		// given
+		Long categoryId = 1L;
+		String newCategoryName = "변경된 카테고리";
+
+		when(productCategoryFinder.existsByCategoryName(newCategoryName)).thenReturn(true);
+		doNothing().when(userValidator).validateAdminAccess();
+
+		// when & then
+		AppException exception = assertThrows(AppException.class,
+			() -> productCategoryService.updateCategory(categoryId, newCategoryName));
+
+		assertThat(exception)
+			.extracting(AppException::getErrorCode)
+			.isEqualTo(ErrorCode.PRODUCT_CATEGORY_DUPLICATED);
+
+		verify(userValidator).validateAdminAccess();
+		verify(productCategoryFinder).existsByCategoryName(newCategoryName);
+		verify(productCategoryFinder, never()).find(categoryId);
+	}
+
 }
