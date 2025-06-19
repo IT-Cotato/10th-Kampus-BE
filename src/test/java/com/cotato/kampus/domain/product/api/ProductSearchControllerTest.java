@@ -26,8 +26,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import com.cotato.kampus.domain.post.application.ProductSearchService;
 import com.cotato.kampus.domain.product.api.ProductSearchController;
+import com.cotato.kampus.domain.product.application.ProductSearchService;
 import com.cotato.kampus.domain.product.domain.ProductThumbnail;
 import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.global.common.dto.DataResponse;

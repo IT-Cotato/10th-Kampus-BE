@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.post.application;
+package com.cotato.kampus.domain.product.application;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
