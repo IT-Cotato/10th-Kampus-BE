@@ -150,9 +150,9 @@ class CategoryServiceTest {
 			.categoryName(categoryName)
 			.build();
 
-
 		doNothing().when(userValidator).validateAdminAccess();
 		when(categoryFinder.find(categoryId)).thenReturn(category);
+		when(categoryFinder.existsByCategoryName(newCategoryName)).thenReturn(false);
 
 		// when
 		categoryService.updateCategory(categoryId, newCategoryName);
@@ -165,6 +165,7 @@ class CategoryServiceTest {
 		assertEquals(newCategoryName, updatedCategory.getCategoryName());
 
 		verify(userValidator).validateAdminAccess();
+		verify(categoryFinder).existsByCategoryName(newCategoryName);
 		verify(categoryFinder).find(categoryId);
 	}
 

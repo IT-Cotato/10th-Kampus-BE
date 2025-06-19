@@ -74,6 +74,7 @@ public class ProductCategoryServiceTest {
 			.build();
 
 		doNothing().when(userValidator).validateAdminAccess();
+		when(productCategoryFinder.existsByCategoryName(newCategoryName)).thenReturn(false);
 		when(productCategoryFinder.find(categoryId)).thenReturn(category);
 
 		// when
@@ -87,6 +88,7 @@ public class ProductCategoryServiceTest {
 		assertThat(newCategoryName).isEqualTo(updatedCategory.getCategoryName());
 
 		verify(userValidator).validateAdminAccess();
+		verify(productCategoryFinder).existsByCategoryName(newCategoryName);
 		verify(productCategoryFinder).find(categoryId);
 	}
 
