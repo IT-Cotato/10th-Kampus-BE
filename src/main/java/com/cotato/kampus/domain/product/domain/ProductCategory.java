@@ -14,4 +14,11 @@ public class ProductCategory {
 		this.id = id;
 		this.categoryName = categoryName;
 	}
+
+	public ProductCategory withUpdateInfo(String categoryName) {
+		return ProductCategory.builder()
+			.id(this.id)
+			.categoryName(categoryName)
+			.build();
+	}
 }

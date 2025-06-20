@@ -16,4 +16,6 @@ public interface ProductCategoryRepository {
 	List<ProductCategory> findAllByIdIn(List<Long> categoryIds);
 
 	List<ProductCategory> findAll();
+
+	Optional<ProductCategory> findById(Long categoryId);
 }

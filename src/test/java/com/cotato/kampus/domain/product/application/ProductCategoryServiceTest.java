@@ -1,43 +1,140 @@
 package com.cotato.kampus.domain.product.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.cotato.kampus.domain.product.domain.ProductCategory;
 import com.cotato.kampus.domain.product.domain.ProductCategoryInfo;
-import com.cotato.kampus.domain.product.implement.port.ProductCategoryRepository;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
+import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryManager;
+import com.cotato.kampus.domain.user.application.UserValidator;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
-@SpringBootTest
-@Transactional
-@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 public class ProductCategoryServiceTest {
 
-	@Autowired
-	private ProductCategoryService productCategoryService;
+	@Mock
+	private ProductCategoryFinder productCategoryFinder;
 
-	@Autowired
-	private ProductCategoryRepository productCategoryRepository;
+	@Mock
+	private UserValidator userValidator;
+
+	@Mock
+	private ProductCategoryManager productCategoryManager;
+
+	@InjectMocks
+	private ProductCategoryService productCategoryService;
 
 	@Test
 	@DisplayName("카테고리 조회 테스트 - 성공")
-	void findAllCategories_success() {
+	void findAllCategories_Success() {
 		// Given
-		ProductCategory category1 = productCategoryRepository.save(ProductCategory.builder().categoryName("카테고리1").build());
-		ProductCategory category2 = productCategoryRepository.save(ProductCategory.builder().categoryName("카테고리2").build());
+		ProductCategory category1 = ProductCategory.builder().categoryName("카테고리1").build();
+		ProductCategory category2 = ProductCategory.builder().categoryName("카테고리2").build();
+
+		when(productCategoryFinder.findAll()).thenReturn(List.of(category1, category2));
 
 		// When
-		List<ProductCategoryInfo> categories = productCategoryService.findAllCategories();
+		List<ProductCategoryInfo> result = productCategoryService.findAllCategories();
 
 		// Then
-		assertThat(categories.size()).isEqualTo(2);
-		assertThat(categories.get(0).productCategoryId()).isEqualTo(category1.getId());
+		assertThat(result.size()).isEqualTo(2);
+		assertThat(result.get(0).productCategoryId()).isEqualTo(category1.getId());
+		assertThat(result.get(0).categoryName()).isEqualTo("카테고리1");
+		assertThat(result.get(1).productCategoryId()).isEqualTo(category2.getId());
+		assertThat(result.get(1).categoryName()).isEqualTo("카테고리2");
+
+		verify(productCategoryFinder).findAll();
 	}
+
+	@Test
+	@DisplayName("카테고리 수정 테스트 - 성공")
+	void updateCategories_Success() {
+		// given
+		Long categoryId = 1L;
+		String categoryName = "카테고리";
+		String newCategoryName = "변경된 카테고리";
+
+		ProductCategory category = ProductCategory.builder()
+			.id(categoryId)
+			.categoryName(categoryName)
+			.build();
+
+		doNothing().when(userValidator).validateAdminAccess();
+		when(productCategoryFinder.existsByCategoryName(newCategoryName)).thenReturn(false);
+		when(productCategoryFinder.find(categoryId)).thenReturn(category);
+
+		// when
+		productCategoryService.updateCategory(categoryId, newCategoryName);
+
+		// then
+		ArgumentCaptor<ProductCategory> captor = ArgumentCaptor.forClass(ProductCategory.class);
+		verify(productCategoryManager).update(captor.capture());
+
+		ProductCategory updatedCategory = captor.getValue();
+		assertThat(newCategoryName).isEqualTo(updatedCategory.getCategoryName());
+
+		verify(userValidator).validateAdminAccess();
+		verify(productCategoryFinder).existsByCategoryName(newCategoryName);
+		verify(productCategoryFinder).find(categoryId);
+	}
+
+	@Test
+	@DisplayName("카테고리 수정 테스트 - 관리자 권한 없음 실패")
+	void updateCategories_Fail_NotAdmin() {
+		// given
+		Long categoryId = 1L;
+		String newCategoryName = "변경된 카테고리";
+
+		doThrow(new AppException(ErrorCode.USER_NOT_ADMIN))
+			.when(userValidator).validateAdminAccess();
+
+		// when & then
+		AppException exception = assertThrows(AppException.class,
+			() -> productCategoryService.updateCategory(categoryId, newCategoryName));
+
+		assertThat(exception)
+			.extracting(AppException::getErrorCode)
+			.isEqualTo(ErrorCode.USER_NOT_ADMIN);
+
+		verify(userValidator).validateAdminAccess();
+		verifyNoMoreInteractions(productCategoryFinder);
+	}
+
+	@Test
+	@DisplayName("카테고리 수정 테스트 - 중복 카테고리 존재 실패")
+	void updateCategory_Fail_DuplicateName() {
+		// given
+		Long categoryId = 1L;
+		String newCategoryName = "변경된 카테고리";
+
+		when(productCategoryFinder.existsByCategoryName(newCategoryName)).thenReturn(true);
+		doNothing().when(userValidator).validateAdminAccess();
+
+		// when & then
+		AppException exception = assertThrows(AppException.class,
+			() -> productCategoryService.updateCategory(categoryId, newCategoryName));
+
+		assertThat(exception)
+			.extracting(AppException::getErrorCode)
+			.isEqualTo(ErrorCode.PRODUCT_CATEGORY_DUPLICATED);
+
+		verify(userValidator).validateAdminAccess();
+		verify(productCategoryFinder).existsByCategoryName(newCategoryName);
+		verify(productCategoryFinder, never()).find(categoryId);
+	}
+
 }

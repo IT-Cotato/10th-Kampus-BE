@@ -35,4 +35,9 @@ public class ProductCategoryFinder {
 	public List<ProductCategory> findAll() {
 		return productCategoryRepository.findAll();
 	}
+
+	public ProductCategory find(Long categoryId) {
+		return productCategoryRepository.findById(categoryId)
+			.orElseThrow(() -> new AppException(ErrorCode.PRODUCT_CATEGORY_NOT_FOUND));
+	}
 }

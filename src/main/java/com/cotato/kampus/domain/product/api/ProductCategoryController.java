@@ -2,18 +2,22 @@ package com.cotato.kampus.domain.product.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.product.api.request.CreateProductCategoryRequest;
+import com.cotato.kampus.domain.product.api.request.UpdateProductCategoryRequest;
 import com.cotato.kampus.domain.product.api.response.ProductCategoryFindResponse;
 import com.cotato.kampus.domain.product.application.ProductCategoryService;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -48,4 +52,15 @@ public class ProductCategoryController {
 			)
 		);
 	}
+
+	@PutMapping("/{productCategoryId}")
+	@Operation(summary = "중고거래 카테고리 수정")
+	public ResponseEntity<DataResponse<Void>> updateCategory(
+		@PathVariable Long productCategoryId,
+		@Valid @RequestBody UpdateProductCategoryRequest request
+	) {
+		productCategoryService.updateCategory(productCategoryId, request.categoryName());
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
 }
