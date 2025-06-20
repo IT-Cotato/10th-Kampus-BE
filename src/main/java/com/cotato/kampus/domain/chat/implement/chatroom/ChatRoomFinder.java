@@ -23,7 +23,7 @@ public class ChatRoomFinder {
 	private final ChatRoomRepository chatRoomRepository;
 	private static final int PAGE_SIZE = 10;
 	private static final String SORT_PROPERTY = "createdTime";
-	
+
 	public boolean existsByReferenceIdAndSenderIdAndChatType(Long referenceId, Long senderId, ChatType chatType) {
 		return chatRoomRepository.existsByReferenceIdAndInitialSenderIdAndChatType(referenceId, senderId, chatType);
 	}
@@ -39,5 +39,9 @@ public class ChatRoomFinder {
 			userId,
 			customPageRequest.of(SORT_PROPERTY)
 		);
+	}
+
+	public int findProductChatCount(Long userId, Long productId, ChatType chatType) {
+		return chatRoomRepository.countByInitialReceiverIdAndReferenceIdAndChatType(userId, productId, chatType);
 	}
 }
