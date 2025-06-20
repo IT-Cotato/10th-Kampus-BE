@@ -9,6 +9,8 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cotato.kampus.domain.chat.enums.ChatType;
+import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomFinder;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductScrap;
 import com.cotato.kampus.domain.product.domain.ProductThumbnail;
@@ -25,11 +27,13 @@ public class ProductDtoMapper {
 
 	private final ProductPhotoFinder productPhotoFinder;
 	private final ProductScrapFinder productScrapFinder;
+	private final ChatRoomFinder chatRoomFinder;
 
 	public ProductThumbnail toProductThumbnail(Product product, Long userId) {
 		String thumbnailPhotoUrl = productPhotoFinder.findFirstPhoto(product.getId());
 		boolean isScrapped = productScrapFinder.isScrapped(product.getId(), userId);
-		return ProductThumbnail.from(product, thumbnailPhotoUrl, isScrapped);
+		int chatCount = chatRoomFinder.findProductChatCount(product.getUserId(), product.getId(), ChatType.PRODUCT);
+		return ProductThumbnail.from(product, thumbnailPhotoUrl, isScrapped, chatCount);
 	}
 
 	public Slice<ProductThumbnail> toProductThumbnails(Slice<Product> products, Long userId) {
@@ -38,10 +42,12 @@ public class ProductDtoMapper {
 
 	public ProductThumbnail toScrapProductThumbnail(Product product) {
 		String thumbnailPhotoUrl = productPhotoFinder.findFirstPhoto(product.getId());
-		return ProductThumbnail.from(product, thumbnailPhotoUrl, true);
+		int chatCount = chatRoomFinder.findProductChatCount(product.getUserId(), product.getId(), ChatType.PRODUCT);
+		return ProductThumbnail.from(product, thumbnailPhotoUrl, true, chatCount);
 	}
 
-	public Slice<ProductThumbnail> toScrapProductThumbnails(Slice<ProductScrap> productScraps, List<Product> products) {
+	public Slice<ProductThumbnail> toScrapProductThumbnails(Slice<ProductScrap> productScraps,
+		List<Product> products) {
 		Map<Long, Product> productMap = products.stream()
 			.collect(Collectors.toMap(Product::getId, product -> product));
 

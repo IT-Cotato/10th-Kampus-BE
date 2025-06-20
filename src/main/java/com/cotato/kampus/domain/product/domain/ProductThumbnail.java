@@ -17,7 +17,7 @@ public record ProductThumbnail(
 	LocalDateTime createdTime,
 	boolean isScrapped
 ) {
-	public static ProductThumbnail from(Product product, String photoUrl, boolean isScrapped) {
+	public static ProductThumbnail from(Product product, String photoUrl, boolean isScrapped, int chatCount) {
 		return new ProductThumbnail(
 			product.getId(),
 			product.getTitle(),
@@ -25,7 +25,7 @@ public record ProductThumbnail(
 			photoUrl,
 			product.getStatus(),
 			product.getScrapCount(),
-			product.getChatCount(),
+			chatCount,
 			product.getCreatedTime(),
 			isScrapped
 		);
