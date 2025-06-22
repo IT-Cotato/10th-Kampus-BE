@@ -36,7 +36,7 @@ public class ProductPhotoRepositoryImpl implements ProductPhotoRepository {
 	@Override
 	public ProductPhoto findByProductIdAndOrder(Long productId, int order) {
 		return productPhotoJpaRepository.findByProductIdAndOrder(productId, order)
-			.orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND))
+			.orElseThrow(() -> new AppException(ErrorCode.PRODUCT_PHOTO_NOT_FOUND))
 			.toDomain();
 	}
 
