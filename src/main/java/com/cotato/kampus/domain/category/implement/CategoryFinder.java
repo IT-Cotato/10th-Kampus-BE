@@ -36,4 +36,8 @@ public class CategoryFinder {
 	public boolean existsByCategoryName(String categoryName) {
 		return categoryRepository.existsByCategoryName(categoryName);
 	}
+
+	public List<Category> findAllByIds(List<Long> categoryIds) {
+		return categoryRepository.findAllByIdIn(categoryIds);
+	}
 }
