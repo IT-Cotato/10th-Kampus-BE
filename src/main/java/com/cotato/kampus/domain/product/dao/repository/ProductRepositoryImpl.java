@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
-import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.dao.entity.ProductEntity;
 import com.cotato.kampus.domain.product.domain.Product;
+import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.implement.port.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,8 @@ public class ProductRepositoryImpl implements ProductRepository {
 	}
 
 	@Override
-	public Slice<Product> findAllByIdInAndProductStatusNot(List<Long> productIds, ProductStatus status, Pageable pageable) {
+	public Slice<Product> findAllByIdInAndProductStatusNot(List<Long> productIds, ProductStatus status,
+		Pageable pageable) {
 		return productJpaRepository.findAllByIdInAndProductStatusNot(productIds, status, pageable)
 			.map(ProductEntity::toDomain);
 	}
@@ -54,6 +55,18 @@ public class ProductRepositoryImpl implements ProductRepository {
 	@Override
 	public Slice<Product> findAllByUserIdAndProductStatusNot(Long userId, ProductStatus status, Pageable pageable) {
 		return productJpaRepository.findAllByUserIdAndProductStatusNot(userId, status, pageable)
+			.map(ProductEntity::toDomain);
+	}
+
+	@Override
+	public Slice<Product> searchAll(String keyword, Pageable pageable) {
+		return productJpaRepository.searchAll(keyword, pageable)
+			.map(ProductEntity::toDomain);
+	}
+
+	@Override
+	public Slice<Product> findByKeywordWithStatusPriority(String keyword, Pageable pageable) {
+		return productJpaRepository.findByKeywordWithStatusPriority(keyword, pageable)
 			.map(ProductEntity::toDomain);
 	}
 }

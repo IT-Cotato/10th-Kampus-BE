@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 import com.cotato.kampus.domain.product.dao.entity.ProductPhotoEntity;
 import com.cotato.kampus.domain.product.domain.ProductPhoto;
 import com.cotato.kampus.domain.product.implement.port.ProductPhotoRepository;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +36,7 @@ public class ProductPhotoRepositoryImpl implements ProductPhotoRepository {
 	@Override
 	public ProductPhoto findByProductIdAndOrder(Long productId, int order) {
 		return productPhotoJpaRepository.findByProductIdAndOrder(productId, order)
+			.orElseThrow(() -> new AppException(ErrorCode.PRODUCT_PHOTO_NOT_FOUND))
 			.toDomain();
 	}
 

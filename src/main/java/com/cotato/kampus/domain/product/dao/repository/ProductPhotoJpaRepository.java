@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.product.dao.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,7 +11,7 @@ public interface ProductPhotoJpaRepository extends JpaRepository<ProductPhotoEnt
 
 	List<ProductPhotoEntity> findByProductId(Long productId);
 
-	ProductPhotoEntity findByProductIdAndOrder(Long productId, int order);
+	Optional<ProductPhotoEntity> findByProductIdAndOrder(Long productId, int order);
 
 	void deleteAllByProductId(Long productId);
 }
