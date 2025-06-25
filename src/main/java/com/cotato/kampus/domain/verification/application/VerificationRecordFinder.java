@@ -61,7 +61,7 @@ public class VerificationRecordFinder {
 	}
 
 	public VerificationRecordDto findRecentPhotoRecord(Long userId) {
-		return verificationRecordRepository.findLatestByUserIdAndTypeAndStatus(userId, VerificationType.PHOTO, VerificationStatus.REJECTED)
+		return verificationRecordRepository.findTop1ByUserIdAndVerificationTypeAndVerificationStatusOrderByCreatedTimeDesc(userId, VerificationType.PHOTO, VerificationStatus.REJECTED)
 			.map(VerificationRecordDto::from)
 			.orElseThrow(() -> new AppException(ErrorCode.REJECTED_RECORD_NOT_FOUND));
 	}
