@@ -22,4 +22,23 @@ public class TestCertHelper {
 			LocalDateTime.now().plusMinutes(10)
 		);
 	}
+
+	public static Cert createExpiredCert(
+		Long id,
+		String email,
+		String univCode,
+		String code,
+		boolean certified,
+		Long userId
+	) {
+		return new Cert(
+			id,
+			email,
+			univCode,
+			code,
+			certified,
+			userId,
+			LocalDateTime.now().minusMinutes(1)
+		);
+	}
 }
