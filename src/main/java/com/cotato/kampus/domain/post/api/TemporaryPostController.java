@@ -21,6 +21,7 @@ import com.cotato.kampus.domain.post.api.response.PostCreateResponse;
 import com.cotato.kampus.domain.post.api.response.TempPostCreateResponse;
 import com.cotato.kampus.domain.post.api.response.TempPostDetailResponse;
 import com.cotato.kampus.domain.post.api.response.SliceResponse;
+import com.cotato.kampus.domain.post.api.response.TempPostSliceResponse;
 import com.cotato.kampus.domain.post.application.TemporaryPostService;
 import com.cotato.kampus.domain.post.domain.TempPostThumbnail;
 import com.cotato.kampus.global.common.dto.DataResponse;
@@ -62,12 +63,14 @@ public class TemporaryPostController {
 
 	@GetMapping(value = "/draft")
 	@Operation(summary = "임시 저장글 목록 조회", description = "모든 임시 저장글을 최신순으로 조회합니다.")
-	public ResponseEntity<DataResponse<SliceResponse<TempPostThumbnail>>> findDraftList(
+	public ResponseEntity<DataResponse<TempPostSliceResponse<TempPostThumbnail>>> findDraftList(
 		@RequestParam(required = false, defaultValue = "1") int page
 	) {
+		int totalCount = temporaryPostService.findTempPostCount();
 		return ResponseEntity.ok(DataResponse.from(
-			SliceResponse.from(
+				TempPostSliceResponse.from(
 					temporaryPostService.findPostDrafts(page)
+					,totalCount
 				)
 			)
 		);
