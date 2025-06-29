@@ -9,6 +9,7 @@ import com.cotato.kampus.domain.admin.dto.StudentVerification;
 import com.cotato.kampus.domain.university.application.UnivFinder;
 import com.cotato.kampus.domain.university.domain.University;
 import com.cotato.kampus.domain.user.enums.VerificationStatus;
+import com.cotato.kampus.domain.user.enums.VerificationType;
 import com.cotato.kampus.domain.verification.dao.VerificationRecordRepository;
 import com.cotato.kampus.domain.verification.domain.VerificationRecord;
 import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
@@ -57,6 +58,12 @@ public class VerificationRecordFinder {
 		return verificationRecordRepository.findByUserId(userId)
 			.map(VerificationRecordDto::from)
 			.orElseThrow(() -> new AppException(ErrorCode.RECORD_NOT_FOUND));
+	}
+
+	public VerificationRecordDto findRecentPhotoRecord(Long userId) {
+		return verificationRecordRepository.findTop1ByUserIdAndVerificationTypeAndVerificationStatusOrderByCreatedTimeDesc(userId, VerificationType.PHOTO, VerificationStatus.REJECTED)
+			.map(VerificationRecordDto::from)
+			.orElseThrow(() -> new AppException(ErrorCode.REJECTED_RECORD_NOT_FOUND));
 	}
 
 }

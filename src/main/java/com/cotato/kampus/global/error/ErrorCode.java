@@ -175,6 +175,7 @@ public enum ErrorCode {
 	INVALID_UNIVERSITY_EMAIL_DOMAIN(HttpStatus.BAD_REQUEST, "이메일이 해당 대학 도메인과 일치하지 않습니다.", "CERT-004"),
 	CERT_NOT_FOUND(HttpStatus.NOT_FOUND, "인증 요청 내역이 없습니다", "CERT-005"),
 	INVALID_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "인증 코드가 유효하지 않습니다.", "CERT-006"),
+	REJECTED_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "반려된 인증 내역을 찾을 수 없습니다.", "CERT-007"),
 
 	// fcm
 	GOOGLE_REQUEST_TOKEN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "google request token error", "FCM-001"),

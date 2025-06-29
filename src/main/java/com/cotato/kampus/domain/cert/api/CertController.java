@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cotato.kampus.domain.cert.api.request.EmailSendRequest;
 import com.cotato.kampus.domain.cert.api.request.EmailVerifyRequest;
 import com.cotato.kampus.domain.cert.api.response.CertStatusResponse;
+import com.cotato.kampus.domain.cert.api.response.RejectReasonResponse;
 import com.cotato.kampus.domain.cert.application.CertService;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
@@ -69,6 +70,17 @@ public class CertController {
 			return ResponseEntity.ok(DataResponse.from(
 				CertStatusResponse.from(
 					certService.getCertStatus()
+				)
+			)
+		);
+	}
+
+	@GetMapping("/reject-reason")
+	@Operation(summary = "서류 반려 사유 조회", description = "서류가 반려된 경우 제출했던 서류 이미지와 사유 조회")
+	public ResponseEntity<DataResponse<RejectReasonResponse>> getRejectReason() {
+			return ResponseEntity.ok(DataResponse.from(
+				RejectReasonResponse.of(
+					certService.getRejectReason()
 				)
 			)
 		);
