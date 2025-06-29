@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional
 @RequiredArgsConstructor
-public class TemporaryPhotoAppender {
+public class TemporaryPhotoManager {
 
 	private final TemporaryPhotoRepository temporaryPhotoRepository;
 
@@ -28,5 +28,13 @@ public class TemporaryPhotoAppender {
 				.toList();
 
 		return temporaryPhotoRepository.saveAll(tempPhotos);
+	}
+
+	public void deleteAllByTempPostId(Long tempPostId) {
+		temporaryPhotoRepository.deleteAllByTemporaryPostId(tempPostId);
+	}
+
+	public void deleteAllByTempPostIds(List<Long> tempPostIds) {
+		temporaryPhotoRepository.deleteAllByTemporaryPostIdIn(tempPostIds);
 	}
 }
