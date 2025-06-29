@@ -11,4 +11,6 @@ public interface TemporaryPostCategoryJpaRepository extends JpaRepository<Tempor
 	void deleteAllByTemporaryPostIdIn(List<Long> tempPostIds);
 
 	void deleteAllByTemporaryPostId(Long tempPostId);
+
+	List<TemporaryPostCategoryEntity> findAllByTemporaryPostId(Long tempPostId);
 }

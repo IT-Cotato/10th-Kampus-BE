@@ -25,6 +25,7 @@ import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPhotoFinde
 import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostAppender;
 import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostCategoryAppender;
 import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostCategoryDeleter;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostCategoryFinder;
 import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostDeleter;
 import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostFinder;
 import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostUpdater;
@@ -65,7 +66,7 @@ public class TemporaryPostService {
 	private final TemporaryPhotoAppender temporaryPhotoAppender;
 	private final TemporaryPostCategoryAppender temporaryPostCategoryAppender;
 	private final TemporaryPostCategoryDeleter temporaryPostCategoryDeleter;
-
+	private final TemporaryPostCategoryFinder temporaryPostCategoryFinder;
 
 	@Transactional
 	public Long createTempPost(
@@ -168,7 +169,9 @@ public class TemporaryPostService {
 
 		List<TemporaryPhoto> tempPhotos = temporaryPhotoFinder.findAllByTempPostId(postDraftId);
 		String boardName = boardFinder.findBoard(temporaryPost.getBoardId()).getBoardName();
-		return TempPostDetails.of(temporaryPost, boardName, tempPhotos);
+		List<Long> categoryIds = temporaryPostCategoryFinder.findCategoryIdsByTempPostId(postDraftId);
+		List<Category> categories = categoryFinder.findAllByIds(categoryIds);
+		return TempPostDetails.of(temporaryPost, boardName, tempPhotos, categories);
 	}
 
 	@Transactional
