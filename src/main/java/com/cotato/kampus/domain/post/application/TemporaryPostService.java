@@ -19,15 +19,12 @@ import com.cotato.kampus.domain.post.domain.TempPostDetails;
 import com.cotato.kampus.domain.post.domain.TempPostThumbnail;
 import com.cotato.kampus.domain.post.domain.TemporaryPhoto;
 import com.cotato.kampus.domain.post.domain.TemporaryPost;
-import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPhotoAppender;
-import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPhotoDeleter;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPhotoManager;
 import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPhotoFinder;
-import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostAppender;
-import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostCategoryAppender;
-import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostCategoryDeleter;
-import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostDeleter;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostManager;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostCategoryManager;
+import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostCategoryFinder;
 import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostFinder;
-import com.cotato.kampus.domain.post.implement.TemporaryPost.TemporaryPostUpdater;
 import com.cotato.kampus.domain.post.implement.post.PostAppender;
 import com.cotato.kampus.domain.post.implement.postCategory.PostCategoryAppender;
 import com.cotato.kampus.domain.post.implement.postImage.PostPhotoAppender;
@@ -56,16 +53,12 @@ public class TemporaryPostService {
 	private final PostAppender postAppender;
 	private final PostPhotoAppender postPhotoAppender;
 
-	private final TemporaryPostAppender temporaryPostAppender;
+	private final TemporaryPostManager temporaryPostManager;
 	private final TemporaryPostFinder temporaryPostFinder;
-	private final TemporaryPostDeleter temporaryPostDeleter;
-	private final TemporaryPostUpdater temporaryPostUpdater;
 	private final TemporaryPhotoFinder temporaryPhotoFinder;
-	private final TemporaryPhotoDeleter temporaryPhotoDeleter;
-	private final TemporaryPhotoAppender temporaryPhotoAppender;
-	private final TemporaryPostCategoryAppender temporaryPostCategoryAppender;
-	private final TemporaryPostCategoryDeleter temporaryPostCategoryDeleter;
-
+	private final TemporaryPhotoManager temporaryPhotoManager;
+	private final TemporaryPostCategoryManager temporaryPostCategoryManager;
+	private final TemporaryPostCategoryFinder temporaryPostCategoryFinder;
 
 	@Transactional
 	public Long createTempPost(
@@ -95,11 +88,11 @@ public class TemporaryPostService {
 			s3Uploader.uploadFiles(validImages, TEMP_POST_IMAGE_FOLDER);
 
 		// 4. 임시 게시글 생성
-		TemporaryPost temporaryPost = temporaryPostAppender.append(user.id(), boardId, title, content);
+		TemporaryPost temporaryPost = temporaryPostManager.append(user.id(), boardId, title, content);
 
 		// 5. 관련 데이터 추가
-		temporaryPostCategoryAppender.appendAll(temporaryPost.getId(), categoryIds);
-		temporaryPhotoAppender.appendAll(temporaryPost.getId(), imageUrls);
+		temporaryPostCategoryManager.appendAll(temporaryPost.getId(), categoryIds);
+		temporaryPhotoManager.appendAll(temporaryPost.getId(), imageUrls);
 
 		return temporaryPost.getId();
 	}
@@ -116,11 +109,11 @@ public class TemporaryPostService {
 		s3Uploader.deleteFiles(photoUrls);
 
 		// 3. 관련 데이터 삭제
-		temporaryPhotoDeleter.deleteAllByTempPostIds(tempPostIds);
-		temporaryPostCategoryDeleter.deleteAllByTemporaryPostIds(tempPostIds);
+		temporaryPhotoManager.deleteAllByTempPostIds(tempPostIds);
+		temporaryPostCategoryManager.deleteAllByTemporaryPostIds(tempPostIds);
 
 		// 4. 임시 게시글 삭제
-		temporaryPostDeleter.deleteAllByIds(tempPostIds);
+		temporaryPostManager.deleteAllByIds(tempPostIds);
 	}
 
 	@Transactional
@@ -139,11 +132,11 @@ public class TemporaryPostService {
 		s3Uploader.deleteFiles(photoUrls);
 
 		// 4. 관련 데이터 삭제
-		temporaryPhotoDeleter.deleteAllByTempPostIds(tempPostIds);
-		temporaryPostCategoryDeleter.deleteAllByTemporaryPostIds(tempPostIds);
+		temporaryPhotoManager.deleteAllByTempPostIds(tempPostIds);
+		temporaryPostCategoryManager.deleteAllByTemporaryPostIds(tempPostIds);
 
 		// 5. 임시 게시글 삭제
-		temporaryPostDeleter.deleteAllByUser(userId);
+		temporaryPostManager.deleteAllByUser(userId);
 	}
 
 	public Slice<TempPostThumbnail> findPostDrafts(int page) {
@@ -168,7 +161,9 @@ public class TemporaryPostService {
 
 		List<TemporaryPhoto> tempPhotos = temporaryPhotoFinder.findAllByTempPostId(postDraftId);
 		String boardName = boardFinder.findBoard(temporaryPost.getBoardId()).getBoardName();
-		return TempPostDetails.of(temporaryPost, boardName, tempPhotos);
+		List<Long> categoryIds = temporaryPostCategoryFinder.findCategoryIdsByTempPostId(postDraftId);
+		List<Category> categories = categoryFinder.findAllByIds(categoryIds);
+		return TempPostDetails.of(temporaryPost, boardName, tempPhotos, categories);
 	}
 
 	@Transactional
@@ -203,11 +198,11 @@ public class TemporaryPostService {
 		s3Uploader.deleteFiles(photoUrls);
 
 		// 4. 임시 게시글 관련 데이터 삭제
-		temporaryPhotoDeleter.deleteAllByTempPostId(tempPostId);
-		temporaryPostCategoryDeleter.deleteAllByTemporaryPostId(tempPostId);
+		temporaryPhotoManager.deleteAllByTempPostId(tempPostId);
+		temporaryPostCategoryManager.deleteAllByTemporaryPostId(tempPostId);
 
 		// 5. 임시 게시글 삭제
-		temporaryPostDeleter.delete(temporaryPost);
+		temporaryPostManager.delete(temporaryPost);
 
 		// 6. 새 데이터 추가
 		Post post = postAppender.appendNormalPost(userId, temporaryPost.getBoardId(), title, content);
@@ -250,15 +245,15 @@ public class TemporaryPostService {
 
 		// 4. 연관 데이터 갱신
 		// 4.1 기존 데이터 삭제
-		temporaryPhotoDeleter.deleteAllByTempPostId(tempPostId);
-		temporaryPostCategoryDeleter.deleteAllByTemporaryPostId(tempPostId);
+		temporaryPhotoManager.deleteAllByTempPostId(tempPostId);
+		temporaryPostCategoryManager.deleteAllByTemporaryPostId(tempPostId);
 
 		// 4.2 새 데이터 추가
-		temporaryPostCategoryAppender.appendAll(temporaryPost.getId(), categoryIds);
-		temporaryPhotoAppender.appendAll(temporaryPost.getId(), imageUrls);
+		temporaryPostCategoryManager.appendAll(temporaryPost.getId(), categoryIds);
+		temporaryPhotoManager.appendAll(temporaryPost.getId(), imageUrls);
 
 		// 5. 임시 게사글 내용 업데이트
-		temporaryPostUpdater.update(temporaryPost, title, content);
+		temporaryPostManager.update(temporaryPost, title, content);
 		return tempPostId;
 	}
 

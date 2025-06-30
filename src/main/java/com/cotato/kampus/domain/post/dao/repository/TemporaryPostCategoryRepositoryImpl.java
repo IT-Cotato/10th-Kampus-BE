@@ -33,4 +33,11 @@ public class TemporaryPostCategoryRepositoryImpl implements TemporaryPostCategor
 	public void deleteAllByTemporaryPostId(Long tempPostId) {
 		temporaryPostCategoryJpaRepository.deleteAllByTemporaryPostId(tempPostId);
 	}
+
+	@Override
+	public List<TemporaryPostCategory> findAllByTemporaryPostId(Long tempPostId) {
+		return temporaryPostCategoryJpaRepository.findAllByTemporaryPostId(tempPostId).stream()
+			.map(TemporaryPostCategoryEntity::toDomain)
+			.toList();
+	}
 }

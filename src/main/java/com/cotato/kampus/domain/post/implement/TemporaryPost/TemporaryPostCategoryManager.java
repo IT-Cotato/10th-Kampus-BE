@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @Transactional
 @RequiredArgsConstructor
-public class TemporaryPostCategoryAppender {
+public class TemporaryPostCategoryManager {
 
 	private final TemporaryPostCategoryRepository temporaryPostCategoryRepository;
 
@@ -26,5 +26,13 @@ public class TemporaryPostCategoryAppender {
 			.toList();
 
 		temporaryPostCategoryRepository.saveAll(tempPostCategories);
+	}
+
+	public void deleteAllByTemporaryPostIds(List<Long> tempPostIds){
+		temporaryPostCategoryRepository.deleteAllByTemporaryPostIdIn(tempPostIds);
+	}
+
+	public void deleteAllByTemporaryPostId(Long tempPostId){
+		temporaryPostCategoryRepository.deleteAllByTemporaryPostId(tempPostId);
 	}
 }

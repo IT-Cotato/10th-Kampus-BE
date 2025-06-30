@@ -11,4 +11,6 @@ public interface TemporaryPostCategoryRepository {
 	void deleteAllByTemporaryPostIdIn(List<Long> tempPostIds);
 
 	void deleteAllByTemporaryPostId(Long tempPostId);
+
+	List<TemporaryPostCategory> findAllByTemporaryPostId(Long tempPostId);
 }
