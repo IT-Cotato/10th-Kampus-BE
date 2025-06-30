@@ -129,4 +129,3 @@ public class CertService {
 		return VerificationWithPhoto.of(verificationRecordDto, universityCode, verificationPhotoDto);
 	}
 }
-

@@ -19,8 +19,8 @@ public class Cert {
 	private final Long userId;
 	private final LocalDateTime expirationTime;
 
-	@Builder(access = AccessLevel.PRIVATE)
-	private Cert(Long id, String email, String univCode, String code, boolean certified, Long userId, LocalDateTime expirationTime) {
+	@Builder(access = AccessLevel.PROTECTED)
+	protected Cert(Long id, String email, String univCode, String code, boolean certified, Long userId, LocalDateTime expirationTime) {
 		this.id = id;
 		this.email = email;
 		this.univCode = univCode;
