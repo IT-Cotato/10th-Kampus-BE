@@ -17,6 +17,9 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.cotato.kampus.domain.admin.application.VerificationPhotoFinder;
+import com.cotato.kampus.domain.admin.dto.VerificationPhotoDto;
+import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
 import com.cotato.kampus.domain.cert.domain.Cert;
 import com.cotato.kampus.domain.cert.domain.TestCertHelper;
 import com.cotato.kampus.domain.cert.enums.UnivMail;
@@ -29,7 +32,11 @@ import com.cotato.kampus.domain.user.application.UserUpdater;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
+import com.cotato.kampus.domain.user.enums.VerificationStatus;
+import com.cotato.kampus.domain.user.enums.VerificationType;
+import com.cotato.kampus.domain.verification.application.VerificationRecordFinder;
 import com.cotato.kampus.domain.verification.application.VerificationRecordManager;
+import com.cotato.kampus.domain.verification.dto.VerificationRecordDto;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.helper.TestUserHelper;
@@ -63,6 +70,12 @@ class CertServiceTest {
 
 	@Mock
 	private VerificationRecordManager verificationRecordManager;
+
+	@Mock
+	private VerificationRecordFinder verificationRecordFinder;
+
+	@Mock
+	private VerificationPhotoFinder verificationPhotoFinder;
 
 	private MockedStatic<UnivMail> univMailMock;
 
@@ -324,5 +337,91 @@ class CertServiceTest {
 		verify(verificationRecordManager, never()).appendEmailType(unverifiedUser.id(), universityId);
 	}
 
+	@Test
+	@DisplayName("서류 반려 사유 조회 - 성공")
+	void getRejectReason_Success() {
+		// given
+		Long verificationRecordId = 1L;
+		Long universityId = 401L;
+		String univCode = "TEST";
+		String rejectReason = "학생증 사진이 흐리게 찍혀서 확인이 불가능합니다.";
+
+		VerificationRecordDto verificationRecordDto = new VerificationRecordDto(
+			verificationRecordId,
+			unverifiedUser.id(),
+			universityId,
+			VerificationType.PHOTO,
+			VerificationStatus.REJECTED,
+			rejectReason
+		);
+
+		VerificationPhotoDto verificationPhotoDto = new VerificationPhotoDto(
+			verificationRecordId,
+			"photoUrl"
+		);
+
+
+		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUser);
+		when(verificationRecordFinder.findRecentPhotoRecord(unverifiedUser.id())).thenReturn(verificationRecordDto);
+		when(univFinder.findUniversityCode(verificationRecordDto.universityId())).thenReturn(univCode);
+		when(verificationPhotoFinder.findByRecordId(verificationRecordId)).thenReturn(verificationPhotoDto);
+
+		// when
+		VerificationWithPhoto result = certService.getRejectReason();
+
+		// then
+		assertThat(result).isNotNull();
+		assertThat(result.verificationRecordId()).isEqualTo(verificationRecordId);
+		assertThat(result.universityId()).isEqualTo(universityId);
+		assertThat(result.universityCode()).isEqualTo(univCode);
+		assertThat(result.rejectReason()).isEqualTo(rejectReason);
+		assertThat(result.verificationType()).isEqualTo(VerificationType.PHOTO);
+		assertThat(result.verificationStatus()).isEqualTo(VerificationStatus.REJECTED);
+		assertThat(result.rejectReason()).isEqualTo(rejectReason);
+
+		verify(apiUserResolver).getCurrentUserDto();
+		verify(userValidator).validateDuplicateStudentVerification(unverifiedUser);
+		verify(verificationRecordFinder).findRecentPhotoRecord(unverifiedUser.id());
+		verify(univFinder).findUniversityCode(universityId);
+		verify(verificationPhotoFinder).findByRecordId(verificationRecordId);
+	}
+
+	@Test
+	@DisplayName("서류 반려 사유 조회 - 이미 인증된 유저 실패")
+	void getRejectReason_Failure_AlreadyVerified() {
+		// given
+		when(apiUserResolver.getCurrentUserDto()).thenReturn(verifiedUser);
+		doThrow(new AppException(ErrorCode.USER_ALREADY_VERIFIED))
+			.when(userValidator).validateDuplicateStudentVerification(verifiedUser);
+
+		// when & then
+		AppException ex = assertThrows(AppException.class, () -> certService.getRejectReason());
+		assertEquals(ErrorCode.USER_ALREADY_VERIFIED, ex.getErrorCode());
+
+		verify(apiUserResolver).getCurrentUserDto();
+		verify(userValidator, never()).validateDuplicateStudentVerification(unverifiedUser);
+		verify(verificationRecordFinder, never()).findRecentPhotoRecord(anyLong());
+		verify(univFinder, never()).findUniversityCode(anyLong());
+		verify(verificationPhotoFinder, never()).findByRecordId(anyLong());
+	}
+
+	@Test
+	@DisplayName("서류 반려 사유 조회 - 반려된 서류 인증 기록이 없는 경우")
+	void getRejectReason_Failure_() {
+		// given
+		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUser);
+		doThrow(new AppException(ErrorCode.REJECTED_RECORD_NOT_FOUND))
+			.when(verificationRecordFinder).findRecentPhotoRecord(unverifiedUser.id());
+
+		// when & then
+		AppException ex = assertThrows(AppException.class, () -> certService.getRejectReason());
+		assertEquals(ErrorCode.REJECTED_RECORD_NOT_FOUND, ex.getErrorCode());
+
+		verify(apiUserResolver).getCurrentUserDto();
+		verify(userValidator).validateDuplicateStudentVerification(unverifiedUser);
+		verify(verificationRecordFinder).findRecentPhotoRecord(unverifiedUser.id());
+		verify(univFinder, never()).findUniversityCode(anyLong());
+		verify(verificationPhotoFinder, never()).findByRecordId(anyLong());
+	}
 
 }
