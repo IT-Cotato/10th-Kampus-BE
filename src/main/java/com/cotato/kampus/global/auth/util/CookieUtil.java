@@ -14,7 +14,7 @@ public class CookieUtil {
 
 	public static Cookie createRefreshCookie(final String refreshToken) {
 		Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken);
-		cookie.setHttpOnly(true);
+		// cookie.setHttpOnly(true);
 		cookie.setPath("/");
 		cookie.setSecure(true);
 		cookie.setMaxAge(COOKIE_MAX_AGE);
@@ -30,5 +30,14 @@ public class CookieUtil {
 			}
 		}
 		throw new AppException(ErrorCode.COOKIE_NOT_FOUND);
+	}
+
+	// 쿠키 삭제를 위한 메서드
+	public static Cookie createExpiredRefreshCookie() {
+		Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, null);
+		cookie.setPath("/");
+		cookie.setSecure(true);
+		cookie.setMaxAge(0); // 즉시 만료
+		return cookie;
 	}
 }

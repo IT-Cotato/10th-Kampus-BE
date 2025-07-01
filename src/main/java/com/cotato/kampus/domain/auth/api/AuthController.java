@@ -67,6 +67,19 @@ public class AuthController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(DataResponse.created());
 	}
 
+	@PostMapping("/logout")
+	@Operation(summary = "로그아웃", description = "액세스 토큰 검증 후 리프레시 토큰 삭제 및 쿠키 제거")
+	public ResponseEntity<DataResponse<Void>> logout(final HttpServletResponse response) {
+		// 액세스 토큰 검증 및 DB에서 리프레시 토큰 삭제
+		authService.logout();
+
+		// 클라이언트 쿠키 삭제
+		Cookie expiredCookie = CookieUtil.createExpiredRefreshCookie();
+		response.addCookie(expiredCookie);
+
+		return ResponseEntity.ok(DataResponse.ok());
+	}
+
 	@Operation(summary = "서버 헬스 체크", description = "서버 헬스 체크")
 	@GetMapping("/health")
 	public ResponseEntity<DataResponse<Void>> health() {

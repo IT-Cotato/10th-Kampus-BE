@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.auth.dao.RefreshRepository;
 import com.cotato.kampus.domain.auth.domain.RefreshEntity;
+import com.cotato.kampus.global.error.ErrorCode;
+import com.cotato.kampus.global.error.exception.AppException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +35,13 @@ public class RefreshManager {
 			.build();
 
 		refreshRepository.save(refreshEntity);
+	}
+
+	@Transactional
+	public void deleteRefreshToken(String uniqueId) {
+		if (!refreshRepository.existsByUniqueId(uniqueId)) {
+			throw new AppException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+		}
+		refreshRepository.deleteByUniqueId(uniqueId);
 	}
 }
