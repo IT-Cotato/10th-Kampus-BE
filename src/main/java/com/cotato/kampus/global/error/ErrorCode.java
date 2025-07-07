@@ -2,8 +2,6 @@ package com.cotato.kampus.global.error;
 
 import org.springframework.http.HttpStatus;
 
-import com.google.api.Http;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -148,6 +146,7 @@ public enum ErrorCode {
 	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료 되었습니다.", "JWT-002"),
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.", "JWT-003"),
 	MALFORMED_TOKEN(HttpStatus.BAD_REQUEST, "토큰 형식에 문제가 있습니다.", "JWT-004"),
+	REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "Refresh Token을 찾을 수 없습니다.", "JWT-005"),
 
 	// DeepL
 	INVALID_DEEPL_AUTH_KEY(HttpStatus.INTERNAL_SERVER_ERROR, "DeepL 인증키가 유효하지 않습니다.", "DEEPL-001"),
