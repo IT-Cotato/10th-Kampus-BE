@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class CookieUtil {
 
 	private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
+	private static final String DOMAIN = "kampusapp.kro.kr";
 	private static final int COOKIE_MAX_AGE = 60 * 60 * 24 * 3;
 
 	public static void setRefreshTokenCookie(HttpServletResponse response, final String refreshToken) {
@@ -19,6 +20,7 @@ public class CookieUtil {
 			.httpOnly(true)
 			.secure(true)
 			.path("/")
+			.domain(DOMAIN)
 			.maxAge(COOKIE_MAX_AGE)
 			.sameSite("None")
 			.build();
