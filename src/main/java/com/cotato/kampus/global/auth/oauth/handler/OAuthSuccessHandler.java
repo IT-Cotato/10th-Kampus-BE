@@ -14,7 +14,6 @@ import com.cotato.kampus.global.auth.oauth.service.dto.CustomOAuth2User;
 import com.cotato.kampus.global.auth.util.CookieUtil;
 import com.cotato.kampus.global.util.JwtUtil;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -68,9 +67,7 @@ public class OAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 		// 엑세스 토큰과 리프레시 토큰을 응답 헤더와 쿠키에 설정
 		response.setHeader(ACCESS_HEADER_NAME, TOKEN_PREFIX + " " + access);
-		Cookie refreshCookie = CookieUtil.createRefreshCookie(refresh);
-		response.addCookie(refreshCookie);
-		log.info("Refresh Cookie: {}", refreshCookie.getName() + "=" + refreshCookie.getValue());
+		CookieUtil.setRefreshTokenCookie(response, refresh);
 
 		// 로컬 환경에서 개발할 때는 로컬로 리다이렉트 되도록 설정(추후 삭제 예정)
 		String finalRedirectUrl = isDevelopment(request) ? DEV_REDIRECT_URL : REDIRECT_URL;

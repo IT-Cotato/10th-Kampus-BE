@@ -21,7 +21,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
@@ -61,8 +60,7 @@ public class AuthController {
 
 		// 재발급된 토큰을 응답 헤더와 쿠키에 추가
 		response.addHeader(ACCESS_TOKEN_HEADER, reissuedToken.accessToken());
-		Cookie refreshCookie = CookieUtil.createRefreshCookie(reissuedToken.refreshToken());
-		response.addCookie(refreshCookie);
+		CookieUtil.setRefreshTokenCookie(response, reissuedToken.refreshToken());
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(DataResponse.created());
 	}
@@ -74,8 +72,7 @@ public class AuthController {
 		authService.logout();
 
 		// 클라이언트 쿠키 삭제
-		Cookie expiredCookie = CookieUtil.createExpiredRefreshCookie();
-		response.addCookie(expiredCookie);
+		CookieUtil.clearRefreshTokenCookie(response);
 
 		return ResponseEntity.ok(DataResponse.ok());
 	}
