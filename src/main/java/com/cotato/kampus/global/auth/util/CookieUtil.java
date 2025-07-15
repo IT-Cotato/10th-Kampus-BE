@@ -13,6 +13,7 @@ public class CookieUtil {
 
 	private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
 	private static final int COOKIE_MAX_AGE = 60 * 60 * 24 * 3;
+	private static final String COOKIE_DOMAIN = ".kampus.kro.kr";
 
 	public static void setRefreshTokenCookie(HttpServletResponse response, final String refreshToken) {
 		ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, refreshToken)
@@ -21,6 +22,7 @@ public class CookieUtil {
 			.path("/")
 			.maxAge(COOKIE_MAX_AGE)
 			.sameSite("None")
+			.domain(COOKIE_DOMAIN)
 			.build();
 
 		response.addHeader("Set-Cookie", cookie.toString());
