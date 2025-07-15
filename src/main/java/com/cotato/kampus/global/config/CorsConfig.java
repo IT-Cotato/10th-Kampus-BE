@@ -17,6 +17,9 @@ public class CorsConfig {
 		"http://localhost:8000",
 		"http://54.180.123.60:8080",
 		"https://kampus.kro.kr",
+		"https://www.kampus.kro.kr",
+		"https://api.kampus.kro.kr",
+		"d1kxhoecpgmf9c.cloudfront.net",
 		"https://dc92clgvselcq.cloudfront.net",
 		"https://kampusapp.kro.kr"
 	};
