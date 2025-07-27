@@ -2,6 +2,9 @@ package com.cotato.kampus.domain.board.implement.board;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +45,14 @@ public class BoardFinder {
 
 	public List<Board> findBoardsWithIds(List<Long> boardIds) {
 		return boardRepository.findAllByIdIn(boardIds);
+	}
+
+	public Map<Long, Board> findBoardMap(List<Long> boardIds) {
+		return findBoardsWithIds(boardIds).stream()
+			.collect(Collectors.toMap(
+				Board::getId,
+				Function.identity()
+			));
 	}
 
 	public List<Board> findPublicBoards() {

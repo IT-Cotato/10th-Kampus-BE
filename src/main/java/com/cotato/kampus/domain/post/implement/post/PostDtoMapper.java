@@ -1,6 +1,8 @@
 package com.cotato.kampus.domain.post.implement.post;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
@@ -65,5 +67,19 @@ public class PostDtoMapper {
 
 	public List<HomePostThumbnail> toHomePostThumbnails(List<Post> posts) {
 		return posts.stream().map(this::toHomePostThumbnail).toList();
+	}
+
+	public List<HomePostThumbnail> toHomePostThumbnails(
+		Map<Long, Board> boards,
+		Map<Long, Optional<Post>> postsByBoardId
+	) {
+		return boards.entrySet().stream()
+			.map(entry -> {
+				Long boardId = entry.getKey();
+				Board board = entry.getValue();
+				Post post = postsByBoardId.getOrDefault(boardId, Optional.empty()).orElse(null);
+				return HomePostThumbnail.from(board, post);
+			})
+			.toList();
 	}
 }

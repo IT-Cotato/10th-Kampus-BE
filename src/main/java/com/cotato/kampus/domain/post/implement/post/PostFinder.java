@@ -1,6 +1,10 @@
 package com.cotato.kampus.domain.post.implement.post;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
@@ -58,10 +62,15 @@ public class PostFinder {
 		return postRepository.findTopAccessiblePostsByIds(trendingPostIds, userUniversityId, HOME_POST_PREVIEW_LIMIT);
 	}
 
-	public List<Post> findTopPosts(List<Long> boardIds) {
+	public Map<Long, Optional<Post>> findTopPosts(List<Long> boardIds) {
 		return boardIds.stream()
-			.map(postRepository::findTopByBoardIdOrderByCreatedTimeDesc)
-			.toList();
+			.collect(Collectors.toMap(
+				Function.identity(), // boardId
+				boardId -> postRepository.findTopByBoardIdAndPostStatusOrderByCreatedTimeDesc(boardId, PostStatus.PUBLISHED)
+			));
+			// .map(postRepository::findTopByBoardIdOrderByCreatedTimeDesc)
+			// .flatMap(Optional::stream)
+			// .toList();
 	}
 
 	public PostReferenceDto findPostReference(Long postId) {

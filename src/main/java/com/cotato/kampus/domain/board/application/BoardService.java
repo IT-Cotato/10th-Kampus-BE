@@ -3,6 +3,8 @@ package com.cotato.kampus.domain.board.application;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,10 +65,11 @@ public class BoardService {
 
 		// 즐겨찾는 게시판 조회
 		List<Long> favoriteBoardIds = boardFavoriteFinder.findFavoriteBoardIds(userId);
+		Map<Long, Board> boards = boardFinder.findBoardMap(favoriteBoardIds);
 
-		List<Post> latestPosts = postFinder.findTopPosts(favoriteBoardIds);
+		Map<Long, Optional<Post>> latestPosts = postFinder.findTopPosts(favoriteBoardIds);
 
-		return postDtoMapper.toHomePostThumbnails(latestPosts);
+		return postDtoMapper.toHomePostThumbnails(boards, latestPosts);
 	}
 
 	public BoardWithFavoriteStatus getUniversityBoard() {
