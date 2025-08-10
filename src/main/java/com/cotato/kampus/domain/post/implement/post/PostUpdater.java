@@ -22,46 +22,46 @@ public class PostUpdater {
 		return postRepository.save(updatedPost);
 	}
 
-	public void increaseLikeCount(Post post) {
+	public Post increaseLikeCount(Post post) {
 		Post updatedPost = post.increaseLikeCount();
-		postRepository.save(updatedPost);
-	}
-
-	public void decreaseLikeCount(Post post) {
-		Post updatedPost = post.decreaseLikeCount();
-		postRepository.save(updatedPost);
-	}
-
-	public void increaseCommentCount(Post post){
-		Post updatedPost = post.increaseCommentCount();
-		postRepository.save(updatedPost);
-	}
-
-	public void decreaseCommentCount(Post post){
-		Post updatedPost = post.decreaseCommentCount();
-		postRepository.save(updatedPost);
-	}
-
-	public Post increaseAnonymousCount(Post post) {
-		Post updatedPost = post.increaseAnonymousCount();
 		return postRepository.save(updatedPost);
 	}
 
-	public void increaseScrapCount(Post post) {
+	public Post decreaseLikeCount(Post post) {
+		Post updatedPost = post.decreaseLikeCount();
+		return postRepository.save(updatedPost);
+	}
+
+	public Post increaseCommentCount(Post post){
+		Post updatedPost = post.increaseCommentCount();
+		return postRepository.save(updatedPost);
+	}
+
+	public Post decreaseCommentCount(Post post){
+		Post updatedPost = post.decreaseCommentCount();
+		return postRepository.save(updatedPost);
+	}
+
+	public Post increaseCommentAndAnonymousCount(Post post) {
+		Post updatedPost = post.increaseCommentAndAnonymousCount();
+		return postRepository.save(updatedPost);
+	}
+
+	public Post increaseScrapCount(Post post) {
 		Post updatedPost = post.increaseScrapCount();
-		postRepository.save(updatedPost);
+		return postRepository.save(updatedPost);
 	}
 
-	public void decreaseScrapCount(Post post) {
+	public Post decreaseScrapCount(Post post) {
 		Post updatedPost = post.decreaseScrapCount();
-		postRepository.save(updatedPost);
+		return postRepository.save(updatedPost);
 	}
 
-	public void pendingAllByBoardId(Long boardId) {
-		postRepository.updateStatusByBoardIdAndCurrentStatus(boardId, PostStatus.PUBLISHED, PostStatus.PENDING);
+	public int pendingAllByBoardId(Long boardId) {
+		return postRepository.updateStatusByBoardIdAndCurrentStatus(boardId, PostStatus.PUBLISHED, PostStatus.PENDING);
 	}
 
-	public void revertPendingAllByBoardId(Long boardId) {
-		postRepository.updateStatusByBoardIdAndCurrentStatus(boardId, PostStatus.PENDING, PostStatus.PUBLISHED);
+	public int revertPendingAllByBoardId(Long boardId) {
+		return postRepository.updateStatusByBoardIdAndCurrentStatus(boardId, PostStatus.PENDING, PostStatus.PUBLISHED);
 	}
 }

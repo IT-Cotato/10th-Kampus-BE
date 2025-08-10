@@ -21,19 +21,23 @@ import lombok.RequiredArgsConstructor;
 public class AnonymousNumberAllocator {
 
 	private final CommentRepository commentRepository;
-	private final PostUpdater postUpdater;
 
-	public Integer allocateAnonymousNumber(Post post, UserDto userDto){
+	public AnonymousAllocationResult allocateAnonymousNumber(Post post, UserDto userDto, boolean isAuthor){
 		// 작성자가 아닌 경우에만 익명 번호 증가
-		if(!post.getUserId().equals(userDto.id())) {
-			// 해당 Post에 현재 User의 댓글 작성 여부 확인
-			Optional<Comment> comment = commentRepository.findFirstByPostIdAndUserId(
-				post.getId(), userDto.id()
-			);
-			return comment.map(Comment::getAnonymousNumber)
-				.orElseGet(() -> (postUpdater.increaseAnonymousCount(post)).getAnonymousCount());
+		if(!isAuthor) {
+			// 기존 댓글작성 여부 확인
+			Optional<Comment> comment = commentRepository.findFirstByPostIdAndUserId(post.getId(), userDto.id());
+
+			if (comment.isPresent()) {
+				// 기존 댓글이 있으면, 번호만 반환. 카운터 증가 필요 없음(false)
+				return AnonymousAllocationResult.of(comment.get().getAnonymousNumber(), false);
+			} else {
+				// 첫 댓글이면, 새 번호를 계산하고 카운터 증가 필요함(true)
+				return AnonymousAllocationResult.of(post.getAnonymousCount() + 1, true);
+			}
 		} else {
-			return null;
+			// 글쓴이면, 익명 번호 없고 카운터 증가도 필요 없음(false)
+			return AnonymousAllocationResult.of(null, false);
 		}
 	}
 
