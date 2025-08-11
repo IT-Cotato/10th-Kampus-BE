@@ -25,7 +25,7 @@ public class PostScrapFinder {
 	}
 
 	public PostScrap find(Long userId, Long postId) {
-		PostScrap postScrap = postScrapRepository.findByPostIdAndUserId(userId, postId)
+		PostScrap postScrap = postScrapRepository.findByPostIdAndUserId(postId, userId)
 			.orElseThrow(() -> new AppException(ErrorCode.POST_SCRAP_NOT_EXIST));
 
 		return postScrap;
