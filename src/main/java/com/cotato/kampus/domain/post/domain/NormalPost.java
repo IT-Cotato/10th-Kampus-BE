@@ -12,8 +12,8 @@ import lombok.Getter;
 @Getter
 public class NormalPost extends Post {
 
-	@Builder(access = AccessLevel.PRIVATE)
-	private NormalPost(
+	@Builder(access = AccessLevel.PACKAGE)
+	NormalPost(
 		Long id,
 		Long boardId,
 		Long userId,
