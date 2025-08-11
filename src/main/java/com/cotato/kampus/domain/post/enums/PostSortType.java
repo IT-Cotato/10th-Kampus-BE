@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum PostSortType {
 	recent("createdTime", Sort.Direction.DESC),    // 최신순
 	old("createdTime", Sort.Direction.ASC),        // 오래된순
-	likes("likeCount", Sort.Direction.DESC);           // 좋아요순
+	likeCount("likeCount", Sort.Direction.DESC);           // 좋아요순
 
 	private final String property;
 	private final Sort.Direction direction;
