@@ -35,4 +35,6 @@ public interface BoardRepository{
 	List<Board> findAllByBoardStatus(BoardStatus boardStatus);
 
 	boolean existsByBoardType(BoardType boardType);
+
+	List<Long> findBoardIdsByBoardTypeIn(List<BoardType> boardTypes);
 }
