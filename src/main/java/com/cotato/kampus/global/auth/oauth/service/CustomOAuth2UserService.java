@@ -26,7 +26,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 	private final UserRepository userRepository;
 	private final BoardFinder boardFinder;
-	private final BoardFavoriteService boardFavoriteService;
 	private final BoardFavoriteManager boardFavoriteManager;
 
 	@Override
@@ -46,7 +45,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		return new CustomOAuth2User(OAuthUserRequest);
 	}
 
-	private User saveOrUpdate(OAuth2Attribute attribute, String uniqueId) {
+		User saveOrUpdate(OAuth2Attribute attribute, String uniqueId) {
 		Optional<User> optionalUser = userRepository.findByUniqueId(uniqueId);
 
 		User user;
