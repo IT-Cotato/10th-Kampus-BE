@@ -116,6 +116,9 @@ public class CertService {
 		verificationRecordManager.deleteAllByUserId(user.id());
 
 		userUpdater.updateRole(user.id(), UserRole.UNVERIFIED);
+
+		Long univBoardId = boardFinder.findUniversityBoardId(user.universityId());
+		boardFavoriteManager.deleteFavoriteBoard(user.id(), univBoardId);
 	}
 
 	public VerificationWithPhoto getCertStatus() {
