@@ -27,6 +27,7 @@ import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryAppen
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.board.implement.boardCategory.BoardCategoryFinder;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteManager;
 import com.cotato.kampus.domain.category.domain.Category;
 import com.cotato.kampus.domain.category.implement.CategoryFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -90,6 +91,7 @@ public class AdminService {
 	private final PostDtoMapper postDtoMapper;
 	private final CategoryFinder categoryFinder;
 	private final BoardCategoryFinder boardCategoryFinder;
+	private final BoardFavoriteManager boardFavoriteManager;
 
 	@Transactional
 	public Long createBoard(String boardName, String description, BoardType boardType, String universityCode, List<String> categoryNames) {
@@ -235,6 +237,12 @@ public class AdminService {
 
 		// 유저 상태 변경, 학교 할당
 		userUpdater.updateVerificationStatus(userId, universityId);
+
+		// 대학 게시판 즐겨찾기 추가
+		Long univBoardId = boardFinder.findUniversityBoardId(universityId);
+		if (univBoardId != null) {
+			boardFavoriteManager.appendFavoriteBoard(userId, univBoardId);
+		}
 	}
 
 	@Transactional
