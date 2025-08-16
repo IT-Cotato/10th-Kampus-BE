@@ -76,6 +76,11 @@ public abstract class Post {
 			this.likeCount, this.commentCount, this.scrapCount, this.anonymousCount + 1);
 	}
 
+	public Post increaseCommentAndAnonymousCount() {
+		return createCopy(this.title, this.content, this.anonymity, this.postStatus,
+			this.likeCount, this.commentCount + 1, this.scrapCount, this.anonymousCount + 1);
+	}
+
 	public void validateAuthor(Long userId) {
 		if(!this.userId.equals(userId)) {
 			throw new AppException(ErrorCode.POST_NOT_AUTHOR);

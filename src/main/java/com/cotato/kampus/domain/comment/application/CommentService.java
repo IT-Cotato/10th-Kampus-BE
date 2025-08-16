@@ -45,28 +45,43 @@ public class CommentService {
 	private final BoardFinder boardFinder;
 	private final PostScrapFinder postScrapFinder;
 
+	/**
+	 18    * 게시글에 새로운 댓글을 생성하고 관련 카운터를 업데이트
+	 19    *
+	 20    *@param postId   댓글을 작성할 게시글 ID
+	 21    *@param content  댓글 내용
+	 22    *@param parentId 부모 댓글 ID (대댓글이 아닐 경우 null)
+	 23    *@param targetId 답글 대상 댓글 ID (대댓글이 아닐 경우 null)
+	 24    *@return 생성된 댓글 ID
+	 25    */
 	@Transactional
-	public Long createComment(Long postId, String content, Long parentId, Long targetId) {
-		// 유저, 게시글 조회
+	public Long createComment(Long postId, String content, Long parentId, Long targetId) { // targetId는 답글 대상
 		UserDto userDto = apiUserResolver.getCurrentUserDto();
 		Post post = postFinder.find(postId);
 
-		// 학생 인증 확인
 		userValidator.validateStudentVerification(userDto);
-
-		// 부모 댓글 유효성 체크
 		commentValidator.validateParent(postId, parentId);
 
-		// 익명 번호 할당
-		Integer anonymousNumber = anonymousNumberAllocator.allocateAnonymousNumber(post, userDto);
+		boolean isAuthor = post.getUserId().equals(userDto.id());
+		AnonymousAllocationResult allocationResult = anonymousNumberAllocator.allocateAnonymousNumber(post, userDto, isAuthor);
 
-		// 댓글 추가
-		Long commentId = commentAppender.append(postId, content, anonymousNumber, parentId, targetId);
+		Long commentId = commentAppender.append(postId, content, allocationResult.anonymousNumber(), parentId, targetId);
 
-		// 게시글의 댓글 수 + 1
-		postUpdater.increaseCommentCount(post);
+		updatePostCountersForNewComment(post, allocationResult);
 
 		return commentId;
+	}
+
+	/**
+	 * 새 댓글 생성 후 게시글의 카운터를 업데이트
+	 * 새로운 익명 댓글 작성 시 익명 카운터도 함께 증가
+	 */
+	private Post updatePostCountersForNewComment(Post post, AnonymousAllocationResult result) {
+		if (result.needsIncrement()) {
+			return postUpdater.increaseCommentAndAnonymousCount(post);
+		} else {
+			return postUpdater.increaseCommentCount(post);
+		}
 	}
 
 	@Transactional
@@ -87,7 +102,6 @@ public class CommentService {
 		Post post = postFinder.find(commentDto.postId());
 
 		postUpdater.decreaseCommentCount(post);
-
 
 		// 댓글 좋아요 데이터 삭제
 		commentLikeDeleter.deleteAllByCommentId(commentId);

@@ -12,8 +12,8 @@ import lombok.Getter;
 @Getter
 public class CardNewsPost extends Post {
 
-	@Builder(access = AccessLevel.PRIVATE)
-	private CardNewsPost(
+	@Builder(access = AccessLevel.PACKAGE)
+	CardNewsPost(
 		Long id,
 		Long boardId,
 		Long userId,
