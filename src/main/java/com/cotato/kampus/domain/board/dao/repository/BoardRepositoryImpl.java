@@ -114,4 +114,9 @@ public class BoardRepositoryImpl implements BoardRepository {
 	public Optional<Long> findBoardIdByUniversityId(Long universityId) {
 		return boardJpaRepository.findBoardIdByUniversityId(universityId);
 	}
+
+	@Override
+	public Optional<String> findBoardTypeByBoardId(Long boardId) {
+		return boardJpaRepository.findBoardTypeByBoardId(boardId);
+	}
 }

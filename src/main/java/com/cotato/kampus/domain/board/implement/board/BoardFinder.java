@@ -94,4 +94,9 @@ public class BoardFinder {
 		return boardRepository.findBoardIdByUniversityId(universityId)
 			.orElse(null);
 	}
+
+	public BoardType findBoardType(Long boardId) {
+		return BoardType.valueOf(boardRepository.findBoardTypeByBoardId(boardId)
+			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND)));
+	}
 }
