@@ -19,6 +19,4 @@ public interface BoardFavoriteRepository {
 	Optional<BoardFavorite> findByUserIdAndBoardId(Long userId, Long boardId);
 
 	void delete(BoardFavorite boardFavorite);
-
-	void saveAll(List<BoardFavorite> boardFavorites);
 }
