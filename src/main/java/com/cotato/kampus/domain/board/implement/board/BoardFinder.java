@@ -89,4 +89,9 @@ public class BoardFinder {
 		List<BoardType> targetTypes = List.of(BoardType.FIXED, BoardType.CARDNEWS);
 		return boardRepository.findBoardIdsByBoardTypeIn(targetTypes);
 	}
+
+	public Long findUniversityBoardId(Long universityId) {
+		return boardRepository.findBoardIdByUniversityId(universityId)
+			.orElse(null);
+	}
 }
