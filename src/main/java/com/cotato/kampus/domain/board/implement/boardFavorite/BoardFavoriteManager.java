@@ -1,7 +1,5 @@
 package com.cotato.kampus.domain.board.implement.boardFavorite;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,17 +28,5 @@ public class BoardFavoriteManager {
 	@Transactional
 	public void deleteFavoriteBoard(BoardFavorite boardFavorite) {
 		boardFavoriteRepository.delete(boardFavorite);
-	}
-
-	@Transactional
-	public void appendAll(Long userId, List<Long> boardIds) {
-		List<BoardFavorite> boardFavorites = boardIds.stream()
-			.map(boardId -> BoardFavorite.builder()
-				.userId(userId)
-				.boardId(boardId)
-				.build()
-			).toList();
-
-		boardFavoriteRepository.saveAll(boardFavorites);
 	}
 }

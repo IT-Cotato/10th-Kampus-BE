@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
@@ -31,7 +29,4 @@ public interface BoardJpaRepository extends JpaRepository<BoardEntity, Long> {
 	List<BoardEntity> findAllByBoardStatus(BoardStatus boardStatus);
 
 	boolean existsByBoardType(BoardType boardType);
-
-	@Query("SELECT b.id FROM BoardEntity b WHERE b.boardType IN :boardTypes")
-	List<Long> findBoardIdsByBoardTypeIn(@Param("boardTypes") List<BoardType> boardTypes);
 }

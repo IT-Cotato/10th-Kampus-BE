@@ -46,12 +46,4 @@ public class BoardFavoriteRepositoryImpl implements BoardFavoriteRepository {
 		BoardFavoriteEntity boardFavoriteEntity = BoardFavoriteEntity.fromDomain(boardFavorite);
 		boardFavoriteJpaRepository.delete(boardFavoriteEntity);
 	}
-
-	@Override
-	public void saveAll(List<BoardFavorite> boardFavorites) {
-		List<BoardFavoriteEntity> boardFavoriteEntities = boardFavorites.stream()
-			.map(BoardFavoriteEntity::fromDomain)
-			.toList();
-		boardFavoriteJpaRepository.saveAll(boardFavoriteEntities);
-	}
 }

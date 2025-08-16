@@ -85,8 +85,4 @@ public class BoardFinder {
 		return expiredBoards.stream().map(Board::getId).toList();
 	}
 
-	public List<Long> findDefaultFavoriteBoardIds() {
-		List<BoardType> targetTypes = List.of(BoardType.FIXED, BoardType.CARDNEWS);
-		return boardRepository.findBoardIdsByBoardTypeIn(targetTypes);
-	}
 }

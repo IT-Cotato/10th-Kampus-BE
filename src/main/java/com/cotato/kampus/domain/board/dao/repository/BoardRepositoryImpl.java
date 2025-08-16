@@ -104,9 +104,4 @@ public class BoardRepositoryImpl implements BoardRepository {
 	public boolean existsByBoardType(BoardType boardType) {
 		return boardJpaRepository.existsByBoardType(boardType);
 	}
-
-	@Override
-	public List<Long> findBoardIdsByBoardTypeIn(List<BoardType> boardTypes) {
-		return boardJpaRepository.findBoardIdsByBoardTypeIn(boardTypes);
-	}
 }
