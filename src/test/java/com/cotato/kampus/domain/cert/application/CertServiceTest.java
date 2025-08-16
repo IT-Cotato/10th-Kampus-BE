@@ -20,6 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.cotato.kampus.domain.admin.application.VerificationPhotoFinder;
 import com.cotato.kampus.domain.admin.dto.VerificationPhotoDto;
 import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteManager;
 import com.cotato.kampus.domain.cert.domain.Cert;
 import com.cotato.kampus.domain.cert.domain.TestCertHelper;
 import com.cotato.kampus.domain.cert.enums.UnivMail;
@@ -76,6 +78,12 @@ class CertServiceTest {
 
 	@Mock
 	private VerificationPhotoFinder verificationPhotoFinder;
+
+	@Mock
+	private BoardFinder boardFinder;
+
+	@Mock
+	private BoardFavoriteManager boardFavoriteManager;
 
 	private MockedStatic<UnivMail> univMailMock;
 
@@ -220,12 +228,14 @@ class CertServiceTest {
 		String email = "test@test.com";
 		String code = "1234";
 		Long universityId = 401L;
+		Long universityBoardId = 1L;
 		Cert cert = spy(
 			TestCertHelper.createCert(unverifiedUser.id(), email, univCode, code, false, unverifiedUser.id()));
 
 		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUser);
 		when(certFinder.findByEmail(email)).thenReturn(cert);
 		when(univFinder.findUniversityId(cert.getUnivCode())).thenReturn(universityId);
+		when(boardFinder.findUniversityBoardId(universityId)).thenReturn(universityBoardId);
 
 		// when
 		certService.verifyEmailCode(email, code);
@@ -238,6 +248,43 @@ class CertServiceTest {
 		verify(cert).validateCode(code);
 		verify(userUpdater).updateVerificationStatus(unverifiedUser.id(), universityId);
 		verify(verificationRecordManager).appendEmailType(unverifiedUser.id(), universityId);
+		verify(boardFinder).findUniversityBoardId(universityId);
+		verify(boardFavoriteManager).appendFavoriteBoard(unverifiedUser.id(), universityBoardId);
+	}
+
+	@Test
+	@DisplayName("이메일 인증 성공 - 대학 게시판이 없는 경우")
+	void verifyEmailCode_Success_UnivBoardNonExist() {
+		// given
+		String univCode = "TEST";
+		String email = "test@test.com";
+		String code = "1234";
+		Long universityId = 401L;
+		Cert cert = spy(
+			TestCertHelper.createCert(unverifiedUser.id(), email, univCode, code, false, unverifiedUser.id()));
+
+		when(apiUserResolver.getCurrentUserDto()).thenReturn(unverifiedUser);
+		when(certFinder.findByEmail(email)).thenReturn(cert);
+		when(univFinder.findUniversityId(cert.getUnivCode())).thenReturn(universityId);
+		when(boardFinder.findUniversityBoardId(universityId)).thenReturn(null);
+
+		// when
+		certService.verifyEmailCode(email, code);
+
+		// then
+		// 호출되어야 함
+		verify(apiUserResolver).getCurrentUserDto();
+		verify(userValidator).validateDuplicateStudentVerification(unverifiedUser);
+		verify(cert).validateNotCertified();
+		verify(cert).validateExpired();
+		verify(cert).validateCode(code);
+		verify(userUpdater).updateVerificationStatus(unverifiedUser.id(), universityId);
+		verify(verificationRecordManager).appendEmailType(unverifiedUser.id(), universityId);
+		verify(boardFinder).findUniversityBoardId(universityId);
+
+		// 호출되지 않아야 함
+		verify(boardFavoriteManager, never()).appendFavoriteBoard(anyLong(), anyLong());
+
 	}
 
 	@Test
@@ -248,6 +295,7 @@ class CertServiceTest {
 		String email = "test@test.com";
 		String code = "1234";
 		Long universityId = 401L;
+		Long universityBoardId = 1L;
 		Cert cert = spy(
 			TestCertHelper.createCert(unverifiedUser.id(), email, univCode, code, false, unverifiedUser.id()));
 
@@ -270,6 +318,8 @@ class CertServiceTest {
 		verify(cert, never()).validateCode(code);
 		verify(userUpdater, never()).updateVerificationStatus(unverifiedUser.id(), universityId);
 		verify(verificationRecordManager, never()).appendEmailType(unverifiedUser.id(), universityId);
+		verify(boardFinder, never()).findUniversityBoardId(universityId);
+		verify(boardFavoriteManager, never()).appendFavoriteBoard(unverifiedUser.id(), universityBoardId);
 	}
 
 	@Test
@@ -280,6 +330,7 @@ class CertServiceTest {
 		String email = "test@test.com";
 		String code = "1234";
 		Long universityId = 401L;
+		Long universityBoardId = 1L;
 		Cert expiredCert = spy(
 			TestCertHelper.createExpiredCert(unverifiedUser.id(), email, univCode, code, false, unverifiedUser.id()));
 
@@ -302,6 +353,8 @@ class CertServiceTest {
 		verify(certManager, never()).certify(expiredCert);
 		verify(userUpdater, never()).updateVerificationStatus(unverifiedUser.id(), universityId);
 		verify(verificationRecordManager, never()).appendEmailType(unverifiedUser.id(), universityId);
+		verify(boardFinder, never()).findUniversityBoardId(universityId);
+		verify(boardFavoriteManager, never()).appendFavoriteBoard(unverifiedUser.id(), universityBoardId);
 	}
 
 	@Test
@@ -313,6 +366,7 @@ class CertServiceTest {
 		String code = "1234";
 		String invalidCode = "4321";
 		Long universityId = 401L;
+		Long universityBoardId = 1L;
 		Cert cert = spy(
 			TestCertHelper.createCert(unverifiedUser.id(), email, univCode, code, false, unverifiedUser.id()));
 
@@ -335,6 +389,8 @@ class CertServiceTest {
 		verify(certManager, never()).certify(cert);
 		verify(userUpdater, never()).updateVerificationStatus(unverifiedUser.id(), universityId);
 		verify(verificationRecordManager, never()).appendEmailType(unverifiedUser.id(), universityId);
+		verify(boardFinder, never()).findUniversityBoardId(universityId);
+		verify(boardFavoriteManager, never()).appendFavoriteBoard(unverifiedUser.id(), universityBoardId);
 	}
 
 	@Test
