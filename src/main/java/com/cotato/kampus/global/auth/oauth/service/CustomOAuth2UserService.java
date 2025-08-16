@@ -48,16 +48,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		User saveOrUpdate(OAuth2Attribute attribute, String uniqueId) {
 		Optional<User> optionalUser = userRepository.findByUniqueId(uniqueId);
 
-		User user;
 		if (optionalUser.isPresent()) {
-			user = optionalUser.get().update(attribute.getEmail(), attribute.getUsername());
+			User user = optionalUser.get().update(attribute.getEmail(), attribute.getUsername());
+			return userRepository.save(user);
 		} else {
-			user = attribute.toEntity(uniqueId);
+			User newUser = attribute.toEntity(uniqueId);
+			User savedUser = userRepository.save(newUser);
 
 			List<Long> defaultFavoriteBoardIds = boardFinder.findDefaultFavoriteBoardIds();
-			boardFavoriteManager.appendAll(user.getId(), defaultFavoriteBoardIds);
+			boardFavoriteManager.appendAll(savedUser.getId(), defaultFavoriteBoardIds);
+
+			return savedUser;
 		}
-		return userRepository.save(user);
 	}
 }
 
