@@ -42,25 +42,33 @@ class CustomOAuth2UserServiceTest {
     void saveOrUpdate_newUser_addDefaultFavorites() {
         // given
         String uniqueId = "uniqueId";
+        Long fakeUserId = 1L; // 테스트용 가짜 ID
         OAuth2Attribute attribute = OAuth2Attribute.builder()
                 .username("testuser")
                 .email("test@test.com")
                 .providerId("providerId")
                 .attributes(Map.of())
                 .build();
-        User newUser = attribute.toEntity(uniqueId);
-        List<Long> defaultBoardIds = List.of(1L, 2L);  // 기본으로 추가될 즐겨찾기 게시판 ID 목록
+        List<Long> defaultBoardIds = List.of(1L, 2L);
 
-        given(userRepository.findByUniqueId(uniqueId)).willReturn(Optional.empty());  // 새로운 사용자이므로 Optional.empty()를 반환하도록 설정
-        given(userRepository.save(any(User.class))).willReturn(newUser);
+        // save 메소드가 반환할 User 모의 객체 생성
+        User savedUser = mock(User.class);
+
+        // 모의 객체의 getId()가 가짜 ID를 반환하도록 설정
+        given(savedUser.getId()).willReturn(fakeUserId);
+
+        // userRepository.save()가 호출되면 위에서 만든 모의 객체를 반환하도록 설정
+        given(userRepository.findByUniqueId(uniqueId)).willReturn(Optional.empty());
+        given(userRepository.save(any(User.class))).willReturn(savedUser);
         given(boardFinder.findDefaultFavoriteBoardIds()).willReturn(defaultBoardIds);
 
         // when
         customOAuth2UserService.saveOrUpdate(attribute, uniqueId);
 
         // then
+        // appendAll이 가짜 ID로 올바르게 호출되었는지 검증
         verify(boardFinder, times(1)).findDefaultFavoriteBoardIds();
-        verify(boardFavoriteManager, times(1)).appendAll(newUser.getId(), defaultBoardIds);
+        verify(boardFavoriteManager, times(1)).appendAll(eq(fakeUserId), eq(defaultBoardIds));
     }
 
     @DisplayName("기존 유저일 경우, 기본 즐겨찾기를 추가하지 않는다")
