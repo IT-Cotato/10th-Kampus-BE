@@ -117,13 +117,13 @@ public class PostInteractionService {
 		Post post = postFinder.find(postId);
 		post.validatePublish();
 
-		// 스크랩 중복 검증
+		// 2. 스크랩 중복 검증
 		postValidator.validateDuplicatedScrap(postId, userId);
 
-		// 게시글 스크랩 수 추가
+		// 3. 게시글 스크랩 수 증가
 		postUpdater.increaseScrapCount(post);
 
-		// 스크랩 데이터 추가
+		// 4. 스크랩 정보 저장
 		postScrapAppender.append(postId, userId);
 	}
 
@@ -134,11 +134,13 @@ public class PostInteractionService {
 		Post post = postFinder.find(postId);
 		post.validatePublish();
 
-		// 게시글 스크랩 수 감소
+		// 2. 스크랩 정보 조회
+		PostScrap postScrap = postScrapFinder.find(userId, postId);
+
+		// 3. 게시글 스크랩 수 감소
 		postUpdater.decreaseScrapCount(post);
 
-		PostScrap postScrap = postScrapFinder.find(userId, postId);
-		// 스크랩 데이터 삭제
+		// 4. 스크랩 정보 삭제
 		postScrapDeleter.delete(postScrap);
 	}
 
