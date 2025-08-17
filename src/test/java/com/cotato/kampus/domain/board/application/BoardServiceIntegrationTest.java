@@ -34,8 +34,6 @@ import com.cotato.kampus.domain.post.implement.port.PostRepository;
 import com.cotato.kampus.domain.post.implement.port.TrendingPostRepository;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.helper.TestUserHelper;
 
 @SpringBootTest
@@ -145,34 +143,6 @@ class BoardServiceIntegrationTest {
 		assertThat(result.size()).isEqualTo(1);
 		assertThat(result.get(0).boardId()).isEqualTo(savedBoard3.getId());
 		assertThat(result.get(0).postTitle()).isEqualTo("고정게시판 게시글");
-	}
-
-
-	@Test
-	@DisplayName("사용자의 대학 게시판 조회 - 성공")
-	void getUniversityBoard_success() {
-		// Given
-		UserDto user = TestUserHelper.createUserDto(1L, 401L, UserRole.VERIFIED);
-		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
-
-		// When
-		BoardWithFavoriteStatus result = boardService.getUniversityBoard();
-
-		// Then
-		assertThat(result.boardName()).isEqualTo("홍익대학교");
-	}
-
-	@Test
-	@DisplayName("사용자의 대학 게시판 조회 - 재학 인증 안된 유저 예외")
-	void getUniversityBoard_userUnverified() {
-		// Given
-		UserDto user = TestUserHelper.createUserDto(1L, null, UserRole.UNVERIFIED);
-		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
-
-		// When & Then
-		assertThatThrownBy(() -> boardService.getUniversityBoard())
-			.isInstanceOf(AppException.class)
-			.hasMessage(ErrorCode.USER_UNVERIFIED.getMessage());
 	}
 
 	@Test

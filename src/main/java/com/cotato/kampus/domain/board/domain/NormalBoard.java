@@ -12,8 +12,8 @@ import lombok.Getter;
 @Getter
 public class NormalBoard extends Board {
 
-	@Builder(access = AccessLevel.PRIVATE)
-	private NormalBoard(
+	@Builder(access = AccessLevel.PACKAGE)
+	NormalBoard(
 		Long id,
 		String boardName,
 		String description,
