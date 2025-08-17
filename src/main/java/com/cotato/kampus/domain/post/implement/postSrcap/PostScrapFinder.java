@@ -20,8 +20,8 @@ public class PostScrapFinder {
 
 	private final PostScrapRepository postScrapRepository;
 
-	public boolean isPostScrappedByUser(Long userId, Long postId) {
-		return postScrapRepository.existsByPostIdAndUserId(userId, postId);
+	public boolean isPostScrappedByUser(Long postId, Long userId) {
+		return postScrapRepository.existsByPostIdAndUserId(postId, userId);
 	}
 
 	public PostScrap find(Long userId, Long postId) {
