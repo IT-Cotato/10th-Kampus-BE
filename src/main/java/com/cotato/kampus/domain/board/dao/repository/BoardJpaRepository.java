@@ -34,4 +34,7 @@ public interface BoardJpaRepository extends JpaRepository<BoardEntity, Long> {
 
 	@Query("SELECT b.id FROM BoardEntity b WHERE b.boardType IN :boardTypes")
 	List<Long> findBoardIdsByBoardTypeIn(@Param("boardTypes") List<BoardType> boardTypes);
+
+	@Query("SELECT b.id FROM BoardEntity b WHERE b.universityId = :universityId")
+	Optional<Long> findBoardIdByUniversityId(@Param("universityId") Long universityId);
 }

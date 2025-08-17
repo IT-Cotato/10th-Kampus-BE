@@ -15,4 +15,5 @@ public interface BoardFavoriteJpaRepository extends JpaRepository<BoardFavoriteE
 
 	Optional<BoardFavoriteEntity> findByUserIdAndBoardId(Long userId, Long boardId);
 
+	void deleteByUserIdAndBoardId(Long userId, Long boardId);
 }

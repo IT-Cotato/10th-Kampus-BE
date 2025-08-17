@@ -37,4 +37,6 @@ public interface BoardRepository{
 	boolean existsByBoardType(BoardType boardType);
 
 	List<Long> findBoardIdsByBoardTypeIn(List<BoardType> boardTypes);
+
+	Optional<Long> findBoardIdByUniversityId(Long universityId);
 }

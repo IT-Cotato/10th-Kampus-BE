@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.admin.application.VerificationPhotoFinder;
 import com.cotato.kampus.domain.admin.dto.VerificationPhotoDto;
 import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteManager;
 import com.cotato.kampus.domain.cert.domain.Cert;
 import com.cotato.kampus.domain.cert.enums.UnivMail;
 import com.cotato.kampus.domain.cert.implement.CertFinder;
@@ -40,6 +42,8 @@ public class CertService {
 	private final VerificationRecordManager verificationRecordManager;
 	private final VerificationRecordFinder verificationRecordFinder;
 	private final VerificationPhotoFinder verificationPhotoFinder;
+	private final BoardFavoriteManager boardFavoriteManager;
+	private final BoardFinder boardFinder;
 
 	public boolean checkUnivCode(String univCode) {
 		return UnivMail.exists(univCode);
@@ -54,8 +58,8 @@ public class CertService {
 		// 대학 이름 유효성 검사 및 도메인 검증
 		UnivMail.validateUnivCode(univCode);
 		boolean domainMatched = UnivMail.getDomains(univCode).stream()
-				.anyMatch(email::contains);
-		if(!domainMatched) {
+			.anyMatch(email::contains);
+		if (!domainMatched) {
 			throw new AppException(ErrorCode.INVALID_UNIVERSITY_EMAIL_DOMAIN);
 		}
 
@@ -64,7 +68,7 @@ public class CertService {
 
 		// 해당 이메일로 인증 요청 여부 확인 후 처리
 		Cert cert = certFinder.findOptionalByEmail(email);
-		if(cert != null) {
+		if (cert != null) {
 			// 인증 요청 정보가 있으면 상태 확인 + 코드 갱신
 			cert.validateNotCertified();
 			certManager.updateCodeAndExpiration(cert, code);
@@ -96,6 +100,12 @@ public class CertService {
 
 		// 인증 기록 추가
 		verificationRecordManager.appendEmailType(user.id(), universityId);
+
+		// 대학 게시판 즐겨찾기 추가
+		Long univBoardId = boardFinder.findUniversityBoardId(universityId);
+		if (univBoardId != null) {
+			boardFavoriteManager.appendFavoriteBoard(user.id(), univBoardId);
+		}
 	}
 
 	@Transactional
@@ -106,6 +116,9 @@ public class CertService {
 		verificationRecordManager.deleteAllByUserId(user.id());
 
 		userUpdater.updateRole(user.id(), UserRole.UNVERIFIED);
+
+		Long univBoardId = boardFinder.findUniversityBoardId(user.universityId());
+		boardFavoriteManager.deleteFavoriteBoard(user.id(), univBoardId);
 	}
 
 	public VerificationWithPhoto getCertStatus() {
@@ -124,7 +137,8 @@ public class CertService {
 		VerificationRecordDto verificationRecordDto = verificationRecordFinder.findRecentPhotoRecord(user.id());
 
 		String universityCode = univFinder.findUniversityCode(verificationRecordDto.universityId());
-		VerificationPhotoDto verificationPhotoDto = verificationPhotoFinder.findByRecordId(verificationRecordDto.verificationRecordId());
+		VerificationPhotoDto verificationPhotoDto = verificationPhotoFinder.findByRecordId(
+			verificationRecordDto.verificationRecordId());
 
 		return VerificationWithPhoto.of(verificationRecordDto, universityCode, verificationPhotoDto);
 	}

@@ -21,4 +21,6 @@ public interface BoardFavoriteRepository {
 	void delete(BoardFavorite boardFavorite);
 
 	void saveAll(List<BoardFavorite> boardFavorites);
+
+	void deleteByUserIdAndBoardId(Long userId, Long boardId);
 }

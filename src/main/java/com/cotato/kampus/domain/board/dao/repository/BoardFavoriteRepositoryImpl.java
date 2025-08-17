@@ -54,4 +54,9 @@ public class BoardFavoriteRepositoryImpl implements BoardFavoriteRepository {
 			.toList();
 		boardFavoriteJpaRepository.saveAll(boardFavoriteEntities);
 	}
+
+	@Override
+	public void deleteByUserIdAndBoardId(Long userId, Long boardId) {
+		boardFavoriteJpaRepository.deleteByUserIdAndBoardId(userId, boardId);
+	}
 }

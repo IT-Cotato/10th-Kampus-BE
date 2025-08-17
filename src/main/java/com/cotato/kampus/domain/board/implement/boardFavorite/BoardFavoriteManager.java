@@ -43,4 +43,9 @@ public class BoardFavoriteManager {
 
 		boardFavoriteRepository.saveAll(boardFavorites);
 	}
+
+	@Transactional
+	public void deleteFavoriteBoard(Long userId, Long boardId) {
+		boardFavoriteRepository.deleteByUserIdAndBoardId(userId, boardId);
+	}
 }
