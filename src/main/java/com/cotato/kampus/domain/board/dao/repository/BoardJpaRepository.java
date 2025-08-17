@@ -37,4 +37,7 @@ public interface BoardJpaRepository extends JpaRepository<BoardEntity, Long> {
 
 	@Query("SELECT b.id FROM BoardEntity b WHERE b.universityId = :universityId")
 	Optional<Long> findBoardIdByUniversityId(@Param("universityId") Long universityId);
+
+	@Query("SELECT b.boardType FROM BoardEntity b WHERE b.id = :boardId")
+	Optional<String> findBoardTypeByBoardId(@Param("boardId") Long boardId);
 }

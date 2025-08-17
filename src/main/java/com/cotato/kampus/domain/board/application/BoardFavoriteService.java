@@ -4,10 +4,12 @@ import org.springframework.stereotype.Service;
 
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.domain.BoardFavorite;
-import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteFinder;
-import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteManager;
+import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.board.implement.board.BoardValidator;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteFinder;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteManager;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteValidator;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.global.error.ErrorCode;
@@ -21,6 +23,7 @@ public class BoardFavoriteService {
 
 	private final BoardFinder boardFinder;
 	private final BoardValidator boardValidator;
+	private final BoardFavoriteValidator boardFavoriteValidator;
 
 	private final BoardFavoriteManager boardFavoriteManager;
 	private final ApiUserResolver apiUserResolver;
@@ -49,8 +52,14 @@ public class BoardFavoriteService {
 		// 유저 조회
 		UserDto user = apiUserResolver.getCurrentUserDto();
 
-		// 즐겨찾기 조회/삭제
+		// 즐겨찾기 조회
 		BoardFavorite boardFavorite = boardFavoriteFinder.findByUserIdAndBoardId(user.id(), boardId);
+
+		// 게시판 타입 조회 및 검증
+		BoardType boardType = boardFinder.findBoardType(boardId);
+		boardFavoriteValidator.validateRemovable(boardType);
+
+		// 즐겨찾기 삭제
 		boardFavoriteManager.deleteFavoriteBoard(boardFavorite);
 
 		return boardId;

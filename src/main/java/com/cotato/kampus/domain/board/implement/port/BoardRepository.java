@@ -39,4 +39,6 @@ public interface BoardRepository{
 	List<Long> findBoardIdsByBoardTypeIn(List<BoardType> boardTypes);
 
 	Optional<Long> findBoardIdByUniversityId(Long universityId);
+
+	Optional<String> findBoardTypeByBoardId(Long boardId);
 }
