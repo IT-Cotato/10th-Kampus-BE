@@ -213,7 +213,7 @@ public class PostService {
 
 		boolean isAuthor = post.getUserId().equals(userId);
 		boolean isLiked = postLikeFinder.hasUserLikedPost(userId, postId);
-		boolean isScrapped = postScrapFinder.isPostScrappedByUser(userId, postId);
+		boolean isScrapped = postScrapFinder.isPostScrappedByUser(postId, userId);
 		return PostDetails.of(post, board, categories, postPhotos, isAuthor, isLiked, isScrapped);
 	}
 
