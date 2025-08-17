@@ -49,7 +49,7 @@ public interface PostRepository {
 		Pageable pageable);
 
 	// 게시판의 최신 게시글 1개 조회
-	Optional<Post> findTopByBoardIdAndPostStatusOrderByCreatedTimeDesc(Long boardId, PostStatus postStatus);
+	List<Post> findLatestPostPerBoard(List<Long> boardId, String postStatus);
 
 	// 게시판 게시글 페이징 조회 (최신순)
 	Slice<Post> findByBoardIdAndPostStatusOrderByCreatedTimeDesc(Long boardId, PostStatus postStatus, Pageable pageable);

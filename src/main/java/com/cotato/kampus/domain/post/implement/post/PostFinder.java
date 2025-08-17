@@ -64,12 +64,10 @@ public class PostFinder {
 			.getContent();
 	}
 
-	public Map<Long, Optional<Post>> findTopPosts(List<Long> boardIds) {
-		return boardIds.stream()
-			.collect(Collectors.toMap(
-				Function.identity(), // boardId
-				boardId -> postRepository.findTopByBoardIdAndPostStatusOrderByCreatedTimeDesc(boardId, PostStatus.PUBLISHED)
-			));
+	public Map<Long, Post> findLatestPostsByBoardIds(List<Long> boardIds) {
+		List<Post> latestPosts = postRepository.findLatestPostPerBoard(boardIds, PostStatus.PUBLISHED.name());
+		return latestPosts.stream()
+				.collect(Collectors.toMap(Post::getBoardId, Function.identity()));
 	}
 
 	public List<Post> findTop5ByBoardId(Long boardId) {

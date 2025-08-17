@@ -63,13 +63,15 @@ public class BoardService {
 		// 유저 조회
 		Long userId = apiUserResolver.getCurrentUserId();
 
-		// 즐겨찾는 게시판 조회
-		List<Long> favoriteBoardIds = boardFavoriteFinder.findFavoriteBoardIds(userId);
-		Map<Long, Board> boards = boardFinder.findBoardMap(favoriteBoardIds);
+		// 미리보기에 필요한 즐겨찾기 게시판 목록 조회
+		List<Board> boardsForPreview = boardFinder.findFavoriteBoardsForPreview(userId);
+		List<Long> boardIds = boardsForPreview.stream().map(Board::getId).toList();
 
-		Map<Long, Optional<Post>> latestPosts = postFinder.findTopPosts(favoriteBoardIds);
+		// 게시판별 최신 게시글 조회
+		Map<Long, Post> latestPosts = postFinder.findLatestPostsByBoardIds(boardIds);
 
-		return postDtoMapper.toHomePostThumbnails(boards, latestPosts);
+		// Board 목록과 Post 매핑
+		return postDtoMapper.toHomePostThumbnails(boardsForPreview, latestPosts);
 	}
 
 	public List<HomePostThumbnail> getUniversityBoardPreview() {
