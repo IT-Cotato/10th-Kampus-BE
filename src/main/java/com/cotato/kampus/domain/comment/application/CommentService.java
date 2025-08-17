@@ -95,16 +95,13 @@ public class CommentService {
 		// 작성자 검증
 		commentValidator.validateCommentAuthor(userId, commentDto);
 
-		// 댓글 삭제
+		// 댓글 상태 업데이트
 		commentDeleter.delete(commentId);
 
 		// 게시글의 댓글 수 - 1
 		Post post = postFinder.find(commentDto.postId());
 
 		postUpdater.decreaseCommentCount(post);
-
-		// 댓글 좋아요 데이터 삭제
-		commentLikeDeleter.deleteAllByCommentId(commentId);
 	}
 
 	@Transactional

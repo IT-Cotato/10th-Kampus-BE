@@ -23,14 +23,9 @@ public class CommentDeleter {
 
 	@Transactional
 	public void delete(Long commentId) {
-		// 대댓글이 있으면 삭제된 상태로 업데이트
-		if (commentRepository.existsByParentId(commentId)) {
-			Comment comment = commentFinder.findComment(commentId);
-			comment.setCommentStatus(CommentStatus.DELETED_BY_USER);
-		}
-
-		// 댓글 삭제
-		commentRepository.deleteById(commentId);
+		// 삭제된 상태로 업데이트
+		Comment comment = commentFinder.findComment(commentId);
+		comment.setCommentStatus(CommentStatus.DELETED_BY_USER);
 	}
 
 	@Transactional
