@@ -2,14 +2,12 @@ package com.cotato.kampus.domain.board.implement.board;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteFinder;
 import com.cotato.kampus.domain.board.implement.port.BoardRepository;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
@@ -24,7 +22,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardFinder {
 
+	private static final List<BoardType> EXCLUDED_BOARD_TYPES_FOR_FAVORITE_PREVIEW = List.of(
+		BoardType.CARDNEWS,
+		BoardType.TRENDING
+	);
+
 	private final BoardRepository boardRepository;
+	private final BoardFavoriteFinder boardFavoriteFinder;
 
 	public List<Board> findAllBoards(BoardStatus boardStatus) {
 		List<Board> boards;
@@ -43,16 +47,13 @@ public class BoardFinder {
 		return boards;
 	}
 
-	public List<Board> findBoardsWithIds(List<Long> boardIds) {
-		return boardRepository.findAllByIdIn(boardIds);
-	}
+	public List<Board> findFavoriteBoardsForPreview(Long userId) {
+		List<Long> favoritesBoardIds = boardFavoriteFinder.findFavoriteBoardIds(userId);
+		List<Board> favoriteBoards = boardRepository.findAllByIdIn(favoritesBoardIds);
 
-	public Map<Long, Board> findBoardMap(List<Long> boardIds) {
-		return findBoardsWithIds(boardIds).stream()
-			.collect(Collectors.toMap(
-				Board::getId,
-				Function.identity()
-			));
+		return favoriteBoards.stream()
+			.filter(board -> !EXCLUDED_BOARD_TYPES_FOR_FAVORITE_PREVIEW.contains(board.getBoardType()))
+			.toList();
 	}
 
 	public List<Board> findPublicBoards() {

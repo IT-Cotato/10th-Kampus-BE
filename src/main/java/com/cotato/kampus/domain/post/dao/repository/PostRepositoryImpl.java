@@ -100,9 +100,10 @@ public class PostRepositoryImpl implements PostRepository {
 	}
 
 	@Override
-	public Optional<Post> findTopByBoardIdAndPostStatusOrderByCreatedTimeDesc(Long boardId, PostStatus postStatus) {
-		return postJpaRepository.findTopByBoardIdAndPostStatusOrderByCreatedTimeDesc(boardId, postStatus)
-			.map(PostEntity::toDomain);
+	public List<Post> findLatestPostPerBoard(List<Long> boardIds, String postStatus) {
+		return postJpaRepository.findLatestPostPerBoard(boardIds, postStatus).stream()
+			.map(PostEntity::toDomain)
+			.toList();
 	}
 
 	@Override

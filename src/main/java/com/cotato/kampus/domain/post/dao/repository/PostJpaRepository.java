@@ -65,7 +65,15 @@ public interface PostJpaRepository extends JpaRepository<PostEntity, Long> {
 	Slice<PostEntity> findAllAccessiblePostsByIds(@Param("postIds") List<Long> postIds, @Param("userUnivId") Long userUnivId,
 		Pageable pageable);
 
-	Optional<PostEntity> findTopByBoardIdAndPostStatusOrderByCreatedTimeDesc(Long boardId, PostStatus postStatus);
+	@Query(value = """
+		SELECT p.* FROM (
+				SELECT *, ROW_NUMBER() OVER(PARTITION BY board_id ORDER BY created_time DESC) as rn 
+			    FROM post 
+			    WHERE board_id IN :boardIds AND post_status = :postStatus
+		) p 
+		WHERE p.rn = 1
+	    """, nativeQuery = true)
+	List<PostEntity> findLatestPostPerBoard(@Param("boardIds") List<Long> boardIds, @Param("postStatus") String postStatus);
 	
 	Slice<PostEntity> findByBoardIdAndPostStatusOrderByCreatedTimeDesc(Long boardId, PostStatus postStatus, Pageable pageable);
 
