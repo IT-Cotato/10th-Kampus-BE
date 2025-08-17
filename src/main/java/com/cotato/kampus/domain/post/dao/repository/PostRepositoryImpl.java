@@ -89,10 +89,9 @@ public class PostRepositoryImpl implements PostRepository {
 	}
 
 	@Override
-	public List<Post> findTopAccessiblePostsByIds(List<Long> postIds, Long userUnivId, int limit) {
-		return postJpaRepository.findTopAccessiblePostsByIds(postIds, userUnivId, limit).stream()
-			.map(PostEntity::toDomain)
-			.toList();
+	public Slice<Post> findTopAccessiblePostsByIds(List<Long> postIds, Long userUnivId, Pageable pageable) {
+		return postJpaRepository.findTopAccessiblePostsByIds(postIds, userUnivId, pageable)
+			.map(PostEntity::toDomain);
 	}
 
 	@Override
@@ -103,6 +102,13 @@ public class PostRepositoryImpl implements PostRepository {
 	@Override
 	public Optional<Post> findTopByBoardIdAndPostStatusOrderByCreatedTimeDesc(Long boardId, PostStatus postStatus) {
 		return postJpaRepository.findTopByBoardIdAndPostStatusOrderByCreatedTimeDesc(boardId, postStatus)
+			.map(PostEntity::toDomain);
+	}
+
+	@Override
+	public Slice<Post> findByBoardIdAndPostStatusOrderByCreatedTimeDesc(Long boardId, PostStatus postStatus,
+		Pageable pageable) {
+		return postJpaRepository.findByBoardIdAndPostStatusOrderByCreatedTimeDesc(boardId, postStatus, pageable)
 			.map(PostEntity::toDomain);
 	}
 

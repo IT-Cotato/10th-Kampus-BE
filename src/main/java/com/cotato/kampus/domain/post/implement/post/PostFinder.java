@@ -59,7 +59,9 @@ public class PostFinder {
 	}
 
 	public List<Post> findTopTrendingPosts(List<Long> trendingPostIds, Long userUniversityId) {
-		return postRepository.findTopAccessiblePostsByIds(trendingPostIds, userUniversityId, HOME_POST_PREVIEW_LIMIT);
+		CustomPageRequest customPageRequest = new CustomPageRequest(1, HOME_POST_PREVIEW_LIMIT, Sort.Direction.DESC);
+		return postRepository.findTopAccessiblePostsByIds(trendingPostIds, userUniversityId, customPageRequest.of(SORT_PROPERTY))
+			.getContent();
 	}
 
 	public Map<Long, Optional<Post>> findTopPosts(List<Long> boardIds) {
@@ -68,9 +70,12 @@ public class PostFinder {
 				Function.identity(), // boardId
 				boardId -> postRepository.findTopByBoardIdAndPostStatusOrderByCreatedTimeDesc(boardId, PostStatus.PUBLISHED)
 			));
-			// .map(postRepository::findTopByBoardIdOrderByCreatedTimeDesc)
-			// .flatMap(Optional::stream)
-			// .toList();
+	}
+
+	public List<Post> findTop5ByBoardId(Long boardId) {
+		CustomPageRequest customPageRequest = new CustomPageRequest(1, HOME_POST_PREVIEW_LIMIT, Sort.Direction.DESC);
+		return postRepository.findByBoardIdAndPostStatusOrderByCreatedTimeDesc(boardId, PostStatus.PUBLISHED, customPageRequest.of(SORT_PROPERTY))
+			.getContent();
 	}
 
 	public PostReferenceDto findPostReference(Long postId) {
