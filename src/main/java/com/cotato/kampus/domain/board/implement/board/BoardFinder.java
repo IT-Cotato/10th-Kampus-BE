@@ -66,7 +66,7 @@ public class BoardFinder {
 		return board;
 	}
 
-	public Board findUserUniversityBoard(Long userUniversityId) {
+	public Board findUniversityBoard(Long userUniversityId) {
 		Board board = boardRepository.findByUniversityId(userUniversityId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 		return board;

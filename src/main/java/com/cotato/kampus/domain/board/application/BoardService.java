@@ -72,15 +72,19 @@ public class BoardService {
 		return postDtoMapper.toHomePostThumbnails(boards, latestPosts);
 	}
 
-	public BoardWithFavoriteStatus getUniversityBoard() {
-		// 1. 유저 조회/검증
+	public List<HomePostThumbnail> getUniversityBoardPreview() {
+		// 유저 조회/검증
 		UserDto user = apiUserResolver.getCurrentUserDto();
 		userValidator.validateStudentVerification(user);
 
-		// 2. 대학교 게시판 조회
-		Board universityBoard = boardFinder.findUserUniversityBoard(user.universityId());
+		// 대학 게시판 조회
+		Board universityBoard = boardFinder.findUniversityBoard(user.universityId());
 
-		return boardDtoMapper.mapToBoardWithFavoriteStatus(universityBoard, user);
+		// 최신 게시글 5개 조회
+		List<Post> latestPosts = postFinder.findTop5ByBoardId(universityBoard.getId());
+
+		// 매핑
+		return postDtoMapper.toHomePostThumbnails(universityBoard, latestPosts);
 	}
 
 	public BoardWithFavoriteStatus getBoard(Long boardId) {

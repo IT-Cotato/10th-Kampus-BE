@@ -82,4 +82,10 @@ public class PostDtoMapper {
 			})
 			.toList();
 	}
+
+	public List<HomePostThumbnail> toHomePostThumbnails(Board board, List<Post> posts) {
+		return posts.stream()
+			.map(post -> HomePostThumbnail.from(board, post))
+			.toList();
+	}
 }
