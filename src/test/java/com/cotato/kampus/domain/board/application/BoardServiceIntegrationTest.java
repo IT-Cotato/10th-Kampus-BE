@@ -41,7 +41,7 @@ import com.cotato.kampus.helper.TestUserHelper;
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
-class BoardServiceTest {
+class BoardServiceIntegrationTest {
 	@Autowired
 	private BoardService boardService;
 
