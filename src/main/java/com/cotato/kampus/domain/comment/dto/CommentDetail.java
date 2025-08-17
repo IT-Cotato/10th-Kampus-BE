@@ -52,4 +52,19 @@ public record CommentDetail(
 			replies
 		);
 	}
+
+	public CommentDetail withMaskedContent() {
+		return new CommentDetail(
+			this.commentId,
+			this.parentId,
+			this.targetAuthor,
+			this.commentStatus,
+			this.author,
+			"삭제된 댓글입니다.",
+			this.likes,
+			this.isLiked,
+			this.createdTime,
+			this.replies
+		);
+	}
 }
