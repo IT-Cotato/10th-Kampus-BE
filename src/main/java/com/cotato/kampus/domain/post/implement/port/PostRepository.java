@@ -42,7 +42,7 @@ public interface PostRepository {
 	int updateStatusByBoardIdAndCurrentStatus(Long boardId, PostStatus currentStatus, PostStatus newStatus);
 
 	// 접근 가능한 게시판의 게시글 중 지정된 ID 목록에 해당하는 상위 N개 조회
-	List<Post> findTopAccessiblePostsByIds(List<Long> postIds, Long userUnivId, int limit);
+	Slice<Post> findTopAccessiblePostsByIds(List<Long> postIds, Long userUnivId, Pageable pageable);
 
 	// 접근 가능한 게시글 목록 페이징 조회
 	Slice<Post> findAllAccessiblePostsByIds(List<Long> postIds, Long userUnivId,
@@ -50,6 +50,9 @@ public interface PostRepository {
 
 	// 게시판의 최신 게시글 1개 조회
 	Optional<Post> findTopByBoardIdAndPostStatusOrderByCreatedTimeDesc(Long boardId, PostStatus postStatus);
+
+	// 게시판 게시글 페이징 조회 (최신순)
+	Slice<Post> findByBoardIdAndPostStatusOrderByCreatedTimeDesc(Long boardId, PostStatus postStatus, Pageable pageable);
 
 	// 사용자가 댓글을 작성한 게시글 목록 조회
 	Slice<Post> findPostsByUserComments(Long userId, Pageable pageable);

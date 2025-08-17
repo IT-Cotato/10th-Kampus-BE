@@ -10,7 +10,6 @@ import com.cotato.kampus.domain.board.application.BoardService;
 import com.cotato.kampus.domain.board.api.response.BoardListResponse;
 import com.cotato.kampus.domain.board.api.response.BoardWithDescriptionResponse;
 import com.cotato.kampus.domain.board.api.response.HomePostThumbnailsResponse;
-import com.cotato.kampus.domain.board.api.response.UniversityBoardResponse;
 import com.cotato.kampus.global.common.dto.DataResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,11 +35,11 @@ public class BoardController {
 	}
 
 	@GetMapping("/university")
-	@Operation(summary = "대학교 게시판 조회", description = "(재학생 인증된) 유저의 대학교 게시판을 조회합니다.")
-	public ResponseEntity<DataResponse<UniversityBoardResponse>> getUniversityBoard() {
+	@Operation(summary = "대학교 게시판 최신 글 미리보기 (홈화면)", description = "재학생 인증된 유저의 대학 게시판 최신글 미리보기. 인증 안된 경우 예외처리")
+	public ResponseEntity<DataResponse<HomePostThumbnailsResponse>> getUniversityBoard() {
 		return ResponseEntity.ok(DataResponse.from(
-			UniversityBoardResponse.from(
-				boardService.getUniversityBoard()
+			HomePostThumbnailsResponse.from(
+				boardService.getUniversityBoardPreview()
 			)
 		));
 	}

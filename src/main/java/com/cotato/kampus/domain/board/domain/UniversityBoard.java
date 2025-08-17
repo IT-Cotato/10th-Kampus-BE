@@ -16,8 +16,8 @@ public class UniversityBoard extends Board {
 
 	private final Long universityId;
 
-	@Builder(access = AccessLevel.PRIVATE)
-	private UniversityBoard(
+	@Builder(access = AccessLevel.PACKAGE)
+	UniversityBoard(
 		Long id,
 		String boardName,
 		String description,

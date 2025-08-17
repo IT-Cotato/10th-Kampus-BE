@@ -1,221 +1,104 @@
 package com.cotato.kampus.domain.board.application;
 
-import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.cotato.kampus.domain.board.domain.Board;
-import com.cotato.kampus.domain.board.domain.BoardFavorite;
-import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
 import com.cotato.kampus.domain.board.domain.HomePostThumbnail;
-import com.cotato.kampus.domain.board.domain.NormalBoard;
-import com.cotato.kampus.domain.board.domain.UniversityBoard;
+import com.cotato.kampus.domain.board.domain.TestBoardHelper;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
-import com.cotato.kampus.domain.board.enums.BoardType;
-import com.cotato.kampus.domain.board.implement.port.BoardFavoriteRepository;
-import com.cotato.kampus.domain.board.implement.port.BoardRepository;
+import com.cotato.kampus.domain.board.implement.board.BoardFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
-import com.cotato.kampus.domain.common.enums.Anonymity;
-import com.cotato.kampus.domain.post.domain.NormalPost;
 import com.cotato.kampus.domain.post.domain.Post;
-import com.cotato.kampus.domain.post.domain.TrendingPost;
-import com.cotato.kampus.domain.post.enums.PostStatus;
-import com.cotato.kampus.domain.post.implement.port.PostRepository;
-import com.cotato.kampus.domain.post.implement.port.TrendingPostRepository;
+import com.cotato.kampus.domain.post.implement.post.PostDtoMapper;
+import com.cotato.kampus.domain.post.implement.post.PostFinder;
+import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.domain.user.enums.UserRole;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.helper.TestUserHelper;
 
-@SpringBootTest
-@Transactional
-@ActiveProfiles("test")
-class BoardServiceTest {
-	@Autowired
+@ExtendWith(MockitoExtension.class)
+public class BoardServiceTest {
+
+	@InjectMocks
 	private BoardService boardService;
 
-	@MockBean
+	@Mock
 	private ApiUserResolver apiUserResolver;
 
-	@Autowired
-	BoardRepository boardRepository;
+	@Mock
+	private UserValidator userValidator;
 
-	@Autowired
-	private BoardFavoriteRepository boardFavoriteRepository;
+	@Mock
+	private BoardFinder boardFinder;
 
-	@Autowired
-	private PostRepository postRepository;
+	@Mock
+	private PostFinder postFinder;
 
-	@Autowired
-	private TrendingPostRepository trendingPostRepository;
-
-	private Board savedBoard1;
-	private Board savedBoard2;
-	private Board savedBoard3;
-	private Board savedBoard4;
-	private Board savedBoard5;
-
-	private Post post1;
-	private Post post2;
-	private Post post3;
-	private Post post4;
-	private Post post5;
-
-	@BeforeEach
-	void setUp() {
-		savedBoard1 = boardRepository.save(NormalBoard.create("일반게시판", "자유게시판입니다", false,
-			BoardStatus.ACTIVE, BoardType.NORMAL));
-		savedBoard2 = boardRepository.save(NormalBoard.create("카드뉴스게시판", "카드뉴스게시판입니다", false,
-			BoardStatus.ACTIVE, BoardType.CARDNEWS));
-		savedBoard3 = boardRepository.save(NormalBoard.create("고정게시판", "고정게시판입니다", false,
-			BoardStatus.ACTIVE, BoardType.FIXED));
-		savedBoard4 = boardRepository.save(NormalBoard.create("트렌딩게시판", "트랜딩게시판입니다", false,
-			BoardStatus.ACTIVE, BoardType.TRENDING));
-		savedBoard5 = boardRepository.save(UniversityBoard.create("홍익대학교", "홍대생 전용 게시판입니다", false,
-			BoardStatus.ACTIVE, BoardType.UNIVERSITY, 401L));
-
-		post1 = postRepository.save(
-			NormalPost.create(savedBoard1.getId(), 1L, "일반게시판 게시글", "내용1", PostStatus.PUBLISHED, Anonymity.ANONYMOUS)
-		);
-		post2 = postRepository.save(
-			NormalPost.create(savedBoard2.getId(), 2L, "카드뉴스게시판 게시글", "내용2", PostStatus.PUBLISHED, Anonymity.ANONYMOUS)
-		);
-		post3 = postRepository.save(
-			NormalPost.create(savedBoard3.getId(), 3L, "고정게시판 게시글", "내용3", PostStatus.PUBLISHED, Anonymity.ANONYMOUS)
-		);
-		post4 = postRepository.save(
-			NormalPost.create(savedBoard4.getId(), 4L, "트렌딩게시판 게시글", "내용4", PostStatus.PUBLISHED, Anonymity.ANONYMOUS)
-		);
-		post5 = postRepository.save(
-			NormalPost.create(savedBoard5.getId(), 5L, "홍익대학교 게시글", "내용5", PostStatus.PUBLISHED, Anonymity.ANONYMOUS)
-		);
-	}
+	@Mock
+	private PostDtoMapper postDtoMapper;
 
 	@Test
-	@DisplayName("공용 게시판 목록 조회 테스트 - 성공")
-	void getBoardList_success() {
-		// Given
-		Long userId = TestUserHelper.createUserDto(1L, null, UserRole.UNVERIFIED).id();
-		given(apiUserResolver.getCurrentUserId()).willReturn(userId);
+	@DisplayName("대학 게시판 미리보기 성공")
+	void getUniversityBoardPreview_Success() {
+		// given
+		Long userId = 1L;
+		Long universityId = 1L;
+		Long boardId = 1L;
+		UserDto user = TestUserHelper.createUserDto(userId, universityId, UserRole.VERIFIED);
+		Board universityBoard = TestBoardHelper.createUniversityBoard(boardId, false, BoardStatus.ACTIVE, universityId);
+		List<Post> posts = List.of();
+		List<HomePostThumbnail> expectedThumbnails = List.of();
 
-		// 트렌딩 게시판 즐겨찾기
-		boardFavoriteRepository.save(BoardFavorite.builder()
-			.userId(userId)
-			.boardId(savedBoard4.getId())
-			.build());
-
-		// When
-		List<BoardWithFavoriteStatus> result = boardService.getBoardList();
-
-		// Then
-		assertThat(result.size()).isEqualTo(4);
-		// 즐겨찾기한 게시판 우선 정렬됨
-		assertThat(result.get(0).isFavorite()).isEqualTo(true);
-		assertThat(result.get(0).boardId()).isEqualTo(savedBoard4.getId());
-	}
-
-	@Test
-	@DisplayName("즐겨찾기 게시판 미리보기 - 성공")
-	void getFavoriteBoardPreview_success() {
-		// Given
-		Long userId = TestUserHelper.createUserDto(1L, null, UserRole.UNVERIFIED).id();
-		given(apiUserResolver.getCurrentUserId()).willReturn(userId);
-
-		// 고정 게시판 즐겨찾기
-		boardFavoriteRepository.save(BoardFavorite.builder()
-			.userId(userId)
-			.boardId(savedBoard3.getId())
-			.build());
-
-		// When
-		List<HomePostThumbnail> result = boardService.getFavoriteBoardPreview();
-
-		// Then
-		assertThat(result.size()).isEqualTo(1);
-		assertThat(result.get(0).boardId()).isEqualTo(savedBoard3.getId());
-		assertThat(result.get(0).postTitle()).isEqualTo("고정게시판 게시글");
-	}
-
-
-	@Test
-	@DisplayName("사용자의 대학 게시판 조회 - 성공")
-	void getUniversityBoard_success() {
-		// Given
-		UserDto user = TestUserHelper.createUserDto(1L, 401L, UserRole.VERIFIED);
 		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+		given(boardFinder.findUniversityBoard(universityId)).willReturn(universityBoard);
+		given(postFinder.findTop5ByBoardId(boardId)).willReturn(posts);
+		given(postDtoMapper.toHomePostThumbnails(universityBoard, posts)).willReturn(expectedThumbnails);
 
-		// When
-		BoardWithFavoriteStatus result = boardService.getUniversityBoard();
+		// when
+		List<HomePostThumbnail> result = boardService.getUniversityBoardPreview();
 
-		// Then
-		assertThat(result.boardName()).isEqualTo("홍익대학교");
+		// then
+		assertThat(result).isNotNull();
+		verify(apiUserResolver).getCurrentUserDto();
+		verify(userValidator).validateStudentVerification(user);
+		verify(boardFinder).findUniversityBoard(universityId);
+		verify(postFinder).findTop5ByBoardId(boardId);
+		verify(postDtoMapper).toHomePostThumbnails(universityBoard, posts);
 	}
 
 	@Test
-	@DisplayName("사용자의 대학 게시판 조회 - 재학 인증 안된 유저 예외")
-	void getUniversityBoard_userUnverified() {
-		// Given
-		UserDto user = TestUserHelper.createUserDto(1L, null, UserRole.UNVERIFIED);
+	@DisplayName("대학 게시판 미리보기 실패 - 재학생 인증 안 된 유저")
+	void getUniversityBoardPreview_Failure_unverified() {
+		// given
+		Long userId = 1L;
+		UserDto user = TestUserHelper.createUserDto(userId, null, UserRole.UNVERIFIED);
+
 		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+		doThrow(new AppException(ErrorCode.USER_UNVERIFIED))
+			.when(userValidator).validateStudentVerification(user);
 
-		// When & Then
-		assertThatThrownBy(() -> boardService.getUniversityBoard())
-			.isInstanceOf(AppException.class)
-			.hasMessage(ErrorCode.USER_UNVERIFIED.getMessage());
-	}
+		// when & then
+		AppException exception = assertThrows(AppException.class, () -> {
+			boardService.getUniversityBoardPreview();
+		});
 
-	@Test
-	@DisplayName("특정 게시판 조회 - 성공")
-	void getBoard_success() {
-		// Given
-		UserDto user = TestUserHelper.createUserDto(1L, null, UserRole.UNVERIFIED);
-		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
+		assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.USER_UNVERIFIED);
 
-		// 고정 게시판 즐겨찾기
-		boardFavoriteRepository.save(BoardFavorite.builder()
-			.userId(user.id())
-			.boardId(savedBoard3.getId())
-			.build());
-
-		// When
-		BoardWithFavoriteStatus result = boardService.getBoard(3L);
-
-		// Then
-		assertThat(result.boardId()).isEqualTo(3L);
-		assertThat(result.isFavorite()).isEqualTo(true);
-	}
-
-	@Test
-	@DisplayName("트렌딩 게시판 미리보기")
-	void getTrendingPreview_success() {
-		// Given
-		// 재학 인증 안된 유저
-		UserDto user = TestUserHelper.createUserDto(1L, null, UserRole.UNVERIFIED);
-		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
-
-		trendingPostRepository.save(TrendingPost.builder().postId(post1.getId()).build());
-		trendingPostRepository.save(TrendingPost.builder().postId(post2.getId()).build());
-		trendingPostRepository.save(TrendingPost.builder().postId(post4.getId()).build());
-		// 홍익대학교 게시글
-		trendingPostRepository.save(TrendingPost.builder().postId(post5.getId()).build());
-
-		// When
-		List<HomePostThumbnail> result = boardService.getTrendingPreview();
-
-		// Then
-		// 타대학 게시판은 제외하고 최신순으로 조회된다
-		assertThat(result.size()).isEqualTo(3);
-		assertThat(result.get(0).postId()).isEqualTo(post4.getId());
+		verify(boardFinder, never()).findUniversityBoard(any());
+		verify(postFinder, never()).findTop5ByBoardId(any());
+		verify(postDtoMapper, never()).toHomePostThumbnails((Board)any(), any());
 	}
 }

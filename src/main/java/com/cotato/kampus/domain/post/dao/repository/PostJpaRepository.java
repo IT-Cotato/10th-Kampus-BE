@@ -50,10 +50,9 @@ public interface PostJpaRepository extends JpaRepository<PostEntity, Long> {
 			AND p.postStatus = 'PUBLISHED'
 			AND (b.boardType <> 'UNIVERSITY' OR b.universityId = :userUnivId)
 			ORDER BY p.createdTime DESC
-			LIMIT :limit
 		""")
-	List<PostEntity> findTopAccessiblePostsByIds(@Param("postIds") List<Long> postIds, @Param("userUnivId") Long userUnivId,
-		@Param("limit") int limit);
+	Slice<PostEntity> findTopAccessiblePostsByIds(@Param("postIds") List<Long> postIds, @Param("userUnivId") Long userUnivId,
+		Pageable pageable);
 
 	@Query("""
 				SELECT p FROM PostEntity p
@@ -67,6 +66,8 @@ public interface PostJpaRepository extends JpaRepository<PostEntity, Long> {
 		Pageable pageable);
 
 	Optional<PostEntity> findTopByBoardIdAndPostStatusOrderByCreatedTimeDesc(Long boardId, PostStatus postStatus);
+	
+	Slice<PostEntity> findByBoardIdAndPostStatusOrderByCreatedTimeDesc(Long boardId, PostStatus postStatus, Pageable pageable);
 
 	@Query("""
 		    SELECT DISTINCT p
