@@ -92,8 +92,9 @@ public class CommentService {
 		// 댓글 조회
 		CommentDto commentDto = commentFinder.findCommentDto(commentId);
 
-		// 작성자 검증
+		// 유효성 검증
 		commentValidator.validateCommentAuthor(userId, commentDto);
+		commentValidator.validateCommentStatus(commentId);
 
 		// 댓글 상태 업데이트
 		commentDeleter.delete(commentId);
