@@ -26,7 +26,7 @@ public class BoardController {
 	private final BoardService boardService;
 
 	@GetMapping("/public")
-	@Operation(summary = "공용 게시판 목록 조회", description = "공용 게시판 목록을 조회합니다. (학교 게시판 제외)")
+	@Operation(summary = "전체 게시판 목록 조회", description = "전체 게시판 목록을 조회합니다. 인증된 유저는 학교 게시판(존재하는 경우)을 포함하여 반환합니다.")
 	public ResponseEntity<DataResponse<BoardListResponse>> getBoardList() {
 		return ResponseEntity.ok(DataResponse.from(
 			BoardListResponse.from(

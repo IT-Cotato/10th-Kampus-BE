@@ -20,10 +20,21 @@ import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.implement.post.PostDtoMapper;
 import com.cotato.kampus.domain.post.implement.post.PostFinder;
 import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostFinder;
+import com.cotato.kampus.domain.user.application.UserFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
+import com.cotato.kampus.domain.user.domain.User;
 import com.cotato.kampus.domain.user.dto.UserDto;
-
+import com.cotato.kampus.domain.user.enums.UserRole;
+import com.cotato.kampus.domain.user.enums.VerificationStatus;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -41,13 +52,18 @@ public class BoardService {
 
 	public List<BoardWithFavoriteStatus> getBoardList() {
 		// 유저 조회
-		Long userId = apiUserResolver.getCurrentUserId();
+		UserDto userDto = apiUserResolver.getCurrentUserDto();
 
-		// 즐겨찾는 게시판 조회
-		List<Long> favoriteBoardIds = boardFavoriteFinder.findFavoriteBoardIds(userId);
+		// 즐겨찾는 게시판 id 조회
+		Set<Long> favoriteBoardIds = boardFavoriteFinder.findFavoriteBoardIds(userDto.id());
 
 		// 공용 게시판 조회
-		List<Board> boards = boardFinder.findPublicBoards();
+		List<Board> boards = new ArrayList<>(boardFinder.findPublicBoards());
+
+		// 재학생 인증 유저일 경우, 대학 게시판 추가
+		if (userDto.userRole() == UserRole.VERIFIED) {
+			boardFinder.findByUniversityId(userDto.universityId()).ifPresent(boards::add);
+		}
 
 		// 즐겨찾기 여부 매핑
 		List<BoardWithFavoriteStatus> boardWithFavorites = new ArrayList<>(
