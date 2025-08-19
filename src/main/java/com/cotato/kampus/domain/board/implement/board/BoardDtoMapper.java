@@ -3,6 +3,7 @@ package com.cotato.kampus.domain.board.implement.board;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class BoardDtoMapper {
 		return BoardWithFavoriteStatus.from(board, isFavorite);
 	}
 
-	public List<BoardWithFavoriteStatus> updateFavoriteStatus(List<Board> boards, List<Long> favoriteBoardIds) {
+	public List<BoardWithFavoriteStatus> updateFavoriteStatus(List<Board> boards, Set<Long> favoriteBoardIds) {
 		return boards.stream()
 			.map(board -> BoardWithFavoriteStatus.from(board, favoriteBoardIds.contains(board.getId())
 			))

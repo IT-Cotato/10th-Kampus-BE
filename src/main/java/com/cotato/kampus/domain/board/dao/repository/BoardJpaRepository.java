@@ -3,6 +3,7 @@ package com.cotato.kampus.domain.board.dao.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,7 +19,7 @@ public interface BoardJpaRepository extends JpaRepository<BoardEntity, Long> {
 
 	Optional<BoardEntity> findByUniversityId(Long universityId);
 
-	List<BoardEntity> findAllByIdIn(List<Long> ids);
+	List<BoardEntity> findAllByIdIn(Set<Long> ids);
 
 	boolean existsByUniversityId(Long universityId);
 

@@ -3,6 +3,7 @@ package com.cotato.kampus.domain.board.dao.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Repository;
 
@@ -40,7 +41,7 @@ public class BoardRepositoryImpl implements BoardRepository {
 	}
 
 	@Override
-	public List<Board> findAllByIdIn(List<Long> ids){
+	public List<Board> findAllByIdIn(Set<Long> ids){
 		return boardJpaRepository.findAllByIdIn(ids).stream()
 			.map(BoardEntity::toDomain)
 			.toList();

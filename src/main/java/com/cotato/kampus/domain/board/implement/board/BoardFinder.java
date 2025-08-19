@@ -2,6 +2,8 @@ package com.cotato.kampus.domain.board.implement.board;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +50,7 @@ public class BoardFinder {
 	}
 
 	public List<Board> findFavoriteBoardsForPreview(Long userId) {
-		List<Long> favoritesBoardIds = boardFavoriteFinder.findFavoriteBoardIds(userId);
+		Set<Long> favoritesBoardIds = boardFavoriteFinder.findFavoriteBoardIds(userId);
 		List<Board> favoriteBoards = boardRepository.findAllByIdIn(favoritesBoardIds);
 
 		return favoriteBoards.stream()
@@ -65,6 +67,10 @@ public class BoardFinder {
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND));
 
 		return board;
+	}
+
+	public Optional<Board> findByUniversityId(Long universityId) {
+		return boardRepository.findByUniversityId(universityId);
 	}
 
 	public Board findUniversityBoard(Long userUniversityId) {
