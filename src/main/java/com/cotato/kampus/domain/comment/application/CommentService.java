@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
+import com.cotato.kampus.domain.comment.dao.CommentRepository;
 import com.cotato.kampus.domain.comment.dto.CommentDetail;
 import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -86,25 +87,16 @@ public class CommentService {
 
 	@Transactional
 	public void deleteComment(Long commentId) {
-		// 유저 조회
+		// 1. 유저, 댓글 확인
 		Long userId = apiUserResolver.getCurrentUserId();
-
-		// 댓글 조회
 		CommentDto commentDto = commentFinder.findCommentDto(commentId);
 
-		// 작성자 검증
+		// 2. 댓글을 삭제할 수 있는 권한과 상태인지 검증
 		commentValidator.validateCommentAuthor(userId, commentDto);
+		commentValidator.validateCommentStatus(commentId);
 
-		// 댓글 삭제
-		commentDeleter.delete(commentId);
-
-		// 게시글의 댓글 수 - 1
-		Post post = postFinder.find(commentDto.postId());
-
-		postUpdater.decreaseCommentCount(post);
-
-		// 댓글 좋아요 데이터 삭제
-		commentLikeDeleter.deleteAllByCommentId(commentId);
+		// 3. 댓글 삭제의 모든 후속 처리를 Deleter에게 위임
+		commentDeleter.delete(commentDto);
 	}
 
 	@Transactional
