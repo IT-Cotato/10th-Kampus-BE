@@ -50,6 +50,7 @@ public class CommentMapper {
 				CommentDetail parent = commentMap.get(detail.parentId());
 				if(parent != null) {
 					parent.replies().add(detail);
+					parent.replies().sort(Comparator.comparing(CommentDetail::createdTime));
 				}
 			}
 		}
