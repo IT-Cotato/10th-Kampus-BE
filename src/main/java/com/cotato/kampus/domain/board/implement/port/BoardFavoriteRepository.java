@@ -2,6 +2,7 @@ package com.cotato.kampus.domain.board.implement.port;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Repository;
 
@@ -23,4 +24,6 @@ public interface BoardFavoriteRepository {
 	void saveAll(List<BoardFavorite> boardFavorites);
 
 	void deleteByUserIdAndBoardId(Long userId, Long boardId);
+
+	Set<Long> findBoardIdsByUserId(Long userId);
 }

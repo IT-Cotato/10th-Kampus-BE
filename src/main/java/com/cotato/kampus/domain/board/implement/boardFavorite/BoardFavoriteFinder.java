@@ -1,6 +1,6 @@
 package com.cotato.kampus.domain.board.implement.boardFavorite;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +20,8 @@ public class BoardFavoriteFinder {
 
 	private final BoardFavoriteRepository boardFavoriteRepository;
 
-	public List<Long> findFavoriteBoardIds(Long userId) {
-		return boardFavoriteRepository.findAllByUserId(userId)
-			.stream()
-			.map(BoardFavorite::getBoardId)
-			.toList();
+	public Set<Long> findFavoriteBoardIds(Long userId) {
+		return boardFavoriteRepository.findBoardIdsByUserId(userId);
 	}
 
 	public boolean existsByUserIdAndBoardId(Long userId, Long boardId) {

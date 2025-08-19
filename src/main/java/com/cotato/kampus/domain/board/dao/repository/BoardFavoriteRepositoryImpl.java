@@ -2,6 +2,7 @@ package com.cotato.kampus.domain.board.dao.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Repository;
 
@@ -58,5 +59,10 @@ public class BoardFavoriteRepositoryImpl implements BoardFavoriteRepository {
 	@Override
 	public void deleteByUserIdAndBoardId(Long userId, Long boardId) {
 		boardFavoriteJpaRepository.deleteByUserIdAndBoardId(userId, boardId);
+	}
+
+	@Override
+	public Set<Long> findBoardIdsByUserId(Long userId) {
+		return boardFavoriteJpaRepository.findBoardIdsByUserId(userId);
 	}
 }
