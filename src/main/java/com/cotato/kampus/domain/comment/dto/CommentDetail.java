@@ -60,7 +60,7 @@ public record CommentDetail(
 			this.targetAuthor,
 			this.commentStatus,
 			this.author,
-			"삭제된 댓글입니다.",
+			"This comment was deleted.",
 			this.likes,
 			this.isLiked,
 			this.createdTime,
