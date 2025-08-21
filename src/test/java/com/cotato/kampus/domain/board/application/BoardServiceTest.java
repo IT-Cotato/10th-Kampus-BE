@@ -32,6 +32,8 @@ import com.cotato.kampus.helper.TestUserHelper;
 @ExtendWith(MockitoExtension.class)
 public class BoardServiceTest {
 
+	private static int unsedVariable = 10;
+
 	@InjectMocks
 	private BoardService boardService;
 
