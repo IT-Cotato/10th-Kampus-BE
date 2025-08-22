@@ -1,7 +1,5 @@
 package com.cotato.kampus.domain.user.api;
 
-import java.io.IOException;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,18 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cotato.kampus.domain.user.application.UserService;
-import com.cotato.kampus.domain.user.dto.request.ConfirmMailRequest;
 import com.cotato.kampus.domain.user.dto.request.NicknameCheckRequest;
-import com.cotato.kampus.domain.user.dto.request.SendMailRequest;
 import com.cotato.kampus.domain.user.dto.request.UserDetailsUpdateRequest;
 import com.cotato.kampus.domain.user.dto.request.UserInfoUpdateRequest;
-import com.cotato.kampus.domain.user.dto.response.ConfirmMailResponse;
 import com.cotato.kampus.domain.user.dto.response.NicknameCheckResponse;
-import com.cotato.kampus.domain.user.dto.response.UnivCertResponse;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsResponse;
 import com.cotato.kampus.domain.user.dto.response.UserDetailsUpdateResponse;
 import com.cotato.kampus.domain.user.dto.response.UserInfoUpdateResponse;
-import com.cotato.kampus.domain.user.dto.response.VerifyStatusResponse;
 import com.cotato.kampus.domain.user.enums.Nationality;
 import com.cotato.kampus.domain.user.enums.PreferredLanguage;
 import com.cotato.kampus.global.common.dto.DataResponse;

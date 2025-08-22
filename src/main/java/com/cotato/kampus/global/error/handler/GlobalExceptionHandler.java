@@ -15,7 +15,6 @@ import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.error.exception.ImageValidationException;
-import com.cotato.kampus.global.error.exception.UnivCertException;
 import com.cotato.kampus.global.error.response.ErrorResponse;
 import com.deepl.api.DeepLException;
 
@@ -70,15 +69,6 @@ public class GlobalExceptionHandler {
 		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
 		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INVALID_DEEPL_AUTH_KEY, request);
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-			.body(errorResponse);
-	}
-
-	@ExceptionHandler(UnivCertException.class)
-	public ResponseEntity<ErrorResponse> handleUnivCertException(UnivCertException e, HttpServletRequest request) {
-		log.error("UnivCert Exception 발생: {}", e.getMessage());
-		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
-		ErrorResponse errorResponse = ErrorResponse.of(request, e.getErrorCode(), e.getMessage());
-		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
 			.body(errorResponse);
 	}
 

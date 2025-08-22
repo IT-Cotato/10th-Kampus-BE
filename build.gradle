@@ -67,7 +67,6 @@ dependencies {
     implementation 'com.deepl.api:deepl-java:1.7.0'
 
     // univcert
-    implementation 'com.github.in-seo:univcert:master-SNAPSHOT'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     // FCM
