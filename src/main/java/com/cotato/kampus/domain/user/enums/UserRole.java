@@ -6,6 +6,6 @@ public enum UserRole {
 	UNVERIFIED;
 
 	public boolean canAccessUniversityBoard() {
-		return this == VERIFIED || this == UNVERIFIED;
+		return this == VERIFIED || this == ADMIN;
 	}
 }
