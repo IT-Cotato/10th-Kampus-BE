@@ -93,7 +93,7 @@ public class BoardFinder {
 	}
 
 	public List<Long> findDefaultFavoriteBoardIds() {
-		List<BoardType> targetTypes = List.of(BoardType.FIXED, BoardType.CARDNEWS);
+		List<BoardType> targetTypes = List.of(BoardType.FIXED, BoardType.CARDNEWS, BoardType.TRENDING);
 		return boardRepository.findBoardIdsByBoardTypeIn(targetTypes);
 	}
 
