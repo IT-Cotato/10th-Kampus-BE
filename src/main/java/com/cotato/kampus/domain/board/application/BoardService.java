@@ -61,7 +61,7 @@ public class BoardService {
 		List<Board> boards = new ArrayList<>(boardFinder.findPublicBoards());
 
 		// 재학생 인증 유저일 경우, 대학 게시판 추가
-		if (userDto.userRole() == UserRole.VERIFIED) {
+		if (userDto.userRole().canAccessUniversityBoard()) {
 			boardFinder.findByUniversityId(userDto.universityId()).ifPresent(boards::add);
 		}
 
