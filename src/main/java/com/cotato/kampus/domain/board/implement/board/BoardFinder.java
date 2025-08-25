@@ -25,8 +25,11 @@ import lombok.RequiredArgsConstructor;
 public class BoardFinder {
 
 	private static final List<BoardType> EXCLUDED_BOARD_TYPES_FOR_FAVORITE_PREVIEW = List.of(
-		BoardType.CARDNEWS,
-		BoardType.TRENDING
+		BoardType.CARDNEWS, BoardType.TRENDING
+	);
+
+	private static final List<BoardType> DEFAULT_FAVORITE_BOARD_TYPES = List.of(
+		BoardType.FIXED, BoardType.CARDNEWS, BoardType.TRENDING
 	);
 
 	private final BoardRepository boardRepository;
@@ -93,8 +96,7 @@ public class BoardFinder {
 	}
 
 	public List<Long> findDefaultFavoriteBoardIds() {
-		List<BoardType> targetTypes = List.of(BoardType.FIXED, BoardType.CARDNEWS, BoardType.TRENDING);
-		return boardRepository.findBoardIdsByBoardTypeIn(targetTypes);
+		return boardRepository.findBoardIdsByBoardTypeIn(DEFAULT_FAVORITE_BOARD_TYPES);
 	}
 
 	public Long findUniversityBoardId(Long universityId) {
