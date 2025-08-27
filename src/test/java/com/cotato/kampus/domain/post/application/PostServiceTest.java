@@ -1,7 +1,6 @@
 package com.cotato.kampus.domain.post.application;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,7 +25,7 @@ import com.cotato.kampus.domain.post.implement.post.PostFinder;
 import com.cotato.kampus.domain.post.implement.postCategory.PostCategoryFinder;
 import com.cotato.kampus.domain.post.implement.postImage.PostPhotoFinder;
 import com.cotato.kampus.domain.post.implement.postLike.PostLikeFinder;
-import com.cotato.kampus.domain.post.implement.postSrcap.PostScrapFinder;
+import com.cotato.kampus.domain.post.implement.postScrap.PostScrapFinder;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceTest {

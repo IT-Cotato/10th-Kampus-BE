@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.post.implement.postSrcap;
+package com.cotato.kampus.domain.post.implement.postScrap;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

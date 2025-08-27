@@ -15,7 +15,7 @@ import com.cotato.kampus.domain.post.domain.Post;
 import com.cotato.kampus.domain.post.domain.PostThumbnail;
 import com.cotato.kampus.domain.post.domain.PostThumbnailWithBoardName;
 import com.cotato.kampus.domain.post.implement.postImage.PostPhotoFinder;
-import com.cotato.kampus.domain.post.implement.postSrcap.PostScrapFinder;
+import com.cotato.kampus.domain.post.implement.postScrap.PostScrapFinder;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class PostDtoMapper {
 
 	public PostThumbnail toPostThumbnail(Post post, Long userId) {
 		String thumbnail = postPhotoFinder.findFirstPhoto(post.getId());
-		boolean isScrapped = postScrapFinder.isPostScrappedByUser(userId, post.getId());
+		boolean isScrapped = postScrapFinder.isPostScrappedByUser(post.getId(), userId);
 		return PostThumbnail.from(post, thumbnail, isScrapped);
 	}
 
@@ -42,7 +42,7 @@ public class PostDtoMapper {
 	public PostThumbnailWithBoardName toPostThumbnailWithBoardName(Post post, Long userId) {
 		String thumbnail = postPhotoFinder.findFirstPhoto(post.getId());
 		Board board = boardFinder.findBoard(post.getBoardId());
-		boolean isScrapped = postScrapFinder.isPostScrappedByUser(userId, post.getId());
+		boolean isScrapped = postScrapFinder.isPostScrappedByUser(post.getId(), userId);
 		return PostThumbnailWithBoardName.from(post, board, thumbnail, isScrapped);
 	}
 
