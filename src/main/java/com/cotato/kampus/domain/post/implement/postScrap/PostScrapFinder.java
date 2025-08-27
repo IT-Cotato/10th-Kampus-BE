@@ -1,4 +1,4 @@
-package com.cotato.kampus.domain.post.implement.postSrcap;
+package com.cotato.kampus.domain.post.implement.postScrap;
 
 import java.util.List;
 

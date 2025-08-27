@@ -1,6 +1,6 @@
-package com.cotato.kampus.domain.post.implement.postSrcap;
+package com.cotato.kampus.domain.post.implement.postScrap;
 
-import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +35,7 @@ class PostScrapFinderTest {
 
 		// then
 		assertThat(isScrapped).isTrue();
+		verifyNoMoreInteractions(postScrapRepository);
 		verify(postScrapRepository).existsByPostIdAndUserId(postId, userId);
 	}
 
@@ -52,6 +53,7 @@ class PostScrapFinderTest {
 
 		// then
 		assertThat(isScrapped).isFalse();
+		verifyNoMoreInteractions(postScrapRepository);
 		verify(postScrapRepository).existsByPostIdAndUserId(postId, userId);
 	}
 }
