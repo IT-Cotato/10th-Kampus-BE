@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.Board;
 import com.cotato.kampus.domain.board.implement.board.BoardFinder;
-import com.cotato.kampus.domain.comment.dao.CommentRepository;
 import com.cotato.kampus.domain.comment.dto.CommentDetail;
 import com.cotato.kampus.domain.comment.dto.CommentDto;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
@@ -17,7 +16,7 @@ import com.cotato.kampus.domain.post.domain.PostThumbnailWithBoardName;
 import com.cotato.kampus.domain.post.implement.post.PostFinder;
 import com.cotato.kampus.domain.post.implement.post.PostUpdater;
 import com.cotato.kampus.domain.post.implement.postImage.PostPhotoFinder;
-import com.cotato.kampus.domain.post.implement.postSrcap.PostScrapFinder;
+import com.cotato.kampus.domain.post.implement.postScrap.PostScrapFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
 
@@ -154,7 +153,7 @@ public class CommentService {
 		return userCommentedPosts.map(post -> {
 			String thumbnail = postPhotoFinder.findFirstPhoto(post.getId());
 			Board board = boardFinder.findBoard(post.getBoardId());
-			boolean isScrapped = postScrapFinder.isPostScrappedByUser(userId, post.getId());
+			boolean isScrapped = postScrapFinder.isPostScrappedByUser(post.getId(), userId);
 			return PostThumbnailWithBoardName.from(post, board, thumbnail, isScrapped);
 		});
 	}
