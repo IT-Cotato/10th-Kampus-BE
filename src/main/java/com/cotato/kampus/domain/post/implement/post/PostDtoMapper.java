@@ -42,7 +42,7 @@ public class PostDtoMapper {
 	public PostThumbnailWithBoardName toPostThumbnailWithBoardName(Post post, Long userId) {
 		String thumbnail = postPhotoFinder.findFirstPhoto(post.getId());
 		Board board = boardFinder.findBoard(post.getBoardId());
-		boolean isScrapped = postScrapFinder.isPostScrappedByUser(userId, post.getId());
+		boolean isScrapped = postScrapFinder.isPostScrappedByUser(post.getId(), userId);
 		return PostThumbnailWithBoardName.from(post, board, thumbnail, isScrapped);
 	}
 
