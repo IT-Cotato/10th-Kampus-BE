@@ -35,8 +35,8 @@ class PostScrapFinderTest {
 
 		// then
 		assertThat(isScrapped).isTrue();
-		verifyNoMoreInteractions(postScrapRepository);
 		verify(postScrapRepository).existsByPostIdAndUserId(postId, userId);
+		verifyNoMoreInteractions(postScrapRepository);
 	}
 
 	@Test
@@ -53,7 +53,7 @@ class PostScrapFinderTest {
 
 		// then
 		assertThat(isScrapped).isFalse();
-		verifyNoMoreInteractions(postScrapRepository);
 		verify(postScrapRepository).existsByPostIdAndUserId(postId, userId);
+		verifyNoMoreInteractions(postScrapRepository);
 	}
 }
