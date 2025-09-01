@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardFinder {
 
 	private static final List<BoardType> EXCLUDED_BOARD_TYPES_FOR_FAVORITE_PREVIEW = List.of(
-		BoardType.CARDNEWS, BoardType.TRENDING
+		BoardType.CARDNEWS, BoardType.TRENDING, BoardType.UNIVERSITY
 	);
 
 	private static final List<BoardType> DEFAULT_FAVORITE_BOARD_TYPES = List.of(
