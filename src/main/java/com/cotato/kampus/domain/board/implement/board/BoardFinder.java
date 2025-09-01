@@ -1,6 +1,7 @@
 package com.cotato.kampus.domain.board.implement.board;
 
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -24,8 +25,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardFinder {
 
-	private static final List<BoardType> EXCLUDED_BOARD_TYPES_FOR_FAVORITE_PREVIEW = List.of(
-		BoardType.CARDNEWS, BoardType.TRENDING
+	private static final Set<BoardType> EXCLUDED_BOARD_TYPES_FOR_FAVORITE_PREVIEW = EnumSet.of(
+		BoardType.CARDNEWS, BoardType.TRENDING, BoardType.UNIVERSITY
 	);
 
 	private static final List<BoardType> DEFAULT_FAVORITE_BOARD_TYPES = List.of(
