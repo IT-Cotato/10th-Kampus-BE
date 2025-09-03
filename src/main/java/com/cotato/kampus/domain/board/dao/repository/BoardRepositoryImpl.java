@@ -119,10 +119,7 @@ public class BoardRepositoryImpl implements BoardRepository {
 	public List<BoardWithPostCount> findBoardsWithPostCount(BoardStatus status) {
 		List<BoardWithPostCountProjection> results = boardJpaRepository.findBoardsWithPostCount(status);
 		return results.stream()
-			.map(projection -> new BoardWithPostCount(
-				projection.getBoard().toDomain(),  // BoardEntity -> Board 변환
-				projection.getPostCount()  // 게시글 수
-			))
+			.map(BoardRepositoryImpl::toDomainRow)
 			.toList();
 	}
 
@@ -130,10 +127,11 @@ public class BoardRepositoryImpl implements BoardRepository {
 	public List<BoardWithPostCount> findAllBoardsWithPostCount() {
 		List<BoardWithPostCountProjection> results = boardJpaRepository.findAllBoardsWithPostCount();
 		return results.stream()
-			.map(projection -> new BoardWithPostCount(
-				projection.getBoard().toDomain(),  // BoardEntity -> Board 변환
-				projection.getPostCount()  // 게시글 수
-			))
+			.map(BoardRepositoryImpl::toDomainRow)
 			.toList();
+	}
+
+	private static BoardWithPostCount toDomainRow(BoardWithPostCountProjection p) {
+		return new BoardWithPostCount(p.getBoard().toDomain(), p.getPostCount());
 	}
 }
