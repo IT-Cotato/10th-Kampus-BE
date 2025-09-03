@@ -29,6 +29,10 @@ public class BoardFinder {
 		BoardType.CARDNEWS, BoardType.TRENDING, BoardType.UNIVERSITY
 	);
 
+	private static final List<BoardType> EXCLUDED_BOARD_TYPES_FOR_ADMIN = List.of(
+		BoardType.CARDNEWS
+	);
+
 	private static final List<BoardType> DEFAULT_FAVORITE_BOARD_TYPES = List.of(
 		BoardType.FIXED, BoardType.CARDNEWS, BoardType.TRENDING
 	);
@@ -95,17 +99,17 @@ public class BoardFinder {
 
 	public List<Object[]> findAllBoardsWithPostCount() {
 		List<Object[]> results = boardRepository.findAllBoardsWithPostCount();
-		// 카드뉴스 제외 필터링
+		// 관리자용 제외 게시판 필터링
 		return results.stream()
-			.filter(arr -> !((Board) arr[0]).getBoardType().equals(BoardType.CARDNEWS))
+			.filter(arr -> !EXCLUDED_BOARD_TYPES_FOR_ADMIN.contains(((Board) arr[0]).getBoardType()))
 			.toList();
 	}
 
 	public List<Object[]> findBoardsWithPostCount(BoardStatus status) {
 		List<Object[]> results = boardRepository.findBoardsWithPostCount(status);
-		// 카드뉴스 제외 필터링
+		// 관리자용 제외 게시판 필터링
 		return results.stream()
-			.filter(arr -> !((Board) arr[0]).getBoardType().equals(BoardType.CARDNEWS))
+			.filter(arr -> !EXCLUDED_BOARD_TYPES_FOR_ADMIN.contains(((Board) arr[0]).getBoardType()))
 			.toList();
 	}
 }

@@ -58,11 +58,6 @@ public class PostRepositoryImpl implements PostRepository {
 	}
 
 	@Override
-	public Long countByBoardId(Long boardId) {
-		return postJpaRepository.countByBoardId(boardId);
-	}
-
-	@Override
 	public Slice<Post> findAllByBoardIdAndIdInAndPostStatus(Long boardId, List<Long> postIds, PostStatus postStatus, Pageable pageable) {
 		return postJpaRepository.findAllByBoardIdAndIdInAndPostStatus(boardId, postIds, postStatus, pageable)
 			.map(PostEntity::toDomain);

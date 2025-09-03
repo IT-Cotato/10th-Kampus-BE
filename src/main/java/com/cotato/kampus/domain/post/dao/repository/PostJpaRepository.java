@@ -1,7 +1,6 @@
 package com.cotato.kampus.domain.post.dao.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -14,8 +13,6 @@ import com.cotato.kampus.domain.post.dao.entity.PostEntity;
 import com.cotato.kampus.domain.post.enums.PostStatus;
 
 public interface PostJpaRepository extends JpaRepository<PostEntity, Long> {
-
-	Long countByBoardId(Long boardId);
 
 	Slice<PostEntity> findAllByBoardIdAndPostStatus(Long boardId, PostStatus postStatus, Pageable pageable);
 

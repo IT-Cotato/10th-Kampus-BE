@@ -2,7 +2,6 @@ package com.cotato.kampus.domain.post.implement.post;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -76,12 +75,6 @@ public class PostFinder {
 			.getContent();
 	}
 
-	public PostReferenceDto findPostReference(Long postId) {
-		return postRepository.findById(postId)
-			.map(PostReferenceDto::from)
-			.orElse(PostReferenceDto.deleted());
-	}
-
 	public Slice<Post> findAllByUserId(Long userId, int page) {
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
 		return postRepository.findAllByUserIdAndPostStatus(userId, PostStatus.PUBLISHED, customPageRequest.of(SORT_PROPERTY));
@@ -103,7 +96,4 @@ public class PostFinder {
 		return postRepository.findPostsByUserComments(userId, customPageRequest.of(SORT_PROPERTY));
 	}
 
-	public Long countByBoardId(Long boardId) {
-		return postRepository.countByBoardId(boardId);
-	}
 }
