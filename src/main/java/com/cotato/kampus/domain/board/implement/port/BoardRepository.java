@@ -33,8 +33,6 @@ public interface BoardRepository{
 
 	List<Board> findByDeletionScheduledAtBefore(LocalDateTime now);
 
-	List<Board> findAllByBoardStatus(BoardStatus boardStatus);
-
 	boolean existsByBoardType(BoardType boardType);
 
 	List<Long> findBoardIdsByBoardTypeIn(List<BoardType> boardTypes);
@@ -42,4 +40,8 @@ public interface BoardRepository{
 	Optional<Long> findBoardIdByUniversityId(Long universityId);
 
 	Optional<String> findBoardTypeByBoardId(Long boardId);
+
+	List<Object[]> findBoardsWithPostCount(BoardStatus status);
+
+	List<Object[]> findAllBoardsWithPostCount();
 }

@@ -94,14 +94,6 @@ public class BoardRepositoryImpl implements BoardRepository {
 	}
 
 	@Override
-	public List<Board> findAllByBoardStatus(BoardStatus boardStatus){
-		return boardJpaRepository.findAllByBoardStatus(boardStatus)
-			.stream()
-			.map(BoardEntity::toDomain)
-			.toList();
-	}
-
-	@Override
 	public boolean existsByBoardType(BoardType boardType) {
 		return boardJpaRepository.existsByBoardType(boardType);
 	}
@@ -119,5 +111,27 @@ public class BoardRepositoryImpl implements BoardRepository {
 	@Override
 	public Optional<String> findBoardTypeByBoardId(Long boardId) {
 		return boardJpaRepository.findBoardTypeByBoardId(boardId);
+	}
+
+	@Override
+	public List<Object[]> findBoardsWithPostCount(BoardStatus status) {
+		List<Object[]> results = boardJpaRepository.findBoardsWithPostCount(status);
+		return results.stream()
+			.map(arr -> new Object[] {
+				((BoardEntity) arr[0]).toDomain(),  // BoardEntity -> Board 변환
+				arr[1]  // 게시글 수는 그대로
+			})
+			.toList();
+	}
+
+	@Override
+	public List<Object[]> findAllBoardsWithPostCount() {
+		List<Object[]> results = boardJpaRepository.findAllBoardsWithPostCount();
+		return results.stream()
+			.map(arr -> new Object[] {
+				((BoardEntity) arr[0]).toDomain(),  // BoardEntity -> Board 변환
+				arr[1]  // 게시글 수는 그대로
+			})
+			.toList();
 	}
 }
