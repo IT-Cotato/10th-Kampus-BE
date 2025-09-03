@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.admin.dto.AdminBoardDetail;
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardWithPostCount;
 import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteFinder;
 import com.cotato.kampus.domain.board.domain.BoardWithFavoriteStatus;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
@@ -40,13 +41,13 @@ public class BoardDtoMapper {
 			.toList();
 	}
 
-	public List<AdminBoardDetail> mapToAdminBoardDetail(List<Object[]> boardsWithPostCount) {
+	public List<AdminBoardDetail> mapToAdminBoardDetail(List<BoardWithPostCount> boardsWithPostCount) {
 		LocalDateTime now = LocalDateTime.now();
 
 		return boardsWithPostCount.stream()
-			.map(arr -> {
-				Board board = (Board) arr[0];
-				Long postCount = (Long) arr[1];
+			.map(boardWithPostCount -> {
+				Board board = boardWithPostCount.board();
+				Long postCount = boardWithPostCount.postCount();
 
 				// 삭제 대기인 게시판은 삭제 날짜 카운트 반환
 				if (board.getBoardStatus().equals(BoardStatus.PENDING_DELETION)) {

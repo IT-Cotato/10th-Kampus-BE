@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardWithPostCount;
 import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteFinder;
 import com.cotato.kampus.domain.board.implement.port.BoardRepository;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
@@ -97,19 +98,19 @@ public class BoardFinder {
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND)));
 	}
 
-	public List<Object[]> findAllBoardsWithPostCount() {
-		List<Object[]> results = boardRepository.findAllBoardsWithPostCount();
+	public List<BoardWithPostCount> findAllBoardsWithPostCount() {
+		List<BoardWithPostCount> results = boardRepository.findAllBoardsWithPostCount();
 		// 관리자용 제외 게시판 필터링
 		return results.stream()
-			.filter(arr -> !EXCLUDED_BOARD_TYPES_FOR_ADMIN.contains(((Board) arr[0]).getBoardType()))
+			.filter(boardWithPostCount -> !EXCLUDED_BOARD_TYPES_FOR_ADMIN.contains(boardWithPostCount.board().getBoardType()))
 			.toList();
 	}
 
-	public List<Object[]> findBoardsWithPostCount(BoardStatus status) {
-		List<Object[]> results = boardRepository.findBoardsWithPostCount(status);
+	public List<BoardWithPostCount> findBoardsWithPostCount(BoardStatus status) {
+		List<BoardWithPostCount> results = boardRepository.findBoardsWithPostCount(status);
 		// 관리자용 제외 게시판 필터링
 		return results.stream()
-			.filter(arr -> !EXCLUDED_BOARD_TYPES_FOR_ADMIN.contains(((Board) arr[0]).getBoardType()))
+			.filter(boardWithPostCount -> !EXCLUDED_BOARD_TYPES_FOR_ADMIN.contains(boardWithPostCount.board().getBoardType()))
 			.toList();
 	}
 }

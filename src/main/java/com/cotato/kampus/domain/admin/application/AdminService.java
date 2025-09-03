@@ -17,6 +17,7 @@ import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
 import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsThumbnail;
 import com.cotato.kampus.domain.admin.dto.BoardDetails;
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardWithPostCount;
 import com.cotato.kampus.domain.board.domain.UniversityBoard;
 import com.cotato.kampus.domain.board.implement.board.BoardAppender;
 import com.cotato.kampus.domain.board.implement.board.BoardDtoMapper;
@@ -177,7 +178,7 @@ public class AdminService {
 		userValidator.validateAdminAccess();
 
 		// 게시판 목록과 각 게시판의 게시글 수를 함께 조회
-		List<Object[]> boardsWithPostCount;
+		List<BoardWithPostCount> boardsWithPostCount;
 		if (boardStatus == null) {
 			boardsWithPostCount = boardFinder.findAllBoardsWithPostCount();
 		} else {

@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardWithPostCount;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 
@@ -41,7 +42,7 @@ public interface BoardRepository{
 
 	Optional<String> findBoardTypeByBoardId(Long boardId);
 
-	List<Object[]> findBoardsWithPostCount(BoardStatus status);
+	List<BoardWithPostCount> findBoardsWithPostCount(BoardStatus status);
 
-	List<Object[]> findAllBoardsWithPostCount();
+	List<BoardWithPostCount> findAllBoardsWithPostCount();
 }

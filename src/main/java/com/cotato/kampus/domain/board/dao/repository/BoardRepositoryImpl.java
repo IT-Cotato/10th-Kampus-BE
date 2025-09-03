@@ -8,7 +8,9 @@ import java.util.Set;
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
+import com.cotato.kampus.domain.board.dao.projection.BoardWithPostCountProjection;
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardWithPostCount;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.board.implement.port.BoardRepository;
@@ -114,24 +116,24 @@ public class BoardRepositoryImpl implements BoardRepository {
 	}
 
 	@Override
-	public List<Object[]> findBoardsWithPostCount(BoardStatus status) {
-		List<Object[]> results = boardJpaRepository.findBoardsWithPostCount(status);
+	public List<BoardWithPostCount> findBoardsWithPostCount(BoardStatus status) {
+		List<BoardWithPostCountProjection> results = boardJpaRepository.findBoardsWithPostCount(status);
 		return results.stream()
-			.map(arr -> new Object[] {
-				((BoardEntity) arr[0]).toDomain(),  // BoardEntity -> Board 변환
-				arr[1]  // 게시글 수는 그대로
-			})
+			.map(projection -> new BoardWithPostCount(
+				projection.getBoard().toDomain(),  // BoardEntity -> Board 변환
+				projection.getPostCount()  // 게시글 수
+			))
 			.toList();
 	}
 
 	@Override
-	public List<Object[]> findAllBoardsWithPostCount() {
-		List<Object[]> results = boardJpaRepository.findAllBoardsWithPostCount();
+	public List<BoardWithPostCount> findAllBoardsWithPostCount() {
+		List<BoardWithPostCountProjection> results = boardJpaRepository.findAllBoardsWithPostCount();
 		return results.stream()
-			.map(arr -> new Object[] {
-				((BoardEntity) arr[0]).toDomain(),  // BoardEntity -> Board 변환
-				arr[1]  // 게시글 수는 그대로
-			})
+			.map(projection -> new BoardWithPostCount(
+				projection.getBoard().toDomain(),  // BoardEntity -> Board 변환
+				projection.getPostCount()  // 게시글 수
+			))
 			.toList();
 	}
 }
