@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardWithPostCount;
 import com.cotato.kampus.domain.board.implement.boardFavorite.BoardFavoriteFinder;
 import com.cotato.kampus.domain.board.implement.port.BoardRepository;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
@@ -29,29 +30,16 @@ public class BoardFinder {
 		BoardType.CARDNEWS, BoardType.TRENDING, BoardType.UNIVERSITY
 	);
 
+	private static final EnumSet<BoardType> EXCLUDED_BOARD_TYPES_FOR_ADMIN = EnumSet.of(
+		BoardType.CARDNEWS
+	);
+
 	private static final List<BoardType> DEFAULT_FAVORITE_BOARD_TYPES = List.of(
 		BoardType.FIXED, BoardType.CARDNEWS, BoardType.TRENDING
 	);
 
 	private final BoardRepository boardRepository;
 	private final BoardFavoriteFinder boardFavoriteFinder;
-
-	public List<Board> findAllBoards(BoardStatus boardStatus) {
-		List<Board> boards;
-
-		// 전체 게시판 조회 (카드뉴스 제외)
-		if (boardStatus == null) {
-			boards = boardRepository.findAll().stream()
-				.filter(board -> !board.getBoardType().equals(BoardType.CARDNEWS))
-				.toList();
-		} else {
-			boards = boardRepository.findAllByBoardStatus(boardStatus).stream()
-				.filter(board -> !board.getBoardType().equals(BoardType.CARDNEWS))
-				.toList();
-		}
-
-		return boards;
-	}
 
 	public List<Board> findFavoriteBoardsForPreview(Long userId) {
 		Set<Long> favoritesBoardIds = boardFavoriteFinder.findFavoriteBoardIds(userId);
@@ -108,5 +96,21 @@ public class BoardFinder {
 	public BoardType findBoardType(Long boardId) {
 		return BoardType.valueOf(boardRepository.findBoardTypeByBoardId(boardId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND)));
+	}
+
+	public List<BoardWithPostCount> findAllBoardsWithPostCount() {
+		List<BoardWithPostCount> results = boardRepository.findAllBoardsWithPostCount();
+		// 관리자용 제외 게시판 필터링
+		return results.stream()
+			.filter(boardWithPostCount -> !EXCLUDED_BOARD_TYPES_FOR_ADMIN.contains(boardWithPostCount.board().getBoardType()))
+			.toList();
+	}
+
+	public List<BoardWithPostCount> findBoardsWithPostCount(BoardStatus status) {
+		List<BoardWithPostCount> results = boardRepository.findBoardsWithPostCount(status);
+		// 관리자용 제외 게시판 필터링
+		return results.stream()
+			.filter(boardWithPostCount -> !EXCLUDED_BOARD_TYPES_FOR_ADMIN.contains(boardWithPostCount.board().getBoardType()))
+			.toList();
 	}
 }

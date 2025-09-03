@@ -23,9 +23,6 @@ public interface PostRepository {
 
 	void delete(Post post);
 
-	// 게시판의 총 게시글 수
-	Long countByBoardId(Long boardId);
-
 	// 게시판에서 일부(postIds) 게시글 조회
 	Slice<Post> findAllByBoardIdAndIdInAndPostStatus(Long boardId, List<Long> postIds, PostStatus postStatus, Pageable pageable);
 

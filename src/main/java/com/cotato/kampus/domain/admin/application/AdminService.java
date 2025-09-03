@@ -17,6 +17,7 @@ import com.cotato.kampus.domain.admin.dto.VerificationWithPhoto;
 import com.cotato.kampus.domain.admin.dto.response.AdminCardNewsThumbnail;
 import com.cotato.kampus.domain.admin.dto.BoardDetails;
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardWithPostCount;
 import com.cotato.kampus.domain.board.domain.UniversityBoard;
 import com.cotato.kampus.domain.board.implement.board.BoardAppender;
 import com.cotato.kampus.domain.board.implement.board.BoardDtoMapper;
@@ -176,11 +177,16 @@ public class AdminService {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
-		// 각 게시판의 게시글 수 매핑하여 반환
-		List<Board> boards = boardFinder.findAllBoards(boardStatus);
+		// 게시판 목록과 각 게시판의 게시글 수를 함께 조회
+		List<BoardWithPostCount> boardsWithPostCount;
+		if (boardStatus == null) {
+			boardsWithPostCount = boardFinder.findAllBoardsWithPostCount();
+		} else {
+			boardsWithPostCount = boardFinder.findBoardsWithPostCount(boardStatus);
+		}
 
-		// 게시판 게시글 수, 삭제까지 남은 날짜 수 매핑
-		return boardDtoMapper.mapToAdminBoardDetail(boards);
+		// Board 객체와 게시글 수를 함께 받아서 바로 매핑
+		return boardDtoMapper.mapToAdminBoardDetail(boardsWithPostCount);
 	}
 
 	public BoardDetails getBoard(Long boardId) {

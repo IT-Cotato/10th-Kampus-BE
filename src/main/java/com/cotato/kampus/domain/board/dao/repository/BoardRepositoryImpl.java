@@ -8,7 +8,9 @@ import java.util.Set;
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
+import com.cotato.kampus.domain.board.dao.projection.BoardWithPostCountProjection;
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardWithPostCount;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 import com.cotato.kampus.domain.board.implement.port.BoardRepository;
@@ -94,14 +96,6 @@ public class BoardRepositoryImpl implements BoardRepository {
 	}
 
 	@Override
-	public List<Board> findAllByBoardStatus(BoardStatus boardStatus){
-		return boardJpaRepository.findAllByBoardStatus(boardStatus)
-			.stream()
-			.map(BoardEntity::toDomain)
-			.toList();
-	}
-
-	@Override
 	public boolean existsByBoardType(BoardType boardType) {
 		return boardJpaRepository.existsByBoardType(boardType);
 	}
@@ -119,5 +113,25 @@ public class BoardRepositoryImpl implements BoardRepository {
 	@Override
 	public Optional<String> findBoardTypeByBoardId(Long boardId) {
 		return boardJpaRepository.findBoardTypeByBoardId(boardId);
+	}
+
+	@Override
+	public List<BoardWithPostCount> findBoardsWithPostCount(BoardStatus status) {
+		List<BoardWithPostCountProjection> results = boardJpaRepository.findBoardsWithPostCount(status);
+		return results.stream()
+			.map(BoardRepositoryImpl::toDomainRow)
+			.toList();
+	}
+
+	@Override
+	public List<BoardWithPostCount> findAllBoardsWithPostCount() {
+		List<BoardWithPostCountProjection> results = boardJpaRepository.findAllBoardsWithPostCount();
+		return results.stream()
+			.map(BoardRepositoryImpl::toDomainRow)
+			.toList();
+	}
+
+	private static BoardWithPostCount toDomainRow(BoardWithPostCountProjection p) {
+		return new BoardWithPostCount(p.getBoard().toDomain(), p.getPostCount());
 	}
 }

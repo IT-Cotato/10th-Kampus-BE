@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.cotato.kampus.domain.board.domain.Board;
+import com.cotato.kampus.domain.board.domain.BoardWithPostCount;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 
@@ -33,8 +34,6 @@ public interface BoardRepository{
 
 	List<Board> findByDeletionScheduledAtBefore(LocalDateTime now);
 
-	List<Board> findAllByBoardStatus(BoardStatus boardStatus);
-
 	boolean existsByBoardType(BoardType boardType);
 
 	List<Long> findBoardIdsByBoardTypeIn(List<BoardType> boardTypes);
@@ -42,4 +41,8 @@ public interface BoardRepository{
 	Optional<Long> findBoardIdByUniversityId(Long universityId);
 
 	Optional<String> findBoardTypeByBoardId(Long boardId);
+
+	List<BoardWithPostCount> findBoardsWithPostCount(BoardStatus status);
+
+	List<BoardWithPostCount> findAllBoardsWithPostCount();
 }

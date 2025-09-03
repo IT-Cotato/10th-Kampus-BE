@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
+import com.cotato.kampus.domain.board.dao.projection.BoardWithPostCountProjection;
 import com.cotato.kampus.domain.board.enums.BoardStatus;
 import com.cotato.kampus.domain.board.enums.BoardType;
 
@@ -29,8 +30,6 @@ public interface BoardJpaRepository extends JpaRepository<BoardEntity, Long> {
 
 	List<BoardEntity> findByDeletionScheduledAtBefore(LocalDateTime now);
 
-	List<BoardEntity> findAllByBoardStatus(BoardStatus boardStatus);
-
 	boolean existsByBoardType(BoardType boardType);
 
 	@Query("SELECT b.id FROM BoardEntity b WHERE b.boardType IN :boardTypes")
@@ -41,4 +40,10 @@ public interface BoardJpaRepository extends JpaRepository<BoardEntity, Long> {
 
 	@Query("SELECT b.boardType FROM BoardEntity b WHERE b.id = :boardId")
 	Optional<String> findBoardTypeByBoardId(@Param("boardId") Long boardId);
+
+	@Query("SELECT b AS board, COUNT(p) AS postCount FROM BoardEntity b LEFT JOIN PostEntity p ON b.id = p.boardId WHERE b.boardStatus = :status GROUP BY b")
+	List<BoardWithPostCountProjection> findBoardsWithPostCount(@Param("status") BoardStatus status);
+
+	@Query("SELECT b AS board, COUNT(p) AS postCount FROM BoardEntity b LEFT JOIN PostEntity p ON b.id = p.boardId GROUP BY b")
+	List<BoardWithPostCountProjection> findAllBoardsWithPostCount();
 }
