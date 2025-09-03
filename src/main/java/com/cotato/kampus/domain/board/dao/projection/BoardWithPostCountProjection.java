@@ -4,5 +4,5 @@ import com.cotato.kampus.domain.board.dao.entity.BoardEntity;
 
 public interface BoardWithPostCountProjection {
 	BoardEntity getBoard();
-	Long getPostCount();
+	long getPostCount();
 }

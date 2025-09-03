@@ -47,7 +47,7 @@ public class BoardDtoMapper {
 		return boardsWithPostCount.stream()
 			.map(boardWithPostCount -> {
 				Board board = boardWithPostCount.board();
-				Long postCount = boardWithPostCount.postCount();
+				long postCount = boardWithPostCount.postCount();
 
 				// 삭제 대기인 게시판은 삭제 날짜 카운트 반환
 				if (board.getBoardStatus().equals(BoardStatus.PENDING_DELETION)) {
