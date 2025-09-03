@@ -29,7 +29,7 @@ public class BoardFinder {
 		BoardType.CARDNEWS, BoardType.TRENDING, BoardType.UNIVERSITY
 	);
 
-	private static final List<BoardType> EXCLUDED_BOARD_TYPES_FOR_ADMIN = List.of(
+	private static final EnumSet<BoardType> EXCLUDED_BOARD_TYPES_FOR_ADMIN = EnumSet.of(
 		BoardType.CARDNEWS
 	);
 

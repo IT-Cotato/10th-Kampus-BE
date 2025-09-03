@@ -176,7 +176,7 @@ public class AdminService {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
-		// JOIN FETCH로 한 번의 쿼리로 게시판과 게시글 수를 함께 조회
+		// 게시판 목록과 각 게시판의 게시글 수를 함께 조회
 		List<Object[]> boardsWithPostCount;
 		if (boardStatus == null) {
 			boardsWithPostCount = boardFinder.findAllBoardsWithPostCount();
