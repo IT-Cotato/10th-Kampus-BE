@@ -40,9 +40,9 @@ public interface BoardJpaRepository extends JpaRepository<BoardEntity, Long> {
 	@Query("SELECT b.boardType FROM BoardEntity b WHERE b.id = :boardId")
 	Optional<String> findBoardTypeByBoardId(@Param("boardId") Long boardId);
 
-	@Query("SELECT b, COALESCE(COUNT(p), 0) FROM BoardEntity b LEFT JOIN PostEntity p ON b.id = p.boardId WHERE b.boardStatus = :status GROUP BY b")
+	@Query("SELECT b, COUNT(p) FROM BoardEntity b LEFT JOIN PostEntity p ON b.id = p.boardId WHERE b.boardStatus = :status GROUP BY b")
 	List<Object[]> findBoardsWithPostCount(@Param("status") BoardStatus status);
 
-	@Query("SELECT b, COALESCE(COUNT(p), 0) FROM BoardEntity b LEFT JOIN PostEntity p ON b.id = p.boardId WHERE b.boardType != 'CARDNEWS' GROUP BY b")
+	@Query("SELECT b, COUNT(p) FROM BoardEntity b LEFT JOIN PostEntity p ON b.id = p.boardId WHERE b.boardType != 'CARDNEWS' GROUP BY b")
 	List<Object[]> findAllBoardsWithPostCount();
 }
