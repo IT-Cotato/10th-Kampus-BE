@@ -176,11 +176,16 @@ public class AdminService {
 		// 관리자 검증
 		userValidator.validateAdminAccess();
 
-		// 각 게시판의 게시글 수 매핑하여 반환
-		List<Board> boards = boardFinder.findAllBoards(boardStatus);
+		// JOIN FETCH로 한 번의 쿼리로 게시판과 게시글 수를 함께 조회
+		List<Object[]> boardsWithPostCount;
+		if (boardStatus == null) {
+			boardsWithPostCount = boardFinder.findAllBoardsWithPostCount();
+		} else {
+			boardsWithPostCount = boardFinder.findBoardsWithPostCount(boardStatus);
+		}
 
-		// 게시판 게시글 수, 삭제까지 남은 날짜 수 매핑
-		return boardDtoMapper.mapToAdminBoardDetail(boards);
+		// Board 객체와 게시글 수를 함께 받아서 바로 매핑
+		return boardDtoMapper.mapToAdminBoardDetail(boardsWithPostCount);
 	}
 
 	public BoardDetails getBoard(Long boardId) {

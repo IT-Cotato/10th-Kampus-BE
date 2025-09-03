@@ -40,15 +40,15 @@ public class BoardDtoMapper {
 			.toList();
 	}
 
-	public List<AdminBoardDetail> mapToAdminBoardDetail(List<Board> boards) {
+	public List<AdminBoardDetail> mapToAdminBoardDetail(List<Object[]> boardsWithPostCount) {
 		LocalDateTime now = LocalDateTime.now();
 
-		return boards.stream()
-			.map(board -> {
-				// 게시글 수
-				Long postCount = postFinder.countByBoardId(board.getId());
+		return boardsWithPostCount.stream()
+			.map(arr -> {
+				Board board = (Board) arr[0];
+				Long postCount = (Long) arr[1];
 
-				// 삭제 대기인 게시글은 삭제 날짜 카운트 반환
+				// 삭제 대기인 게시판은 삭제 날짜 카운트 반환
 				if (board.getBoardStatus().equals(BoardStatus.PENDING_DELETION)) {
 					// 삭제까지 남은 날짜
 					Long deletionCountDown = ChronoUnit.DAYS.between(now, board.getDeletionScheduledAt());

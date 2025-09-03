@@ -36,23 +36,6 @@ public class BoardFinder {
 	private final BoardRepository boardRepository;
 	private final BoardFavoriteFinder boardFavoriteFinder;
 
-	public List<Board> findAllBoards(BoardStatus boardStatus) {
-		List<Board> boards;
-
-		// 전체 게시판 조회 (카드뉴스 제외)
-		if (boardStatus == null) {
-			boards = boardRepository.findAll().stream()
-				.filter(board -> !board.getBoardType().equals(BoardType.CARDNEWS))
-				.toList();
-		} else {
-			boards = boardRepository.findAllByBoardStatus(boardStatus).stream()
-				.filter(board -> !board.getBoardType().equals(BoardType.CARDNEWS))
-				.toList();
-		}
-
-		return boards;
-	}
-
 	public List<Board> findFavoriteBoardsForPreview(Long userId) {
 		Set<Long> favoritesBoardIds = boardFavoriteFinder.findFavoriteBoardIds(userId);
 		List<Board> favoriteBoards = boardRepository.findAllByIdIn(favoritesBoardIds);
@@ -108,5 +91,21 @@ public class BoardFinder {
 	public BoardType findBoardType(Long boardId) {
 		return BoardType.valueOf(boardRepository.findBoardTypeByBoardId(boardId)
 			.orElseThrow(() -> new AppException(ErrorCode.BOARD_NOT_FOUND)));
+	}
+
+	public List<Object[]> findAllBoardsWithPostCount() {
+		List<Object[]> results = boardRepository.findAllBoardsWithPostCount();
+		// 카드뉴스 제외 필터링
+		return results.stream()
+			.filter(arr -> !((Board) arr[0]).getBoardType().equals(BoardType.CARDNEWS))
+			.toList();
+	}
+
+	public List<Object[]> findBoardsWithPostCount(BoardStatus status) {
+		List<Object[]> results = boardRepository.findBoardsWithPostCount(status);
+		// 카드뉴스 제외 필터링
+		return results.stream()
+			.filter(arr -> !((Board) arr[0]).getBoardType().equals(BoardType.CARDNEWS))
+			.toList();
 	}
 }
