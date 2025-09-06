@@ -1,6 +1,8 @@
 package com.cotato.kampus.domain.comment.application;
 
+import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
@@ -59,8 +61,8 @@ class CommentMapperTest {
 		);
 
 		given(anonymousNumberAllocator.resolveAuthorName(commentDto)).willReturn("Anonymous1");
-		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(commentId)))
-			.willReturn(Arrays.asList()); // 좋아요하지 않음
+		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, anyList()))
+			.willReturn(emptyList()); // 좋아요하지 않음
 
 		// when
 		List<CommentDetail> result = commentMapper.buildCommentHierarchy(Arrays.asList(commentDto), currentUserId);
@@ -97,8 +99,8 @@ class CommentMapperTest {
 		);
 
 		given(anonymousNumberAllocator.resolveAuthorName(commentDto)).willReturn("Anonymous1");
-		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(commentId)))
-			.willReturn(Arrays.asList()); // 좋아요하지 않음
+		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, anyList()))
+			.willReturn(emptyList()); // 좋아요하지 않음
 
 		// when
 		List<CommentDetail> result = commentMapper.buildCommentHierarchy(Arrays.asList(commentDto), currentUserId);
@@ -153,8 +155,8 @@ class CommentMapperTest {
 
 		given(anonymousNumberAllocator.resolveAuthorName(parentComment)).willReturn("Anonymous1");
 		given(anonymousNumberAllocator.resolveAuthorName(replyComment)).willReturn("Anonymous2");
-		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(10L, 11L)))
-			.willReturn(Arrays.asList()); // 좋아요하지 않음
+		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, anyList()))
+			.willReturn(emptyList()); // 좋아요하지 않음
 
 		// when
 		List<CommentDetail> result = commentMapper.buildCommentHierarchy(
@@ -198,7 +200,7 @@ class CommentMapperTest {
 		given(anonymousNumberAllocator.resolveAuthorName(deletedParent)).willReturn("Anonymous1");
 		given(anonymousNumberAllocator.resolveAuthorName(reply)).willReturn("Anonymous2");
 		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(10L, 11L)))
-			.willReturn(Collections.emptyList());
+			.willReturn(emptyList());
 
 		// when
 		List<CommentDetail> result = commentMapper.buildCommentHierarchy(
@@ -236,7 +238,7 @@ class CommentMapperTest {
 		given(anonymousNumberAllocator.resolveAuthorName(deletedComment)).willReturn("Anonymous1");
 		given(anonymousNumberAllocator.resolveAuthorName(normalComment)).willReturn("Anonymous2");
 		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(10L, 11L)))
-			.willReturn(Collections.emptyList());
+			.willReturn(emptyList());
 
 		// when
 		List<CommentDetail> result = commentMapper.buildCommentHierarchy(
@@ -291,7 +293,7 @@ class CommentMapperTest {
 
 		given(anonymousNumberAllocator.resolveAuthorName(commentDto)).willReturn("Anonymous1");
 		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(commentId)))
-			.willReturn(Collections.emptyList()); // 좋아요하지 않음
+			.willReturn(emptyList()); // 좋아요하지 않음
 
 		// when
 		List<CommentDetail> result = commentMapper.buildCommentHierarchy(Arrays.asList(commentDto), currentUserId);
@@ -330,7 +332,7 @@ class CommentMapperTest {
 		given(anonymousNumberAllocator.resolveAuthorName(comment2)).willReturn("Anonymous1");
 		given(anonymousNumberAllocator.resolveAuthorName(comment3)).willReturn("Anonymous1");
 		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(30L, 10L, 20L)))
-			.willReturn(Collections.emptyList());
+			.willReturn(emptyList());
 
 		// when
 		List<CommentDetail> result = commentMapper.buildCommentHierarchy(
@@ -376,7 +378,7 @@ class CommentMapperTest {
 		given(anonymousNumberAllocator.resolveAuthorName(reply2)).willReturn("Anonymous2");
 		given(anonymousNumberAllocator.resolveAuthorName(reply3)).willReturn("Anonymous2");
 		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(10L, 13L, 11L, 12L)))
-			.willReturn(Collections.emptyList());
+			.willReturn(emptyList());
 
 		// when
 		List<CommentDetail> result = commentMapper.buildCommentHierarchy(
@@ -416,7 +418,7 @@ class CommentMapperTest {
 		given(anonymousNumberAllocator.resolveAuthorName(parent)).willReturn("Anonymous1");
 		given(anonymousNumberAllocator.resolveAuthorName(reply)).willReturn("Anonymous2");
 		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(10L, 11L)))
-			.willReturn(Collections.emptyList());
+			.willReturn(emptyList());
 
 		// when
 		List<CommentDetail> result = commentMapper.buildCommentHierarchy(
@@ -436,7 +438,7 @@ class CommentMapperTest {
 		Long currentUserId = 1L;
 
 		// when
-		List<CommentDetail> result = commentMapper.buildCommentHierarchy(Collections.emptyList(), currentUserId);
+		List<CommentDetail> result = commentMapper.buildCommentHierarchy(emptyList(), currentUserId);
 
 		// then
 		assertThat(result).isEmpty();
@@ -469,7 +471,7 @@ class CommentMapperTest {
 		given(anonymousNumberAllocator.resolveAuthorName(reply)).willReturn("Anonymous2");
 		given(anonymousNumberAllocator.resolveAuthorName(nestedReply)).willReturn("Anonymous3");
 		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(10L, 11L, 12L)))
-			.willReturn(Collections.emptyList());
+			.willReturn(emptyList());
 
 		// when
 		List<CommentDetail> result = commentMapper.buildCommentHierarchy(

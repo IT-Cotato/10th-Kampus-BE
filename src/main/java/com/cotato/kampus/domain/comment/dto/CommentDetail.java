@@ -41,6 +41,8 @@ public record CommentDetail(
 	@Schema(description = "댓글의 대댓글 리스트")
 	List<CommentDetail> replies
 ) {
+	public static final String DELETED_PLACEHOLDER = "This comment was deleted.";
+
 	public static CommentDetail of(CommentDto commentDto, String author, String targetAuthor, List<CommentDetail> replies, boolean isLiked, boolean isAuthor) {
 		return new CommentDetail(
 			commentDto.commentId(),
@@ -64,7 +66,7 @@ public record CommentDetail(
 			this.targetAuthor,
 			this.commentStatus,
 			this.author,
-			"This comment was deleted.",
+			DELETED_PLACEHOLDER,
 			this.likes,
 			this.isLiked,
 			this.isAuthor,
