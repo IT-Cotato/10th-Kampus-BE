@@ -31,6 +31,9 @@ public record CommentDetail(
 	@Schema(example = "true")
 	boolean isLiked,
 
+	@Schema(example = "true")
+	boolean isAuthor,
+
 	@Schema(example = "2025-01-17T21:03:30.218321")
 	LocalDateTime createdTime,
 
@@ -38,7 +41,7 @@ public record CommentDetail(
 	@Schema(description = "댓글의 대댓글 리스트")
 	List<CommentDetail> replies
 ) {
-	public static CommentDetail of(CommentDto commentDto, String author, String targetAuthor, List<CommentDetail> replies, boolean isLiked) {
+	public static CommentDetail of(CommentDto commentDto, String author, String targetAuthor, List<CommentDetail> replies, boolean isLiked, boolean isAuthor) {
 		return new CommentDetail(
 			commentDto.commentId(),
 			commentDto.parentId(),
@@ -48,6 +51,7 @@ public record CommentDetail(
 			commentDto.content(),
 			commentDto.likes(),
 			isLiked,
+			isAuthor,
 			commentDto.createdTime(),
 			replies
 		);
@@ -63,6 +67,7 @@ public record CommentDetail(
 			"This comment was deleted.",
 			this.likes,
 			this.isLiked,
+			this.isAuthor,
 			this.createdTime,
 			this.replies
 		);

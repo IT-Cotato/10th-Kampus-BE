@@ -39,7 +39,8 @@ public class CommentMapper {
 				anonymousNumberAllocator.resolveAuthorName(dto),
 				targetAuthor,
 				new ArrayList<>(),
-				commentLikeRepository.existsByUserIdAndCommentId(userId, dto.commentId())
+				commentLikeRepository.existsByUserIdAndCommentId(userId, dto.commentId()),
+				userId.equals(dto.userId())
 			);
 			commentMap.put(dto.commentId(), detail);
 		}
