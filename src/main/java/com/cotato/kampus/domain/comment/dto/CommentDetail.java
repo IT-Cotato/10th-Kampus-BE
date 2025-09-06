@@ -31,7 +31,10 @@ public record CommentDetail(
 	@Schema(example = "true")
 	boolean isLiked,
 
-	@Schema(example = "true")
+	@Schema(
+		example = "true",
+		description = "현재 로그인한 사용자가 해당 댓글의 작성자인지 여부"
+	)
 	boolean isAuthor,
 
 	@Schema(example = "2025-01-17T21:03:30.218321")
