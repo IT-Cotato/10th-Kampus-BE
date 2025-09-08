@@ -38,6 +38,11 @@ public class TestPostHelper {
         return this;
     }
 
+    public TestPostHelper withLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+        return this;
+    }
+
     public Post createNormalPost() {
         return new NormalPost(
             this.id,
@@ -74,5 +79,10 @@ public class TestPostHelper {
         );
     }
 
+    public Post createPostWithLikeCount(int likeCount) {
+        return new TestPostHelper()
+            .withLikeCount(likeCount)
+            .createNormalPost();
+    }
 
 }
