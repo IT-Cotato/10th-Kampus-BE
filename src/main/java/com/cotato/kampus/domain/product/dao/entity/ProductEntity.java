@@ -3,8 +3,8 @@ package com.cotato.kampus.domain.product.dao.entity;
 import java.time.LocalDateTime;
 
 import com.cotato.kampus.domain.common.domain.BaseTimeEntity;
-import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
+import com.cotato.kampus.domain.product.enums.ProductStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,9 +47,6 @@ public class ProductEntity extends BaseTimeEntity {
 	@Column(name = "scrap_count", nullable = false, columnDefinition = "int default 0")
 	private Integer scrapCount = 0;
 
-	@Column(name = "chat_count", nullable = false, columnDefinition = "int default 0")
-	private Integer chatCount = 0;
-
 	@Column(name = "bumped_count", nullable = false, columnDefinition = "int default 0")
 	private Integer bumpCount = 0;
 
@@ -61,7 +58,7 @@ public class ProductEntity extends BaseTimeEntity {
 	private ProductStatus productStatus;
 
 	public Product toDomain() {
-		return Product.fromEntity(id, userId, title, price, description, viewCount, scrapCount, chatCount, bumpCount,
+		return Product.fromEntity(id, userId, title, price, description, viewCount, scrapCount, bumpCount,
 			bumpedTime, productStatus, getCreatedTime(), getLastModifiedTime());
 	}
 
@@ -74,7 +71,6 @@ public class ProductEntity extends BaseTimeEntity {
 		entity.description = product.getDescription();
 		entity.viewCount = product.getViewCount();
 		entity.scrapCount = product.getScrapCount();
-		entity.chatCount = product.getChatCount();
 		entity.bumpCount = product.getBumpCount();
 		entity.bumpedTime = product.getBumpedTime();
 		entity.productStatus = product.getStatus();

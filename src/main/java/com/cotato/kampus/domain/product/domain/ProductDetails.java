@@ -30,6 +30,7 @@ public record ProductDetails(
 		List<ProductPhoto> productPhotos,
 		boolean isAuthor,
 		boolean isScrapped,
+		int chatCount,
 		List<String> categories
 	) {
 		return new ProductDetails(
@@ -45,7 +46,7 @@ public record ProductDetails(
 					.toList(),
 			product.getViewCount(),
 			product.getScrapCount(),
-			product.getChatCount(),
+			chatCount,
 			product.getBumpCount(),
 			product.getStatus(),
 			product.getBumpedTime(),

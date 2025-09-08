@@ -7,30 +7,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cotato.kampus.domain.chat.enums.ChatType;
+import com.cotato.kampus.domain.chat.implement.chatroom.ChatRoomFinder;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.domain.common.application.ImageValidator;
-import com.cotato.kampus.domain.product.enums.ProductSortType;
-import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
 import com.cotato.kampus.domain.product.domain.ProductCategory;
 import com.cotato.kampus.domain.product.domain.ProductDetails;
 import com.cotato.kampus.domain.product.domain.ProductPhoto;
 import com.cotato.kampus.domain.product.domain.ProductThumbnail;
+import com.cotato.kampus.domain.product.enums.ProductSortType;
+import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.implement.product.ProductDtoMapper;
-import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.product.ProductFinder;
+import com.cotato.kampus.domain.product.implement.product.ProductManager;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingFinder;
 import com.cotato.kampus.domain.product.implement.productCategory.ProductCategoryMappingManager;
-import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoManager;
 import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoFinder;
+import com.cotato.kampus.domain.product.implement.productPhoto.ProductPhotoManager;
 import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapFinder;
-import com.cotato.kampus.domain.product.implement.productScrap.ProductScrapManager;
 import com.cotato.kampus.domain.user.application.UserFinder;
 import com.cotato.kampus.domain.user.application.UserValidator;
 import com.cotato.kampus.domain.user.dto.UserDto;
-import com.cotato.kampus.global.error.ErrorCode;
-import com.cotato.kampus.global.error.exception.AppException;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.util.s3.S3Uploader;
 
@@ -57,6 +56,7 @@ public class ProductService {
 	private final ProductCategoryMappingFinder productCategoryMappingFinder;
 	private final ProductDtoMapper productDtoMapper;
 	private final UserFinder userFinder;
+	private final ChatRoomFinder chatRoomFinder;
 
 	@Transactional
 	public Long createProduct(
@@ -165,8 +165,18 @@ public class ProductService {
 		Product viewedProduct = product.increaseViewCount();
 		productManager.update(viewedProduct);
 
-		// 4. ProductDetails 변환
-		return ProductDetails.of(viewedProduct, sellerName, photos, isAuthor, isScrapped, categoryNames);
+		/**
+		 * 4. 채팅 카운트 조회
+		 *   - 상품 작성자일 경우에만 채팅 카운트 조회
+		 *   - 채팅 카운트는 상품 작성자가 아닌 경우에는 -1로 설정
+		 */
+		int chatCount = -1;
+		if (isAuthor) {
+			chatCount = chatRoomFinder.findProductChatCount(user.id(), productId, ChatType.PRODUCT);
+		}
+
+		// 5. ProductDetails 변환
+		return ProductDetails.of(viewedProduct, sellerName, photos, isAuthor, isScrapped, chatCount, categoryNames);
 	}
 
 	public Slice<ProductThumbnail> findProducts(int page, int size, ProductSortType sort, String categoryName) {
@@ -176,7 +186,7 @@ public class ProductService {
 		Slice<Product> products;
 
 		// 2. 카테고리 여부에 따른 필터링
-		if(categoryName != null && !categoryName.isEmpty()) {
+		if (categoryName != null && !categoryName.isEmpty()) {
 			ProductCategory category = productCategoryFinder.find(categoryName);
 			List<Long> productIds = productCategoryMappingFinder.getIdsByCategory(category.getId());
 			products = productFinder.findAllByProductIds(productIds, page, size, sort);

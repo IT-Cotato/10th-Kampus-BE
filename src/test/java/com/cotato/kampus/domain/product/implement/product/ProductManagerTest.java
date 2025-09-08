@@ -1,5 +1,9 @@
 package com.cotato.kampus.domain.product.implement.product;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -8,13 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.domain.Product;
+import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.domain.product.implement.port.ProductRepository;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductManagerTest {
@@ -59,7 +59,6 @@ class ProductManagerTest {
 			assertThat(result.getStatus()).isEqualTo(ProductStatus.ACTIVE);
 			assertThat(result.getViewCount()).isEqualTo(0);
 			assertThat(result.getScrapCount()).isEqualTo(0);
-			assertThat(result.getChatCount()).isEqualTo(0);
 			assertThat(result.getBumpCount()).isEqualTo(0);
 		}
 	}

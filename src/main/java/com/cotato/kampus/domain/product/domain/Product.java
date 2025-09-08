@@ -20,7 +20,6 @@ public class Product {
 	private final String description;
 	private final Integer viewCount;
 	private final Integer scrapCount;
-	private final Integer chatCount;
 	private final Integer bumpCount;
 	private final LocalDateTime bumpedTime;
 	private final ProductStatus status;
@@ -29,7 +28,7 @@ public class Product {
 
 	@Builder(access = AccessLevel.PRIVATE)
 	private Product(Long id, Long userId, String title, Integer price, String description, Integer viewCount,
-		Integer scrapCount, Integer chatCount, Integer bumpCount, LocalDateTime bumpedTime, ProductStatus status,
+		Integer scrapCount, Integer bumpCount, LocalDateTime bumpedTime, ProductStatus status,
 		LocalDateTime createdTime, LocalDateTime lastModifiedTime) {
 		this.id = id;
 		this.userId = userId;
@@ -38,7 +37,6 @@ public class Product {
 		this.description = description;
 		this.viewCount = viewCount;
 		this.scrapCount = scrapCount;
-		this.chatCount = chatCount;
 		this.bumpCount = bumpCount;
 		this.bumpedTime = bumpedTime;
 		this.status = status;
@@ -54,7 +52,6 @@ public class Product {
 			.description(description)
 			.viewCount(0)
 			.scrapCount(0)
-			.chatCount(0)
 			.bumpCount(0)
 			.bumpedTime(LocalDateTime.now())
 			.status(ProductStatus.ACTIVE)
@@ -64,7 +61,7 @@ public class Product {
 	// createdTime과 lastModifiedTime은 DB에서만 관리되므로, 도메인 생성(create)에선 제외되고, fromEntity에서만 주입됨
 	public static Product fromEntity(
 		Long id, Long userId, String title, Integer price, String description, Integer viewCount,
-		Integer scrapCount, Integer chatCount, Integer bumpCount, LocalDateTime bumpedTime, ProductStatus status,
+		Integer scrapCount, Integer bumpCount, LocalDateTime bumpedTime, ProductStatus status,
 		LocalDateTime createdTime, LocalDateTime lastModifiedTime) {
 		return Product.builder()
 			.id(id)
@@ -74,7 +71,6 @@ public class Product {
 			.description(description)
 			.viewCount(viewCount)
 			.scrapCount(scrapCount)
-			.chatCount(chatCount)
 			.bumpCount(bumpCount)
 			.bumpedTime(bumpedTime)
 			.status(status)
@@ -85,54 +81,37 @@ public class Product {
 
 	public Product withUpdateInfo(String title, Integer price, String description) {
 		return createCopy(title, price, description, this.viewCount, this.scrapCount,
-			this.chatCount, this.bumpCount, this.bumpedTime, this.status);
+			this.bumpCount, this.bumpedTime, this.status);
 	}
 
-
 	public Product withProductStatus(ProductStatus status) {
-		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount, this.chatCount,
-			this.bumpCount,
-			this.bumpedTime, status);
+		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount,
+			this.bumpCount, this.bumpedTime, status);
 	}
 
 	public Product increaseViewCount() {
-		return createCopy(this.title, this.price, this.description, this.viewCount + 1, this.scrapCount, this.chatCount,
-			this.bumpCount,
-			this.bumpedTime, this.status);
+		return createCopy(this.title, this.price, this.description, this.viewCount + 1, this.scrapCount,
+			this.bumpCount, this.bumpedTime, this.status);
 	}
 
 	public Product increaseScrapCount() {
-		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount + 1, this.chatCount,
-			this.bumpCount,
+		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount + 1, this.bumpCount,
 			this.bumpedTime, this.status);
 	}
 
 	public Product decreaseScrapCount() {
 		return createCopy(this.title, this.price, this.description, this.viewCount, Math.max(0, this.scrapCount - 1),
-			this.chatCount, this.bumpCount,
-			this.bumpedTime, this.status);
-	}
-
-	public Product increaseChatCount() {
-		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount, this.chatCount + 1,
-			this.bumpCount,
-			this.bumpedTime, this.status);
-	}
-
-	public Product decreaseChatCount() {
-		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount,
-			Math.max(0, this.chatCount - 1), this.bumpCount,
-			this.bumpedTime, this.status);
+			this.bumpCount, this.bumpedTime, this.status);
 	}
 
 	// 끌어올리기 규칙 필요
 	public Product bump() {
-		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount, this.chatCount,
-			this.bumpCount + 1, LocalDateTime.now(), this.status);
+		return createCopy(this.title, this.price, this.description, this.viewCount, this.scrapCount, this.bumpCount + 1,
+			LocalDateTime.now(), this.status);
 	}
 
 	private Product createCopy(String title, Integer price, String description, Integer viewCount,
-		Integer scrapCount, Integer chatCount, Integer bumpCount, LocalDateTime bumpedTime, ProductStatus status) {
+		Integer scrapCount, Integer bumpCount, LocalDateTime bumpedTime, ProductStatus status) {
 		return Product.builder()
 			.id(this.id)
 			.userId(this.userId)
@@ -141,7 +120,6 @@ public class Product {
 			.description(description)
 			.viewCount(viewCount)
 			.scrapCount(scrapCount)
-			.chatCount(chatCount)
 			.bumpCount(bumpCount)
 			.bumpedTime(bumpedTime)
 			.status(status)
@@ -156,13 +134,13 @@ public class Product {
 	}
 
 	private void validateOwner(Long userId) {
-		if(!userId.equals(this.userId)) {
+		if (!userId.equals(this.userId)) {
 			throw new AppException(ErrorCode.FORBIDDEN_PRODUCT_EDIT);
 		}
 	}
 
 	public void validateNotDeleted() {
-		if(this.status.equals(ProductStatus.DELETED)) {
+		if (this.status.equals(ProductStatus.DELETED)) {
 			throw new AppException(ErrorCode.ALREADY_DELETED_PRODUCT);
 		}
 	}

@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Slice;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,7 +48,7 @@ public class ProductServiceTest {
 	@Autowired
 	private ProductService productService;
 
-	@MockBean
+	@MockitoBean
 	private ApiUserResolver apiUserResolver;
 
 	@Autowired
@@ -229,12 +230,16 @@ public class ProductServiceTest {
 		given(apiUserResolver.getCurrentUserId()).willReturn(user.id());
 
 		// 초기 카테고리 & 상품 저장
-		ProductCategory category1 = productCategoryRepository.save(ProductCategory.builder().categoryName("전자제품").build());
-		ProductCategory category2 =productCategoryRepository.save(ProductCategory.builder().categoryName("의류").build());
+		ProductCategory category1 = productCategoryRepository.save(
+			ProductCategory.builder().categoryName("전자제품").build());
+		ProductCategory category2 = productCategoryRepository.save(
+			ProductCategory.builder().categoryName("의류").build());
 
 		Product product = productRepository.save(Product.create(user.id(), "상품1", 10000, "설명1"));
-		productCategoryMappingRepository.save(ProductCategoryMapping.builder().categoryId(category1.getId()).productId(product.getId()).build());
-		productPhotoRepository.saveAll(List.of(ProductPhoto.builder().productId(product.getId()).photoUrl("image1.jpg").order(0).build()));
+		productCategoryMappingRepository.save(
+			ProductCategoryMapping.builder().categoryId(category1.getId()).productId(product.getId()).build());
+		productPhotoRepository.saveAll(
+			List.of(ProductPhoto.builder().productId(product.getId()).photoUrl("image1.jpg").order(0).build()));
 
 		// 새로운 카테고리
 		List<String> newCategoryNames = List.of("의류");
@@ -297,7 +302,8 @@ public class ProductServiceTest {
 		UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
 		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
 
-		ProductCategory category = productCategoryRepository.save(ProductCategory.builder().categoryName("전자제품").build());
+		ProductCategory category = productCategoryRepository.save(
+			ProductCategory.builder().categoryName("전자제품").build());
 
 		Product product = productRepository.save(Product.create(user.id(), "노트북", 100000, "노트북입니다."));
 		productCategoryMappingRepository.save(ProductCategoryMapping.builder()
@@ -351,7 +357,7 @@ public class ProductServiceTest {
 		UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
 		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
 
-		for(int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			Product product = productRepository.save(Product.create(user.id(), "상품" + i, 10000, "설명" + i));
 			productPhotoRepository.saveAll(List.of(ProductPhoto.builder()
 				.productId(product.getId())
@@ -378,11 +384,13 @@ public class ProductServiceTest {
 		UserDto user = TestUserHelper.createUserDto(1L, 1L, UserRole.VERIFIED);
 		given(apiUserResolver.getCurrentUserDto()).willReturn(user);
 
-		ProductCategory category1 = productCategoryRepository.save(ProductCategory.builder().categoryName("전자제품").build());
-		ProductCategory category2 = productCategoryRepository.save(ProductCategory.builder().categoryName("의류").build());
+		ProductCategory category1 = productCategoryRepository.save(
+			ProductCategory.builder().categoryName("전자제품").build());
+		ProductCategory category2 = productCategoryRepository.save(
+			ProductCategory.builder().categoryName("의류").build());
 
 		// 0 ~ 2번 상품은 전자제품, 3 ~ 9번 상품은 의류
-		for(int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			Product product = productRepository.save(Product.create(user.id(), "상품" + i, 10000, "설명" + i));
 			productPhotoRepository.saveAll(List.of(ProductPhoto.builder()
 				.productId(product.getId())
@@ -390,7 +398,7 @@ public class ProductServiceTest {
 				.order(0)
 				.build()));
 
-			if(i < 3) {
+			if (i < 3) {
 				productCategoryMappingRepository.save(ProductCategoryMapping.builder()
 					.productId(product.getId()).categoryId(category1.getId()).build());
 			} else {
@@ -474,9 +482,12 @@ public class ProductServiceTest {
 		Product product2 = productRepository.save(Product.create(1L, "상품2", 20000, "설명2"));
 		Product product3 = productRepository.save(Product.create(1L, "상품3", 30000, "설명3"));
 
-		productPhotoRepository.saveAll(List.of(ProductPhoto.builder().productId(product1.getId()).photoUrl("image1.jpg").order(0).build()));
-		productPhotoRepository.saveAll(List.of(ProductPhoto.builder().productId(product2.getId()).photoUrl("image2.jpg").order(0).build()));
-		productPhotoRepository.saveAll(List.of(ProductPhoto.builder().productId(product3.getId()).photoUrl("image3.jpg").order(0).build()));
+		productPhotoRepository.saveAll(
+			List.of(ProductPhoto.builder().productId(product1.getId()).photoUrl("image1.jpg").order(0).build()));
+		productPhotoRepository.saveAll(
+			List.of(ProductPhoto.builder().productId(product2.getId()).photoUrl("image2.jpg").order(0).build()));
+		productPhotoRepository.saveAll(
+			List.of(ProductPhoto.builder().productId(product3.getId()).photoUrl("image3.jpg").order(0).build()));
 
 		// When
 		Slice<ProductThumbnail> result = productService.findMyProducts(1, 10);

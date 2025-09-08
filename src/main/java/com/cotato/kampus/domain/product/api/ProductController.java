@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cotato.kampus.domain.post.api.response.SliceResponse;
+import com.cotato.kampus.domain.product.api.request.CreateProductRequest;
 import com.cotato.kampus.domain.product.api.request.ProductStatusUpdatable;
 import com.cotato.kampus.domain.product.api.request.UpdateProductRequest;
-import com.cotato.kampus.domain.product.enums.ProductSortType;
+import com.cotato.kampus.domain.product.api.response.ProductCreateResponse;
 import com.cotato.kampus.domain.product.api.response.ProductDetailResponse;
 import com.cotato.kampus.domain.product.application.ProductService;
-import com.cotato.kampus.domain.product.api.request.CreateProductRequest;
-import com.cotato.kampus.domain.product.api.response.ProductCreateResponse;
 import com.cotato.kampus.domain.product.domain.ProductThumbnail;
+import com.cotato.kampus.domain.product.enums.ProductSortType;
 import com.cotato.kampus.domain.product.enums.ProductStatus;
 import com.cotato.kampus.global.common.dto.DataResponse;
 import com.cotato.kampus.global.error.exception.ImageException;
