@@ -36,7 +36,7 @@ import com.cotato.kampus.domain.post.implement.postScrap.PostScrapDeleter;
 import com.cotato.kampus.domain.post.implement.postScrap.PostScrapFinder;
 import com.cotato.kampus.domain.post.domain.PostDetails;
 import com.cotato.kampus.domain.post.domain.PostThumbnailWithBoardName;
-import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostDeleter;
+import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostManager;
 import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostFinder;
 import com.cotato.kampus.domain.user.dto.UserDto;
 import com.cotato.kampus.global.error.exception.ImageException;
@@ -78,7 +78,7 @@ public class PostService {
 	private final PostScrapDeleter postScrapDeleter;
 
 	// 트렌딩 게시글 관련
-	private final TrendingPostDeleter trendingPostDeleter;
+	private final TrendingPostManager trendingPostManager;
 	private final TrendingPostFinder trendingPostFinder;
 
 	// 이미지 업로드 및 검증
@@ -178,7 +178,7 @@ public class PostService {
 		commentDeleter.deleteAllByPostId(postId);
 
 		// TrendingPost 삭제
-		trendingPostDeleter.deleteByPostId(postId);
+		trendingPostManager.deleteByPostId(postId);
 
 		// Post 삭제
 		postDeleter.delete(post);
