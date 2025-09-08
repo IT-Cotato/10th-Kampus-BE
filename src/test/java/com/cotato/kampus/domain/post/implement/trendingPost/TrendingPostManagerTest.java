@@ -3,7 +3,6 @@ package com.cotato.kampus.domain.post.implement.trendingPost;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -11,9 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.cotato.kampus.domain.post.implement.port.TrendingPostRepository;
 import com.cotato.kampus.domain.post.domain.TrendingPost;
 
-import static org.assertj.core.api.AssertionsForClassTypes.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TrendingPostManagerTest {
@@ -39,10 +36,9 @@ class TrendingPostManagerTest {
 		trendingPostManager.handleLikeCountChange(postId, likeCount);
 
 		// then
-		ArgumentCaptor<TrendingPost> captor = ArgumentCaptor.forClass(TrendingPost.class);
-		verify(trendingPostRepository, times(1)).save(captor.capture());
-		assertThat(captor.getValue().getPostId()).isEqualTo(postId);
-		verify(trendingPostRepository, never()).deleteByPostId(postId);
+		then(trendingPostRepository).should(times(1)).save(any(TrendingPost.class));
+		then(trendingPostRepository).should(never()).deleteByPostId(postId);
+		then(trendingPostFinder).should().existsByPostId(postId);
 	}
 
 	@Test
@@ -56,8 +52,9 @@ class TrendingPostManagerTest {
 		trendingPostManager.handleLikeCountChange(postId, likeCount);
 
 		// then
-		verify(trendingPostRepository, never()).save(any(TrendingPost.class));
-		verify(trendingPostRepository, never()).deleteByPostId(postId);
+		then(trendingPostRepository).should(never()).save(any(TrendingPost.class));
+		then(trendingPostRepository).should(never()).deleteByPostId(postId);
+		then(trendingPostFinder).should().existsByPostId(postId);
 	}
 
 	@Test
@@ -71,8 +68,9 @@ class TrendingPostManagerTest {
 		trendingPostManager.handleLikeCountChange(postId, likeCount);
 
 		// then
-		verify(trendingPostRepository, times(1)).deleteByPostId(postId);
-		verify(trendingPostRepository, never()).save(any(TrendingPost.class));
+		then(trendingPostRepository).should(times(1)).deleteByPostId(postId);
+		then(trendingPostRepository).should(never()).save(any(TrendingPost.class));
+		then(trendingPostFinder).should().existsByPostId(postId);
 	}
 
 	@Test
@@ -86,8 +84,8 @@ class TrendingPostManagerTest {
 		trendingPostManager.handleLikeCountChange(postId, likeCount);
 
 		// then
-		verify(trendingPostRepository, never()).save(any(TrendingPost.class));
-		verify(trendingPostRepository, never()).deleteByPostId(postId);
+		then(trendingPostRepository).shouldHaveNoInteractions();
+		then(trendingPostFinder).should().existsByPostId(postId);
 	}
 
 	@Test
@@ -101,8 +99,9 @@ class TrendingPostManagerTest {
 		trendingPostManager.handleLikeCountChange(postId, likeCount);
 
 		// then
-		verify(trendingPostRepository, times(1)).save(any(TrendingPost.class));
-		verify(trendingPostRepository, never()).deleteByPostId(postId);
+		then(trendingPostRepository).should(times(1)).save(any(TrendingPost.class));
+		then(trendingPostRepository).should(never()).deleteByPostId(postId);
+		then(trendingPostFinder).should().existsByPostId(postId);
 	}
 
 }
