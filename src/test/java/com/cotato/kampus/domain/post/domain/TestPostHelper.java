@@ -78,11 +78,4 @@ public class TestPostHelper {
             LocalDateTime.now()
         );
     }
-
-    public Post createPostWithLikeCount(int likeCount) {
-        return new TestPostHelper()
-            .withLikeCount(likeCount)
-            .createNormalPost();
-    }
-
 }

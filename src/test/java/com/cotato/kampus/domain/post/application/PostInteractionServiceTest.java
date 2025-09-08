@@ -148,13 +148,12 @@ class PostInteractionServiceTest {
     void likePost_success() {
         // given
         Post post = new TestPostHelper().createNormalPost();
-        Post updatedPost = new TestPostHelper().createPostWithLikeCount(1);
+        Post updatedPost = new TestPostHelper().withLikeCount(1).createNormalPost();
         given(apiUserResolver.getCurrentUserId()).willReturn(userId);
         given(postFinder.find(postId)).willReturn(post);
         doNothing().when(postLikeValidator).validateDuplicateLike(postId, userId);
         when(postLikeAppender.append(postId, userId)).thenReturn(PostLike.builder().id(1L).postId(postId).userId(userId).build());
         when(postUpdater.increaseLikeCount(post)).thenReturn(updatedPost);
-        doNothing().when(trendingPostManager).handleLikeCountChange(postId, updatedPost.getLikeCount());
 
         // when
         postInteractionService.likePost(postId);
@@ -190,13 +189,12 @@ class PostInteractionServiceTest {
     @DisplayName("게시글 좋아요 취소 성공")
     void unlikePost_success() {
         // given
-        Post post = new TestPostHelper().createPostWithLikeCount(5);
-        Post updatedPost = new TestPostHelper().createPostWithLikeCount(4);
+        Post post = new TestPostHelper().withLikeCount(5).createNormalPost();
+        Post updatedPost = new TestPostHelper().withLikeCount(4).createNormalPost();
         PostLike postLike = PostLike.builder().id(1L).postId(postId).userId(userId).build();
         given(apiUserResolver.getCurrentUserId()).willReturn(userId);
         given(postFinder.find(postId)).willReturn(post);
         given(postLikeFinder.findPostLikeByPostIdAndUserId(postId, userId)).willReturn(postLike);
-        doNothing().when(postLikeDeleter).delete(postLike);
         when(postUpdater.decreaseLikeCount(post)).thenReturn(updatedPost);
         doNothing().when(trendingPostManager).handleLikeCountChange(postId, updatedPost.getLikeCount());
 
