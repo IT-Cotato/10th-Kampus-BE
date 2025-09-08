@@ -21,9 +21,7 @@ import com.cotato.kampus.domain.post.implement.postLike.PostLikeValidator;
 import com.cotato.kampus.domain.post.implement.postScrap.PostScrapAppender;
 import com.cotato.kampus.domain.post.implement.postScrap.PostScrapDeleter;
 import com.cotato.kampus.domain.post.implement.postScrap.PostScrapFinder;
-import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostAppender;
-import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostDeleter;
-import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostFinder;
+import com.cotato.kampus.domain.post.implement.trendingPost.TrendingPostManager;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -44,9 +42,7 @@ public class PostInteractionService {
 	private final PostLikeDeleter postLikeDeleter;
 	private final PostLikeValidator postLikeValidator;
 
-	private final TrendingPostAppender trendingPostAppender;
-	private final TrendingPostFinder trendingPostFinder;
-	private final TrendingPostDeleter trendingPostDeleter;
+	private final TrendingPostManager trendingPostManager;
 
 	private final PostScrapAppender postScrapAppender;
 	private final PostScrapFinder postScrapFinder;
@@ -65,15 +61,11 @@ public class PostInteractionService {
 		// 3. 좋아요 추가
 		postLikeAppender.append(postId, userId);
 
-		// 4. 기존에 좋아요가 2개였다면 Trending 게시판에 추가
-		//  TRENDING_LIKE_THRESHOLD 추가
-		boolean isTrending = trendingPostFinder.existsByPostId(postId);
-		if (!isTrending) {
-			trendingPostAppender.append(postId);
-		}
+		// 4. post의 likeCount + 1
+		Post updatedPost = postUpdater.increaseLikeCount(post);
 
-		// 5. post의 likeCount + 1
-		postUpdater.increaseLikeCount(post);
+		// 5. 트렌딩 게시판 관리
+		trendingPostManager.handleLikeCountChange(postId, updatedPost.getLikeCount());
 
 	}
 
@@ -88,16 +80,11 @@ public class PostInteractionService {
 		PostLike postLike = postLikeFinder.findPostLikeByPostIdAndUserId(postId, userId);
 		postLikeDeleter.delete(postLike);
 
-		// 4. 기존에 좋아요가 3개 였다면 Trending 게시판에서 제거
-		boolean isTrending = trendingPostFinder.existsByPostId(postId);
-
-		if (isTrending) {
-			// private static final int TRENDING_LIKE_THRESHOLD = 3;
-
-			trendingPostDeleter.deleteByPostId(postId);
-		}
 		// 3. post의 likeCount - 1
-		postUpdater.decreaseLikeCount(post);
+		Post updatedPost = postUpdater.decreaseLikeCount(post);
+
+		// 4. 트렌딩 게시판 관리
+		trendingPostManager.handleLikeCountChange(postId, updatedPost.getLikeCount());
 
 	}
 
