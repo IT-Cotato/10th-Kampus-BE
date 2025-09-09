@@ -55,26 +55,41 @@ class ChatRoomServiceTest {
 	ChatroomMetadataMapper chatroomMetadataMapper;
 
 	@Test
-	@DisplayName("postId로 채팅방을 생성한다.")
+	@DisplayName("postId로 채팅방을 생성하고 올바른 파라미터가 전달되는지 검증한다.")
 	public void createChatRoom() {
-		//postId = 1, senderId = 1, receiverId = 2
+		// given
+		Long postId = 999L;
+		Long senderId = 777L;
+		Long receiverId = 555L;
+		Long expectedChatRoomId = 123L;
 
 		ChatReference chatReference = ChatReference.builder()
-			.referenceId(1L)
-			.referenceUserId(2L)
+			.referenceId(postId)
+			.referenceUserId(receiverId)
 			.title("test")
 			.build();
 
-		when(referenceFinder.find(1L, ChatType.POST)).thenReturn(chatReference);
-		when(apiUserResolver.getCurrentUserId()).thenReturn(1L);
-		doNothing().when(chatRoomValidator).validateDuplicateChatRoom(1L, 1L, ChatType.POST);
-		when(chatRoomAppender.appendChatRoom(2L, ChatType.POST, 1L, 2L)).thenReturn(123L);
+		when(referenceFinder.find(postId, ChatType.POST)).thenReturn(chatReference);
+		when(apiUserResolver.getCurrentUserId()).thenReturn(senderId);
+		doNothing().when(chatRoomValidator).validateDuplicateChatRoom(postId, senderId, ChatType.POST);
+		when(chatRoomAppender.appendChatRoom(postId, ChatType.POST, senderId, receiverId)).thenReturn(expectedChatRoomId);
 		doNothing().when(chatroomMetadataAppender)
-			.createMetadataPair(123L, ChatType.POST, chatReference.getReferenceId(),
-				chatReference.getTitle(), 1L, 2L);
+			.createMetadataPair(expectedChatRoomId, ChatType.POST, postId,
+				chatReference.getTitle(), senderId, receiverId);
 
-		Long id = target.createChatRoom(chatReference.getReferenceId(), ChatType.POST);
-		assertThat(id).isEqualTo(123L);
+		// when
+		Long id = target.createChatRoom(postId, ChatType.POST);
+		
+		// then
+		assertThat(id).isEqualTo(expectedChatRoomId);
+		
+		// 파라미터 순서 검증: 첫 번째는 postId여야 함 (receiverId가 아닌)
+		verify(chatRoomAppender).appendChatRoom(
+			eq(postId),      // referenceId = postId (NOT receiverId)
+			eq(ChatType.POST),
+			eq(senderId),
+			eq(receiverId)
+		);
 	}
 
 	@Test
