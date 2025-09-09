@@ -68,7 +68,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 		chatRoomValidator.validateDuplicateChatRoom(chatReference.getReferenceId(), senderId, chatType);
 
 		// 4. 채팅방 생성(생성 시 검증 이루어짐(sender != receiver))
-		Long chatroomId = chatRoomAppender.appendChatRoom(chatReference.getReferenceUserId(), chatType, senderId,
+		Long chatroomId = chatRoomAppender.appendChatRoom(chatReference.getReferenceId(), chatType, senderId,
 			chatReference.getReferenceUserId());
 
 		// 5. 채팅방 리스트 조회시 사용되는 뷰 생성
