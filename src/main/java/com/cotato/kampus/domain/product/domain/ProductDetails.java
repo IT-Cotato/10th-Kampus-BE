@@ -18,7 +18,7 @@ public record ProductDetails(
 	int scrapCount,
 	int chatCount,
 	int bumpCount,
-	ProductStatus postStatus,
+	ProductStatus productStatus,
 	LocalDateTime bumpedTime,
 	LocalDateTime createdTime,
 	boolean isAuthor,
