@@ -32,6 +32,7 @@ import com.cotato.kampus.domain.chat.implement.metadata.ChatroomMetadataMapper;
 import com.cotato.kampus.domain.common.application.ApiUserResolver;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
+import com.cotato.kampus.global.error.exception.ChatRoomDuplicatedException;
 
 @ExtendWith(MockitoExtension.class)
 class ChatRoomServiceTest {
@@ -113,7 +114,7 @@ class ChatRoomServiceTest {
 		when(referenceFinder.find(1L, null)).thenReturn(chatReference);
 		when(apiUserResolver.getCurrentUserId()).thenReturn(1L);
 		doNothing().when(chatRoomValidator).validateDuplicateChatRoom(1L, 1L, null);
-		when(chatRoomAppender.appendChatRoom(2L, null, 1L, 2L)).thenReturn(123L);
+		when(chatRoomAppender.appendChatRoom(1L, null, 1L, 2L)).thenReturn(123L);
 		doNothing().when(chatroomMetadataAppender)
 			.createMetadataPair(123L, null, chatReference.getReferenceId(),
 				chatReference.getTitle(), 1L, 2L);
@@ -169,5 +170,102 @@ class ChatRoomServiceTest {
 
 		var result = target.findChatRooms(1, null);
 		assertThat(result.chatRoomPreviewList()).isEmpty();
+	}
+
+	@Test
+	@DisplayName("중복된 채팅방 생성 시 ChatRoomDuplicatedException이 발생하고 기존 채팅방 ID를 포함한다.")
+	void createChatRoom_duplicated() {
+		// given
+		Long referenceId = 1L;
+		Long senderId = 2L;
+		Long existingChatRoomId = 999L;
+
+		ChatReference chatReference = ChatReference.builder()
+			.referenceId(referenceId)
+			.referenceUserId(3L)
+			.title("test")
+			.build();
+
+		when(referenceFinder.find(referenceId, ChatType.POST)).thenReturn(chatReference);
+		when(apiUserResolver.getCurrentUserId()).thenReturn(senderId);
+		doThrow(new ChatRoomDuplicatedException(ErrorCode.CHATROOM_DUPLICATED, existingChatRoomId))
+			.when(chatRoomValidator).validateDuplicateChatRoom(referenceId, senderId, ChatType.POST);
+
+		// when & then
+		assertThatThrownBy(() -> target.createChatRoom(referenceId, ChatType.POST))
+			.isInstanceOf(ChatRoomDuplicatedException.class)
+			.hasMessage(ErrorCode.CHATROOM_DUPLICATED.getMessage())
+			.extracting("existingChatRoomId")
+			.isEqualTo(existingChatRoomId);
+
+		// 중복 검증 이후 채팅방 생성 로직이 실행되지 않는지 확인
+		verify(chatRoomAppender, never()).appendChatRoom(any(), any(), any(), any());
+		verify(chatroomMetadataAppender, never()).createMetadataPair(any(), any(), any(), any(), any(), any());
+	}
+
+	@Test
+	@DisplayName("중복된 PRODUCT 타입 채팅방 생성 시에도 ChatRoomDuplicatedException이 발생한다.")
+	void createChatRoom_duplicated_product() {
+		// given
+		Long referenceId = 1L;
+		Long senderId = 2L;
+		Long existingChatRoomId = 888L;
+
+		ChatReference chatReference = ChatReference.builder()
+			.referenceId(referenceId)
+			.referenceUserId(3L)
+			.title("product test")
+			.build();
+
+		when(referenceFinder.find(referenceId, ChatType.PRODUCT)).thenReturn(chatReference);
+		when(apiUserResolver.getCurrentUserId()).thenReturn(senderId);
+		doThrow(new ChatRoomDuplicatedException(ErrorCode.CHATROOM_DUPLICATED, existingChatRoomId))
+			.when(chatRoomValidator).validateDuplicateChatRoom(referenceId, senderId, ChatType.PRODUCT);
+
+		// when & then
+		assertThatThrownBy(() -> target.createChatRoom(referenceId, ChatType.PRODUCT))
+			.isInstanceOf(ChatRoomDuplicatedException.class)
+			.hasMessage(ErrorCode.CHATROOM_DUPLICATED.getMessage())
+			.extracting("existingChatRoomId")
+			.isEqualTo(existingChatRoomId);
+	}
+
+	@Test
+	@DisplayName("중복 검증 통과 후 채팅방이 정상적으로 생성된다.")
+	void createChatRoom_success_after_validation() {
+		// given
+		Long referenceId = 1L;
+		Long senderId = 2L;
+		Long receiverId = 3L;
+		Long expectedChatRoomId = 100L;
+
+		ChatReference chatReference = ChatReference.builder()
+			.referenceId(referenceId)
+			.referenceUserId(receiverId)
+			.title("test chat")
+			.build();
+
+		when(referenceFinder.find(referenceId, ChatType.POST)).thenReturn(chatReference);
+		when(apiUserResolver.getCurrentUserId()).thenReturn(senderId);
+		doNothing().when(chatRoomValidator).validateDuplicateChatRoom(referenceId, senderId, ChatType.POST);
+		when(chatRoomAppender.appendChatRoom(referenceId, ChatType.POST, senderId, receiverId))
+			.thenReturn(expectedChatRoomId);
+		doNothing().when(chatroomMetadataAppender)
+			.createMetadataPair(expectedChatRoomId, ChatType.POST, referenceId,
+				chatReference.getTitle(), senderId, receiverId);
+
+		// when
+		Long result = target.createChatRoom(referenceId, ChatType.POST);
+
+		// then
+		assertThat(result).isEqualTo(expectedChatRoomId);
+
+		// 모든 단계가 순서대로 실행되는지 확인
+		verify(referenceFinder).find(referenceId, ChatType.POST);
+		verify(apiUserResolver).getCurrentUserId();
+		verify(chatRoomValidator).validateDuplicateChatRoom(referenceId, senderId, ChatType.POST);
+		verify(chatRoomAppender).appendChatRoom(referenceId, ChatType.POST, senderId, receiverId);
+		verify(chatroomMetadataAppender).createMetadataPair(
+			expectedChatRoomId, ChatType.POST, referenceId, chatReference.getTitle(), senderId, receiverId);
 	}
 }
