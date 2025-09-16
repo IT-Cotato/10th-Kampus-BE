@@ -33,6 +33,11 @@ public class ChatRoomFinder {
 			.orElseThrow(() -> new AppException(ErrorCode.CHATROOM_NOT_FOUND));
 	}
 
+	public ChatRoom findByReferenceIdAndSenderIdAndChatType(Long referenceId, Long senderId, ChatType chatType) {
+		return chatRoomRepository.findByReferenceIdAndInitialSenderIdAndChatType(referenceId, senderId, chatType)
+			.orElseThrow(() -> new AppException(ErrorCode.CHATROOM_NOT_FOUND));
+	}
+
 	public Slice<ChatRoom> findChatRooms(Long userId, int page) {
 		CustomPageRequest customPageRequest = new CustomPageRequest(page, PAGE_SIZE, Sort.Direction.DESC);
 		return chatRoomRepository.findAllByUserIdOrderByCreatedTimeDesc(

@@ -1,5 +1,7 @@
 package com.cotato.kampus.domain.chat.dao.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +19,6 @@ public interface ChatRoomJpaRepository extends JpaRepository<ChatRoomEntity, Lon
 		"WHERE c.initialSenderId = :userId OR c.initialReceiverId = :userId " +
 		"ORDER BY c.createdTime DESC")
 	Slice<ChatRoomEntity> findAllByUserIdOrderByCreatedTimeDesc(@Param("userId") Long userId, Pageable pageable);
+
+	Optional<ChatRoomEntity> findByReferenceIdAndInitialSenderIdAndChatType(Long referenceId, Long senderId, ChatType chatType);
 }

@@ -29,7 +29,7 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepository {
 	public Optional<ChatRoom> findById(Long chatroomId) {
 		return chatRoomJpaRepository.findById(chatroomId).map(ChatRoomEntity::toDomain);
 	}
-	
+
 	@Override
 	public boolean existsByReferenceIdAndInitialSenderIdAndChatType(Long referenceId, Long senderId, ChatType chatType) {
 		return chatRoomJpaRepository.existsByReferenceIdAndInitialSenderIdAndChatType(referenceId, senderId, chatType);
@@ -38,6 +38,14 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepository {
 	@Override
 	public Slice<ChatRoom> findAllByUserIdOrderByCreatedTimeDesc(Long userId, Pageable pageable) {
 		return chatRoomJpaRepository.findAllByUserIdOrderByCreatedTimeDesc(userId, pageable)
+			.map(ChatRoomEntity::toDomain);
+	}
+
+
+	@Override
+	public Optional<ChatRoom> findByReferenceIdAndInitialSenderIdAndChatType(Long referenceId, Long senderId,
+		ChatType chatType) {
+		return chatRoomJpaRepository.findByReferenceIdAndInitialSenderIdAndChatType(referenceId, senderId, chatType)
 			.map(ChatRoomEntity::toDomain);
 	}
 }
