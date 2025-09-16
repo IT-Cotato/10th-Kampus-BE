@@ -14,6 +14,7 @@ import com.cotato.kampus.domain.chat.domain.ChatRoom;
 import com.cotato.kampus.domain.chat.enums.ChatType;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
+import com.cotato.kampus.global.error.exception.ChatRoomDuplicatedException;
 
 @ExtendWith(MockitoExtension.class)
 class ChatRoomValidatorTest {
@@ -47,13 +48,19 @@ class ChatRoomValidatorTest {
 		Long referenceId = 1L;
 		Long senderId = 2L;
 		ChatType chatType = ChatType.POST;
+		Long existingChatRoomId = 100L;
+
+		ChatRoom existingChatRoom = mock(ChatRoom.class);
+		when(existingChatRoom.getId()).thenReturn(existingChatRoomId);
 
 		when(chatRoomFinder.existsByReferenceIdAndSenderIdAndChatType(referenceId, senderId, chatType))
 			.thenReturn(true);
+		when(chatRoomFinder.findByReferenceIdAndSenderIdAndChatType(referenceId, senderId, chatType))
+			.thenReturn(existingChatRoom);
 
 		// when & then
 		assertThatThrownBy(() -> target.validateDuplicateChatRoom(referenceId, senderId, chatType))
-			.isInstanceOf(AppException.class)
+			.isInstanceOf(ChatRoomDuplicatedException.class)
 			.hasMessage(ErrorCode.CHATROOM_DUPLICATED.getMessage());
 	}
 
