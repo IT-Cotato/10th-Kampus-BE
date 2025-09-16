@@ -21,7 +21,7 @@ public enum ErrorCode {
 	POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 게시글을 찾을 수 없습니다.", "POST-001"),
 	POST_NOT_AUTHOR(HttpStatus.FORBIDDEN, "게시글 작성자가 아닙니다.", "POST-002"),
 	POST_SCRAP_FORBIDDEN(HttpStatus.FORBIDDEN, "자신의 게시글을 스크랩 할 수 없습니다.", "POST-005"),
-	POST_SCRAP_DUPLICATED(HttpStatus.FORBIDDEN, "이미 스크랩한 글입니다.", "POST-006"),
+	POST_SCRAP_DUPLICATED(HttpStatus.CONFLICT, "이미 스크랩한 글입니다.", "POST-006"),
 	POST_SCRAP_NOT_EXIST(HttpStatus.FORBIDDEN, "스크랩 되지 않은 게시글은 삭제할 수 없습니다.", "POST-007"),
 	INVALID_CATEGORY(HttpStatus.BAD_REQUEST, "해당 게시판에서 사용할 수 없는 카테고리입니다.", "POST-008"),
 	CATEGORY_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "카테고리가 없는 게시판입니다.", "POST-009"),
@@ -56,7 +56,7 @@ public enum ErrorCode {
 	POST_LIKE_USER_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostLike 사용자 ID는 필수입니다.", "POST_LIKE-001"),
 	POST_LIKE_POST_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostLike 게시글 ID는 필수입니다.", "POST_LIKE-002"),
 	POST_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "좋아요 내역을 찾을 수 없습니다. ", "POST_LIKE-003"),
-	POST_LIKE_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 좋아요한 게시글입니다.", "POST_LIKE-004"),
+	POST_LIKE_DUPLICATED(HttpStatus.CONFLICT, "이미 좋아요한 게시글입니다.", "POST_LIKE-004"),
 
 	// PostScrap
 	POST_SCRAP_USER_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PostScrap 사용자 ID는 필수입니다.", "POST_SCRAP-001"),
@@ -70,7 +70,7 @@ public enum ErrorCode {
 	CATEGORY_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "Category 생성시 카테고리 이름은 필수입니다.", "CATEGORY-001"),
 	CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "Category를 찾을 수 없습니다.", "CATEGORY-002"),
 	CATEGORY_NOT_BELONG_TO_BOARD(HttpStatus.BAD_REQUEST, "카테고리가 해당 게시판에 속하지 않습니다.", "CATEGORY-003"),
-	CATEGORY_DUPLICATED(HttpStatus.BAD_REQUEST, "카테고리가 중복됩니다.", "Category-004"),
+	CATEGORY_DUPLICATED(HttpStatus.CONFLICT, "카테고리가 중복됩니다.", "CATEGORY-004"),
 
 	// Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
@@ -87,15 +87,15 @@ public enum ErrorCode {
 	COMMENT_UNLIKE_FORBIDDEN(HttpStatus.BAD_REQUEST, "댓글 좋아요 취소가 불가능합니다.", "COMMENT-006"),
 
 	// File
-	FILE_EXTENSION_FAULT(HttpStatus.BAD_REQUEST, "F-001", "해당 파일 확장자 명이 존재하지 않습니다."),
-	FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "F-002", "파일이 비어있습니다"),
-	FILE_SIZE_TOO_LARGE(HttpStatus.BAD_REQUEST, "F-003", "파일 크기가 너무 큽니다"),
+	FILE_EXTENSION_FAULT(HttpStatus.BAD_REQUEST, "해당 파일 확장자 명이 존재하지 않습니다.", "F-001"),
+	FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "파일이 비어있습니다", "F-002"),
+	FILE_SIZE_TOO_LARGE(HttpStatus.BAD_REQUEST, "파일 크기가 너무 큽니다", "F-003"),
 
 	// S3 에러
-	EMPTY_FILE_EXCEPTION(HttpStatus.BAD_REQUEST, "S3-001", "파일이 비어 있습니다."),
-	IO_EXCEPTION_ON_IMAGE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "S3-002", "이미지 업로드 중 IO 예외 발생"),
-	NO_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3-003", "파일 확장자가 없습니다."),
-	INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3-004", "유효하지 않은 파일 확장자입니다."),
+	EMPTY_FILE_EXCEPTION(HttpStatus.BAD_REQUEST, "파일이 비어 있습니다.", "S3-001"),
+	IO_EXCEPTION_ON_IMAGE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드 중 IO 예외 발생", "S3-002"),
+	NO_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "파일 확장자가 없습니다.", "S3-003"),
+	INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "유효하지 않은 파일 확장자입니다.", "S3-004"),
 
 	// User
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저를 찾을 수 없습니다.", "USER-001"),
@@ -115,13 +115,13 @@ public enum ErrorCode {
 	BOARD_ALREADY_INACTIVE(HttpStatus.CONFLICT, "이미 게시판이 비활성화 상태입니다.", "BOARD-005"),
 	BOARD_ALREADY_ACTIVE(HttpStatus.CONFLICT, "이미 게시판이 활성화 상태입니다.", "BOARD-006"),
 	BOARD_NOT_VALIDATE(HttpStatus.BAD_REQUEST, "게시판이 유효하지 않습니다.", "BOARD-007"),
-	BOARD_NAME_DUPLICATED(HttpStatus.BAD_REQUEST, "게시판 이름이 이미 존재합니다.", "BOARD-008"),
+	BOARD_NAME_DUPLICATED(HttpStatus.CONFLICT, "게시판 이름이 이미 존재합니다.", "BOARD-008"),
 	BOARD_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 게시판 접근 자격이 없습니다.", "BOARD-009"),
 	BOARD_ALREADY_PENDING(HttpStatus.BAD_REQUEST, "이미 삭제 대기 상태인 게시판입니다.", "BOARD-010"),
 	INVALID_BOARD_TYPE(HttpStatus.BAD_REQUEST, "유효하지 않은 BoardType 입니다.", "BOARD-011"),
 	BOARD_NOT_ACTIVE(HttpStatus.FORBIDDEN, "게시판이 활성화되지 않았습니다.", "BOARD-012"),
 	BOARD_UNIVERSITY_ID_REQUIRED(HttpStatus.BAD_REQUEST, "대학 게시판은 대학 ID가 필수입니다.", "BOARD-013"),
-	DUPLICATED_UNIQUE_BOARD_TYPE(HttpStatus.BAD_REQUEST, "중복 생성이 허용되지 않는 게시판 타입입니다.", "BOARD-014"),
+	DUPLICATED_UNIQUE_BOARD_TYPE(HttpStatus.CONFLICT, "중복 생성이 허용되지 않는 게시판 타입입니다.", "BOARD-014"),
 	CANNOT_REMOVE_FAVORITE_BOARD(HttpStatus.BAD_REQUEST, "고정 게시판은 즐겨찾기를 해제할 수 없습니다.", "BOARD-015"),
 
 	// Product
@@ -137,7 +137,7 @@ public enum ErrorCode {
 
 	// ProductCategory
 	PRODUCT_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "상품 카테고리를 찾을 수 없습니다.", "PRODUCT_CATEGORY-001"),
-	PRODUCT_CATEGORY_DUPLICATED(HttpStatus.BAD_REQUEST, "카테고리가 중복됩니다.", "PRODUCT_CATEGORY-002"),
+	PRODUCT_CATEGORY_DUPLICATED(HttpStatus.CONFLICT, "카테고리가 중복됩니다.", "PRODUCT_CATEGORY-002"),
 
 	// University
 	UNIVERSITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 대학을 찾을 수 없습니다.", "UNIVERSITY-001"),
@@ -156,7 +156,7 @@ public enum ErrorCode {
 
 	// Chat
 	INVALID_CHATROOM(HttpStatus.FORBIDDEN, "자신에게 채팅을 할 수 없습니다.", "CHAT-001"),
-	CHATROOM_DUPLICATED(HttpStatus.BAD_REQUEST, "이미 존재하는 채팅 방입니다.", "CHAT-002"),
+	CHATROOM_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 채팅방입니다.", "CHAT-002"),
 	CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 채팅방을 찾을 수 없습니다.", "CHAT-003"),
 	CHATROOM_NOT_ENTERED(HttpStatus.FORBIDDEN, "채팅방에 입장한 유저가 아닙니다.", "CHAT-004"),
 	READ_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 채팅 읽음 상태를 찾을 수 없습니다.", "CHAT-005"),

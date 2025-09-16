@@ -17,6 +17,7 @@ import com.cotato.kampus.global.error.exception.ChatRoomDuplicatedException;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.error.exception.ImageValidationException;
 import com.cotato.kampus.global.error.exception.UnivCertException;
+import com.cotato.kampus.global.error.response.ChatRoomDuplicatedResponse;
 import com.cotato.kampus.global.error.response.ErrorResponse;
 import com.deepl.api.DeepLException;
 
@@ -193,10 +194,16 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(ChatRoomDuplicatedException.class)
-	public ResponseEntity<ErrorResponse> handleChatRoomDuplicatedException(ChatRoomDuplicatedException e, HttpServletRequest request) {
+	public ResponseEntity<ChatRoomDuplicatedResponse> handleChatRoomDuplicatedException(ChatRoomDuplicatedException e, HttpServletRequest request) {
 		log.error("ChatRoom Duplicated Exception 발생: {}, 기존 채팅방 ID: {}", e.getMessage(), e.getExistingChatRoomId());
 		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
-		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode(), request);
+
+		ChatRoomDuplicatedResponse errorResponse = ChatRoomDuplicatedResponse.of(
+			e.getErrorCode(),
+			request,
+			e.getExistingChatRoomId()
+		);
+
 		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
 			.body(errorResponse);
 	}
