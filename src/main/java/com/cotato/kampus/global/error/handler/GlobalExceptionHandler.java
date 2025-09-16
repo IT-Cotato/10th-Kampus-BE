@@ -13,6 +13,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
+import com.cotato.kampus.global.error.exception.ChatRoomDuplicatedException;
 import com.cotato.kampus.global.error.exception.ImageException;
 import com.cotato.kampus.global.error.exception.ImageValidationException;
 import com.cotato.kampus.global.error.exception.UnivCertException;
@@ -189,5 +190,14 @@ public class GlobalExceptionHandler {
 		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
 		ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.MALFORMED_TOKEN, request);
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+
+	@ExceptionHandler(ChatRoomDuplicatedException.class)
+	public ResponseEntity<ErrorResponse> handleChatRoomDuplicatedException(ChatRoomDuplicatedException e, HttpServletRequest request) {
+		log.error("ChatRoom Duplicated Exception 발생: {}, 기존 채팅방 ID: {}", e.getMessage(), e.getExistingChatRoomId());
+		log.error("에러가 발생한 지점 {}, {}", request.getMethod(), request.getRequestURI());
+		ErrorResponse errorResponse = ErrorResponse.of(e.getErrorCode(), request);
+		return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+			.body(errorResponse);
 	}
 }
