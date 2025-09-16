@@ -228,6 +228,9 @@ class ChatRoomServiceTest {
 			.hasMessage(ErrorCode.CHATROOM_DUPLICATED.getMessage())
 			.extracting("existingChatRoomId")
 			.isEqualTo(existingChatRoomId);
+
+		verify(chatRoomAppender, never()).appendChatRoom(any(), any(), any(), any());
+		verify(chatroomMetadataAppender, never()).createMetadataPair(any(), any(), any(), any(), any(), any());
 	}
 
 	@Test

@@ -20,5 +20,5 @@ public interface ChatRoomJpaRepository extends JpaRepository<ChatRoomEntity, Lon
 		"ORDER BY c.createdTime DESC")
 	Slice<ChatRoomEntity> findAllByUserIdOrderByCreatedTimeDesc(@Param("userId") Long userId, Pageable pageable);
 
-	Optional<ChatRoomEntity> findByReferenceIdAndInitialSenderIdAndChatType(Long referenceId, Long senderId, ChatType chatType);
+	Optional<ChatRoomEntity> findByReferenceIdAndInitialSenderIdAndChatType(Long referenceId, Long initialSenderId, ChatType chatType);
 }

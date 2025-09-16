@@ -18,5 +18,5 @@ public interface ChatRoomRepository {
 
 	Optional<ChatRoom> findById(Long chatroomId);
 
-	Optional<ChatRoom> findByReferenceIdAndInitialSenderIdAndChatType(Long referenceId, Long senderId, ChatType chatType);
+	Optional<ChatRoom> findByReferenceIdAndInitialSenderIdAndChatType(Long referenceId, Long initialSenderId, ChatType chatType);
 }

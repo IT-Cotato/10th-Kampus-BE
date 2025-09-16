@@ -41,11 +41,10 @@ public class ChatRoomRepositoryImpl implements ChatRoomRepository {
 			.map(ChatRoomEntity::toDomain);
 	}
 
-
 	@Override
-	public Optional<ChatRoom> findByReferenceIdAndInitialSenderIdAndChatType(Long referenceId, Long senderId,
+	public Optional<ChatRoom> findByReferenceIdAndInitialSenderIdAndChatType(Long referenceId, Long initialSenderId,
 		ChatType chatType) {
-		return chatRoomJpaRepository.findByReferenceIdAndInitialSenderIdAndChatType(referenceId, senderId, chatType)
+		return chatRoomJpaRepository.findByReferenceIdAndInitialSenderIdAndChatType(referenceId, initialSenderId, chatType)
 			.map(ChatRoomEntity::toDomain);
 	}
 }
