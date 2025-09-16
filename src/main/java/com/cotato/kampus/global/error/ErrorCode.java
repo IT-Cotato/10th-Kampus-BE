@@ -70,7 +70,7 @@ public enum ErrorCode {
 	CATEGORY_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "Category 생성시 카테고리 이름은 필수입니다.", "CATEGORY-001"),
 	CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "Category를 찾을 수 없습니다.", "CATEGORY-002"),
 	CATEGORY_NOT_BELONG_TO_BOARD(HttpStatus.BAD_REQUEST, "카테고리가 해당 게시판에 속하지 않습니다.", "CATEGORY-003"),
-	CATEGORY_DUPLICATED(HttpStatus.BAD_REQUEST, "카테고리가 중복됩니다.", "Category-004"),
+	CATEGORY_DUPLICATED(HttpStatus.BAD_REQUEST, "카테고리가 중복됩니다.", "CATEGORY-004"),
 
 	// Image
 	INVALID_DELETED_IMAGE(HttpStatus.BAD_REQUEST, "삭제 요청한 이미지 URL이 유효하지 않습니다.", "IMAGE-001"),
@@ -87,14 +87,14 @@ public enum ErrorCode {
 	COMMENT_UNLIKE_FORBIDDEN(HttpStatus.BAD_REQUEST, "댓글 좋아요 취소가 불가능합니다.", "COMMENT-006"),
 
 	// File
-	FILE_EXTENSION_FAULT(HttpStatus.BAD_REQUEST, "F-001", "해당 파일 확장자 명이 존재하지 않습니다."),
-	FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "F-002", "파일이 비어있습니다"),
-	FILE_SIZE_TOO_LARGE(HttpStatus.BAD_REQUEST, "F-003", "파일 크기가 너무 큽니다"),
+	FILE_EXTENSION_FAULT(HttpStatus.BAD_REQUEST, "해당 파일 확장자 명이 존재하지 않습니다.", "F-001"),
+	FILE_IS_EMPTY(HttpStatus.BAD_REQUEST, "파일이 비어있습니다", "F-002"),
+	FILE_SIZE_TOO_LARGE(HttpStatus.BAD_REQUEST, "파일 크기가 너무 큽니다", "F-003"),
 
 	// S3 에러
-	EMPTY_FILE_EXCEPTION(HttpStatus.BAD_REQUEST, "S3-001", "파일이 비어 있습니다."),
-	IO_EXCEPTION_ON_IMAGE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "S3-002", "이미지 업로드 중 IO 예외 발생"),
-	NO_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3-003", "파일 확장자가 없습니다."),
+	EMPTY_FILE_EXCEPTION(HttpStatus.BAD_REQUEST, "파일이 비어 있습니다.", "S3-001"),
+	IO_EXCEPTION_ON_IMAGE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드 중 IO 예외 발생", "S3-002"),
+	NO_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "파일 확장자가 없습니다.", "S3-003"),
 	INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S3-004", "유효하지 않은 파일 확장자입니다."),
 
 	// User
@@ -156,7 +156,7 @@ public enum ErrorCode {
 
 	// Chat
 	INVALID_CHATROOM(HttpStatus.FORBIDDEN, "자신에게 채팅을 할 수 없습니다.", "CHAT-001"),
-	CHATROOM_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 채팅 방입니다.", "CHAT-002"),
+	CHATROOM_DUPLICATED(HttpStatus.CONFLICT, "이미 존재하는 채팅방입니다.", "CHAT-002"),
 	CHATROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 채팅방을 찾을 수 없습니다.", "CHAT-003"),
 	CHATROOM_NOT_ENTERED(HttpStatus.FORBIDDEN, "채팅방에 입장한 유저가 아닙니다.", "CHAT-004"),
 	READ_STATUS_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 채팅 읽음 상태를 찾을 수 없습니다.", "CHAT-005"),
