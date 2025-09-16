@@ -17,4 +17,6 @@ public interface ChatRoomRepository {
 	Slice<ChatRoom> findAllByUserIdOrderByCreatedTimeDesc(Long userId, Pageable pageable);
 
 	Optional<ChatRoom> findById(Long chatroomId);
+
+	Optional<ChatRoom> findByReferenceIdAndInitialSenderIdAndChatType(Long referenceId, Long initialSenderId, ChatType chatType);
 }
