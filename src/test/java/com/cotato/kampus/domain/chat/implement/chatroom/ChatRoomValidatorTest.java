@@ -62,6 +62,9 @@ class ChatRoomValidatorTest {
 		assertThatThrownBy(() -> target.validateDuplicateChatRoom(referenceId, senderId, chatType))
 			.isInstanceOf(ChatRoomDuplicatedException.class)
 			.hasMessage(ErrorCode.CHATROOM_DUPLICATED.getMessage());
+
+		verify(chatRoomFinder).existsByReferenceIdAndSenderIdAndChatType(referenceId, senderId, chatType);
+		verify(chatRoomFinder).findByReferenceIdAndSenderIdAndChatType(referenceId, senderId, chatType);
 	}
 
 	@Test
@@ -70,7 +73,6 @@ class ChatRoomValidatorTest {
 		// given
 		Long referenceId = 1L;
 		Long senderId = 2L;
-		ChatType existingChatType = ChatType.POST;
 		ChatType newChatType = ChatType.PRODUCT;
 
 		// chatType.PRODUCT로만 테스트하기 때문에 existingChatType에 대한 stubbing 제거
@@ -79,24 +81,6 @@ class ChatRoomValidatorTest {
 
 		// POST 타입으로 이미 채팅방이 있더라도 PRODUCT 타입으로는 새로 생성 가능
 		assertThatCode(() -> target.validateDuplicateChatRoom(referenceId, senderId, newChatType))
-			.doesNotThrowAnyException();
-	}
-
-	@Test
-	@DisplayName("채팅방 중복 검증 성공 - 같은 chatType이지만 다른 referenceId인 경우")
-	void validateDuplicateChatRoom_Success_DifferentReferenceId() {
-		// given
-		Long referenceId1 = 1L;
-		Long referenceId2 = 2L;
-		Long senderId = 3L;
-		ChatType chatType = ChatType.POST;
-
-		// referenceId2로만 테스트하기 때문에 referenceId1에 대한 stubbing 제거
-		when(chatRoomFinder.existsByReferenceIdAndSenderIdAndChatType(referenceId2, senderId, chatType))
-			.thenReturn(false);
-
-		// when & then
-		assertThatCode(() -> target.validateDuplicateChatRoom(referenceId2, senderId, chatType))
 			.doesNotThrowAnyException();
 	}
 
