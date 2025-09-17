@@ -43,7 +43,7 @@ class CommentMapperTest {
 		// given
 		Long currentUserId = 1L;
 		Long commentId = 10L;
-		
+
 		CommentDto commentDto = new CommentDto(
 			commentId,
 			currentUserId, // 현재 유저가 작성한 댓글
@@ -61,7 +61,7 @@ class CommentMapperTest {
 		);
 
 		given(anonymousNumberAllocator.resolveAuthorName(commentDto)).willReturn("Anonymous1");
-		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, anyList()))
+		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(eq(currentUserId), anyList()))
 			.willReturn(emptyList()); // 좋아요하지 않음
 
 		// when
@@ -99,7 +99,7 @@ class CommentMapperTest {
 		);
 
 		given(anonymousNumberAllocator.resolveAuthorName(commentDto)).willReturn("Anonymous1");
-		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, anyList()))
+		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(eq(currentUserId), anyList()))
 			.willReturn(emptyList()); // 좋아요하지 않음
 
 		// when
@@ -155,7 +155,7 @@ class CommentMapperTest {
 
 		given(anonymousNumberAllocator.resolveAuthorName(parentComment)).willReturn("Anonymous1");
 		given(anonymousNumberAllocator.resolveAuthorName(replyComment)).willReturn("Anonymous2");
-		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, anyList()))
+		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(eq(currentUserId), anyList()))
 			.willReturn(emptyList()); // 좋아요하지 않음
 
 		// when
@@ -199,7 +199,7 @@ class CommentMapperTest {
 
 		given(anonymousNumberAllocator.resolveAuthorName(deletedParent)).willReturn("Anonymous1");
 		given(anonymousNumberAllocator.resolveAuthorName(reply)).willReturn("Anonymous2");
-		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(10L, 11L)))
+		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(eq(currentUserId), anyList()))
 			.willReturn(emptyList());
 
 		// when
@@ -237,7 +237,7 @@ class CommentMapperTest {
 
 		given(anonymousNumberAllocator.resolveAuthorName(deletedComment)).willReturn("Anonymous1");
 		given(anonymousNumberAllocator.resolveAuthorName(normalComment)).willReturn("Anonymous2");
-		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(10L, 11L)))
+		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(eq(currentUserId), anyList()))
 			.willReturn(emptyList());
 
 		// when
@@ -292,7 +292,7 @@ class CommentMapperTest {
 		);
 
 		given(anonymousNumberAllocator.resolveAuthorName(commentDto)).willReturn("Anonymous1");
-		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(commentId)))
+		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(eq(currentUserId), anyList()))
 			.willReturn(emptyList()); // 좋아요하지 않음
 
 		// when
@@ -417,7 +417,7 @@ class CommentMapperTest {
 
 		given(anonymousNumberAllocator.resolveAuthorName(parent)).willReturn("Anonymous1");
 		given(anonymousNumberAllocator.resolveAuthorName(reply)).willReturn("Anonymous2");
-		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(currentUserId, Arrays.asList(10L, 11L)))
+		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(eq(currentUserId), anyList()))
 			.willReturn(emptyList());
 
 		// when
