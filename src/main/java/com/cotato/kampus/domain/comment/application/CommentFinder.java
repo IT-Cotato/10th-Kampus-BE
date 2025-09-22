@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cotato.kampus.domain.comment.dao.CommentRepository;
 import com.cotato.kampus.domain.comment.domain.Comment;
 import com.cotato.kampus.domain.comment.dto.CommentDto;
+import com.cotato.kampus.domain.comment.enums.CommentStatus;
 import com.cotato.kampus.global.error.ErrorCode;
 import com.cotato.kampus.global.error.exception.AppException;
 
@@ -32,6 +33,7 @@ public class CommentFinder {
 	public List<CommentDto> findAllDtoByPostId(Long postId) {
 		List<Comment> comments = commentRepository.findAllByPostIdOrderByCreatedTimeAsc(postId);
 		List<CommentDto> commentDtos = comments.stream()
+			.filter(comment -> !comment.getCommentStatus().isRemoved())
 			.map(CommentDto::from)
 			.toList();
 

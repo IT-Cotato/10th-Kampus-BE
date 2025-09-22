@@ -51,13 +51,13 @@ public class CommentMapper {
 	/**
 	 * CommentDto를 CommentDetail로 변환하여 Map에 저장
 	 */
-	private Map<Long, CommentDetail> convertToCommentDetails(List<CommentDto> allCommentDtos, 
+	private Map<Long, CommentDetail> convertToCommentDetails(List<CommentDto> allCommentDtos,
 			Map<Long, CommentDto> commentDtoMap, Map<Long, Boolean> likedCommentsMap, Long userId) {
 		Map<Long, CommentDetail> commentMap = new HashMap<>();
-		
+
 		for (CommentDto dto : allCommentDtos) {
 			String targetAuthor = resolveTargetAuthor(dto, commentDtoMap);
-			
+
 			CommentDetail detail = CommentDetail.of(
 				dto,
 				anonymousNumberAllocator.resolveAuthorName(dto),
@@ -66,6 +66,12 @@ public class CommentMapper {
 				likedCommentsMap.getOrDefault(dto.commentId(), false),
 				userId.equals(dto.userId())
 			);
+
+			// MASKED 상태인 경우 마스킹 처리
+			if (dto.commentStatus().isMasked()) {
+				detail = detail.withMaskedContent();
+			}
+
 			commentMap.put(dto.commentId(), detail);
 		}
 		return commentMap;
@@ -111,22 +117,14 @@ public class CommentMapper {
 	 */
 	private List<CommentDetail> filterAndSortRootComments(Map<Long, CommentDetail> commentMap) {
 		List<CommentDetail> rootComments = new ArrayList<>();
-		
+
 		for(CommentDetail detail : commentMap.values()) {
 			if(detail.parentId() == null) {
-				boolean isDeleted = detail.commentStatus() != CommentStatus.NORMAL;
-				boolean hasReplies = !detail.replies().isEmpty();
-
-				if (isDeleted && hasReplies) {
-					// 삭제됐지만 대댓글이 있는 경우: 내용 변경 후 추가
-					rootComments.add(detail.withMaskedContent());
-				} else if (!isDeleted) {
-					rootComments.add(detail);
-				}
-				// 삭제됐고 대댓글도 없는 경우는 아무것도 하지 않음 (결과에서 제외)
+				// 이미 convertToCommentDetails에서 마스킹 처리했으므로 그대로 추가
+				rootComments.add(detail);
 			}
 		}
-		
+
 		rootComments.sort(Comparator.comparing(CommentDetail::createdTime));
 		return rootComments;
 	}
