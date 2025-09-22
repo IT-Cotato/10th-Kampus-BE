@@ -2,33 +2,25 @@ package com.cotato.kampus.domain.comment.dao;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.cotato.kampus.domain.comment.domain.Comment;
+import com.cotato.kampus.domain.comment.enums.CommentStatus;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
 	Optional<Comment> findFirstByPostIdAndUserId(Long postId, Long userId);
 
-	boolean existsByParentId(Long parentId);
+	boolean existsByParentIdAndCommentStatusIn(Long commentId, Set<CommentStatus> commentStatuses);
 
 	List<Comment> findAllByPostIdOrderByCreatedTimeAsc(Long postId);
 
 	Slice<Comment> findAllByUserId(Long userId, Pageable pageable);
 
-	@Query("""
-		SELECT c.postId 
-		FROM Comment c
-		WHERE c.userId = :userId
-		GROUP BY c.postId
-		ORDER BY MAX(c.createdTime) DESC
-		""")
-	List<Long> findRecentPostIdsByUserId(@Param("userId") Long userId);
 }
