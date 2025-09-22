@@ -30,7 +30,10 @@ public class CommentDeleter {
 	@Transactional
 	public void delete(CommentDto commentDto) {
 		Comment comment = commentFinder.findComment(commentDto.commentId());
-		boolean hasReplies = commentRepository.existsByParentId(commentDto.commentId());
+		boolean hasReplies = commentRepository.existsByParentIdAndCommentStatusIn(
+			commentDto.commentId(),
+			CommentStatus.getVisibleStatuses()
+			);
 
 		// 댓글 좋아요 삭제 처리한다
 		commentLikeDeleter.deleteAllByCommentId(commentDto.commentId());
