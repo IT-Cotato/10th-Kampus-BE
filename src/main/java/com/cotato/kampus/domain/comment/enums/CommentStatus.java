@@ -1,5 +1,6 @@
 package com.cotato.kampus.domain.comment.enums;
 
+import java.util.EnumSet;
 import java.util.Set;
 
 public enum CommentStatus {
@@ -9,6 +10,8 @@ public enum CommentStatus {
 	MASKED_BY_ADMIN,
 	REMOVED_BY_ADMIN;
 
+	private static final Set<CommentStatus> VISIBLE_STATUSES = EnumSet.of(NORMAL, MASKED, REMOVED);
+
 	public boolean isRemoved() {
 		return this == REMOVED || this == REMOVED_BY_ADMIN;
 	}
@@ -17,7 +20,11 @@ public enum CommentStatus {
 		return this == MASKED || this == MASKED_BY_ADMIN;
 	}
 
+	public boolean isVisible() {
+		return this == NORMAL || isMasked();
+	}
+
 	public static Set<CommentStatus> getVisibleStatuses() {
-		return Set.of(NORMAL, MASKED, MASKED_BY_ADMIN);
+		return VISIBLE_STATUSES;
 	}
 }
