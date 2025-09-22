@@ -68,7 +68,7 @@ public class CommentMapper {
 			);
 
 			// MASKED 상태인 경우 마스킹 처리
-			if (isMaskedStatus(dto.commentStatus())) {
+			if (dto.commentStatus().isMasked()) {
 				detail = detail.withMaskedContent();
 			}
 
@@ -127,10 +127,6 @@ public class CommentMapper {
 
 		rootComments.sort(Comparator.comparing(CommentDetail::createdTime));
 		return rootComments;
-	}
-
-	private boolean isMaskedStatus(CommentStatus status) {
-		return status == CommentStatus.MASKED || status == CommentStatus.MASKED_BY_ADMIN;
 	}
 
 	/**

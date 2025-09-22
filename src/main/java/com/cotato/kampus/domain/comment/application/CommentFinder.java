@@ -33,16 +33,11 @@ public class CommentFinder {
 	public List<CommentDto> findAllDtoByPostId(Long postId) {
 		List<Comment> comments = commentRepository.findAllByPostIdOrderByCreatedTimeAsc(postId);
 		List<CommentDto> commentDtos = comments.stream()
-			.filter(comment -> !isRemovedStatus(comment.getCommentStatus()))
+			.filter(comment -> !comment.getCommentStatus().isRemoved())
 			.map(CommentDto::from)
 			.toList();
 
 		return commentDtos;
-	}
-
-	private boolean isRemovedStatus(CommentStatus status) {
-		return status == CommentStatus.REMOVED
-			|| status == CommentStatus.REMOVED_BY_ADMIN;
 	}
 
 	public List<Comment> findAllByPostId(Long postId) {
