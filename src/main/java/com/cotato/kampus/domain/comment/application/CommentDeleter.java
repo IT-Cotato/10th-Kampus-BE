@@ -43,7 +43,7 @@ public class CommentDeleter {
 			comment.setCommentStatus(CommentStatus.MASKED);
 		} else {
 			// 대댓글이 없는 경우: REMOVED 상태로 변경, 댓글 수 감소
-			Post post = postFinder.find(commentDto.postId());
+			Post post = postFinder.find(comment.getPostId());
 			postUpdater.decreaseCommentCount(post);
 			comment.setCommentStatus(CommentStatus.REMOVED);
 		}
