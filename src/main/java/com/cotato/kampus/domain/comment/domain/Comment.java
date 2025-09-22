@@ -20,13 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(
-	name = "comment",
-	indexes = {
-		@Index(name = "idx_comment_parent_status", columnList = "parent_id, comment_status"),
-		@Index(name = "idx_comment_post", columnList = "post_id")
-	}
-)
+@Table(name = "comment")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends BaseTimeEntity {
