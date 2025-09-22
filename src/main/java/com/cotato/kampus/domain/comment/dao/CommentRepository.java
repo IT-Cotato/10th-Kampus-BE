@@ -1,8 +1,8 @@
 package com.cotato.kampus.domain.comment.dao;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -17,7 +17,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
 	Optional<Comment> findFirstByPostIdAndUserId(Long postId, Long userId);
 
-	boolean existsByParentIdAndCommentStatusIn(Long commentId, Set<CommentStatus> commentStatuses);
+	boolean existsByParentIdAndCommentStatusIn(Long parentId, Collection<CommentStatus> statuses);
 
 	List<Comment> findAllByPostIdOrderByCreatedTimeAsc(Long postId);
 
