@@ -184,7 +184,7 @@ class CommentMapperTest {
 		// 삭제된 부모 댓글
 		CommentDto deletedParent = new CommentDto(
 			10L, 2L, 1L, "Original content", 0L,
-			ReportStatus.NORMAL, CommentStatus.DELETED_BY_USER, // 삭제됨
+			ReportStatus.NORMAL, CommentStatus.MASKED, // 마스킹됨
 			Anonymity.ANONYMOUS, 0L, 1, null, null,
 			LocalDateTime.now()
 		);
@@ -214,39 +214,91 @@ class CommentMapperTest {
 	}
 
 	@Test
-	@DisplayName("삭제된 댓글이고 대댓글도 없으면 결과에서 완전히 제외해야 한다")
-	void buildCommentHierarchy_deletedCommentWithoutReplies_shouldExclude() {
+	@DisplayName("MASKED 상태 댓글은 내용이 마스킹되어 조회되어야 한다")
+	void buildCommentHierarchy_maskedComment_shouldShowMaskedContent() {
 		// given
 		Long currentUserId = 1L;
-		
-		// 삭제된 댓글 (대댓글 없음)
-		CommentDto deletedComment = new CommentDto(
-			10L, 2L, 1L, "To be deleted", 0L,
-			ReportStatus.NORMAL, CommentStatus.DELETED_BY_USER, // 삭제됨
-			Anonymity.ANONYMOUS, 0L, 1, null, null,
-			LocalDateTime.now()
-		);
-		
-		// 정상 댓글
-		CommentDto normalComment = new CommentDto(
-			11L, currentUserId, 1L, "Normal comment", 0L,
-			ReportStatus.NORMAL, CommentStatus.NORMAL,
-			Anonymity.ANONYMOUS, 0L, 2, null, null,
-			LocalDateTime.now().plusMinutes(1)
+		Long maskedCommentId = 10L;
+		Long otherUserId = 2L;
+		Long postId = 1L;
+		String originalContent = "Original sensitive content";
+		LocalDateTime commentTime = LocalDateTime.now();
+
+		CommentDto maskedComment = new CommentDto(
+			maskedCommentId,
+			otherUserId,
+			postId,
+			originalContent,
+			0L, // likes
+			ReportStatus.NORMAL,
+			CommentStatus.MASKED,
+			Anonymity.ANONYMOUS,
+			0L, // reports
+			1, // anonymousNumber
+			null, // parentId
+			null, // targetId
+			commentTime
 		);
 
-		given(anonymousNumberAllocator.resolveAuthorName(deletedComment)).willReturn("Anonymous1");
+		given(anonymousNumberAllocator.resolveAuthorName(maskedComment)).willReturn("Anonymous1");
+		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(eq(currentUserId), anyList()))
+			.willReturn(emptyList());
+
+		// when
+		List<CommentDetail> result = commentMapper.buildCommentHierarchy(
+			Arrays.asList(maskedComment), currentUserId);
+
+		// then
+		assertThat(result).hasSize(1);
+		CommentDetail resultComment = result.get(0);
+
+		assertThat(resultComment.commentId()).isEqualTo(maskedCommentId);
+		assertThat(resultComment.commentStatus()).isEqualTo(CommentStatus.MASKED);
+		assertThat(resultComment.content()).isEqualTo("This comment was deleted.");
+		assertThat(resultComment.content()).isNotEqualTo(originalContent); // 원본 내용과 다름
+	}
+
+	@Test
+	@DisplayName("NORMAL 상태 댓글은 원본 내용이 그대로 조회되어야 한다")
+	void buildCommentHierarchy_normalComment_shouldShowOriginalContent() {
+		// given
+		Long currentUserId = 1L;
+		Long normalCommentId = 11L;
+		Long postId = 1L;
+		String originalContent = "This is normal comment content";
+		LocalDateTime commentTime = LocalDateTime.now();
+
+		CommentDto normalComment = new CommentDto(
+			normalCommentId,
+			currentUserId,
+			postId,
+			originalContent,
+			0L, // likes
+			ReportStatus.NORMAL,
+			CommentStatus.NORMAL,
+			Anonymity.ANONYMOUS,
+			0L, // reports
+			2, // anonymousNumber
+			null, // parentId
+			null, // targetId
+			commentTime
+		);
+
 		given(anonymousNumberAllocator.resolveAuthorName(normalComment)).willReturn("Anonymous2");
 		given(commentLikeRepository.findCommentIdsByUserIdAndCommentIdIn(eq(currentUserId), anyList()))
 			.willReturn(emptyList());
 
 		// when
 		List<CommentDetail> result = commentMapper.buildCommentHierarchy(
-			Arrays.asList(deletedComment, normalComment), currentUserId);
+			Arrays.asList(normalComment), currentUserId);
 
 		// then
-		assertThat(result).hasSize(1); // 삭제된 댓글은 제외됨
-		assertThat(result.get(0).commentId()).isEqualTo(11L); // 정상 댓글만 포함
+		assertThat(result).hasSize(1);
+		CommentDetail resultComment = result.get(0);
+
+		assertThat(resultComment.commentId()).isEqualTo(normalCommentId);
+		assertThat(resultComment.commentStatus()).isEqualTo(CommentStatus.NORMAL);
+		assertThat(resultComment.content()).isEqualTo(originalContent); // 원본 내용 유지
 	}
 
 	// ========== 좋아요 기능 테스트 ==========
