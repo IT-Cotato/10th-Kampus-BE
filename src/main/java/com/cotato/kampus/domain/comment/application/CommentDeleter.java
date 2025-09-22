@@ -47,6 +47,26 @@ public class CommentDeleter {
 			postUpdater.decreaseCommentCount(post);
 			comment.setCommentStatus(CommentStatus.REMOVED);
 		}
+
+		// 부모 댓글이 있다면 부모의 상태 재검사
+		if (comment.getParentId() != null) {
+			checkAndUpdateParentStatus(comment.getParentId());
+		}
+	}
+
+	private void checkAndUpdateParentStatus(Long parentId) {
+		Comment parent = commentFinder.findComment(parentId);
+		if (parent.getCommentStatus().isMasked()) {
+			boolean hasVisibleReplies = commentRepository
+				.existsByParentIdAndCommentStatusIn(parentId, CommentStatus.getVisibleStatuses());
+
+			if (!hasVisibleReplies) {
+				// 마스킹된 부모 댓글에 가시적 대댓글이 없으면 완전 삭제
+				Post post = postFinder.find(parent.getPostId());
+				postUpdater.decreaseCommentCount(post);
+				parent.setCommentStatus(CommentStatus.REMOVED);
+			}
+		}
 	}
 
 	@Transactional
