@@ -10,7 +10,7 @@ public enum CommentStatus {
 	MASKED_BY_ADMIN,
 	REMOVED_BY_ADMIN;
 
-	private static final Set<CommentStatus> VISIBLE_STATUSES = EnumSet.of(NORMAL, MASKED, REMOVED);
+	private static final Set<CommentStatus> VISIBLE_STATUSES = EnumSet.of(NORMAL, MASKED, MASKED_BY_ADMIN);
 
 	public boolean isRemoved() {
 		return this == REMOVED || this == REMOVED_BY_ADMIN;
